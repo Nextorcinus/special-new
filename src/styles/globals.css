@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+	--background: #f5f5f5;
+	--foreground: #1f1f1f;
+	--card: #ffffff;
+	--muted: #6b7280;
+	--button: #e5e7eb;
+	--button-hover: #d1d5db;
+}
+
+html.dark {
+	--background: #202020;
+	--foreground: #ffffff;
+	--card: #2f2f2f;
+	--muted: #a1a1aa;
+	--button: #2f2f2f;
+	--button-hover: #3a3a3a;
+}
+
+body {
+	min-height: 100vh;
+	background: var(--background);
+	color: var(--foreground);
+	transition:
+		background 0.2s ease,
+		color 0.2s ease;
+}
+
+.theme-switch {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 58px;
+	height: 34px;
+	padding: 4px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--button);
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.theme-switch:hover {
+	background: var(--button-hover);
+}
+
+.theme-switch__icon {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	width: 26px;
+	height: 26px;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	line-height: 1;
+	pointer-events: none;
+}
+
+.theme-switch__thumb {
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	z-index: 1;
+	width: 26px;
+	height: 26px;
+	border-radius: 999px;
+	background: var(--card);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+	transform: translateX(0);
+	transition:
+		transform 0.25s ease,
+		background 0.2s ease;
+}
+
+.theme-switch__thumb--dark {
+	transform: translateX(24px);
+}
