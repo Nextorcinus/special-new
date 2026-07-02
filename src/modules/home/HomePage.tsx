@@ -1,9 +1,16 @@
-import Header from "@/components/layout/Header";
+import HomeDesktop from "./HomeDesktop";
+import HomeMobile from "./HomeMobile";
 
 export default function HomePage() {
 	return (
-		<main className="min-h-screen px-4 pt-8">
-			<Header />
-		</main>
+		<>
+			<div className="block lg:hidden">
+				<HomeMobile />
+			</div>
+
+			<div className="hidden lg:block">
+				<HomeDesktop />
+			</div>
+		</>
 	);
 }
