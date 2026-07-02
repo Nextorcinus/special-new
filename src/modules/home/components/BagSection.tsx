@@ -16,7 +16,7 @@ export default function WhatsInBagSection() {
 					className="flex w-full items-center gap-4 rounded-2xl bg-[var(--card)] p-4 text-left"
 				>
 					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2A2A2A]">
-						<Image src="/bag.png" alt="Bag" width={24} height={24} />
+						<Image src="/icons/bag.png" alt="Bag" width={24} height={24} />
 					</div>
 
 					<div className="flex-1">

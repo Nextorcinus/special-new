@@ -8,7 +8,7 @@ export default function HeaderNotification() {
 			aria-label="Notifications"
 		>
 			<Image
-				src="/notification.png"
+				src="/icons/notification.png"
 				alt="Notification"
 				width={22}
 				height={22}

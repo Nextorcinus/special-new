@@ -3,7 +3,13 @@
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function CategoriesHeader() {
+type CategoriesHeaderProps = {
+	title?: string;
+};
+
+export default function CategoriesHeader({
+	title = "Category",
+}: CategoriesHeaderProps) {
 	const router = useRouter();
 
 	return (
@@ -16,7 +22,9 @@ export default function CategoriesHeader() {
 				<ChevronLeft size={18} />
 			</button>
 
-			<h1 className="text-lg font-medium text-[var(--foreground)]">Category</h1>
+			<h1 className="text-sm font-medium text-[var(--foreground)]">
+				{title}
+			</h1>
 		</header>
 	);
 }
