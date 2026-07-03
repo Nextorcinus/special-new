@@ -26,6 +26,7 @@ type CalculateUpgradeInput = {
 		vpLevel: string;
 		doubleTime: boolean;
 		zinmanSkill: string;
+		agnesLevel: string;
 		constructionSpeed: number;
 		valeriaBonus: number;
 	};
@@ -41,10 +42,12 @@ function parseDurationToSeconds(str: string) {
 }
 
 function formatDuration(seconds: number) {
-	const d = Math.floor(seconds / 86400);
-	const h = Math.floor((seconds % 86400) / 3600);
-	const m = Math.floor((seconds % 3600) / 60);
-	const s = Math.floor(seconds % 60);
+	const safeSeconds = Math.max(0, seconds);
+
+	const d = Math.floor(safeSeconds / 86400);
+	const h = Math.floor((safeSeconds % 86400) / 3600);
+	const m = Math.floor((safeSeconds % 3600) / 60);
+	const s = Math.floor(safeSeconds % 60);
 
 	return `${d}d ${h}h ${m}m ${s}s`;
 }
@@ -90,6 +93,33 @@ const zinmanBuffMap: Record<string, number> = {
 	"Level 1 (-3% cost)": 3,
 	"Level 2 (-6% cost)": 6,
 	"Level 3 (-9% cost)": 9,
+	"Level 4 (-12% cost)": 12,
+	"Level 5 (-15% cost)": 15,
+};
+
+const agnesBuffMap: Record<string, number> = {
+	Off: 0,
+	"0": 0,
+	"1": 2,
+	"2": 4,
+	"3": 6,
+	"4": 8,
+	"5": 10,
+	"Lv.1": 2,
+	"Lv.2": 4,
+	"Lv.3": 6,
+	"Lv.4": 8,
+	"Lv.5": 10,
+	"Level 1": 2,
+	"Level 2": 4,
+	"Level 3": 6,
+	"Level 4": 8,
+	"Level 5": 10,
+	"Level 1 (-2h)": 2,
+	"Level 2 (-4h)": 4,
+	"Level 3 (-6h)": 6,
+	"Level 4 (-8h)": 8,
+	"Level 5 (-10h)": 10,
 };
 
 const vpBuffMap: Record<string, number> = {
@@ -164,8 +194,15 @@ export function calculateUpgrade({
 	const pet = normalizeBuff(buffs.petLevel, petBuffMap);
 	const doubleTime = buffs.doubleTime ? 20 : 0;
 
+	const agnesHours = normalizeBuff(buffs.agnesLevel, agnesBuffMap);
+	const agnesSeconds = agnesHours * 3600;
+
 	const totalBuff = constructionSpeed + vp + pet + doubleTime;
-	const reducedSeconds = totalSeconds / (1 + totalBuff / 100);
+
+	const reducedSeconds = Math.max(
+		0,
+		totalSeconds / (1 + totalBuff / 100) - agnesSeconds,
+	);
 
 	const svsBase = range.reduce((sum, item) => {
 		return sum + parseResource(item["SvS Points"]);
@@ -187,5 +224,6 @@ export function calculateUpgrade({
 		svsBase,
 		svsFinal,
 		valeriaBonus,
+		agnesHours,
 	};
 }

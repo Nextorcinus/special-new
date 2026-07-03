@@ -4,15 +4,71 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
-	calculateUpgrade,
 	type BuildingType,
+	calculateUpgrade,
 } from "@/modules/buildings/calculator/calculateUpgrade";
+
+import SLButton from "@/components/ui/sl-ui/SLButton";
+import SLInput from "@/components/ui/sl-ui/SLInput";
+import SLSelect from "@/components/ui/sl-ui/SLSelect";
+import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
 
 type BuildingFormProps = {
 	type: BuildingType;
 	data: any[];
 	onCalculate: (result: any) => void;
 };
+
+const labelClass = "mb-1 block text-[11px] text-zinc-400";
+
+const petOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "Lv.1", label: "Level 1" },
+	{ value: "Lv.2", label: "Level 2" },
+	{ value: "Lv.3", label: "Level 3" },
+	{ value: "Lv.4", label: "Level 4" },
+	{ value: "Lv.5", label: "Level 5" },
+];
+
+const vpOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "10%", label: "+10%" },
+	{ value: "15%", label: "+15%" },
+	{ value: "20%", label: "+20%" },
+	{ value: "25%", label: "+25%" },
+];
+
+const zinmanOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "Lv.1", label: "Level 1 (-3% cost)" },
+	{ value: "Lv.2", label: "Level 2 (-6% cost)" },
+	{ value: "Lv.3", label: "Level 3 (-9% cost)" },
+	{ value: "Lv.4", label: "Level 4 (-12% cost)" },
+	{ value: "Lv.5", label: "Level 5 (-15% cost)" },
+];
+
+const agnesOptions = [
+	{ value: "0", label: "Off" },
+	{ value: "1", label: "Level 1 (-2h)" },
+	{ value: "2", label: "Level 2 (-4h)" },
+	{ value: "3", label: "Level 3 (-6h)" },
+	{ value: "4", label: "Level 4 (-8h)" },
+	{ value: "5", label: "Level 5 (-10h)" },
+];
+
+const valeriaOptions = [
+	{ value: "0", label: "Off" },
+	{ value: "1", label: "Level 1 (+2% SvS)" },
+	{ value: "2", label: "Level 2 (+4% SvS)" },
+	{ value: "3", label: "Level 3 (+6% SvS)" },
+	{ value: "4", label: "Level 4 (+8% SvS)" },
+	{ value: "5", label: "Level 5 (+10% SvS)" },
+	{ value: "6", label: "Level 6 (+12% SvS)" },
+	{ value: "7", label: "Level 7 (+14% SvS)" },
+	{ value: "8", label: "Level 8 (+16% SvS)" },
+	{ value: "9", label: "Level 9 (+18% SvS)" },
+	{ value: "10", label: "Level 10 (+20% SvS)" },
+];
 
 export default function BuildingForm({
 	type,
@@ -30,8 +86,7 @@ export default function BuildingForm({
 	const [agnesLevel, setAgnesLevel] = useState("0");
 	const [valeriaLevel, setValeriaLevel] = useState("0");
 	const [constructionSpeed, setConstructionSpeed] = useState("");
-
-	const [isConfigOpen, setIsConfigOpen] = useState(true);
+	const [isConfigOpen, setIsConfigOpen] = useState(false);
 
 	const buildingOptions = useMemo(() => {
 		return [...new Set(data.map((item) => item.Building))]
@@ -76,6 +131,7 @@ export default function BuildingForm({
 				vpLevel,
 				doubleTime,
 				zinmanSkill,
+				agnesLevel,
 				constructionSpeed: Number(constructionSpeed) || 0,
 				valeriaBonus: Number(valeriaLevel) * 2,
 			},
@@ -100,87 +156,76 @@ export default function BuildingForm({
 		setAgnesLevel("0");
 		setValeriaLevel("0");
 		setConstructionSpeed("");
-		setIsConfigOpen(true);
+		setIsConfigOpen(false);
 	}
-
-	const labelClass = "mb-1 block text-[11px] text-[#a6a6a6]";
-	const selectLightClass =
-		"h-11 w-full rounded-lg border-0 bg-white px-4 text-xs text-black outline-none disabled:opacity-50";
-	const inputDarkClass =
-		"h-10 w-full rounded-lg border-0 bg-[#2b2b2b] px-4 text-xs text-white outline-none placeholder:text-[#8e8e8e]";
-	const selectDarkClass =
-		"h-10 w-full rounded-lg border-0 bg-[#2b2b2b] px-4 text-xs text-white outline-none";
 
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="space-y-4 rounded-[14px] bg-[#1f1f1f] p-4 text-white"
+			className="relative space-y-4 rounded-[14px] bg-[#1f1f1f] p-4 text-white dark:bg-special-inside"
 		>
 			<div>
 				<h2 className="text-sm font-bold">Calculation</h2>
-				<p className="mt-1 text-[11px] text-[#9a9a9a]">Building Name</p>
+				<p className="mt-1 text-[11px] text-white/50">Building Name</p>
 			</div>
 
-			<div>
+			<div className="relative z-50 space-y-1.5">
 				<label className={labelClass}>Building</label>
-				<select
-					value={building}
-					onChange={(e) => {
-						setBuilding(e.target.value);
-						setFromLevel("");
-						setToLevel("");
-					}}
-					className={selectLightClass}
-				>
-					<option value="">From here</option>
-					{buildingOptions.map((item) => (
-						<option key={item} value={item}>
-							{item}
-						</option>
-					))}
-				</select>
+
+				<SLSelect
+	value={building}
+	onChange={(value: string) => {
+		setBuilding(value);
+		setFromLevel("");
+		setToLevel("");
+	}}
+	placeholder="From here"
+	options={buildingOptions.map((item) => ({
+		value: item,
+		label: item,
+	}))}
+	className="!bg-white !text-black"
+/>
 			</div>
 
-			<div className="grid grid-cols-2 gap-3">
-				<div>
+			<div className="relative z-40 grid grid-cols-2 gap-3">
+				<div className="space-y-1.5">
 					<label className={labelClass}>Current</label>
-					<select
-						value={fromLevel}
-						onChange={(e) => {
-							setFromLevel(e.target.value);
-							setToLevel("");
-						}}
-						className={selectLightClass}
-						disabled={!building}
-					>
-						<option value="">Select current</option>
-						{levelOptions.map((lvl) => (
-							<option key={lvl} value={lvl}>
-								{lvl}
-							</option>
-						))}
-					</select>
+
+					<SLSelect
+	value={fromLevel}
+	onChange={(value: string) => {
+		setFromLevel(value);
+		setToLevel("");
+	}}
+	placeholder="Select current"
+	options={levelOptions.map((lvl) => ({
+		value: lvl,
+		label: lvl,
+	}))}
+	disabled={!building}
+	className="!bg-white !text-black"
+/>
 				</div>
 
-				<div>
+				<div className="space-y-1.5">
 					<label className={labelClass}>To</label>
-					<select
-						value={toLevel}
-						onChange={(e) => setToLevel(e.target.value)}
-						className={selectLightClass}
-						disabled={!fromLevel || filteredToLevels.length === 0}
-					>
-						<option value="">Select target</option>
-						{filteredToLevels.map((lvl) => (
-							<option key={lvl} value={lvl}>
-								{lvl}
-							</option>
-						))}
-					</select>
+
+					<SLSelect
+	value={toLevel}
+	onChange={(value: string) => setToLevel(value)}
+	placeholder="Select target"
+	options={filteredToLevels.map((lvl) => ({
+		value: lvl,
+		label: lvl,
+	}))}
+	disabled={!fromLevel || filteredToLevels.length === 0}
+	className="!bg-white !text-black"
+/>
 				</div>
 			</div>
 
-			<div className="rounded-[14px] bg-[#353535] p-3">
+			<div className="relative z-10 rounded-[14px] bg-white/10 p-3">
 				<button
 					type="button"
 					onClick={() => setIsConfigOpen((prev) => !prev)}
@@ -189,153 +234,114 @@ export default function BuildingForm({
 					<span className="text-xs font-bold">Configuration</span>
 
 					{isConfigOpen ? (
-						<ChevronUp size={15} className="text-[#cfcfcf]" />
+						<ChevronUp size={15} className="text-white/70" />
 					) : (
-						<ChevronDown size={15} className="text-[#cfcfcf]" />
+						<ChevronDown size={15} className="text-white/70" />
 					)}
 				</button>
 
 				{isConfigOpen && (
 					<div className="mt-4 space-y-3">
-						<div>
+						<div className="space-y-1.5">
 							<label className={labelClass}>Construction Speed %</label>
-							<input
+
+							<SLInput
 								type="number"
 								value={constructionSpeed}
-								onChange={(e) => setConstructionSpeed(e.target.value)}
-								placeholder="98.9"
-								className={inputDarkClass}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									setConstructionSpeed(e.target.value)
+								}
+								placeholder="e.g. 68 for 68%"
+								className="bg-special-input text-white"
 							/>
 						</div>
 
-						<div className="grid grid-cols-2 gap-3">
-							<div>
+						<div className="relative z-30 grid grid-cols-2 gap-3">
+							<div className="space-y-1.5">
 								<label className={labelClass}>Pet Skill</label>
-								<select
+
+								<SLSelect
 									value={petLevel}
-									onChange={(e) => setPetLevel(e.target.value)}
-									className={selectDarkClass}
-								>
-									<option value="Off">Off</option>
-									<option value="Lv.1">Level 1</option>
-									<option value="Lv.2">Level 2</option>
-									<option value="Lv.3">Level 3</option>
-									<option value="Lv.4">Level 4</option>
-									<option value="Lv.5">Level 5</option>
-								</select>
+									onChange={(value: string) => setPetLevel(value)}
+									options={petOptions}
+									className="bg-special-input text-white"
+								/>
 							</div>
 
-							<div>
+							<div className="space-y-1.5">
 								<label className={labelClass}>VP</label>
-								<select
+
+								<SLSelect
 									value={vpLevel}
-									onChange={(e) => setVpLevel(e.target.value)}
-									className={selectDarkClass}
-								>
-									<option value="Off">Off</option>
-									<option value="10%">+10%</option>
-									<option value="15%">+15%</option>
-									<option value="20%">+20%</option>
-									<option value="25%">+25%</option>
-								</select>
+									onChange={(value: string) => setVpLevel(value)}
+									options={vpOptions}
+									className="bg-special-input text-white"
+								/>
 							</div>
 						</div>
 
-						<div>
+						<div className="relative z-20 space-y-1.5">
 							<label className={labelClass}>Zinman Skill</label>
-							<select
+
+							<SLSelect
 								value={zinmanSkill}
-								onChange={(e) => setZinmanSkill(e.target.value)}
-								className={selectDarkClass}
-							>
-								<option value="Off">Off</option>
-								<option value="Lv.1">Level 1 (-3% cost)</option>
-								<option value="Lv.2">Level 2 (-6% cost)</option>
-								<option value="Lv.3">Level 3 (-9% cost)</option>
-								<option value="Lv.4">Level 4 (-12% cost)</option>
-								<option value="Lv.5">Level 5 (-15% cost)</option>
-							</select>
+								onChange={(value: string) => setZinmanSkill(value)}
+								options={zinmanOptions}
+								className="bg-special-input text-white"
+							/>
 						</div>
 
-						<div>
+						<div className="relative z-20 space-y-1.5">
 							<label className={labelClass}>Agnes Skill</label>
-							<select
+
+							<SLSelect
 								value={agnesLevel}
-								onChange={(e) => setAgnesLevel(e.target.value)}
-								className={selectDarkClass}
-							>
-								<option value="0">Off</option>
-								<option value="1">Level 1 (-2h)</option>
-								<option value="2">Level 2 (-4h)</option>
-								<option value="3">Level 3 (-6h)</option>
-								<option value="4">Level 4 (-8h)</option>
-								<option value="5">Level 5 (-10h)</option>
-							</select>
+								onChange={(value: string) => setAgnesLevel(value)}
+								options={agnesOptions}
+								className="bg-special-input text-white"
+							/>
 						</div>
 
-						<div>
+						<div className="relative z-20 space-y-1.5">
 							<label className={labelClass}>Valerie Skill</label>
-							<select
+
+							<SLSelect
 								value={valeriaLevel}
-								onChange={(e) => setValeriaLevel(e.target.value)}
-								className={selectDarkClass}
-							>
-								<option value="0">Off</option>
-								<option value="1">Level 1 (+2% SvS)</option>
-								<option value="2">Level 2 (+4% SvS)</option>
-								<option value="3">Level 3 (+6% SvS)</option>
-								<option value="4">Level 4 (+8% SvS)</option>
-								<option value="5">Level 5 (+10% SvS)</option>
-								<option value="6">Level 6 (+12% SvS)</option>
-								<option value="7">Level 7 (+14% SvS)</option>
-								<option value="8">Level 8 (+16% SvS)</option>
-								<option value="9">Level 9 (+18% SvS)</option>
-								<option value="10">Level 10 (+20% SvS)</option>
-							</select>
+								onChange={(value: string) => setValeriaLevel(value)}
+								options={valeriaOptions}
+								className="bg-special-input text-white"
+							/>
 						</div>
 
 						<div className="border-t border-white/20 pt-3">
 							<p className="text-xs font-bold">Additional Bonus</p>
 
 							<div className="mt-2 flex items-center justify-between">
-								<p className="text-[11px] text-[#9a9a9a]">
-									Double Time +20%
-								</p>
+								<p className="text-[11px] text-white/50">Double Time +20%</p>
 
-								<button
-									type="button"
-									onClick={() => setDoubleTime((prev) => !prev)}
-									className={`relative h-[18px] w-[34px] rounded-full transition ${
-										doubleTime ? "bg-[#f6bd32]" : "bg-[#777]"
-									}`}
-								>
-									<span
-										className={`absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-white transition ${
-											doubleTime ? "left-[17px]" : "left-0.5"
-										}`}
-									/>
-								</button>
+							<SLSwitch
+	label="Double Time"
+	checked={doubleTime}
+	onCheckedChange={setDoubleTime}
+/>
 							</div>
 						</div>
 					</div>
 				)}
 			</div>
 
-			<div className="grid grid-cols-2 gap-4 pt-1">
-				<button
-					type="submit"
-					className="h-10 rounded-full bg-[#f7b72c] text-xs font-bold text-black"
-				>
+			<div className="relative z-0 grid grid-cols-2 gap-4 pt-1">
+				<SLButton type="submit" className="h-10 rounded-full">
 					Submit
-				</button>
+				</SLButton>
 
-				<button
+				<SLButton
 					type="button"
 					onClick={handleReset}
-					className="h-10 rounded-full bg-[#777] text-xs font-bold text-white"
+					className="h-10 rounded-full bg-[#777] text-white"
 				>
 					Reset
-				</button>
+				</SLButton>
 			</div>
 		</form>
 	);

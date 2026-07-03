@@ -1,29 +1,25 @@
-import Link from "next/link";
+import HeaderOther from "@/components/layout/Header/HeaderOther";
+import MobileContainer from "@/components/layout/MobileContainer";
+
+import BuildingTypeCard from "@/modules/buildings/components/BuildingTypeCard";
+import { BUILDING_CATEGORIES } from "@/modules/buildings/data/building-categories";
 
 export default function Page() {
 	return (
-		<main className="min-h-screen bg-[#dcebf0]">
-			<div className="mx-auto min-h-screen w-full max-w-[430px] bg-[#202020] px-4 py-6 text-white">
-				<h1 className="mb-8 text-center text-sm font-semibold">Category</h1>
+		<MobileContainer>
+			<HeaderOther title="Buildings" />
 
-				<div className="grid grid-cols-2 gap-5">
-					<Link href="/buildings/regular" className="space-y-4">
-						<div className="flex h-[180px] items-center justify-center rounded-[24px] bg-[#303030] text-center">
-							Regular<br />Buildings
-						</div>
+			<section className="mt-8">
+				<h1 className="text-center text-sm font-semibold text-white">
+					Category
+				</h1>
 
-						<p className="text-center text-sm">Regular Buildings</p>
-					</Link>
-
-					<Link href="/buildings/fc" className="space-y-4">
-						<div className="flex h-[180px] items-center justify-center rounded-[24px] bg-[#303030] text-center">
-							FC Buildings
-						</div>
-
-						<p className="text-center text-sm">FC Buildings</p>
-					</Link>
+				<div className="mt-8 grid grid-cols-2 gap-5">
+					{BUILDING_CATEGORIES.map((item) => (
+						<BuildingTypeCard key={item.id} item={item} />
+					))}
 				</div>
-			</div>
-		</main>
+			</section>
+		</MobileContainer>
 	);
 }

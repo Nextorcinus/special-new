@@ -1,14 +1,15 @@
-import CategoriesHeader from "./components/CategoriesHeader";
+import HeaderOther from "@/components/layout/Header/HeaderOther";
+import MobileContainer from "@/components/layout/MobileContainer";
 import CategoryGrid from "./components/CategoryGrid";
 
 export default function CategoriesPage() {
 	return (
-		<main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 py-6">
-			<CategoriesHeader />
+		<MobileContainer>
+			<HeaderOther title="Categories" />
 
 			<div className="mt-8">
 				<CategoryGrid />
 			</div>
-		</main>
+		</MobileContainer>
 	);
 }

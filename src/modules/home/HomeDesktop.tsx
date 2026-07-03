@@ -1,27 +1,20 @@
-import Header from "@/components/layout/Header";
+import DesktopContainer from "@/components/layout/DekstopContainer";
+import Header from "@/components/layout/Header/Header";
 
 export default function HomeDesktop() {
 	return (
-		<div className="flex min-h-screen">
-			{/* Sidebar */}
+		<DesktopContainer sidebar={<div>Sidebar</div>}>
+			<Header />
 
-			<aside className="w-72 border-r border-white/10">Sidebar</aside>
+			<div className="mt-10">{/* Search */}</div>
 
-			{/* Content */}
+			<div className="mt-10 grid grid-cols-2 gap-8">
+				<div>{/* Quick Access */}</div>
 
-			<main className="flex-1 px-10 py-8">
-				<Header />
+				<div>{/* Recent History */}</div>
+			</div>
 
-				<div className="mt-10">{/* Search */}</div>
-
-				<div className="mt-10 grid grid-cols-2 gap-8">
-					<div>{/* Quick Access */}</div>
-
-					<div>{/* Recent History */}</div>
-				</div>
-
-				<div className="mt-10">{/* What's In Your Bag */}</div>
-			</main>
-		</div>
+			<div className="mt-10">{/* What's In Your Bag */}</div>
+		</DesktopContainer>
 	);
 }

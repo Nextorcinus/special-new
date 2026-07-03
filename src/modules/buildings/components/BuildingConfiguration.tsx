@@ -2,7 +2,10 @@
 
 import { ChevronUp } from "lucide-react";
 import { useState } from "react";
-import BuildingSelect from "./BuildingSelect";
+
+import SLInput from "@/components/ui/sl-ui/SLInput";
+import SLSelect from "@/components/ui/sl-ui/SLSelect";
+import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
 
 type BuildingConfigurationProps = {
 	constructionSpeed: string;
@@ -13,11 +16,67 @@ type BuildingConfigurationProps = {
 	setVpLevel: (value: string) => void;
 	zinmanSkill: string;
 	setZinmanSkill: (value: string) => void;
-	valeriaBonus: string;
-	setValeriaBonus: (value: string) => void;
+	agnesLevel: string;
+	setAgnesLevel: (value: string) => void;
+	valeriaLevel: string;
+	setValeriaLevel: (value: string) => void;
 	doubleTime: boolean;
 	setDoubleTime: (value: boolean) => void;
 };
+
+const labelClass = "mb-1 block text-[11px] text-white/50";
+
+const fieldClass =
+	"h-10 rounded-lg border border-white/10 bg-[#292929] px-4 text-xs text-white";
+
+const petOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "Lv.1", label: "Level 1" },
+	{ value: "Lv.2", label: "Level 2" },
+	{ value: "Lv.3", label: "Level 3" },
+	{ value: "Lv.4", label: "Level 4" },
+	{ value: "Lv.5", label: "Level 5" },
+];
+
+const vpOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "10%", label: "+10%" },
+	{ value: "15%", label: "+15%" },
+	{ value: "20%", label: "+20%" },
+	{ value: "25%", label: "+25%" },
+];
+
+const zinmanOptions = [
+	{ value: "Off", label: "Off" },
+	{ value: "Lv.1", label: "Level 1 (-3% cost)" },
+	{ value: "Lv.2", label: "Level 2 (-6% cost)" },
+	{ value: "Lv.3", label: "Level 3 (-9% cost)" },
+	{ value: "Lv.4", label: "Level 4 (-12% cost)" },
+	{ value: "Lv.5", label: "Level 5 (-15% cost)" },
+];
+
+const agnesOptions = [
+	{ value: "0", label: "Off" },
+	{ value: "1", label: "Level 1 (-2h)" },
+	{ value: "2", label: "Level 2 (-4h)" },
+	{ value: "3", label: "Level 3 (-6h)" },
+	{ value: "4", label: "Level 4 (-8h)" },
+	{ value: "5", label: "Level 5 (-10h)" },
+];
+
+const valeriaOptions = [
+	{ value: "0", label: "Off" },
+	{ value: "1", label: "Level 1 (+2% SvS)" },
+	{ value: "2", label: "Level 2 (+4% SvS)" },
+	{ value: "3", label: "Level 3 (+6% SvS)" },
+	{ value: "4", label: "Level 4 (+8% SvS)" },
+	{ value: "5", label: "Level 5 (+10% SvS)" },
+	{ value: "6", label: "Level 6 (+12% SvS)" },
+	{ value: "7", label: "Level 7 (+14% SvS)" },
+	{ value: "8", label: "Level 8 (+16% SvS)" },
+	{ value: "9", label: "Level 9 (+18% SvS)" },
+	{ value: "10", label: "Level 10 (+20% SvS)" },
+];
 
 export default function BuildingConfiguration({
 	constructionSpeed,
@@ -28,114 +87,118 @@ export default function BuildingConfiguration({
 	setVpLevel,
 	zinmanSkill,
 	setZinmanSkill,
-	valeriaBonus,
-	setValeriaBonus,
+	agnesLevel,
+	setAgnesLevel,
+	valeriaLevel,
+	setValeriaLevel,
 	doubleTime,
 	setDoubleTime,
 }: BuildingConfigurationProps) {
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(true);
 
 	return (
-		<div className="mt-6 rounded-2xl border-2 border-[#009DFF] bg-[#353535] p-4">
+		<div className="relative z-10 overflow-visible rounded-[14px] bg-[#353535] p-3">
 			<button
 				type="button"
 				onClick={() => setOpen((value) => !value)}
-				className="flex w-full items-center justify-between"
+				className="flex w-full items-center justify-between text-left"
 			>
-				<h3 className="text-base font-semibold text-white">Configuration</h3>
+				<span className="text-xs font-bold text-white">Configuration</span>
 
 				<ChevronUp
-					size={20}
-					className={`transition-transform ${open ? "" : "rotate-180"}`}
+					size={15}
+					className={`text-white/70 transition-transform ${
+						open ? "" : "rotate-180"
+					}`}
 				/>
 			</button>
 
 			{open && (
-				<div className="mt-6">
-					<label className="mb-2 block text-sm text-zinc-300">
-						Construction Speed %
-					</label>
+				<div className="mt-4 space-y-3 overflow-visible">
+					<div className="space-y-1.5">
+						<label className={labelClass}>Construction Speed %</label>
 
-					<input
-						type="text"
-						inputMode="decimal"
-						value={constructionSpeed}
-						onChange={(event) => setConstructionSpeed(event.target.value)}
-						placeholder="0"
-						className="h-12 w-full rounded-xl bg-[#292929] px-4 text-sm text-white outline-none"
-					/>
+						<SLInput
+							type="text"
+							inputMode="decimal"
+							value={constructionSpeed}
+							onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+								setConstructionSpeed(event.target.value)
+							}
+							placeholder="e.g. 68 for 68%"
+							className={fieldClass}
+						/>
+					</div>
 
-					<div className="mt-5 grid grid-cols-2 gap-3">
-						<div>
-							<label className="mb-2 block text-sm text-zinc-300">
-								Pet Skill
-							</label>
+					<div className="relative z-[80] grid grid-cols-2 gap-3 overflow-visible">
+						<div className="relative z-[82] space-y-1.5 overflow-visible">
+							<label className={labelClass}>Pet Skill</label>
 
-							<BuildingSelect
+							<SLSelect
 								value={petLevel}
-								onChange={setPetLevel}
-								options={["Off", "Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"]}
-								dark
+								onChange={(value: string) => setPetLevel(value)}
+								options={petOptions}
+								className={fieldClass}
 							/>
 						</div>
 
-						<div>
-							<label className="mb-2 block text-sm text-zinc-300">VP</label>
+						<div className="relative z-[81] space-y-1.5 overflow-visible">
+							<label className={labelClass}>VP</label>
 
-							<BuildingSelect
+							<SLSelect
 								value={vpLevel}
-								onChange={setVpLevel}
-								options={["Off", "15%", "25%"]}
-								dark
+								onChange={(value: string) => setVpLevel(value)}
+								options={vpOptions}
+								className={fieldClass}
 							/>
 						</div>
 					</div>
 
-					<label className="mt-5 mb-2 block text-sm text-zinc-300">
-						Zinman Skill
-					</label>
+					<div className="relative z-[70] space-y-1.5 overflow-visible pb-1">
+						<label className={labelClass}>Zinman Skill</label>
 
-					<BuildingSelect
-						value={zinmanSkill}
-						onChange={setZinmanSkill}
-						options={["Off", "Lv.1", "Lv.2", "Lv.3", "Lv.4", "Lv.5"]}
-						dark
-					/>
+						<SLSelect
+							value={zinmanSkill}
+							onChange={(value: string) => setZinmanSkill(value)}
+							options={zinmanOptions}
+							className={fieldClass}
+						/>
+					</div>
 
-					<label className="mt-5 mb-2 block text-sm text-zinc-300">
-						Valeria Bonus %
-					</label>
+					<div className="relative z-[60] space-y-1.5 overflow-visible pb-1">
+						<label className={labelClass}>Agnes Skill</label>
 
-					<input
-						type="text"
-						inputMode="decimal"
-						value={valeriaBonus}
-						onChange={(event) => setValeriaBonus(event.target.value)}
-						placeholder="0"
-						className="h-12 w-full rounded-xl bg-[#292929] px-4 text-sm text-white outline-none"
-					/>
+						<SLSelect
+							value={agnesLevel}
+							onChange={(value: string) => setAgnesLevel(value)}
+							options={agnesOptions}
+							className={fieldClass}
+						/>
+					</div>
 
-					<div className="my-6 h-px bg-zinc-500" />
+					<div className="relative z-[50] space-y-1.5 overflow-visible">
+						<label className={labelClass}>Valerie Skill</label>
 
-					<h4 className="text-base font-semibold text-white">
-						Additional Bonus
-					</h4>
+						<SLSelect
+							value={valeriaLevel}
+							onChange={(value: string) => setValeriaLevel(value)}
+							options={valeriaOptions}
+							className={fieldClass}
+						/>
+					</div>
 
-					<div className="mt-5 flex items-center justify-between">
-						<span className="text-sm text-zinc-400">Double Time + 20%</span>
+					<div className="relative z-10 border-t border-white/20 pt-3">
+						<p className="text-xs font-bold text-white">Additional Bonus</p>
 
-						<label className="relative inline-flex cursor-pointer items-center">
-							<input
-								type="checkbox"
-								checked={doubleTime}
-								onChange={(event) => setDoubleTime(event.target.checked)}
-								className="peer sr-only"
-							/>
+						<div className="mt-3 flex items-center justify-between">
+							<p className="text-[11px] text-white/50">Double Time +20%</p>
 
-							<span className="h-6 w-11 rounded-full bg-[#292929] transition peer-checked:bg-[#FFC632]" />
-
-							<span className="absolute left-1 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-5" />
-						</label>
+						<SLSwitch
+	label="Double Time"
+	checked={doubleTime}
+	onCheckedChange={setDoubleTime}
+/>
+						</div>
 					</div>
 				</div>
 			)}

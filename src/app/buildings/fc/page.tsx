@@ -1,6 +1,6 @@
-import BuildingCalculatorPage from "@/modules/buildings/calculator/BuildingCalculatorPage";
+import BuildingPage from "@/modules/buildings/BuildingPage";
 import fcBuilding from "@/modules/buildings/data/fc-building.json";
 
 export default function Page() {
-	return <BuildingCalculatorPage type="fc" data={fcBuilding} />;
+	return <BuildingPage title="FC Buildings" type="fc" data={fcBuilding} />;
 }
