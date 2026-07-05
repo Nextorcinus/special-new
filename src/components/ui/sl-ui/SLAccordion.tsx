@@ -1,27 +1,42 @@
+"use client";
+
+import * as React from "react";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 
 type SLAccordionProps = {
 	title: string;
 	children: React.ReactNode;
 	defaultOpen?: boolean;
+	className?: string;
 };
 
 export default function SLAccordion({
 	title,
 	children,
 	defaultOpen = false,
+	className,
 }: SLAccordionProps) {
+	const [value, setValue] = React.useState(defaultOpen ? "item-1" : "");
+
+	const isOpen = value === "item-1";
+
 	return (
 		<Accordion
 			type="single"
 			collapsible
-			defaultValue={defaultOpen ? "item-1" : undefined}
-			className="rounded-[14px] bg-[#353535] p-3"
+			value={value}
+			onValueChange={setValue}
+			className={cn(
+				"rounded-[14px] p-3 transition-colors duration-200",
+				isOpen ? "bg-white/10" : "bg-white/0",
+				className
+			)}
 		>
 			<AccordionItem value="item-1" className="border-0">
 				<AccordionTrigger className="py-0 text-xs font-bold text-white hover:no-underline">

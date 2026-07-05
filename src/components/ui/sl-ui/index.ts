@@ -4,3 +4,4 @@ export { default as SLCard } from "./SLCard";
 export { default as SLInput } from "./SLInput";
 export { default as SLSelect } from "./SLSelect";
 export { default as SLSwitch } from "./SLSwitch";
+export { default as SLLabel } from "./SLLabel";

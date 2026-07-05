@@ -1,80 +1,115 @@
 "use client";
 
+import { useEffect } from "react";
+import { ArrowRight, BriefcaseBusiness, Clock3, Gem } from "lucide-react";
+
+import CalculatorResult from "@/components/calculator/CalculatorResult";
+import {
+	formatNumber,
+	useCompareResources,
+} from "@/components/calculator/useCompareResources";
+import { NAVIGATION } from "@/config/navigation";
+import type { ResourceKey } from "@/config/resources";
+import { useInventoryStore } from "@/features/inventory/store/inventory.store";
+import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+
 type BuildingResultProps = {
 	result: any;
+	history?: CalculationHistoryItem | null;
 };
 
-function formatNumber(value: unknown) {
-	if (value === undefined || value === null) return "-";
+function formatSvs(value: unknown) {
+	const num = Number(value || 0);
 
-	const num = Number(value);
+	if (num >= 1_000_000) return `+${(num / 1_000_000).toFixed(2)}M`;
+	if (num >= 1_000) return `+${(num / 1_000).toFixed(1)}K`;
 
-	if (Number.isNaN(num)) return String(value);
-
-	return new Intl.NumberFormat().format(Math.round(num));
+	return `+${formatNumber(num)}`;
 }
 
-export default function BuildingResult({ result }: BuildingResultProps) {
+export default function BuildingResult({
+	result,
+	history,
+}: BuildingResultProps) {
+	const loadResources = useInventoryStore((state) => state.loadResources);
+
+	useEffect(() => {
+		loadResources();
+	}, [loadResources]);
+
 	if (!result) return null;
 
-	const resources = result.resources || {};
+	const resources = (result.resources ?? {}) as Partial<
+		Record<ResourceKey, number>
+	>;
+
+	const category = NAVIGATION.find((item) => item.id === "buildings");
+	const { createResourceItem } = useCompareResources(resources);
+
+	const hasTimeReduction = result.timeOriginal !== result.timeReduced;
 
 	return (
-		<div className="rounded-2xl border border-white/10 bg-special-inside p-4">
-			<div className="space-y-6">
-				<h2 className="text-xl font-bold text-white">Result</h2>
-
-				<div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Meat</div>
-						<div className="text-xl font-bold text-white">{formatNumber(resources.Meat)}</div>
-					</div>
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Wood</div>
-						<div className="text-xl font-bold text-white">{formatNumber(resources.Wood)}</div>
-					</div>
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Coal</div>
-						<div className="text-xl font-bold text-white">{formatNumber(resources.Coal)}</div>
-					</div>
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Iron</div>
-						<div className="text-xl font-bold text-white">{formatNumber(resources.Iron)}</div>
-					</div>
-
-					{resources.Crystal > 0 && (
-						<div className="rounded-lg bg-special p-4">
-							<div className="text-sm text-gray-400">Fire Crystal</div>
-							<div className="text-xl font-bold text-white">{formatNumber(resources.Crystal)}</div>
-						</div>
-					)}
-
-					{resources.RFC > 0 && (
-						<div className="rounded-lg bg-special p-4">
-							<div className="text-sm text-gray-400">Refined Fire Crystal</div>
-							<div className="text-xl font-bold text-white">{formatNumber(resources.RFC)}</div>
-						</div>
-					)}
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Original Time</div>
-						<div className="text-xl font-bold text-white">{result.timeOriginal}</div>
-					</div>
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">Reduced Time</div>
-						<div className="text-xl font-bold text-white">{result.timeReduced}</div>
-					</div>
-
-					<div className="rounded-lg bg-special p-4">
-						<div className="text-sm text-gray-400">SvS Points</div>
-						<div className="text-xl font-bold text-white">{formatNumber(result.svsFinal)}</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<CalculatorResult
+			categoryTitle={category?.title ?? "Buildings"}
+			categoryIcon={category?.icon ?? "/category/building-upgrade.png"}
+			name={result.building ?? "-"}
+			subtitle={
+				<>
+					<span>Lv.{result.fromLevel ?? "-"}</span>
+					<ArrowRight className="size-4" />
+					<span className="text-yellow-500">
+						Lv.{result.toLevel ?? "-"}
+					</span>
+				</>
+			}
+			highlightValue={formatSvs(result.svsFinal)}
+			highlightLabel="SvS Points"
+			createdAt={history?.createdAt}
+			updatedAt={history?.updatedAt}
+			sections={[
+				{
+					id: "time",
+					title: "Time",
+					icon: <Clock3 size={18} />,
+					items: [
+						{
+							id: "total-time",
+							label: "Total",
+							icon: "/icons/totalTime.png",
+							value: result.timeOriginal ?? "-",
+						},
+						{
+							id: "reduced-time",
+							label: "Reduced",
+							icon: "/icons/reducedTime.png",
+							value: result.timeReduced ?? "-",
+							valueClassName: hasTimeReduction
+								? "text-white"
+								: "text-white/35",
+						},
+					],
+				},
+				{
+					id: "resources",
+					title: "Base Resources",
+					icon: <BriefcaseBusiness size={18} />,
+					items: [
+						createResourceItem("Meat"),
+						createResourceItem("Wood"),
+						createResourceItem("Coal"),
+						createResourceItem("Iron"),
+					],
+				},
+				{
+					id: "fire-crystals",
+					title: "Fire Crystals",
+					icon: <Gem size={18} />,
+					items: [
+						createResourceItem("Crystal"),
+						createResourceItem("RFC"),
+					],
+				},
+			]}
+		/>
 	);
 }
