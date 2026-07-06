@@ -103,7 +103,7 @@ export default function HistoryPanel({
 					/>
 				))
 			) : (
-				<div className="rounded-xl border border-white/10 p-4 text-center text-sm text-white/40">
+				<div className="rounded-xl border border-solid border-[color:var(--sl-border)] p-4 text-center text-sm text-[var(--sl-text-muted)]">
 					No history found
 				</div>
 			)}

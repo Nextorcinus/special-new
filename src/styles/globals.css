@@ -9,7 +9,7 @@
 	--muted: oklch(0.97 0 0);
 	--button: #e5e7eb;
 	--button-hover: #d1d5db;
-	--background: oklch(1 0 0);
+	--background: oklch(97.913% 0.00011 271.152);
 	--foreground: oklch(0.145 0 0);
 	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
@@ -41,14 +41,6 @@
 	--sidebar-ring: oklch(0.708 0 0);
 }
 
-html.dark {
-	--background: #202020;
-	--foreground: #ffffff;
-	--card: #2f2f2f;
-	--muted: #a1a1aa;
-	--button: #2f2f2f;
-	--button-hover: #3a3a3a;
-}
 
 body {
 	min-height: 100vh;

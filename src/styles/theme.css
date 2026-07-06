@@ -1,47 +1,75 @@
 :root {
-	--sl-bg: #f4f4f5;
+	/* Background */
+	--sl-bg: #e4e4e4;
 
+	/* Surface */
 	--sl-surface: #ffffff;
 	--sl-surface-2: #ffffff;
+	--sl-surface-3: #f4f4f5;
 
-	--sl-input: #f0f0f1;
+	/* Input */
+	--sl-input: #f1f1f2;
 	--sl-input-hover: #e9e9eb;
 
+	/* States */
+	--sl-hover: #ededee;
+	--sl-active: #e3e3e6;
+
+	/* Border */
 	--sl-border: rgba(0, 0, 0, 0.08);
 
+	/* Text */
 	--sl-text: #09090b;
 	--sl-text-secondary: #3f3f46;
 	--sl-text-muted: #71717a;
 
+	/* Brand */
 	--sl-primary: #18181b;
 	--sl-primary-foreground: #ffffff;
 
+	/* Status */
 	--sl-warning: #facc15;
 	--sl-danger: #ef4444;
+	--sl-success: #22c55e;
 
+	/* Shadow */
 	--sl-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
+	/* Background */
 	--sl-bg: #202020;
 
+	/* Surface */
 	--sl-surface: #2f2f2f;
 	--sl-surface-2: #353535;
+	--sl-surface-3: #292929;
 
+	/* Input */
 	--sl-input: #292929;
 	--sl-input-hover: #333333;
 
+	/* States */
+	--sl-hover: #3a3a3a;
+	--sl-active: #454545;
+
+	/* Border */
 	--sl-border: rgba(255, 255, 255, 0.1);
 
+	/* Text */
 	--sl-text: #ffffff;
 	--sl-text-secondary: rgba(255, 255, 255, 0.78);
 	--sl-text-muted: rgba(255, 255, 255, 0.5);
 
+	/* Brand */
 	--sl-primary: #f4f4f5;
 	--sl-primary-foreground: #18181b;
 
+	/* Status */
 	--sl-warning: #facc15;
 	--sl-danger: #ef4444;
+	--sl-success: #22c55e;
 
+	/* Shadow */
 	--sl-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }

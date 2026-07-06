@@ -4,8 +4,8 @@ export default function HeaderNotification() {
 	return (
 		<button
 			type="button"
-			className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2F2F2F] transition-colors hover:bg-[#3A3A3A]"
 			aria-label="Notifications"
+			className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--sl-surface-2)] transition-colors hover:bg-[var(--sl-surface-hover)] active:bg-[var(--ring)]"
 		>
 			<Image
 				src="/icons/notification.png"

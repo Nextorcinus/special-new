@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ResourceBagModal } from "@/features/inventory";
+import "@/styles/theme.css";
+import "@/styles/globals.css";
 
 export default function WhatsInBagSection() {
 	const [open, setOpen] = useState(false);
@@ -15,12 +17,12 @@ export default function WhatsInBagSection() {
 					onClick={() => setOpen(true)}
 					className="flex w-full items-center gap-4 rounded-2xl bg-[var(--sl-input)] p-4 text-left"
 				>
-					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2A2A2A]">
+					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--sl-surface)] border border-solid border-[color:var(--sl-border)]">
 						<Image src="/icons/bag.png" alt="Bag" width={24} height={24} />
 					</div>
 
 					<div className="flex-1">
-						<h3 className="text-sm font-semibold text-[var(--foreground)]">
+						<h3 className="text-sm font-semibold text-[var(--sl-primary)]">
 							What&apos;s in your bag?
 						</h3>
 

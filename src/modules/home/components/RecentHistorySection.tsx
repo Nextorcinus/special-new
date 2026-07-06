@@ -5,6 +5,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import HistoryPanel from "@/features/inventory/components/HistoryPanel";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
@@ -56,13 +57,14 @@ export default function RecentHistorySection() {
 	return (
 		<section className="space-y-4">
 			<div className="flex items-center justify-between">
-				<h2 className="text-lg font-bold text-white">Recent History</h2>
+				<h2 className="text-lg font-bold text-[var(--sl-primary)]">Recent History</h2>
 
 				<Link
 					href="/history"
-					className="text-sm font-semibold text-yellow-300"
+					className="flex items-center gap-1 text-xs font-semibold text-[var(--sl-primary)] transition-colors hover:text-[var(--sl-primary-hover)"
 				>
-					See All
+				See All
+					<ChevronRight size={15} />
 				</Link>
 			</div>
 
