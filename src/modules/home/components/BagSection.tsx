@@ -13,7 +13,7 @@ export default function WhatsInBagSection() {
 				<button
 					type="button"
 					onClick={() => setOpen(true)}
-					className="flex w-full items-center gap-4 rounded-2xl bg-[var(--card)] p-4 text-left"
+					className="flex w-full items-center gap-4 rounded-2xl bg-[var(--sl-input)] p-4 text-left"
 				>
 					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2A2A2A]">
 						<Image src="/icons/bag.png" alt="Bag" width={24} height={24} />
@@ -24,7 +24,7 @@ export default function WhatsInBagSection() {
 							What&apos;s in your bag?
 						</h3>
 
-						<p className="mt-1 text-xs text-[var(--muted)]">
+						<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
 							Insert here for easily compare result to your resources
 						</p>
 					</div>

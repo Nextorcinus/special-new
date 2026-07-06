@@ -21,7 +21,8 @@ export default function ResourceInput({ item }: ResourceInputProps) {
 
 				<input
 					type="text"
-					inputMode="decimal"
+					inputMode="text"
+					autoCapitalize="characters"
 					value={value}
 					onChange={(event) => setResource(item.id, event.target.value)}
 					placeholder="0 / 134K / 3.4M  "

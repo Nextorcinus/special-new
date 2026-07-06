@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { ArrowRight, BriefcaseBusiness, Clock3, Gem } from "lucide-react";
+import { useEffect } from "react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
 import {
@@ -10,12 +10,13 @@ import {
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
 import type { ResourceKey } from "@/config/resources";
-import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 
 type BuildingResultProps = {
 	result: any;
 	history?: CalculationHistoryItem | null;
+	title?: string;
 };
 
 function formatSvs(value: unknown) {
@@ -30,6 +31,7 @@ function formatSvs(value: unknown) {
 export default function BuildingResult({
 	result,
 	history,
+	title,
 }: BuildingResultProps) {
 	const loadResources = useInventoryStore((state) => state.loadResources);
 
@@ -37,19 +39,20 @@ export default function BuildingResult({
 		loadResources();
 	}, [loadResources]);
 
-	if (!result) return null;
-
-	const resources = (result.resources ?? {}) as Partial<
+	const resources = (result?.resources ?? {}) as Partial<
 		Record<ResourceKey, number>
 	>;
 
 	const category = NAVIGATION.find((item) => item.id === "buildings");
 	const { createResourceItem } = useCompareResources(resources);
 
+	if (!result) return null;
+
 	const hasTimeReduction = result.timeOriginal !== result.timeReduced;
 
 	return (
 		<CalculatorResult
+			title={title}
 			categoryTitle={category?.title ?? "Buildings"}
 			categoryIcon={category?.icon ?? "/category/building-upgrade.png"}
 			name={result.building ?? "-"}
@@ -57,9 +60,7 @@ export default function BuildingResult({
 				<>
 					<span>Lv.{result.fromLevel ?? "-"}</span>
 					<ArrowRight className="size-4" />
-					<span className="text-yellow-500">
-						Lv.{result.toLevel ?? "-"}
-					</span>
+					<span className="text-yellow-500">Lv.{result.toLevel ?? "-"}</span>
 				</>
 			}
 			highlightValue={formatSvs(result.svsFinal)}
@@ -83,9 +84,7 @@ export default function BuildingResult({
 							label: "Reduced",
 							icon: "/icons/reducedTime.png",
 							value: result.timeReduced ?? "-",
-							valueClassName: hasTimeReduction
-								? "text-white"
-								: "text-white/35",
+							valueClassName: hasTimeReduction ? "text-white" : "text-white/35",
 						},
 					],
 				},
@@ -104,10 +103,7 @@ export default function BuildingResult({
 					id: "fire-crystals",
 					title: "Fire Crystals",
 					icon: <Gem size={18} />,
-					items: [
-						createResourceItem("Crystal"),
-						createResourceItem("RFC"),
-					],
+					items: [createResourceItem("Crystal"), createResourceItem("RFC")],
 				},
 			]}
 		/>

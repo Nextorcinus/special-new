@@ -24,7 +24,7 @@ type BuildingConfigurationProps = {
 	setDoubleTime: (value: boolean) => void;
 };
 
-const labelClass = "mb-1 block text-[11px] text-white/50";
+const labelClass = "mb-1 block text-[11px] text-[var(--sl-muted)]";
 
 const fieldClass =
 	"h-10 rounded-lg border border-white/10 bg-[#292929] px-4 text-xs text-white";
@@ -77,6 +77,9 @@ const valeriaOptions = [
 	{ value: "9", label: "Level 9 (+18% SvS)" },
 	{ value: "10", label: "Level 10 (+20% SvS)" },
 ];
+function FieldLabel({ children }: { children: React.ReactNode }) {
+	return <p className={labelClass}>{children}</p>;
+}
 
 export default function BuildingConfiguration({
 	constructionSpeed,
@@ -116,7 +119,7 @@ export default function BuildingConfiguration({
 			{open && (
 				<div className="mt-4 space-y-3 overflow-visible">
 					<div className="space-y-1.5">
-						<label className={labelClass}>Construction Speed %</label>
+						<FieldLabel>Construction Speed %</FieldLabel>
 
 						<SLInput
 							type="text"
@@ -132,7 +135,7 @@ export default function BuildingConfiguration({
 
 					<div className="relative z-[80] grid grid-cols-2 gap-3 overflow-visible">
 						<div className="relative z-[82] space-y-1.5 overflow-visible">
-							<label className={labelClass}>Pet Skill</label>
+							<FieldLabel>Pet Skill</FieldLabel>
 
 							<SLSelect
 								value={petLevel}
@@ -143,7 +146,7 @@ export default function BuildingConfiguration({
 						</div>
 
 						<div className="relative z-[81] space-y-1.5 overflow-visible">
-							<label className={labelClass}>VP</label>
+							<FieldLabel>VP</FieldLabel>
 
 							<SLSelect
 								value={vpLevel}
@@ -155,7 +158,7 @@ export default function BuildingConfiguration({
 					</div>
 
 					<div className="relative z-[70] space-y-1.5 overflow-visible pb-1">
-						<label className={labelClass}>Zinman Skill</label>
+						<FieldLabel>Zinman Skill</FieldLabel>
 
 						<SLSelect
 							value={zinmanSkill}
@@ -166,7 +169,7 @@ export default function BuildingConfiguration({
 					</div>
 
 					<div className="relative z-[60] space-y-1.5 overflow-visible pb-1">
-						<label className={labelClass}>Agnes Skill</label>
+						<FieldLabel>Agnes Skill</FieldLabel>
 
 						<SLSelect
 							value={agnesLevel}
@@ -177,7 +180,7 @@ export default function BuildingConfiguration({
 					</div>
 
 					<div className="relative z-[50] space-y-1.5 overflow-visible">
-						<label className={labelClass}>Valerie Skill</label>
+						<FieldLabel>Valerie Skill</FieldLabel>
 
 						<SLSelect
 							value={valeriaLevel}
@@ -193,11 +196,11 @@ export default function BuildingConfiguration({
 						<div className="mt-3 flex items-center justify-between">
 							<p className="text-[11px] text-white/50">Double Time +20%</p>
 
-						<SLSwitch
-	label="Double Time"
-	checked={doubleTime}
-	onCheckedChange={setDoubleTime}
-/>
+							<SLSwitch
+								label="Double Time"
+								checked={doubleTime}
+								onCheckedChange={setDoubleTime}
+							/>
 						</div>
 					</div>
 				</div>

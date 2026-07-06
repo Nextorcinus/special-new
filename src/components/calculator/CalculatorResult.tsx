@@ -1,27 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import { formatHistoryDate } from "@/lib/date";
 import CalculatorSection from "./CalculatorSection";
 import type { CalculatorResultProps } from "./types";
-import { formatHistoryDate } from "@/lib/date";
 
 export default function CalculatorResult({
-	title = "Result",
+	title,
 	categoryTitle,
 	categoryIcon,
 	name,
 	subtitle,
 	highlightLabel,
 	highlightValue,
-		createdAt,
+	createdAt,
 	updatedAt,
 	sections,
 }: CalculatorResultProps) {
 	return (
 		<section className="space-y-5">
-			<h2 className="px-1 text-[26px] font-medium text-white/80">
-				{title}
-			</h2>
+			{title && (
+				<h2 className="px-1 text-[26px] font-medium text-white/80">{title}</h2>
+			)}
 
 			<div className="rounded-[28px] bg-white/10 p-6">
 				<div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -72,34 +72,26 @@ export default function CalculatorResult({
 				</div>
 
 				{(createdAt || updatedAt) && (
-	<div className="mt-6 border-t border-white/10 pt-4">
-		<div className="grid grid-cols-2 gap-4 text-xs">
-			<div>
-				<p className="text-white/35">
-					Created
-				</p>
+					<div className="mt-6 border-t border-white/10 pt-4">
+						<div className="grid grid-cols-2 gap-4 text-xs">
+							<div>
+								<p className="text-white/35">Created</p>
 
-				<p className="mt-1 font-medium text-white/70">
-					{createdAt
-						? formatHistoryDate(createdAt)
-						: "-"}
-				</p>
-			</div>
+								<p className="mt-1 font-medium text-white/70">
+									{createdAt ? formatHistoryDate(createdAt) : "-"}
+								</p>
+							</div>
 
-			<div className="text-right">
-				<p className="text-white/35">
-					Last Updated
-				</p>
+							<div className="text-right">
+								<p className="text-white/35">Last Updated</p>
 
-				<p className="mt-1 font-medium text-white/70">
-					{updatedAt
-						? formatHistoryDate(updatedAt)
-						: "Never"}
-				</p>
-			</div>
-		</div>
-	</div>
-)}
+								<p className="mt-1 font-medium text-white/70">
+									{updatedAt ? formatHistoryDate(updatedAt) : "Never"}
+								</p>
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		</section>
 	);

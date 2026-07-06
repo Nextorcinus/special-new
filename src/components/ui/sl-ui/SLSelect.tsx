@@ -113,7 +113,7 @@ export default function SLSelect({
 				type="button"
 				disabled={disabled}
 				onClick={handleToggle}
-				className={`flex h-10 w-full items-center justify-between rounded-lg border border-white/10 bg-[#292929] px-4 text-xs text-white outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+				className={`flex h-12 min-h-12 w-full items-center justify-between rounded-xl border border-white/10 bg-[#292929] px-4 text-sm text-white outline-none disabled:cursor-not-allowed disabled:opacity-50 md:h-10 md:min-h-10 md:text-xs ${className}`}
 			>
 				<span className="truncate">{selectedLabel}</span>
 
@@ -131,7 +131,7 @@ export default function SLSelect({
 				createPortal(
 					<div
 						ref={contentRef}
-						className="fixed z-[99999] max-h-40 overflow-y-auto rounded-lg border border-white/20 bg-[#1f1f1f] p-1 shadow-2xl"
+						className="fixed z-[99999] max-h-64 overflow-y-auto rounded-xl border border-white/20 bg-[#1f1f1f] p-1 shadow-2xl"
 						style={{
 							top: position.top,
 							left: position.left,
@@ -146,7 +146,7 @@ export default function SLSelect({
 									event.preventDefault();
 									handleSelect(item.value);
 								}}
-								className={`block w-full rounded-md px-3 py-2 text-left text-xs text-white hover:bg-white/10 ${
+								className={`block min-h-11 w-full rounded-lg px-4 py-3 text-left text-sm text-white hover:bg-white/10 md:min-h-9 md:px-3 md:py-2 md:text-xs ${
 									item.value === value ? "bg-white/10" : ""
 								}`}
 							>

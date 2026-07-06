@@ -7,7 +7,7 @@ export default function QuickAccessSection() {
 	const quickAccessItems = NAVIGATION.slice(0, 5);
 
 	return (
-		<section className="rounded-[28px] bg-[var(--card)] p-5">
+		<section className="rounded-[28px] bg-[var(--sl-input)] p-5">
 			<div className="mb-5 flex items-center justify-between">
 				<h2 className="text-lg font-medium text-[var(--foreground)]">
 					Quick access
