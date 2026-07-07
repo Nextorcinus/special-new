@@ -100,13 +100,15 @@ export default function BuildingConfiguration({
 	const [open, setOpen] = useState(true);
 
 	return (
-		<div className="relative z-10 overflow-visible rounded-[14px] bg-[#353535] p-3">
+		<div className="relative z-10 overflow-visible rounded-[14px] bg-[var(--input)] p-3">
 			<button
 				type="button"
 				onClick={() => setOpen((value) => !value)}
 				className="flex w-full items-center justify-between text-left"
 			>
-				<span className="text-xs font-bold text-white">Configuration</span>
+				<span className="text-xs font-bold text-[var(--foreground)]">
+					Configuration
+				</span>
 
 				<ChevronUp
 					size={15}

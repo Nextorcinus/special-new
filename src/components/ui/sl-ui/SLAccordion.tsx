@@ -34,12 +34,12 @@ export default function SLAccordion({
 			onValueChange={setValue}
 			className={cn(
 				"rounded-[14px] p-3 transition-colors duration-200",
-				isOpen ? "bg-white/10" : "bg-white/0",
-				className
+				isOpen ? "bg-[var(--sl-surface-2)]" : "bg-white/0",
+				className,
 			)}
 		>
 			<AccordionItem value="item-1" className="border-0">
-				<AccordionTrigger className="py-0 text-xs font-bold text-white hover:no-underline">
+				<AccordionTrigger className="py-0 text-xs font-bold text-[var(--secondary-foreground)] hover:no-underline">
 					{title}
 				</AccordionTrigger>
 

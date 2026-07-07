@@ -9,11 +9,7 @@ export default function Page() {
 		<MobileContainer>
 			<HeaderOther title="Buildings" />
 
-			<section className="mt-8">
-				<h1 className="text-center text-sm font-semibold text-white">
-					Category
-				</h1>
-
+			<section className="mt-4">
 				<div className="mt-8 grid grid-cols-2 gap-5">
 					{BUILDING_CATEGORIES.map((item) => (
 						<BuildingTypeCard key={item.id} item={item} />

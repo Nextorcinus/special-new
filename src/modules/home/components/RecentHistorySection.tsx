@@ -2,15 +2,15 @@
 
 "use client";
 
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
 import HistoryPanel from "@/features/inventory/components/HistoryPanel";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
-import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import { getHistoryRoute } from "@/features/inventory/store/history/historyRoutes";
+import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
@@ -19,13 +19,13 @@ export default function RecentHistorySection() {
 
 	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 	const loadHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.loadHistory
+		(state: HistoryStoreState) => state.loadHistory,
 	);
 	const togglePinHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.togglePinHistory
+		(state: HistoryStoreState) => state.togglePinHistory,
 	);
 	const deleteHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.deleteHistory
+		(state: HistoryStoreState) => state.deleteHistory,
 	);
 
 	function handleSelectHistory(item: CalculationHistoryItem) {
@@ -35,8 +35,6 @@ export default function RecentHistorySection() {
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
-
-
 
 	const recentItems = useMemo(() => {
 		return [...items]
@@ -52,32 +50,32 @@ export default function RecentHistorySection() {
 			.slice(0, 4);
 	}, [items]);
 
- 
-
 	return (
-		<section className="space-y-4">
+		<section className="px-4 py-3 space-y-4">
 			<div className="flex items-center justify-between">
-				<h2 className="text-lg font-bold text-[var(--sl-primary)]">Recent History</h2>
+				<h2 className="text-lg font-bold text-[var(--sl-primary)]">
+					Recent History
+				</h2>
 
 				<Link
 					href="/history"
-					className="flex items-center gap-1 text-xs font-semibold text-[var(--sl-primary)] transition-colors hover:text-[var(--sl-primary-hover)"
+					className="flex items-center gap-1 text-xs font-semibold text-[var(--sl-text-muted)] transition-colors hover:text-[var(--sl-primary-hover)"
 				>
-				See All
+					See All
 					<ChevronRight size={15} />
 				</Link>
 			</div>
 
-		<HistoryPanel
-	items={recentItems}
-	module="all"
-	compact
-	hideSearch
-	hideHeader
-	onSelect={handleSelectHistory}
-	onPin={togglePinHistory}
-	onDelete={deleteHistory}
-/>
+			<HistoryPanel
+				items={recentItems}
+				module="all"
+				compact
+				hideSearch
+				hideHeader
+				onSelect={handleSelectHistory}
+				onPin={togglePinHistory}
+				onDelete={deleteHistory}
+			/>
 		</section>
 	);
 }

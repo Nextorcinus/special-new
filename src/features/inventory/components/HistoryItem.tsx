@@ -25,56 +25,55 @@ export default function HistoryItem({
 			day: "2-digit",
 			hour: "2-digit",
 			minute: "2-digit",
-		}
+		},
 	);
 
 	return (
 		<div
-			onClick={() => onSelect(item)}
-			className={`cursor-pointer rounded-xl border p-3 transition ${
+			className={`rounded-xl border p-3 transition-colors ${
 				isActive
 					? "border-yellow-400/60 bg-yellow-400/10"
-					: "border-[var(--sl-input)] bg-[var(--sl-surface)] hover:border-[var(--sl-primary)] hover:bg-[var(--sl-surface-2)]"
+					: "border-[var(--sl-border)] bg-[var(--sl-surface)] hover:bg-[var(--sl-hover)]"
 			}`}
 		>
 			<div className="flex items-start justify-between gap-2">
-				<div className="min-w-0 flex-1">
+				<button
+					type="button"
+					onClick={() => onSelect(item)}
+					className="min-w-0 flex-1 cursor-pointer space-y-2 text-left"
+				>
 					<h3 className="truncate text-sm font-semibold text-[var(--sl-text)]">
 						{item.title}
 					</h3>
 
 					{item.subtitle && (
-						<p className="mt-1 truncate text-xs font-medium text-[var(--sl-warning)]">
+						<p className="truncate text-xs font-medium text-[var(--sl-text-muted)]">
 							{item.subtitle}
 						</p>
 					)}
 
-					<p className="mt-1 text-[11px] text-[var(--sl-text-muted)]">{date}</p>
-				</div>
+					<p className="text-[11px] text-[var(--sl-text-muted)]">{date}</p>
+				</button>
 
 				<div className="flex shrink-0 items-center gap-1">
 					<button
 						type="button"
-						onClick={(event) => {
-							event.stopPropagation();
-							onPin(item.id);
-						}}
-						className="rounded-md p-2 text-[var(--sl-primary)] hover:bg-[var(--sl-primary-hover)]/10 "
+						onClick={() => onPin(item.id)}
+						className="rounded-md p-2 text-[var(--sl-primary)] hover:bg-[var(--sl-hover)]"
+						aria-label={item.isPinned ? "Unpin history" : "Pin history"}
 					>
 						{item.isPinned ? (
-							<PinOff className="h-4 w-4 text-amber-600 " />
+							<PinOff className="h-4 w-4 text-amber-600" />
 						) : (
-							<Pin className="h-4 w-4 " />
+							<Pin className="h-4 w-4" />
 						)}
 					</button>
 
 					<button
 						type="button"
-						onClick={(event) => {
-							event.stopPropagation();
-							onDelete(item.id);
-						}}
-						className="rounded-md p-2 text-red-400 hover:bg-red-500/10"
+						onClick={() => onDelete(item.id)}
+						className="rounded-md p-2 text-[var(--sl-danger)] hover:bg-red-500/10"
+						aria-label="Delete history"
 					>
 						<Trash2 className="h-4 w-4" />
 					</button>

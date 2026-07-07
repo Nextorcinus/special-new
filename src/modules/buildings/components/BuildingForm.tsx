@@ -2,18 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import {
-	type BuildingType,
-	calculateUpgrade,
-} from "@/modules/buildings/calculator/calculateUpgrade";
-
 import SLAccordion from "@/components/ui/sl-ui/SLAccordion";
 import SLButton from "@/components/ui/sl-ui/SLButton";
 import SLInput from "@/components/ui/sl-ui/SLInput";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
-
+import {
+	type BuildingType,
+	calculateUpgrade,
+} from "@/modules/buildings/calculator/calculateUpgrade";
 import type { BuildingFormValues } from "@/modules/buildings/types";
 
 type BuildingFormProps = {
@@ -21,6 +19,8 @@ type BuildingFormProps = {
 	data: any[];
 	onCalculate: (result: any) => void;
 	initialValues?: BuildingFormValues | null;
+	mode?: "create" | "update";
+	lockMainFields?: boolean;
 };
 
 const defaultBuildingFormValues: BuildingFormValues = {
@@ -90,20 +90,25 @@ export default function BuildingForm({
 	data,
 	onCalculate,
 	initialValues,
+	mode = "create",
+	lockMainFields = false,
 }: BuildingFormProps) {
 	const [values, setValues] = useState<BuildingFormValues>(
-		defaultBuildingFormValues
+		defaultBuildingFormValues,
 	);
 
-useEffect(() => {
-	if (!initialValues) return;
+	useEffect(() => {
+		if (initialValues) {
+			setValues(initialValues);
+			return;
+		}
 
-	setValues(initialValues);
-}, [initialValues]);
+		setValues(defaultBuildingFormValues);
+	}, [initialValues]);
 
 	const updateValue = <K extends keyof BuildingFormValues>(
 		key: K,
-		value: BuildingFormValues[K]
+		value: BuildingFormValues[K],
 	) => {
 		setValues((prev) => ({
 			...prev,
@@ -137,7 +142,7 @@ useEffect(() => {
 		if (!values.fromLevel) return [];
 
 		const fromIndex = levelOptions.findIndex(
-			(level) => level === values.fromLevel
+			(level) => level === values.fromLevel,
 		);
 
 		if (fromIndex === -1) return [];
@@ -145,8 +150,8 @@ useEffect(() => {
 		return levelOptions.slice(fromIndex + 1);
 	}, [levelOptions, values.fromLevel]);
 
-	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
 
 		if (!values.building || !values.fromLevel || !values.toLevel) {
 			alert("Please select building, current level, and target level.");
@@ -185,7 +190,10 @@ useEffect(() => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="relative space-y-4 p-4 text-white">
+		<form
+			onSubmit={handleSubmit}
+			className="relative space-y-4 p-4 text-[var(--sl-text)]"
+		>
 			<div className="relative z-50 space-y-1.5">
 				<SLLabel>Building Name</SLLabel>
 
@@ -203,7 +211,7 @@ useEffect(() => {
 						value: item,
 						label: item,
 					}))}
-					className="!bg-white !text-black"
+					disabled={lockMainFields}
 				/>
 			</div>
 
@@ -224,8 +232,7 @@ useEffect(() => {
 							value: item,
 							label: item,
 						}))}
-						disabled={!values.building}
-						className="!bg-white !text-black"
+						disabled={lockMainFields || !values.building}
 					/>
 				</div>
 
@@ -240,8 +247,11 @@ useEffect(() => {
 							value: item,
 							label: item,
 						}))}
-						disabled={!values.fromLevel || filteredToLevels.length === 0}
-						className="!bg-white !text-black"
+						disabled={
+							lockMainFields ||
+							!values.fromLevel ||
+							filteredToLevels.length === 0
+						}
 					/>
 				</div>
 			</div>
@@ -253,11 +263,10 @@ useEffect(() => {
 					<SLInput
 						type="number"
 						value={values.constructionSpeed}
-						onChange={(e) =>
-							updateValue("constructionSpeed", e.target.value)
+						onChange={(event) =>
+							updateValue("constructionSpeed", event.target.value)
 						}
 						placeholder="e.g. 68"
-						className="bg-special-input text-white"
 					/>
 				</div>
 
@@ -269,7 +278,6 @@ useEffect(() => {
 							value={values.petLevel}
 							onChange={(value: string) => updateValue("petLevel", value)}
 							options={petOptions}
-							className="bg-special-input text-white"
 						/>
 					</div>
 
@@ -280,7 +288,6 @@ useEffect(() => {
 							value={values.vpLevel}
 							onChange={(value: string) => updateValue("vpLevel", value)}
 							options={vpOptions}
-							className="bg-special-input text-white"
 						/>
 					</div>
 				</div>
@@ -290,11 +297,8 @@ useEffect(() => {
 
 					<SLSelect
 						value={values.zinmanSkill}
-						onChange={(value: string) =>
-							updateValue("zinmanSkill", value)
-						}
+						onChange={(value: string) => updateValue("zinmanSkill", value)}
 						options={zinmanOptions}
-						className="bg-special-input text-white"
 					/>
 				</div>
 
@@ -303,11 +307,8 @@ useEffect(() => {
 
 					<SLSelect
 						value={values.agnesLevel}
-						onChange={(value: string) =>
-							updateValue("agnesLevel", value)
-						}
+						onChange={(value: string) => updateValue("agnesLevel", value)}
 						options={agnesOptions}
-						className="bg-special-input text-white"
 					/>
 				</div>
 
@@ -316,16 +317,15 @@ useEffect(() => {
 
 					<SLSelect
 						value={values.valeriaLevel}
-						onChange={(value: string) =>
-							updateValue("valeriaLevel", value)
-						}
+						onChange={(value: string) => updateValue("valeriaLevel", value)}
 						options={valeriaOptions}
-						className="bg-special-input text-white"
 					/>
 				</div>
 
-				<div className="border-t border-white/20 pt-3">
-					<p className="text-xs font-bold">Additional Bonus</p>
+				<div className="border-t border-[var(--sl-border)] pt-3">
+					<p className="text-xs font-bold text-[var(--sl-text)]">
+						Additional Bonus
+					</p>
 
 					<div className="mt-2">
 						<SLSwitch
@@ -341,14 +341,17 @@ useEffect(() => {
 			</SLAccordion>
 
 			<div className="grid grid-cols-2 gap-4 pt-1">
-				<SLButton type="submit" className="h-10 rounded-full">
-					Submit
-				</SLButton>
+				<button
+					type="submit"
+					className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
+				>
+					{mode === "update" ? "Update" : "Submit"}
+				</button>
 
 				<SLButton
 					type="button"
 					onClick={handleReset}
-					className="h-10 rounded-full bg-[#777] text-white"
+					className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 				>
 					Reset
 				</SLButton>

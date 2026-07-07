@@ -102,14 +102,43 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 
 		if (!existingItem) return null;
 
-		const firstEntry = createHistoryEntry(item);
+		const updatedEntry = createHistoryEntry(item);
+
+		const existingEntries =
+			existingItem.items && existingItem.items.length > 0
+				? existingItem.items
+				: [
+						{
+							id: createId(`${existingItem.module}_item`),
+							title: existingItem.title,
+							subtitle: existingItem.subtitle,
+							form: existingItem.form,
+							result: existingItem.result,
+							createdAt: existingItem.createdAt,
+						},
+					];
+
+		const nextEntries = existingEntries.map((entry, index) =>
+			index === 0
+				? {
+						...entry,
+						title: updatedEntry.title,
+						subtitle: updatedEntry.subtitle,
+						form: updatedEntry.form,
+						result: updatedEntry.result,
+					}
+				: entry,
+		);
 
 		const updatedItem: CalculationHistoryItem = {
 			...existingItem,
-			...item,
-			id: existingItem.id,
-			items: [firstEntry],
-			isPinned: existingItem.isPinned ?? item.isPinned ?? false,
+			form: item.form,
+			result: item.result,
+			title: existingItem.title,
+			subtitle:
+				nextEntries.length > 1 ? `${nextEntries.length} Items` : item.subtitle,
+			items: nextEntries,
+			isPinned: existingItem.isPinned ?? false,
 			createdAt: existingItem.createdAt,
 			updatedAt: now,
 		};

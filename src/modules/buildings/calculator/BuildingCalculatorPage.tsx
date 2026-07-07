@@ -1,10 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
-import HistoryPanel from "@/features/inventory/components/HistoryPanel";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import type { BuildingType } from "@/modules/buildings/calculator/calculateUpgrade";
@@ -31,6 +30,8 @@ export default function BuildingCalculatorPage({
 		useState<CalculationHistoryItem | null>(null);
 	const [formKey, setFormKey] = useState("new");
 	const [isAddingItem, setIsAddingItem] = useState(false);
+	const [isEditingHistory, setIsEditingHistory] = useState(false);
+
 	const formRef = useRef<HTMLDivElement>(null);
 
 	const items = useHistoryStore((state: HistoryStoreState) => state.items);
@@ -45,15 +46,6 @@ export default function BuildingCalculatorPage({
 	);
 	const addCalculationItem = useHistoryStore(
 		(state: HistoryStoreState) => state.addCalculationItem,
-	);
-	const togglePinHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.togglePinHistory,
-	);
-	const deleteHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.deleteHistory,
-	);
-	const clearHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.clearHistory,
 	);
 
 	function scrollToForm() {
@@ -77,15 +69,10 @@ export default function BuildingCalculatorPage({
 		if (!selected) return;
 
 		setActiveHistory(selected);
+		setIsEditingHistory(true);
 		setIsAddingItem(false);
 		setFormKey(selected.id);
 	}, [historyId, items]);
-
-	const buildingHistories = useMemo(() => {
-		return items.filter(
-			(item) => item.module === "buildings" && item.category === type,
-		);
-	}, [items, type]);
 
 	const historyItems =
 		activeHistory?.items && activeHistory.items.length > 0
@@ -121,12 +108,6 @@ export default function BuildingCalculatorPage({
 		};
 	}
 
-	function handleSelectHistory(item: CalculationHistoryItem) {
-		setActiveHistory(item);
-		setIsAddingItem(false);
-		setFormKey(item.id);
-	}
-
 	function handleCalculate(result: any) {
 		const payload = buildHistoryPayload(result);
 
@@ -136,6 +117,7 @@ export default function BuildingCalculatorPage({
 			if (updated) {
 				setActiveHistory(updated);
 				setIsAddingItem(false);
+				setIsEditingHistory(false);
 				setFormKey(updated.id);
 			}
 
@@ -156,39 +138,29 @@ export default function BuildingCalculatorPage({
 		const saved = saveCalculation(payload);
 
 		setActiveHistory(saved);
+		setIsEditingHistory(false);
 		setIsAddingItem(false);
 		setFormKey(saved.id);
 	}
+
 	function handleAddItem() {
 		if (!activeHistory) return;
 
 		setIsAddingItem(true);
+		setIsEditingHistory(false);
 		setFormKey(`add-item-${Date.now()}`);
 		scrollToForm();
-	}
-	function handleDeleteHistory(id: string) {
-		deleteHistory(id);
-
-		if (activeHistory?.id === id) {
-			setActiveHistory(null);
-			setIsAddingItem(false);
-			setFormKey("new");
-		}
-	}
-
-	function handleClearBuildingHistory() {
-		clearHistory("buildings");
-		setActiveHistory(null);
-		setIsAddingItem(false);
-		setFormKey("new");
 	}
 
 	function handleNewCalculation() {
 		setActiveHistory(null);
+		setIsEditingHistory(false);
 		setIsAddingItem(false);
 		setFormKey(`new-${Date.now()}`);
 		scrollToForm();
 	}
+
+	const isUpdateMode = isEditingHistory && !isAddingItem;
 
 	return (
 		<div className="grid gap-6">
@@ -200,6 +172,8 @@ export default function BuildingCalculatorPage({
 						data={data}
 						onCalculate={handleCalculate}
 						initialValues={initialValues}
+						mode={isUpdateMode ? "update" : "create"}
+						lockMainFields={isUpdateMode}
 					/>
 				</div>
 
@@ -231,7 +205,7 @@ export default function BuildingCalculatorPage({
 						<button
 							type="button"
 							onClick={handleNewCalculation}
-							className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white"
+							className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 						>
 							New Calculation
 						</button>
