@@ -15,14 +15,14 @@ export default function WhatsInBagSection() {
 				<button
 					type="button"
 					onClick={() => setOpen(true)}
-					className="flex w-full items-center gap-4 rounded-xl  bg-[var(--sl-surface)] border border-[var(--sl-border)] px-4 py-3 text-left transition-colors hover:bg-[var(--sl-surface-hover)]"
+					className="flex w-full items-center gap-4 rounded-xl  bg-[var(--sl-surface)] border border-[var(--divider)] px-4 py-3 text-left transition-colors hover:bg-[var(--sl-surface-hover)]"
 				>
 					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--sl-surface)] border border-solid border-[color:var(--sl-border)]">
 						<Image src="/icons/bag.png" alt="Bag" width={24} height={24} />
 					</div>
 
 					<div className="flex-1">
-						<h3 className="text-sm font-semibold text-[var(--sl-primary)]">
+						<h3 className="text-[11px] sm:text-[0.99rem] text-[var(--sl-text)]">
 							What&apos;s in your bag?
 						</h3>
 

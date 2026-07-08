@@ -21,7 +21,7 @@ export default function CalculatorResourceItem({ item }: Props) {
 		<div
 			className={cn(
 				"grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2",
-				item.className
+				item.className,
 			)}
 		>
 			<Image
@@ -32,14 +32,14 @@ export default function CalculatorResourceItem({ item }: Props) {
 				className="shrink-0"
 			/>
 
-			<span className="truncate text-sm text-white/55">
+			<span className="truncate text-sm text-[var(--sl-text-muted)]">
 				{item.label}
 			</span>
 
 			<span
 				className={cn(
-					"justify-self-end whitespace-nowrap text-sm font-semibold text-white",
-					item.valueClassName
+					"justify-self-end whitespace-nowrap text-sm  text-[var(--sl-text)]",
+					item.valueClassName,
 				)}
 			>
 				{item.value}
@@ -48,8 +48,8 @@ export default function CalculatorResourceItem({ item }: Props) {
 			{item.compareValue !== undefined && (
 				<span
 					className={cn(
-						"min-w-[56px] whitespace-nowrap text-right text-sm font-semibold",
-						getCompareClass(item.compareType)
+						"min-w-[56px] whitespace-nowrap text-right text-sm ",
+						getCompareClass(item.compareType),
 					)}
 				>
 					{item.compareValue}

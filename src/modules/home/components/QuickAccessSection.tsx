@@ -9,7 +9,7 @@ export default function QuickAccessSection() {
 	return (
 		<section className="rounded-2xl  bg-[var(--sl-surface)] border border-[var(--sl-border)] px-4 py-3 text-left transition-colors hover:bg-[var(--sl-surface-hover)]">
 			<div className="mb-5 flex items-center justify-between">
-				<h2 className="text-lg font-bold text-[var(--sl-primary)]">
+				<h2 className="text-[11px] sm:text-[0.99rem] text-[var(--sl-primary)]">
 					Quick access
 				</h2>
 
@@ -39,7 +39,7 @@ export default function QuickAccessSection() {
 							/>
 						</div>
 
-						<span className="mt-3 block text-xs text-[var(--sl-primary)]">
+						<span className="mt-3 block text-xs text-[var(--sl-text-secondary)]">
 							{item.title}
 						</span>
 					</Link>

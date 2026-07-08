@@ -18,17 +18,38 @@ export default function CalculatorResourceItem({ item }: Props) {
 	if (item.hidden) return null;
 
 	return (
-		<div className={cn("grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2", item.className)}>
-			<Image src={item.icon} alt={item.label} width={20} height={20} className="shrink-0" />
+		<div
+			className={cn(
+				"grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2",
+				item.className,
+			)}
+		>
+			<Image
+				src={item.icon}
+				alt={item.label}
+				width={20}
+				height={20}
+				className="shrink-0"
+			/>
 
 			<span className="truncate text-sm text-white/55">{item.label}</span>
 
-			<span className={cn("justify-self-end whitespace-nowrap text-sm font-semibold text-white", item.valueClassName)}>
+			<span
+				className={cn(
+					"justify-self-end whitespace-nowrap text-sm  text-white",
+					item.valueClassName,
+				)}
+			>
 				{item.value}
 			</span>
 
 			{item.compareValue !== undefined && (
-				<span className={cn("min-w-[56px] whitespace-nowrap text-right text-sm font-semibold", getCompareClass(item.compareType))}>
+				<span
+					className={cn(
+						"min-w-[56px] whitespace-nowrap text-right text-sm ",
+						getCompareClass(item.compareType),
+					)}
+				>
 					{item.compareValue}
 				</span>
 			)}

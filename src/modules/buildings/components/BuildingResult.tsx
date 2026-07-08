@@ -84,7 +84,9 @@ export default function BuildingResult({
 							label: "Reduced",
 							icon: "/icons/reducedTime.png",
 							value: result.timeReduced ?? "-",
-							valueClassName: hasTimeReduction ? "text-white" : "text-white/35",
+							valueClassName: hasTimeReduction
+								? "text-green-400"
+								: "text-[var(--sl-text-muted)]",
 						},
 					],
 				},

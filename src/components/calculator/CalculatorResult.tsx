@@ -20,13 +20,15 @@ export default function CalculatorResult({
 	return (
 		<section className="space-y-5">
 			{title && (
-				<h2 className="px-1 text-[26px] font-medium text-white/80">{title}</h2>
+				<h2 className="px-1 text-[26px] font-medium text-[var(--text)]">
+					{title}
+				</h2>
 			)}
 
-			<div className="rounded-[28px] bg-white/10 p-6">
+			<div className="rounded-2xl bg-[var(--sl-surface)] p-4">
 				<div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 					<div className="flex items-center gap-4">
-						<div className="flex size-[72px] shrink-0 items-center justify-center rounded-full bg-black/20">
+						<div className="flex size-[72px] shrink-0 items-center justify-center rounded-full bg-[black/20]">
 							<div className="flex size-[56px] items-center justify-center rounded-full bg-black/25">
 								<Image
 									src={categoryIcon}
@@ -38,12 +40,12 @@ export default function CalculatorResult({
 						</div>
 
 						<div className="min-w-0 space-y-2">
-							<h3 className="truncate text-sm font-semibold leading-tight text-white sm:text-[15px]">
+							<h3 className="truncate text-sm font-semibold leading-tight text-[var(--sl-text)] sm:text-[16px]">
 								{name}
 							</h3>
 
 							{subtitle && (
-								<p className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-white/65 sm:text-[13px]">
+								<p className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-[var(--sl-text-muted)] sm:text-[13px]">
 									{subtitle}
 								</p>
 							)}
@@ -51,41 +53,41 @@ export default function CalculatorResult({
 					</div>
 
 					{highlightValue !== undefined && (
-						<div className="flex items-center justify-between gap-4 sm:block sm:shrink-0 sm:text-right">
+						<div className="flex items-center justify-between space-y-2 gap-4 sm:block sm:shrink-0 sm:text-right">
 							{highlightLabel && (
-								<p className="text-sm text-white/45 sm:text-xs">
+								<p className="text-sm text-[var(--sl-text-muted)] sm:text-xs">
 									{highlightLabel}
 								</p>
 							)}
 
-							<p className="text-lg font-bold leading-tight text-yellow-400">
+							<p className="text-xs sm:text-[16px] font-medium leading-tight text-yellow-500">
 								{highlightValue}
 							</p>
 						</div>
 					)}
 				</div>
 
-				<div className="mt-6 space-y-5">
+				<div className="mt-4 space-y-5">
 					{sections.map((section) => (
 						<CalculatorSection key={section.id} section={section} />
 					))}
 				</div>
 
 				{(createdAt || updatedAt) && (
-					<div className="mt-6 border-t border-white/10 pt-4">
+					<div className="mt-6 border-t border-[var(--divider)] pt-4">
 						<div className="grid grid-cols-2 gap-4 text-xs">
 							<div>
-								<p className="text-white/35">Created</p>
+								<p className="text-[var(--sl-text)]">Created</p>
 
-								<p className="mt-1 font-medium text-white/70">
+								<p className="mt-1 font-medium text-[var(--sl-text-muted)]">
 									{createdAt ? formatHistoryDate(createdAt) : "-"}
 								</p>
 							</div>
 
 							<div className="text-right">
-								<p className="text-white/35">Last Updated</p>
+								<p className="text-[var(--sl-text)]">Last Updated</p>
 
-								<p className="mt-1 font-medium text-white/70">
+								<p className="mt-1 font-medium text-[var(--sl-text-muted)]">
 									{updatedAt ? formatHistoryDate(updatedAt) : "Never"}
 								</p>
 							</div>

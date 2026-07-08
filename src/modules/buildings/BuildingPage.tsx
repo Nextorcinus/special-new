@@ -15,7 +15,7 @@ export default function BuildingPage({ title, type, data }: BuildingPageProps) {
 		<MobileContainer>
 			<HeaderOther title={title} />
 
-			<div className="mt-8 px-1 py-1 bg-[var(--card)] rounded-3xl">
+			<div className="mt-8 px-1 py-1 bg-[var(--sl-active)] rounded-3xl">
 				<BuildingCalculatorPage type={type} data={data} />
 			</div>
 		</MobileContainer>

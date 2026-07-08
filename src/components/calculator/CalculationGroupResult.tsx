@@ -22,7 +22,7 @@ export default function CalculationGroupResult<T>({
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 p-4">
 			{items.map((item, index) => (
 				<div key={getKey(item, index)}>{renderItem(item, index)}</div>
 			))}

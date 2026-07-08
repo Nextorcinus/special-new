@@ -53,7 +53,7 @@ export default function RecentHistorySection() {
 	return (
 		<section className="px-4 py-3 space-y-4">
 			<div className="flex items-center justify-between">
-				<h2 className="text-lg font-bold text-[var(--sl-primary)]">
+				<h2 className="text-[11px] sm:text-[0.99rem] text-[var(--sl-primary)]">
 					Recent History
 				</h2>
 
