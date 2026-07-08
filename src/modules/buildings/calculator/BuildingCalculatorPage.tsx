@@ -164,8 +164,8 @@ export default function BuildingCalculatorPage({
 
 	return (
 		<div className="grid gap-6">
-			<div className="space-y-6">
-				<div ref={formRef}>
+			<div className="space-y-6 p-2">
+				<div ref={formRef} className="p-4">
 					<BuildingForm
 						key={formKey}
 						type={type}
