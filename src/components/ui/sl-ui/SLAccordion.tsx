@@ -34,7 +34,7 @@ export default function SLAccordion({
 			onValueChange={setValue}
 			className={cn(
 				"rounded-[14px] p-3 transition-colors duration-200",
-				isOpen ? "bg-[var(--sl-surface-2)]" : "bg-white/0",
+				isOpen ? "bg-[var(--sl-hover)]" : "bg-white/0",
 				className,
 			)}
 		>

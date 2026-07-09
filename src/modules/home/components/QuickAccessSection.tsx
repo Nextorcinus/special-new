@@ -9,7 +9,7 @@ export default function QuickAccessSection() {
 	return (
 		<section className="rounded-2xl  bg-[var(--sl-surface)] border border-[var(--sl-border)] px-4 py-3 text-left transition-colors hover:bg-[var(--sl-surface-hover)]">
 			<div className="mb-5 flex items-center justify-between">
-				<h2 className="text-[11px] sm:text-[0.99rem] text-[var(--sl-primary)]">
+				<h2 className="text-[14px] sm:text-[1rem] text-[var(--sl-primary)]">
 					Quick access
 				</h2>
 
@@ -29,7 +29,7 @@ export default function QuickAccessSection() {
 						href={item.href}
 						className="w-[72px] shrink-0 text-center"
 					>
-						<div className="flex h-[64px] w-[72px] items-center justify-center rounded-2xl bg-[var(--sl-surface-2)] border border-solid border-[color:var(--sl-border)]">
+						<div className="flex h-[64px] w-[72px] items-center justify-center rounded-2xl bg-black/20 border border-solid border-[color:var(--sl-border)]">
 							<Image
 								src={item.icon}
 								alt={item.title}

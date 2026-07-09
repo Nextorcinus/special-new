@@ -13,6 +13,7 @@ import {
 	calculateUpgrade,
 } from "@/modules/buildings/calculator/calculateUpgrade";
 import type { BuildingFormValues } from "@/modules/buildings/types";
+import styles from "@/styles/global.css";
 
 type BuildingFormProps = {
 	type: BuildingType;
@@ -267,6 +268,7 @@ export default function BuildingForm({
 							updateValue("constructionSpeed", event.target.value)
 						}
 						placeholder="e.g. 68"
+						className="bg-[lab(87 0 -0.01)] text-[var(--sl-text)] placeholder:text-[var(--sl-text-muted)]"
 					/>
 				</div>
 
@@ -322,21 +324,19 @@ export default function BuildingForm({
 					/>
 				</div>
 
-				<div className="border-t border-[var(--sl-border)] pt-3">
+				<div className="flex items-center justify-between border-t border-[var(--sl-border)] pt-3">
 					<p className="text-xs font-bold text-[var(--sl-text)]">
 						Additional Bonus
 					</p>
 
-					<div className="mt-2">
-						<SLSwitch
-							label="Double Time"
-							description="+20%"
-							checked={values.doubleTime}
-							onCheckedChange={(checked: boolean) =>
-								updateValue("doubleTime", checked)
-							}
-						/>
-					</div>
+					<SLSwitch
+						label="Double Time"
+						description="+20%"
+						checked={values.doubleTime}
+						onCheckedChange={(checked: boolean) =>
+							updateValue("doubleTime", checked)
+						}
+					/>
 				</div>
 			</SLAccordion>
 

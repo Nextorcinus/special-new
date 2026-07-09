@@ -35,10 +35,8 @@ export default function HistoryFilterTabs({
 						key={tab.value}
 						type="button"
 						onClick={() => onChange(tab.value)}
-						className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition ${
-							isActive
-								? "bg-teal-500/80 text-white"
-								: "bg-white text-black"
+						className={`shrink-0 rounded-full px-3 py-3 text-xs font-semibold transition ${
+							isActive ? "bg-teal-500/80 text-white" : "bg-white text-black"
 						}`}
 					>
 						{tab.label}

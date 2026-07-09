@@ -51,9 +51,9 @@ export default function RecentHistorySection() {
 	}, [items]);
 
 	return (
-		<section className="px-4 py-3 space-y-4">
+		<section className=" space-y-4 p-3">
 			<div className="flex items-center justify-between">
-				<h2 className="text-[11px] sm:text-[0.99rem] text-[var(--sl-primary)]">
+				<h2 className="text-[14px] sm:text-[1rem] text-[var(--sl-primary)]">
 					Recent History
 				</h2>
 

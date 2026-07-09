@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import ThemeProvider from "@/providers/ThemeProvider";
 import "@/styles/globals.css";
 import "@/styles/theme.css";
+import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 
 const geist = Geist({
 	variable: "--font-sans",
@@ -30,7 +31,10 @@ export default function RootLayout({
 			className={`${geist.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
-				<ThemeProvider>{children}</ThemeProvider>
+				<ThemeProvider>
+					<main className="pb-28 md:pb-0">{children}</main>
+					<MobileBottomBar />
+				</ThemeProvider>
 			</body>
 		</html>
 	);

@@ -106,7 +106,7 @@ export default function BuildingConfiguration({
 				onClick={() => setOpen((value) => !value)}
 				className="flex w-full items-center justify-between text-left"
 			>
-				<span className="text-xs font-bold text-[var(--foreground)]">
+				<span className="text-xs text-[var(--sl-text-muted)]">
 					Configuration
 				</span>
 

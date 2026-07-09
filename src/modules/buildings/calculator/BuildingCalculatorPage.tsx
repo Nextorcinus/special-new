@@ -95,6 +95,8 @@ export default function BuildingCalculatorPage({
 			? (activeHistory.form as BuildingFormValues)
 			: null;
 
+	const isUpdateMode = isEditingHistory && !isAddingItem;
+
 	function buildHistoryPayload(result: any) {
 		return {
 			module: "buildings" as const,
@@ -160,11 +162,9 @@ export default function BuildingCalculatorPage({
 		scrollToForm();
 	}
 
-	const isUpdateMode = isEditingHistory && !isAddingItem;
-
 	return (
 		<div className="grid gap-6">
-			<div className="space-y-6 p-2">
+			<div className="space-y-6">
 				<div ref={formRef} className="p-4">
 					<BuildingForm
 						key={formKey}
@@ -186,6 +186,8 @@ export default function BuildingCalculatorPage({
 								result={item.result}
 								history={activeHistory}
 								title={index === 0 ? "Result" : undefined}
+								showAddButton={index === historyItems.length - 1}
+								onAddItem={handleAddItem}
 							/>
 						)}
 						renderTotal={(items) => <BuildingTotalResult items={items} />}
@@ -193,23 +195,13 @@ export default function BuildingCalculatorPage({
 				)}
 
 				{activeHistory && (
-					<div className="flex flex-wrap gap-3">
-						<button
-							type="button"
-							onClick={handleAddItem}
-							className="rounded-full bg-teal-500/20 px-4 py-2 text-sm font-semibold text-teal-300"
-						>
-							+ Add Item
-						</button>
-
-						<button
-							type="button"
-							onClick={handleNewCalculation}
-							className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
-						>
-							New Calculation
-						</button>
-					</div>
+					<button
+						type="button"
+						onClick={handleNewCalculation}
+						className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+					>
+						New Calculation
+					</button>
 				)}
 			</div>
 		</div>
