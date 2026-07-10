@@ -22,13 +22,13 @@ export default function ResourceBagContent({
 				))}
 			</div>
 
-			<div className="sticky bottom-0 mt-6 flex gap-3 bg-[var(--sl-surface)] pt-4">
+			<div className="sticky bottom-0 mt-2 flex gap-3 bg-[var(--sl-surface)] p-4">
 				<button
 					type="button"
 					onClick={onClose}
 					className="h-11 flex-1 rounded-full bg-[var(--sl-primary)] text-sm font-semibold text-[var(--sl-primary-foreground)]"
 				>
-					Update
+					Save & Close
 				</button>
 
 				<button

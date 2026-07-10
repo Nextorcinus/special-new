@@ -27,19 +27,19 @@ export default function QuickAccessSection() {
 					<Link
 						key={item.id}
 						href={item.href}
-						className="w-[72px] shrink-0 text-center"
+						className="w-[64px] shrink-0 text-center sm:w-[72px] md:w-[80px]"
 					>
-						<div className="flex h-[64px] w-[72px] items-center justify-center rounded-2xl bg-black/20 border border-solid border-[color:var(--sl-border)]">
+						<div className="flex h-14 w-16 items-center justify-center rounded-xl border border-solid border-[color:var(--sl-border)] bg-black/20 sm:h-16 sm:w-[72px] sm:rounded-2xl md:h-[72px] md:w-20">
 							<Image
 								src={item.icon}
 								alt={item.title}
 								width={44}
 								height={44}
-								className="object-contain"
+								className="size-9 object-contain sm:size-11 md:size-12"
 							/>
 						</div>
 
-						<span className="mt-3 block text-xs text-[var(--sl-text-secondary)]">
+						<span className="mt-2 block truncate text-[12px] leading-tight text-[var(--sl-text-secondary)] sm:mt-3 sm:text-xs md:text-[13px]">
 							{item.title}
 						</span>
 					</Link>

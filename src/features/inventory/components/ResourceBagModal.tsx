@@ -17,14 +17,28 @@ export default function ResourceBagModal({
 	const loadResources = useInventoryStore((state) => state.loadResources);
 
 	useEffect(() => {
-		if (open) loadResources();
+		if (open) {
+			loadResources();
+		}
 	}, [open, loadResources]);
 
 	if (!open) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 px-4 py-6 lg:items-center">
-			<div className="max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 text-[var(--sl-text)]">
+		<div className="fixed inset-0 z-[100] flex items-end justify-center px-4 py-6 md:items-center">
+			<button
+				type="button"
+				aria-label="Close resource bag"
+				onClick={onClose}
+				className="absolute inset-0 cursor-default bg-black/60"
+			/>
+
+			<div
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="resource-bag-title"
+				className="relative z-10 max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 text-[var(--sl-text)]"
+			>
 				<ResourceBagContent onClose={onClose} />
 			</div>
 		</div>
