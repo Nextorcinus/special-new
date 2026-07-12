@@ -1,0 +1,189 @@
+[
+  {
+    "level": 0,
+    "guide_cost": 0,
+    "design_cost": 0,
+    "jewel_cost": 0,
+    "power_total": 0,
+    "stat_total": 0.0,
+    "power_diff": 0,
+    "stat_diff": 0.0,
+    "svs_point": 0
+  },
+  {
+    "level": 1,
+    "guide_cost": 5,
+    "design_cost": 5,
+    "power_total": 205700,
+    "stat_total": 9.0,
+    "power_diff": 205700,
+    "stat_diff": 9.0,
+    "svs_point": 43000,
+    "jewel_cost": 0
+  },
+  {
+    "level": 2,
+    "guide_cost": 40,
+    "design_cost": 15,
+    "power_total": 288000,
+    "stat_total": 12.0,
+    "power_diff": 82300,
+    "stat_diff": 3.0,
+    "svs_point": 87500,
+    "jewel_cost": 0
+  },
+  {
+    "level": 3,
+    "guide_cost": 60,
+    "design_cost": 40,
+    "power_total": 370000,
+    "stat_total": 16.0,
+    "power_diff": 82000,
+    "stat_diff": 4.0,
+    "svs_point": 218750,
+    "jewel_cost": 0
+  },
+  {
+    "level": 4,
+    "guide_cost": 80,
+    "design_cost": 100,
+    "power_total": 452000,
+    "stat_total": 19.0,
+    "power_diff": 82000,
+    "stat_diff": 3.0,
+    "svs_point": 612500,
+    "jewel_cost": 0
+  },
+  {
+    "level": 5,
+    "guide_cost": 100,
+    "design_cost": 200,
+    "power_total": 576000,
+    "stat_total": 25.0,
+    "power_diff": 124000,
+    "stat_diff": 6.0,
+    "svs_point": 787500,
+    "jewel_cost": 0
+  },
+  {
+    "level": 6,
+    "guide_cost": 120,
+    "design_cost": 300,
+    "power_total": 700000,
+    "stat_total": 30.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 875000.0,
+    "jewel_cost": 0
+  },
+  {
+    "level": 7,
+    "guide_cost": 140,
+    "design_cost": 400,
+    "power_total": 824000,
+    "stat_total": 35.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 875000,
+    "jewel_cost": 0
+  },
+  {
+    "level": 8,
+    "guide_cost": 200,
+    "design_cost": 400,
+    "power_total": 948000,
+    "stat_total": 40.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 910000,
+    "jewel_cost": 0
+  },
+  {
+    "level": 9,
+    "guide_cost": 300,
+    "design_cost": 400,
+    "power_total": 1072000,
+    "stat_total": 45.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 980000,
+    "jewel_cost": 0
+  },
+  {
+    "level": 10,
+    "guide_cost": 420,
+    "design_cost": 420,
+    "power_total": 1196000,
+    "stat_total": 50.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1050000,
+    "jewel_cost": 0
+  },
+  {
+    "level": 11,
+    "guide_cost": 560,
+    "design_cost": 420,
+    "power_total": 1320000,
+    "stat_total": 55.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1120000,
+    "jewel_cost": 0
+  },
+   {
+    "level": 12,
+    "guide_cost": 580,
+    "design_cost": 450,
+    "power_total": 0,
+    "stat_total": 55.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1190000,
+    "jewel_cost": 15
+   },
+   {
+    "level": 13,
+    "guide_cost": 580,
+    "design_cost": 450,
+    "power_total": 0,
+    "stat_total": 60.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1260000,
+    "jewel_cost": 30
+  },
+{
+    "level": 14,
+    "guide_cost": 600,
+    "design_cost": 500,
+    "power_total": 0,
+    "stat_total": 60.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1330000,
+    "jewel_cost": 45
+  },
+  {
+    "level": 15,
+    "guide_cost": 600,
+    "design_cost": 500,
+    "power_total": 0,
+    "stat_total": 65.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1400000,
+    "jewel_cost": 70
+  },
+  {
+    "level": 16,
+    "guide_cost": 650,
+    "design_cost": 550,
+    "power_total": 0,
+    "stat_total": 65.0,
+    "power_diff": 124000,
+    "stat_diff": 5.0,
+    "svs_point": 1470000,
+    "jewel_cost": 100
+  }
+]

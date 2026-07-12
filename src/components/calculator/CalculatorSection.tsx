@@ -8,10 +8,27 @@ type Props = {
 	section: CalculatorResultSection;
 };
 
-export default function CalculatorSection({ section }: Props) {
-	const visibleItems = section.items.filter((item) => !item.hidden);
+function shouldUseFullWidth(
+	sectionId: string,
+	itemId: string,
+): boolean {
+	return (
+		itemId === "buff" ||
+		itemId === "required-research" ||
+		sectionId === "prerequisites"
+	);
+}
 
-	if (visibleItems.length === 0) return null;
+export default function CalculatorSection({
+	section,
+}: Props) {
+	const visibleItems = section.items.filter(
+		(item) => !item.hidden,
+	);
+
+	if (visibleItems.length === 0) {
+		return null;
+	}
 
 	const isTimeSection = section.id === "time";
 
@@ -19,7 +36,10 @@ export default function CalculatorSection({ section }: Props) {
 		<div className="rounded-[24px] bg-[var(--sl-surface-3)] px-4 py-4">
 			<div className="mb-4 flex items-center gap-3 text-[var(--sl-text-muted)]">
 				{section.icon}
-				<span className="text-sm font-medium">{section.title}</span>
+
+				<span className="text-sm font-medium">
+					{section.title}
+				</span>
 			</div>
 
 			<div
@@ -29,13 +49,37 @@ export default function CalculatorSection({ section }: Props) {
 						: "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-8"
 				}
 			>
-				{visibleItems.map((item) =>
-					isTimeSection ? (
-						<CalculatorStatItem key={item.id} item={item} />
-					) : (
-						<CalculatorResourceItem key={item.id} item={item} />
-					),
-				)}
+				{visibleItems.map((item) => {
+					if (isTimeSection) {
+						return (
+							<CalculatorStatItem
+								key={item.id}
+								item={item}
+							/>
+						);
+					}
+
+					const isFullWidth =
+						shouldUseFullWidth(
+							section.id,
+							item.id,
+						);
+
+					return (
+						<div
+							key={item.id}
+							className={
+								isFullWidth
+									? "min-w-0 sm:col-span-2"
+									: "min-w-0"
+							}
+						>
+							<CalculatorResourceItem
+								item={item}
+							/>
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);

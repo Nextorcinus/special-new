@@ -24,7 +24,7 @@ export default function MobileBottomBar() {
 
 	return (
 		<>
-			<nav className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-32px)] max-w-[390px] -translate-x-1/2 md:hidden">
+			<nav className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-32px)] max-w-[390px] -translate-x-1/2 lg:hidden">
 				<div className="flex items-center justify-between rounded-full bg-[#181818] p-2 shadow-2xl">
 					<button
 						type="button"

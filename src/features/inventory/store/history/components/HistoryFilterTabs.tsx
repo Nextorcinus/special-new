@@ -13,7 +13,7 @@ const tabs: { label: string; value: FilterValue }[] = [
 	{ label: "All", value: "all" },
 	{ label: "Buildings", value: "buildings" },
 	{ label: "Research", value: "research" },
-	{ label: "Chief", value: "gear" },
+	{ label: "Gear", value: "gear" },
 	{ label: "Charm", value: "charm" },
 	{ label: "War Academy", value: "war-academy" },
 	{ label: "Widget", value: "widget" },

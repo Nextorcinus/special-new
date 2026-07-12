@@ -1,4 +1,5 @@
 export const RESOURCES = {
+	// Resources
 	Meat: {
 		id: "meat",
 		label: "Meat",
@@ -19,15 +20,66 @@ export const RESOURCES = {
 		label: "Iron",
 		icon: "/icons/iron.png",
 	},
+	Steel: {
+		id: "steel",
+		label: "Steel",
+		icon: "/icons/steel.png",
+	},
+
+	// Fire Crystal
 	Crystal: {
 		id: "fire-crystal",
-		label: "FC",
+		label: "Fire Crystal",
 		icon: "/icons/crystal.png",
+	},
+	Shard: {
+		id: "shard",
+		label: "Shard",
+		icon: "/icons/fire_crystal_shard.png",
 	},
 	RFC: {
 		id: "refined",
-		label: "RFC",
+		label: "Refined Fire Crystal",
 		icon: "/icons/rfc.png",
+	},
+
+	// Chief Gear
+	Plans: {
+		id: "design-plans",
+		label: "Design Plans",
+		icon: "/icons/design-plan.png",
+	},
+	Polish: {
+		id: "polishing",
+		label: "Polishing Solution",
+		icon: "/icons/polishing-solution.png",
+	},
+	Alloy: {
+		id: "hardened-alloy",
+		label: "Hardened Alloy",
+		icon: "/icons/hardened-alloy.png",
+	},
+	Amber: {
+		id: "lunar-amber",
+		label: "Lunar Amber",
+		icon: "/icons/amber.png",
+	},
+
+	// Chief Charm
+	Guide: {
+		id: "guide",
+		label: "Guide",
+		icon: "/icons/charm-guide.png",
+	},
+	Design: {
+		id: "design",
+		label: "Design",
+		icon: "/icons/charm-design.png",
+	},
+	Jewel: {
+		id: "jewel",
+		label: "Secret Charm",
+		icon: "/icons/charm-secret.png",
 	},
 } as const;
 
