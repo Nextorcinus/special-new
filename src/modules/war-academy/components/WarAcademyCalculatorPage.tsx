@@ -421,15 +421,21 @@ export default function WarAcademyCalculatorPage({
 
 	return (
 	<div className="grid gap-6">
-			<div className="space-y-6">
-				<div  className="p-4">
-
+		<div className="space-y-6 p-4">
+			<div>
 				<WarAcademyForm
 					key={formKey}
 					category={category}
 					data={data}
 					initialValues={initialValues}
-					mode={isEditingHistory && !isAddingItem ? "update" : "create"}
+					mode={
+						isEditingHistory && !isAddingItem
+							? "update"
+							: "create"
+					}
+					lockMainFields={
+						isEditingHistory && !isAddingItem
+					}
 					onSubmit={handleSubmit}
 					onReset={handleReset}
 				/>
@@ -439,14 +445,17 @@ export default function WarAcademyCalculatorPage({
 				<WarAcademyResult
 					result={result}
 					history={activeHistory}
+					title="Result"
 					showAddButton={activeHistory !== null}
 					onAddItem={handleAddItem}
 				/>
 			)}
 
 			{showGroupResult && (
-				<div className="space-y-5 p-4">
-					<h2 className="text-2xl font-bold text-[var(--sl-text)]">Result</h2>
+				<div className="space-y-5">
+					<h2 className="text-2xl font-bold text-[var(--sl-text)]">
+						Result
+					</h2>
 
 					<CalculationGroupResult
 						items={historyEntries}
@@ -454,27 +463,32 @@ export default function WarAcademyCalculatorPage({
 						renderItem={(item, index) => (
 							<WarAcademyResult
 								result={item.result}
-								showAddButton={index === historyEntries.length - 1}
+								showAddButton={
+									index ===
+									historyEntries.length - 1
+								}
 								onAddItem={handleAddItem}
 							/>
 						)}
 						renderTotal={(items) => (
-							<WarAcademyTotalResult items={items} title="Total Result" />
+							<WarAcademyTotalResult
+								items={items}
+								title="Total Result"
+							/>
 						)}
 					/>
 				</div>
 			)}
 
-		{activeHistory && (
-					<button
-						type="button"
-						onClick={handleNewCalculation}
-						className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] transition hover:bg-[var(--sl-input-hover)]"
-					>
-						New Calculation
-					</button>
-				)}
+			{activeHistory && (
+				<button
+					type="button"
+					onClick={handleNewCalculation}
+					className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] transition hover:bg-[var(--sl-input-hover)]"
+				>
+					New Calculation
+				</button>
+			)}
 		</div>
 	</div>
-	);
-}
+)}

@@ -113,7 +113,7 @@ export default function WarAcademyForm({
 
 	return (
 		<form onSubmit={handleSubmit} className="relative space-y-4 p-4 text-[var(--sl-text)] bg-[var(--sl-surface)] rounded-2xl border border-[var(--sl-border)]">
-			<div className="space-y-5">
+			<div className="space-y-5 p-4">
 				<div>
 					<h2 className="text-sm font-bold text-[var(--sl-text)]">
 						{category} War Academy

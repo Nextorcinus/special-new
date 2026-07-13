@@ -55,11 +55,9 @@ function sumNumber(
 	return items.reduce((total, item) => {
 		const value = Number(getValue(item) ?? 0);
 
-		if (!Number.isFinite(value)) {
-			return total;
-		}
-
-		return total + value;
+		return Number.isFinite(value)
+			? total + value
+			: total;
 	}, 0);
 }
 
@@ -83,36 +81,31 @@ function formatReduction(value: unknown): string {
 	return `-${formatNumber(number)}%`;
 }
 
-function normalizeBuffLabel(value: string): string {
+function normalizeBuffText(value: string): string {
 	return value.trim().replace(/\s+/g, " ");
 }
 
 /**
- * Memisahkan beberapa buff dalam satu string.
+ * Memisahkan beberapa buff dalam satu string tanpa memisahkan
+ * koma yang menjadi pemisah ribuan.
  *
  * Contoh:
  * "+1.50% Infantry Health, +3.00% Infantry Health"
  *
- * menjadi:
- * [
- *   "+1.50% Infantry Health",
- *   "+3.00% Infantry Health",
- * ]
- *
- * Koma pada angka seperti "+1,500 Rally Capacity"
- * tidak ikut dipisahkan.
+ * Tidak memisahkan:
+ * "+1,500 Rally Capacity"
  */
 function splitWarAcademyBuffs(value: string): string[] {
 	return value
 		.split(/,\s*(?=[+-]\s*\d)/)
-		.map((buff) => normalizeBuffLabel(buff))
+		.map(normalizeBuffText)
 		.filter(Boolean);
 }
 
 function parseWarAcademyBuff(
 	value: string,
 ): ParsedWarAcademyBuff | null {
-	const normalizedValue = normalizeBuffLabel(value);
+	const normalizedValue = normalizeBuffText(value);
 
 	if (!normalizedValue) {
 		return null;
@@ -139,7 +132,7 @@ function parseWarAcademyBuff(
 	return {
 		value: numericValue,
 		isPercent: Boolean(match[2]),
-		label: normalizeBuffLabel(match[3] ?? ""),
+		label: normalizeBuffText(match[3] ?? ""),
 	};
 }
 
@@ -147,9 +140,7 @@ function formatWarAcademyBuffValue(
 	value: number,
 	isPercent: boolean,
 ): string {
-	const absoluteValue = Math.abs(value);
-
-	const formattedValue = absoluteValue.toLocaleString(
+	const formattedValue = Math.abs(value).toLocaleString(
 		"en-US",
 		{
 			minimumFractionDigits: 0,
@@ -162,14 +153,6 @@ function formatWarAcademyBuffValue(
 	return `${sign}${formattedValue}${isPercent ? "%" : ""}`;
 }
 
-/**
- * Mengambil seluruh buff dari satu calculation.
- *
- * selectedLevels diprioritaskan supaya buff dari setiap
- * level ikut dihitung.
- *
- * result.buffs digunakan sebagai fallback untuk history lama.
- */
 function getItemBuffs(
 	item: WarAcademyHistoryEntry,
 ): string[] {
@@ -177,33 +160,16 @@ function getItemBuffs(
 		item.result?.selectedLevels ?? [];
 
 	if (selectedLevels.length > 0) {
-		return selectedLevels.flatMap((level) => {
-			return splitWarAcademyBuffs(
-				level.buff ?? "",
-			);
-		});
+		return selectedLevels.flatMap((level) =>
+			splitWarAcademyBuffs(level.buff ?? ""),
+		);
 	}
 
 	return (item.result?.buffs ?? []).flatMap(
-		(buff) => splitWarAcademyBuffs(buff),
+		splitWarAcademyBuffs,
 	);
 }
 
-/**
- * Menjumlahkan seluruh buff dari semua calculation.
- *
- * Buff hanya digabung jika:
- * 1. Label sama
- * 2. Sama-sama persen atau sama-sama flat
- *
- * Contoh:
- * +1.50% Infantry Health
- * +3.00% Infantry Health
- * +5.00% Infantry Health
- *
- * Hasil:
- * +9.5% Infantry Health
- */
 function aggregateWarAcademyBuffs(
 	items: WarAcademyHistoryEntry[],
 ): string[] {
@@ -215,10 +181,8 @@ function aggregateWarAcademyBuffs(
 	const unmatchedBuffs = new Map<string, string>();
 
 	for (const item of items) {
-		const itemBuffs = getItemBuffs(item);
-
-		for (const rawBuff of itemBuffs) {
-			const buff = normalizeBuffLabel(rawBuff);
+		for (const rawBuff of getItemBuffs(item)) {
+			const buff = normalizeBuffText(rawBuff);
 
 			if (!buff) {
 				continue;
@@ -227,13 +191,10 @@ function aggregateWarAcademyBuffs(
 			const parsed = parseWarAcademyBuff(buff);
 
 			if (!parsed) {
-				const unmatchedKey = buff.toLowerCase();
+				const key = buff.toLowerCase();
 
-				if (!unmatchedBuffs.has(unmatchedKey)) {
-					unmatchedBuffs.set(
-						unmatchedKey,
-						buff,
-					);
+				if (!unmatchedBuffs.has(key)) {
+					unmatchedBuffs.set(key, buff);
 				}
 
 				continue;
@@ -245,9 +206,7 @@ function aggregateWarAcademyBuffs(
 				.trim();
 
 			const groupKey = [
-				parsed.isPercent
-					? "percent"
-					: "flat",
+				parsed.isPercent ? "percent" : "flat",
 				normalizedLabel,
 			].join(":");
 
@@ -261,7 +220,7 @@ function aggregateWarAcademyBuffs(
 
 			groupedBuffs.set(groupKey, {
 				...parsed,
-				label: normalizeBuffLabel(
+				label: normalizeBuffText(
 					parsed.label,
 				),
 			});
@@ -370,13 +329,15 @@ export default function WarAcademyTotalResult({
 	const totalVpBonus = sumNumber(
 		items,
 		(item) =>
-			item.result?.bonuses?.vpResearchSpeed,
+			item.result?.bonuses
+				?.vpResearchSpeed,
 	);
 
 	const totalDoubleTimeSpeed = sumNumber(
 		items,
 		(item) =>
-			item.result?.bonuses?.doubleTimeSpeed,
+			item.result?.bonuses
+				?.doubleTimeSpeed,
 	);
 
 	const totalAgnesReduction = sumNumber(
@@ -469,7 +430,7 @@ export default function WarAcademyTotalResult({
 					: "No Buff",
 			valueClassName:
 				buffs.length > 0
-					? "whitespace-pre-line text-white"
+					? "text-white"
 					: "text-[var(--sl-text-muted)]",
 		},
 		{

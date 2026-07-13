@@ -60,11 +60,17 @@ function formatReduction(value: unknown): string {
 }
 
 function formatBuffs(values: string[]): string {
-	if (!Array.isArray(values) || values.length === 0) {
+	if (!values.length) {
 		return "No Buff";
 	}
 
-	return values.join(", ");
+	return values
+		.flatMap((value) =>
+			value.split(/,\s*(?=[+-]\s*\d)/),
+		)
+		.map((value) => value.trim())
+		.filter(Boolean)
+		.join("\n");
 }
 
 function formatShard(value: unknown): string {
@@ -175,11 +181,15 @@ export default function WarAcademyResult({
 						icon: <Zap size={18} />,
 						items: [
 							{
-								id: "buff",
-								label: "Buff",
-								icon: "/icons/Buff.png",
-								value: formatBuffs(result.buffs),
-							},
+	id: "buff",
+	label: "Buff",
+	icon: "/icons/Buff.png",
+	value: formatBuffs(result.buffs),
+	valueClassName:
+		result.buffs.length > 0
+			? "whitespace-pre-line text-white"
+			: "text-[var(--sl-text-muted)]",
+},
 							{
 								id: "selected-levels",
 								label: "Levels Researched",
