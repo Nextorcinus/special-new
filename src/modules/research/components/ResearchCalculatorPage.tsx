@@ -247,14 +247,14 @@ export default function ResearchCalculatorPage({
 					className="p-4"
 				>
 				<ResearchForm
-	key={formKey}
-	category={category}
-	data={data}
-	onSubmit={handleCalculate}
-	initialValues={initialValues}
-	mode={isUpdateMode ? "update" : "create"}
-	lockMainFields={isUpdateMode}
-/>
+					key={formKey}
+					category={category}
+					data={data}
+					onSubmit={handleCalculate}
+					initialValues={initialValues}
+					mode={isUpdateMode ? "update" : "create"}
+					lockMainFields={isUpdateMode}
+				/>
 				</div>
 
 				{activeHistory && (

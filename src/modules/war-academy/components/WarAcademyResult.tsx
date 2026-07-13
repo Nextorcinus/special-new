@@ -143,20 +143,12 @@ export default function WarAcademyResult({
 								id: "reduced-time",
 								label: "Reduced",
 								icon: "/icons/reducedTime.png",
-								value: result.time.reduced,
-								valueClassName: hasTimeReduction
+								value: result.time.final,
+								valueClassName:hasTimeReduction
 									? "text-green-400"
 									: "text-[var(--sl-text-muted)]",
 							},
-							{
-								id: "final-time",
-								label: "Final",
-								icon: "/icons/finalTime.png",
-								value: result.time.final,
-								valueClassName: hasTimeReduction
-									? "text-yellow-500"
-									: "text-[var(--sl-text-muted)]",
-							},
+						
 						],
 					},
 					{

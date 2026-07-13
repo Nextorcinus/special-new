@@ -112,8 +112,8 @@ export default function WarAcademyForm({
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4">
-			<div className="relative space-y-4 rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4 text-[var(--sl-text)]">
+		<form onSubmit={handleSubmit} className="relative space-y-4 p-4 text-[var(--sl-text)] bg-[var(--sl-surface)] rounded-2xl border border-[var(--sl-border)]">
+			<div className="space-y-5">
 				<div>
 					<h2 className="text-sm font-bold text-[var(--sl-text)]">
 						{category} War Academy
@@ -124,9 +124,8 @@ export default function WarAcademyForm({
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div className="sm:col-span-2">
-						<SLLabel>Research</SLLabel>
+				<div className="relative z-50 space-y-1.5">				
+					<SLLabel>Research</SLLabel>
 
 						<SLSelect
 							value={values.research}
@@ -135,9 +134,10 @@ export default function WarAcademyForm({
 							options={researchOptions}
 							disabled={lockMainFields}
 						/>
-					</div>
+				</div>
 
-					<div>
+				<div className="relative z-40 grid grid-cols-2 gap-3">
+					<div className="space-y-1.5">
 						<SLLabel>From</SLLabel>
 
 						<SLSelect
@@ -149,7 +149,7 @@ export default function WarAcademyForm({
 						/>
 					</div>
 
-					<div>
+					<div className="space-y-1.5">
 						<SLLabel>To</SLLabel>
 
 						<SLSelect
@@ -165,8 +165,8 @@ export default function WarAcademyForm({
 				</div>
 
 				<SLAccordion title="Configuration">
-					<div className="space-y-4">
-						<div>
+					<div className="space-y-1.5">
+						<div className="space-y-1.5">
 							<SLLabel>Research Speed (%)</SLLabel>
 
 							<SLInput
@@ -180,7 +180,7 @@ export default function WarAcademyForm({
 						</div>
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-							<div>
+							<div className="space-y-1.5">
 								<SLLabel>Vice President</SLLabel>
 
 								<SLSelect
@@ -190,7 +190,7 @@ export default function WarAcademyForm({
 								/>
 							</div>
 
-							<div>
+							<div className="space-y-1.5">
 								<SLLabel>Agnes Skill</SLLabel>
 
 								<SLSelect
@@ -201,33 +201,31 @@ export default function WarAcademyForm({
 							</div>
 						</div>
 
-						<div className="border-t border-white/20 pt-3">
-							<p className="text-xs font-bold text-[var(--sl-text)]">
-								Additional Bonus
-							</p>
+						<div className="mt-5 border-t border-[var(--sl-border)] pt-3">
+	<p className="text-xs font-bold text-[var(--sl-text)]">
+		Additional Bonus
+	</p>
 
-							<div className="mt-3 flex items-start justify-between gap-4">
-								<div className="min-w-0 flex-1">
-									<p className="text-sm font-bold text-[var(--sl-text)]">
-										Double Time
-									</p>
+	<div className="mt-3 flex items-center justify-between gap-4">
+		<div className="min-w-0 flex-1">
+			<p className="text-sm font-semibold text-[var(--sl-text)]">
+				Double Time
+			</p>
 
-									<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
-										+20% Research Speed while Double Time is active.
-									</p>
-								</div>
+			<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
+				+20% Research Speed while Double Time is active.
+			</p>
+		</div>
 
-								<div className="shrink-0 pt-0.5">
-									<SLSwitch
-										label="Double Time"
-										checked={values.doubleTime}
-										onCheckedChange={(checked) =>
-											setField("doubleTime", checked)
-										}
-									/>
-								</div>
-							</div>
-						</div>
+		<SLSwitch
+			label=""
+			checked={values.doubleTime}
+			onCheckedChange={(checked) =>
+				setField("doubleTime", checked)
+			}
+		/>
+	</div>
+</div>
 					</div>
 				</SLAccordion>
 

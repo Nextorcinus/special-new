@@ -420,29 +420,9 @@ export default function WarAcademyCalculatorPage({
 	const showSingleResult = result !== null && !showGroupResult && !isAddingItem;
 
 	return (
-		<div className="p-4 space-y-8">
-			<div className="rounded-2xl bg-[var(--sl-surface)] p-4">
-				<div className="mb-4 flex items-center justify-between gap-3">
-					<div>
-						<h1 className="text-lg font-bold text-[var(--sl-text)]">
-							War Academy
-						</h1>
-
-						<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
-							{category}
-						</p>
-					</div>
-
-					{activeHistory && (
-						<button
-							type="button"
-							onClick={handleNewCalculation}
-							className="rounded-lg bg-[var(--sl-input)] px-3 py-2 text-xs font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
-						>
-							New Calculation
-						</button>
-					)}
-				</div>
+	<div className="grid gap-6">
+			<div className="space-y-6">
+				<div  className="p-4">
 
 				<WarAcademyForm
 					key={formKey}
@@ -465,7 +445,7 @@ export default function WarAcademyCalculatorPage({
 			)}
 
 			{showGroupResult && (
-				<div className="space-y-5">
+				<div className="space-y-5 p-4">
 					<h2 className="text-2xl font-bold text-[var(--sl-text)]">Result</h2>
 
 					<CalculationGroupResult
@@ -485,15 +465,16 @@ export default function WarAcademyCalculatorPage({
 				</div>
 			)}
 
-			<HistoryPanel
-				items={warAcademyHistoryItems}
-				module="war-academy"
-				activeId={activeHistory?.id}
-				title="War Academy History"
-				onSelect={handleHistorySelect}
-				onPin={handlePinHistory}
-				onDelete={handleDeleteHistory}
-			/>
+		{activeHistory && (
+					<button
+						type="button"
+						onClick={handleNewCalculation}
+						className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] transition hover:bg-[var(--sl-input-hover)]"
+					>
+						New Calculation
+					</button>
+				)}
 		</div>
+	</div>
 	);
 }

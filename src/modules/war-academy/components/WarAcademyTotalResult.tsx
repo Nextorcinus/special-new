@@ -1,6 +1,12 @@
 "use client";
 
-import { BriefcaseBusiness, Clock3, Gem, Sparkles, Zap } from "lucide-react";
+import {
+	BriefcaseBusiness,
+	Clock3,
+	Gem,
+	Sparkles,
+	Zap,
+} from "lucide-react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
 import {
@@ -77,20 +83,54 @@ function formatReduction(value: unknown): string {
 	return `-${formatNumber(number)}%`;
 }
 
-function parseWarAcademyBuff(value: string): ParsedWarAcademyBuff | null {
-	const normalizedValue = value.trim();
+function normalizeBuffLabel(value: string): string {
+	return value.trim().replace(/\s+/g, " ");
+}
+
+/**
+ * Memisahkan beberapa buff dalam satu string.
+ *
+ * Contoh:
+ * "+1.50% Infantry Health, +3.00% Infantry Health"
+ *
+ * menjadi:
+ * [
+ *   "+1.50% Infantry Health",
+ *   "+3.00% Infantry Health",
+ * ]
+ *
+ * Koma pada angka seperti "+1,500 Rally Capacity"
+ * tidak ikut dipisahkan.
+ */
+function splitWarAcademyBuffs(value: string): string[] {
+	return value
+		.split(/,\s*(?=[+-]\s*\d)/)
+		.map((buff) => normalizeBuffLabel(buff))
+		.filter(Boolean);
+}
+
+function parseWarAcademyBuff(
+	value: string,
+): ParsedWarAcademyBuff | null {
+	const normalizedValue = normalizeBuffLabel(value);
 
 	if (!normalizedValue) {
 		return null;
 	}
 
-	const match = normalizedValue.match(/^([+-]?\s*[\d,.]+)\s*(%)?\s*(.*)$/);
+	const match = normalizedValue.match(
+		/^([+-]?\s*[\d,.]+)\s*(%)?\s*(.*)$/,
+	);
 
 	if (!match) {
 		return null;
 	}
 
-	const numericValue = Number(match[1].replace(/\s/g, "").replace(/,/g, ""));
+	const numericValue = Number(
+		match[1]
+			.replace(/\s/g, "")
+			.replace(/,/g, ""),
+	);
 
 	if (!Number.isFinite(numericValue)) {
 		return null;
@@ -99,27 +139,86 @@ function parseWarAcademyBuff(value: string): ParsedWarAcademyBuff | null {
 	return {
 		value: numericValue,
 		isPercent: Boolean(match[2]),
-		label: match[3]?.trim() ?? "",
+		label: normalizeBuffLabel(match[3] ?? ""),
 	};
 }
 
-function formatWarAcademyBuffValue(value: number, isPercent: boolean): string {
-	const formattedValue = value.toLocaleString("en-US", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	});
+function formatWarAcademyBuffValue(
+	value: number,
+	isPercent: boolean,
+): string {
+	const absoluteValue = Math.abs(value);
 
-	return `+${formattedValue}${isPercent ? "%" : ""}`;
+	const formattedValue = absoluteValue.toLocaleString(
+		"en-US",
+		{
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 2,
+		},
+	);
+
+	const sign = value < 0 ? "-" : "+";
+
+	return `${sign}${formattedValue}${isPercent ? "%" : ""}`;
 }
 
-function aggregateWarAcademyBuffs(items: WarAcademyHistoryEntry[]): string[] {
-	const groupedBuffs = new Map<string, ParsedWarAcademyBuff>();
+/**
+ * Mengambil seluruh buff dari satu calculation.
+ *
+ * selectedLevels diprioritaskan supaya buff dari setiap
+ * level ikut dihitung.
+ *
+ * result.buffs digunakan sebagai fallback untuk history lama.
+ */
+function getItemBuffs(
+	item: WarAcademyHistoryEntry,
+): string[] {
+	const selectedLevels =
+		item.result?.selectedLevels ?? [];
 
-	const unmatchedBuffs = new Set<string>();
+	if (selectedLevels.length > 0) {
+		return selectedLevels.flatMap((level) => {
+			return splitWarAcademyBuffs(
+				level.buff ?? "",
+			);
+		});
+	}
+
+	return (item.result?.buffs ?? []).flatMap(
+		(buff) => splitWarAcademyBuffs(buff),
+	);
+}
+
+/**
+ * Menjumlahkan seluruh buff dari semua calculation.
+ *
+ * Buff hanya digabung jika:
+ * 1. Label sama
+ * 2. Sama-sama persen atau sama-sama flat
+ *
+ * Contoh:
+ * +1.50% Infantry Health
+ * +3.00% Infantry Health
+ * +5.00% Infantry Health
+ *
+ * Hasil:
+ * +9.5% Infantry Health
+ */
+function aggregateWarAcademyBuffs(
+	items: WarAcademyHistoryEntry[],
+): string[] {
+	const groupedBuffs = new Map<
+		string,
+		ParsedWarAcademyBuff
+	>();
+
+	const unmatchedBuffs = new Map<string, string>();
 
 	for (const item of items) {
-		for (const rawBuff of item.result?.buffs ?? []) {
-			const buff = rawBuff.trim();
+		const itemBuffs = getItemBuffs(item);
+
+		for (const rawBuff of itemBuffs) {
+			const buff = normalizeBuffLabel(rawBuff);
 
 			if (!buff) {
 				continue;
@@ -128,57 +227,97 @@ function aggregateWarAcademyBuffs(items: WarAcademyHistoryEntry[]): string[] {
 			const parsed = parseWarAcademyBuff(buff);
 
 			if (!parsed) {
-				unmatchedBuffs.add(buff);
+				const unmatchedKey = buff.toLowerCase();
+
+				if (!unmatchedBuffs.has(unmatchedKey)) {
+					unmatchedBuffs.set(
+						unmatchedKey,
+						buff,
+					);
+				}
+
 				continue;
 			}
 
+			const normalizedLabel = parsed.label
+				.toLowerCase()
+				.replace(/\s+/g, " ")
+				.trim();
+
 			const groupKey = [
-				parsed.isPercent ? "percent" : "flat",
-				parsed.label.toLowerCase(),
+				parsed.isPercent
+					? "percent"
+					: "flat",
+				normalizedLabel,
 			].join(":");
 
-			const existingBuff = groupedBuffs.get(groupKey);
+			const existingBuff =
+				groupedBuffs.get(groupKey);
 
 			if (existingBuff) {
 				existingBuff.value += parsed.value;
-
 				continue;
 			}
 
 			groupedBuffs.set(groupKey, {
 				...parsed,
+				label: normalizeBuffLabel(
+					parsed.label,
+				),
 			});
 		}
 	}
 
-	const calculatedBuffs = Array.from(groupedBuffs.values()).map((buff) => {
-		const formattedValue = formatWarAcademyBuffValue(
-			buff.value,
-			buff.isPercent,
-		);
+	const calculatedBuffs = Array.from(
+		groupedBuffs.values(),
+	).map((buff) => {
+		const formattedValue =
+			formatWarAcademyBuffValue(
+				buff.value,
+				buff.isPercent,
+			);
 
-		return buff.label ? `${formattedValue} ${buff.label}` : formattedValue;
+		return buff.label
+			? `${formattedValue} ${buff.label}`
+			: formattedValue;
 	});
 
-	return [...calculatedBuffs, ...Array.from(unmatchedBuffs)];
+	return [
+		...calculatedBuffs,
+		...Array.from(unmatchedBuffs.values()),
+	];
 }
 
-function getResearchNames(items: WarAcademyHistoryEntry[]): string[] {
+function getResearchNames(
+	items: WarAcademyHistoryEntry[],
+): string[] {
 	return Array.from(
 		new Set(
 			items
-				.map((item) => item.result?.research?.trim())
-				.filter((value): value is string => Boolean(value)),
+				.map((item) =>
+					item.result?.research?.trim(),
+				)
+				.filter(
+					(value): value is string =>
+						Boolean(value),
+				),
 		),
 	);
 }
 
-function getCategories(items: WarAcademyHistoryEntry[]): string[] {
+function getCategories(
+	items: WarAcademyHistoryEntry[],
+): string[] {
 	return Array.from(
 		new Set(
 			items
-				.map((item) => item.result?.category?.trim())
-				.filter((value): value is string => Boolean(value)),
+				.map((item) =>
+					item.result?.category?.trim(),
+				)
+				.filter(
+					(value): value is string =>
+						Boolean(value),
+				),
 		),
 	);
 }
@@ -187,11 +326,17 @@ export default function WarAcademyTotalResult({
 	items,
 	title = "Total Result",
 }: WarAcademyTotalResultProps) {
-	const category = NAVIGATION.find((item) => item.id === "war-academy");
+	const category = NAVIGATION.find(
+		(item) => item.id === "war-academy",
+	);
 
 	const resources = RESOURCE_KEYS.reduce(
 		(total, key) => {
-			total[key] = sumNumber(items, (item) => item.result?.resources?.[key]);
+			total[key] = sumNumber(
+				items,
+				(item) =>
+					item.result?.resources?.[key],
+			);
 
 			return total;
 		},
@@ -200,68 +345,89 @@ export default function WarAcademyTotalResult({
 
 	const totalOriginalTime = sumNumber(
 		items,
-		(item) => item.result?.time?.totalSeconds,
+		(item) =>
+			item.result?.time?.totalSeconds,
 	);
 
 	const totalReducedTime = sumNumber(
 		items,
-		(item) => item.result?.time?.reducedSeconds,
+		(item) =>
+			item.result?.time?.reducedSeconds,
 	);
 
 	const totalFinalTime = sumNumber(
 		items,
-		(item) => item.result?.time?.finalSeconds,
+		(item) =>
+			item.result?.time?.finalSeconds,
 	);
 
 	const totalResearchSpeed = sumNumber(
 		items,
-		(item) => item.result?.bonuses?.researchSpeed,
+		(item) =>
+			item.result?.bonuses?.researchSpeed,
 	);
 
 	const totalVpBonus = sumNumber(
 		items,
-		(item) => item.result?.bonuses?.vpResearchSpeed,
+		(item) =>
+			item.result?.bonuses?.vpResearchSpeed,
 	);
 
 	const totalDoubleTimeSpeed = sumNumber(
 		items,
-		(item) => item.result?.bonuses?.doubleTimeSpeed,
+		(item) =>
+			item.result?.bonuses?.doubleTimeSpeed,
 	);
 
 	const totalAgnesReduction = sumNumber(
 		items,
-		(item) => item.result?.bonuses?.agnesTimeReduction,
+		(item) =>
+			item.result?.bonuses
+				?.agnesTimeReduction,
 	);
 
 	const totalLevels = sumNumber(
 		items,
-		(item) => item.result?.selectedLevels?.length,
+		(item) =>
+			item.result?.selectedLevels?.length,
 	);
 
 	const buffs = aggregateWarAcademyBuffs(items);
-
 	const researchNames = getResearchNames(items);
-
 	const categories = getCategories(items);
 
-	const hasTimeReduction = totalOriginalTime !== totalFinalTime;
+	const hasTimeReduction =
+		totalOriginalTime !== totalFinalTime;
 
-	const { createResourceItem } = useCompareResources(resources);
+	const { createResourceItem } =
+		useCompareResources(resources);
 
 	const baseResourceItems = [
-		...(resources.Meat > 0 ? [createResourceItem("Meat")] : []),
+		...(resources.Meat > 0
+			? [createResourceItem("Meat")]
+			: []),
 
-		...(resources.Wood > 0 ? [createResourceItem("Wood")] : []),
+		...(resources.Wood > 0
+			? [createResourceItem("Wood")]
+			: []),
 
-		...(resources.Coal > 0 ? [createResourceItem("Coal")] : []),
+		...(resources.Coal > 0
+			? [createResourceItem("Coal")]
+			: []),
 
-		...(resources.Iron > 0 ? [createResourceItem("Iron")] : []),
+		...(resources.Iron > 0
+			? [createResourceItem("Iron")]
+			: []),
 
-		...(resources.Steel > 0 ? [createResourceItem("Steel")] : []),
+		...(resources.Steel > 0
+			? [createResourceItem("Steel")]
+			: []),
 	];
 
 	const fireCrystalItems = [
-		...(resources.Shard > 0 ? [createResourceItem("Shard")] : []),
+		...(resources.Shard > 0
+			? [createResourceItem("Shard")]
+			: []),
 	];
 
 	const timeItems = [
@@ -277,7 +443,9 @@ export default function WarAcademyTotalResult({
 			icon: "/icons/reducedTime.png",
 			value: formatDuration(totalReducedTime),
 			valueClassName:
-				totalReducedTime > 0 ? "text-green-400" : "text-[var(--sl-text-muted)]",
+				totalReducedTime > 0
+					? "text-green-400"
+					: "text-[var(--sl-text-muted)]",
 		},
 		{
 			id: "final-time",
@@ -295,7 +463,10 @@ export default function WarAcademyTotalResult({
 			id: "buff",
 			label: "Buff",
 			icon: "/icons/Buff.png",
-			value: buffs.length > 0 ? buffs.join("\n") : "No Buff",
+			value:
+				buffs.length > 0
+					? buffs.join("\n")
+					: "No Buff",
 			valueClassName:
 				buffs.length > 0
 					? "whitespace-pre-line text-white"
@@ -320,7 +491,9 @@ export default function WarAcademyTotalResult({
 			id: "research-speed",
 			label: "Research Speed",
 			icon: "/category/research.png",
-			value: formatBonus(totalResearchSpeed),
+			value: formatBonus(
+				totalResearchSpeed,
+			),
 		},
 		{
 			id: "vice-president",
@@ -332,13 +505,17 @@ export default function WarAcademyTotalResult({
 			id: "double-time",
 			label: "Double Time",
 			icon: "/icons/President-Skill.png",
-			value: formatBonus(totalDoubleTimeSpeed),
+			value: formatBonus(
+				totalDoubleTimeSpeed,
+			),
 		},
 		{
 			id: "agnes-skill",
 			label: "Agnes Skill",
 			icon: "/icons/Agnes-Skill.png",
-			value: formatReduction(totalAgnesReduction),
+			value: formatReduction(
+				totalAgnesReduction,
+			),
 		},
 	];
 
@@ -359,12 +536,19 @@ export default function WarAcademyTotalResult({
 	return (
 		<CalculatorResult
 			title={title}
-			categoryTitle={category?.title ?? "War Academy"}
-			categoryIcon={category?.icon ?? "/category/war-academy.png"}
+			categoryTitle={
+				category?.title ?? "War Academy"
+			}
+			categoryIcon={
+				category?.icon ??
+				"/category/war-academy.png"
+			}
 			name={resultName}
 			subtitle={subtitle}
 			highlightLabel="Total FC Shards Required"
-			highlightValue={formatNumber(resources.Shard)}
+			highlightValue={formatNumber(
+				resources.Shard,
+			)}
 			createdAt={firstItem?.createdAt}
 			sections={[
 				{
@@ -376,7 +560,11 @@ export default function WarAcademyTotalResult({
 				{
 					id: "resources",
 					title: "Base Resources",
-					icon: <BriefcaseBusiness size={18} />,
+					icon: (
+						<BriefcaseBusiness
+							size={18}
+						/>
+					),
 					items: baseResourceItems,
 				},
 				{

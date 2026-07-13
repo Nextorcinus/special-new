@@ -4,7 +4,7 @@ import WarAcademyPage from "@/modules/war-academy/WarAcademyPage";
 export default function Page() {
 	return (
 		<WarAcademyPage
-			title="Infantry"
+			title="Infantry Helios"
 			category="Infantry"
 			data={warAcademyData}
 		/>
