@@ -38,14 +38,24 @@ function getCategoryPath(item: CalculationHistoryItem): string {
 			return route ? `/${route}` : "";
 		}
 
+		case "war-academy": {
+			const validRoutes: Record<string, string> = {
+				infantry: "infantry",
+				lancer: "lancer",
+				marksman: "marksman",
+			};
+
+			const route = validRoutes[category];
+
+			return route ? `/${route}` : "";
+		}
+
 		default:
 			return `/${category}`;
 	}
 }
 
-export function getHistoryRoute(
-	item: CalculationHistoryItem,
-): string {
+export function getHistoryRoute(item: CalculationHistoryItem): string {
 	const categoryPath = getCategoryPath(item);
 
 	const routes: Record<string, string> = {
@@ -61,9 +71,7 @@ export function getHistoryRoute(
 
 	const baseRoute = routes[item.module] ?? "/";
 
-	const historyId = encodeURIComponent(
-		String(item.id),
-	);
+	const historyId = encodeURIComponent(String(item.id));
 
 	return `${baseRoute}?historyId=${historyId}`;
 }
