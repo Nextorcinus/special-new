@@ -1,8 +1,8 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
@@ -21,9 +21,7 @@ type GearCalculatorPageProps = {
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
-export default function GearCalculatorPage({
-	data,
-}: GearCalculatorPageProps) {
+export default function GearCalculatorPage({ data }: GearCalculatorPageProps) {
 	const searchParams = useSearchParams();
 	const historyId = searchParams.get("historyId");
 
@@ -36,9 +34,7 @@ export default function GearCalculatorPage({
 
 	const formRef = useRef<HTMLDivElement>(null);
 
-	const items = useHistoryStore(
-		(state: HistoryStoreState) => state.items,
-	);
+	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
 	const loadHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.loadHistory,
@@ -75,9 +71,7 @@ export default function GearCalculatorPage({
 		}
 
 		const selected = items.find(
-			(item) =>
-				item.id === historyId &&
-				item.module === "gear",
+			(item) => item.id === historyId && item.module === "gear",
 		);
 
 		if (!selected) {
@@ -111,40 +105,25 @@ export default function GearCalculatorPage({
 			? (activeHistory.form as GearFormValues)
 			: null;
 
-	const isUpdateMode =
-		isEditingHistory && !isAddingItem;
+	const isUpdateMode = isEditingHistory && !isAddingItem;
 
-	function buildHistoryPayload(
-		result: GearCalculationResult,
-	) {
+	function buildHistoryPayload(result: GearCalculationResult) {
 		return {
 			module: "gear" as const,
-			title:
-				result.gear ??
-				result.form?.gear ??
-				"Chief Gear",
-			subtitle: `${
-				result.fromLevel ??
-				result.form?.fromLevel
-			} → ${
-				result.toLevel ??
-				result.form?.toLevel
+			title: result.gear ?? result.form?.gear ?? "Chief Gear",
+			subtitle: `${result.fromLevel ?? result.form?.fromLevel} → ${
+				result.toLevel ?? result.form?.toLevel
 			}`,
 			form: result.form,
 			result,
 		};
 	}
 
-	function handleCalculate(
-		result: GearCalculationResult,
-	) {
+	function handleCalculate(result: GearCalculationResult) {
 		const payload = buildHistoryPayload(result);
 
 		if (activeHistory && isAddingItem) {
-			const updated = addCalculationItem(
-				activeHistory.id,
-				payload,
-			);
+			const updated = addCalculationItem(activeHistory.id, payload);
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -157,10 +136,7 @@ export default function GearCalculatorPage({
 		}
 
 		if (activeHistory) {
-			const updated = updateCalculation(
-				activeHistory.id,
-				payload,
-			);
+			const updated = updateCalculation(activeHistory.id, payload);
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -199,21 +175,14 @@ export default function GearCalculatorPage({
 
 	return (
 		<div className="grid gap-6">
-			<div className="space-y-6">
-				<div
-					ref={formRef}
-					className="p-4"
-				>
+			<div className="space-y-6 p-4">
+				<div ref={formRef}>
 					<GearForm
 						key={formKey}
 						data={data}
 						onCalculate={handleCalculate}
 						initialValues={initialValues}
-						mode={
-							isUpdateMode
-								? "update"
-								: "create"
-						}
+						mode={isUpdateMode ? "update" : "create"}
 						lockMainFields={isUpdateMode}
 					/>
 				</div>
@@ -224,27 +193,14 @@ export default function GearCalculatorPage({
 						getKey={(item) => item.id}
 						renderItem={(item, index) => (
 							<GearResult
-								result={
-									item.result as GearCalculationResult
-								}
+								result={item.result as GearCalculationResult}
 								history={activeHistory}
-								title={
-									index === 0
-										? "Result"
-										: undefined
-								}
-								showAddButton={
-									index ===
-									historyItems.length - 1
-								}
+								title={index === 0 ? "Result" : undefined}
+								showAddButton={index === historyItems.length - 1}
 								onAddItem={handleAddItem}
 							/>
 						)}
-						renderTotal={(items) => (
-							<GearTotalResult
-								items={items}
-							/>
-						)}
+						renderTotal={(items) => <GearTotalResult items={items} />}
 					/>
 				)}
 

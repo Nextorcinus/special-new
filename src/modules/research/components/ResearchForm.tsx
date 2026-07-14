@@ -39,7 +39,6 @@ const VP_OPTIONS = [
 		value: "15%",
 		label: "+15%",
 	},
-
 ];
 
 const AGNES_OPTIONS = [
@@ -113,9 +112,7 @@ export default function ResearchForm({
 		loadValues(initialValues);
 	}, [initialValues, loadValues]);
 
-	function handleSubmit(
-		event: React.FormEvent<HTMLFormElement>,
-	) {
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		if (!isSelectionComplete) {
@@ -147,7 +144,7 @@ export default function ResearchForm({
 				</div>
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div className="sm:col-span-2">
+					<div className="sm:col-span-2 space-y-2">
 						<SLLabel>Research</SLLabel>
 
 						<SLSelect
@@ -159,7 +156,7 @@ export default function ResearchForm({
 						/>
 					</div>
 
-					<div className="sm:col-span-2">
+					<div className="sm:col-span-2 space-y-2">
 						<SLLabel>Tier</SLLabel>
 
 						<SLSelect
@@ -167,14 +164,11 @@ export default function ResearchForm({
 							onChange={setTier}
 							placeholder="Select tier"
 							options={tierOptions}
-							disabled={
-								lockMainFields ||
-								!values.research
-							}
+							disabled={lockMainFields || !values.research}
 						/>
 					</div>
 
-					<div>
+					<div className="space-y-2">
 						<SLLabel>From</SLLabel>
 
 						<SLSelect
@@ -182,15 +176,11 @@ export default function ResearchForm({
 							onChange={setFromLevel}
 							placeholder="Select level"
 							options={fromLevelOptions}
-							disabled={
-								lockMainFields ||
-								!values.research ||
-								!values.tier
-							}
+							disabled={lockMainFields || !values.research || !values.tier}
 						/>
 					</div>
 
-					<div>
+					<div className="space-y-2">
 						<SLLabel>To</SLLabel>
 
 						<SLSelect
@@ -210,28 +200,20 @@ export default function ResearchForm({
 
 				<SLAccordion title="Configuration">
 					<div className="space-y-4">
-						<div>
-							<SLLabel>
-								Research Speed (%)
-							</SLLabel>
+						<div className="space-y-2">
+							<SLLabel>Research Speed (%)</SLLabel>
 
 							<SLInput
 								value={values.researchSpeed}
-								onChange={(event) =>
-									setResearchSpeed(
-										event.target.value,
-									)
-								}
+								onChange={(event) => setResearchSpeed(event.target.value)}
 								inputMode="decimal"
 								placeholder="e.g. 68 for 68%"
 							/>
 						</div>
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-							<div>
-								<SLLabel>
-									Vice President
-								</SLLabel>
+							<div className="space-y-2">
+								<SLLabel>Vice President</SLLabel>
 
 								<SLSelect
 									value={values.vpLevel}
@@ -240,10 +222,8 @@ export default function ResearchForm({
 								/>
 							</div>
 
-							<div>
-								<SLLabel>
-									Agnes Skill
-								</SLLabel>
+							<div className="space-y-2">
+								<SLLabel>Agnes Skill</SLLabel>
 
 								<SLSelect
 									value={values.agnesLevel}
@@ -254,31 +234,26 @@ export default function ResearchForm({
 						</div>
 
 						<div className="border-t border-white/20 pt-3">
-							<p className="text-xs font-bold text-[var(--sl-text)]">
+							<p className="text-xs font-medium text-[var(--sl-text)]">
 								Additional Bonus
 							</p>
 
 							<div className="mt-3 flex items-start justify-between gap-4">
 								<div className="min-w-0 flex-1">
-									<p className="text-sm font-bold text-[var(--sl-text)]">
+									<p className="text-sm font-medium text-[var(--sl-text)]">
 										President Skill
 									</p>
 
 									<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
-										+10% Research Speed.
-										President activated skill
+										+10% Research Speed. President activated skill
 									</p>
 								</div>
 
 								<div className="shrink-0 pt-0.5">
 									<SLSwitch
 										label="President Skill"
-										checked={
-											values.presidentSkill
-										}
-										onCheckedChange={
-											setPresidentSkill
-										}
+										checked={values.presidentSkill}
+										onCheckedChange={setPresidentSkill}
 									/>
 								</div>
 							</div>
@@ -292,9 +267,7 @@ export default function ResearchForm({
 						disabled={!isSelectionComplete}
 						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)] disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						{mode === "update"
-							? "Update"
-							: "Submit"}
+						{mode === "update" ? "Update" : "Submit"}
 					</button>
 
 					<SLButton

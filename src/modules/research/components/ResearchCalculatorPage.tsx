@@ -1,8 +1,8 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
 import type {
@@ -36,9 +36,7 @@ type ResearchHistoryEntry = CalculationHistoryEntry<
 	ResearchCalculationResult
 >;
 
-type HistoryStoreState = ReturnType<
-	typeof useHistoryStore.getState
->;
+type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
 export default function ResearchCalculatorPage({
 	category,
@@ -52,14 +50,11 @@ export default function ResearchCalculatorPage({
 
 	const [formKey, setFormKey] = useState("new");
 	const [isAddingItem, setIsAddingItem] = useState(false);
-	const [isEditingHistory, setIsEditingHistory] =
-		useState(false);
+	const [isEditingHistory, setIsEditingHistory] = useState(false);
 
 	const formRef = useRef<HTMLDivElement>(null);
 
-	const items = useHistoryStore(
-		(state: HistoryStoreState) => state.items,
-	);
+	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
 	const loadHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.loadHistory,
@@ -95,9 +90,7 @@ export default function ResearchCalculatorPage({
 			return;
 		}
 
-		const selected = items.find(
-			(item) => String(item.id) === historyId,
-		);
+		const selected = items.find((item) => String(item.id) === historyId);
 
 		if (
 			!selected ||
@@ -107,8 +100,7 @@ export default function ResearchCalculatorPage({
 			return;
 		}
 
-		const researchHistory =
-			selected as ResearchHistoryItem;
+		const researchHistory = selected as ResearchHistoryItem;
 
 		setActiveHistory(researchHistory);
 		setIsEditingHistory(true);
@@ -117,8 +109,7 @@ export default function ResearchCalculatorPage({
 	}, [category, historyId, items]);
 
 	const historyItems: ResearchHistoryEntry[] =
-		activeHistory?.items &&
-		activeHistory.items.length > 0
+		activeHistory?.items && activeHistory.items.length > 0
 			? (activeHistory.items as ResearchHistoryEntry[])
 			: activeHistory
 				? [
@@ -143,8 +134,7 @@ export default function ResearchCalculatorPage({
 					category,
 				};
 
-	const isUpdateMode =
-		isEditingHistory && !isAddingItem;
+	const isUpdateMode = isEditingHistory && !isAddingItem;
 
 	function buildHistoryPayload(
 		form: ResearchFormValues,
@@ -160,9 +150,7 @@ export default function ResearchCalculatorPage({
 		};
 	}
 
-	function handleCalculate(
-		values: ResearchFormValues,
-	) {
+	function handleCalculate(values: ResearchFormValues) {
 		const formValues: ResearchFormValues = {
 			...values,
 			category,
@@ -173,16 +161,12 @@ export default function ResearchCalculatorPage({
 			values: formValues,
 		});
 
-		const payload = buildHistoryPayload(
-			formValues,
-			result,
-		);
+		const payload = buildHistoryPayload(formValues, result);
 
 		if (activeHistory && isAddingItem) {
-			const updated = addCalculationItem(
-				activeHistory.id,
-				payload,
-			) as ResearchHistoryItem | undefined;
+			const updated = addCalculationItem(activeHistory.id, payload) as
+				| ResearchHistoryItem
+				| undefined;
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -195,10 +179,9 @@ export default function ResearchCalculatorPage({
 		}
 
 		if (activeHistory) {
-			const updated = updateCalculation(
-				activeHistory.id,
-				payload,
-			) as ResearchHistoryItem | undefined;
+			const updated = updateCalculation(activeHistory.id, payload) as
+				| ResearchHistoryItem
+				| undefined;
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -210,9 +193,7 @@ export default function ResearchCalculatorPage({
 			return;
 		}
 
-		const saved = saveCalculation(
-			payload,
-		) as ResearchHistoryItem;
+		const saved = saveCalculation(payload) as ResearchHistoryItem;
 
 		setActiveHistory(saved);
 		setIsEditingHistory(false);
@@ -241,20 +222,17 @@ export default function ResearchCalculatorPage({
 
 	return (
 		<div className="grid gap-6">
-			<div className="space-y-6">
-				<div
-					ref={formRef}
-					className="p-4"
-				>
-				<ResearchForm
-					key={formKey}
-					category={category}
-					data={data}
-					onSubmit={handleCalculate}
-					initialValues={initialValues}
-					mode={isUpdateMode ? "update" : "create"}
-					lockMainFields={isUpdateMode}
-				/>
+			<div className="space-y-6 p-4">
+				<div ref={formRef}>
+					<ResearchForm
+						key={formKey}
+						category={category}
+						data={data}
+						onSubmit={handleCalculate}
+						initialValues={initialValues}
+						mode={isUpdateMode ? "update" : "create"}
+						lockMainFields={isUpdateMode}
+					/>
 				</div>
 
 				{activeHistory && (
@@ -265,34 +243,29 @@ export default function ResearchCalculatorPage({
 							<ResearchResult
 								result={item.result}
 								history={activeHistory}
-								title={
-									index === 0
-										? "Result"
-										: undefined
-								}
-								showAddButton={
-									index ===
-									historyItems.length - 1
-								}
+								title={index === 0 ? "Result" : undefined}
+								showAddButton={index === historyItems.length - 1}
 								onAddItem={handleAddItem}
 							/>
 						)}
 						renderTotal={(groupItems) => (
-							<ResearchTotalResult
-								items={groupItems}
-							/>
+							<ResearchTotalResult items={groupItems} />
 						)}
 					/>
 				)}
 
 				{activeHistory && (
-					<button
-						type="button"
-						onClick={handleNewCalculation}
-						className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] transition hover:bg-[var(--sl-input-hover)]"
-					>
-						New Calculation
-					</button>
+					<div className="px-4 py-2">
+						<button
+							type="button"
+							onClick={handleNewCalculation}
+							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
+						>
+							<span>New Calculation</span>
+
+							<ArrowRight className="size-4" />
+						</button>
+					</div>
 				)}
 			</div>
 		</div>

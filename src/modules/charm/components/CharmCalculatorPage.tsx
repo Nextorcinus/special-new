@@ -1,31 +1,25 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
-import type {
-	CalculationHistoryItem,
-} from "@/features/inventory/store/history/types";
-
-import CharmForm from "./CharmForm";
-import CharmResult from "./CharmResult";
-import CharmTotalResult from "./CharmTotalResult";
-
+import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import type {
 	CharmCalculationResult,
 	CharmDataItem,
 	CharmFormValues,
 } from "../type";
+import CharmForm from "./CharmForm";
+import CharmResult from "./CharmResult";
+import CharmTotalResult from "./CharmTotalResult";
 
 type CharmCalculatorPageProps = {
 	data: CharmDataItem[];
 };
 
-type HistoryStoreState = ReturnType<
-	typeof useHistoryStore.getState
->;
+type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
 export default function CharmCalculatorPage({
 	data,
@@ -37,35 +31,27 @@ export default function CharmCalculatorPage({
 		useState<CalculationHistoryItem | null>(null);
 
 	const [formKey, setFormKey] = useState("new");
-	const [isAddingItem, setIsAddingItem] =
-		useState(false);
-	const [isEditingHistory, setIsEditingHistory] =
-		useState(false);
+	const [isAddingItem, setIsAddingItem] = useState(false);
+	const [isEditingHistory, setIsEditingHistory] = useState(false);
 
 	const formRef = useRef<HTMLDivElement>(null);
 
-	const items = useHistoryStore(
-		(state: HistoryStoreState) => state.items,
-	);
+	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
 	const loadHistory = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.loadHistory,
+		(state: HistoryStoreState) => state.loadHistory,
 	);
 
 	const saveCalculation = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.saveCalculation,
+		(state: HistoryStoreState) => state.saveCalculation,
 	);
 
 	const updateCalculation = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.updateCalculation,
+		(state: HistoryStoreState) => state.updateCalculation,
 	);
 
 	const addCalculationItem = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.addCalculationItem,
+		(state: HistoryStoreState) => state.addCalculationItem,
 	);
 
 	function scrollToForm() {
@@ -87,9 +73,7 @@ export default function CharmCalculatorPage({
 		}
 
 		const selected = items.find(
-			(item) =>
-				item.id === historyId &&
-				item.module === "charm",
+			(item) => item.id === historyId && item.module === "charm",
 		);
 
 		if (!selected) {
@@ -103,21 +87,17 @@ export default function CharmCalculatorPage({
 	}, [historyId, items]);
 
 	const historyItems =
-		activeHistory?.items &&
-		activeHistory.items.length > 0
+		activeHistory?.items && activeHistory.items.length > 0
 			? activeHistory.items
 			: activeHistory
 				? [
 						{
 							id: activeHistory.id,
 							title: activeHistory.title,
-							subtitle:
-								activeHistory.subtitle,
+							subtitle: activeHistory.subtitle,
 							form: activeHistory.form,
-							result:
-								activeHistory.result,
-							createdAt:
-								activeHistory.createdAt,
+							result: activeHistory.result,
+							createdAt: activeHistory.createdAt,
 						},
 					]
 				: [];
@@ -127,33 +107,23 @@ export default function CharmCalculatorPage({
 			? (activeHistory.form as CharmFormValues)
 			: null;
 
-	const isUpdateMode =
-		isEditingHistory && !isAddingItem;
+	const isUpdateMode = isEditingHistory && !isAddingItem;
 
-function buildHistoryPayload(
-	result: CharmCalculationResult,
-) {
-	return {
-		module: "charm" as const,
-		title: `${result.type} Charm`,
-		subtitle: `Lv.${result.fromLevel} → Lv.${result.toLevel}`,
-		form: result.form,
-		result,
-	};
-}
+	function buildHistoryPayload(result: CharmCalculationResult) {
+		return {
+			module: "charm" as const,
+			title: `${result.type} Charm`,
+			subtitle: `Lv.${result.fromLevel} → Lv.${result.toLevel}`,
+			form: result.form,
+			result,
+		};
+	}
 
-	function handleCalculate(
-		result: CharmCalculationResult,
-	) {
-		const payload =
-			buildHistoryPayload(result);
+	function handleCalculate(result: CharmCalculationResult) {
+		const payload = buildHistoryPayload(result);
 
 		if (activeHistory && isAddingItem) {
-			const updated =
-				addCalculationItem(
-					activeHistory.id,
-					payload,
-				);
+			const updated = addCalculationItem(activeHistory.id, payload);
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -166,11 +136,7 @@ function buildHistoryPayload(
 		}
 
 		if (activeHistory) {
-			const updated =
-				updateCalculation(
-					activeHistory.id,
-					payload,
-				);
+			const updated = updateCalculation(activeHistory.id, payload);
 
 			if (updated) {
 				setActiveHistory(updated);
@@ -180,8 +146,7 @@ function buildHistoryPayload(
 			return;
 		}
 
-		const saved =
-			saveCalculation(payload);
+		const saved = saveCalculation(payload);
 
 		setActiveHistory(saved);
 		setIsEditingHistory(false);
@@ -196,9 +161,7 @@ function buildHistoryPayload(
 
 		setIsAddingItem(true);
 		setIsEditingHistory(false);
-		setFormKey(
-			`add-item-${Date.now()}`,
-		);
+		setFormKey(`add-item-${Date.now()}`);
 
 		scrollToForm();
 	}
@@ -207,87 +170,43 @@ function buildHistoryPayload(
 		setActiveHistory(null);
 		setIsEditingHistory(false);
 		setIsAddingItem(false);
-		setFormKey(
-			`new-${Date.now()}`,
-		);
+		setFormKey(`new-${Date.now()}`);
 
 		scrollToForm();
 	}
 
 	return (
 		<div className="grid gap-6">
-			<div className="space-y-6">
-				<div
-					ref={formRef}
-					className="p-4"
-				>
+			<div className="space-y-6 p-4">
+				<div ref={formRef}>
 					<CharmForm
 						key={formKey}
 						data={data}
-						onCalculate={
-							handleCalculate
-						}
-						initialValues={
-							initialValues
-						}
-						mode={
-							isUpdateMode
-								? "update"
-								: "create"
-						}
-						lockMainFields={
-							isUpdateMode
-						}
+						onCalculate={handleCalculate}
+						initialValues={initialValues}
+						mode={isUpdateMode ? "update" : "create"}
+						lockMainFields={isUpdateMode}
 					/>
 				</div>
 
 				{activeHistory && (
 					<CalculationGroupResult
-						items={
-							historyItems
-						}
-						getKey={(item) =>
-							item.id
-						}
-						renderItem={(
-							item,
-							index,
-						) => (
+						items={historyItems}
+						getKey={(item) => item.id}
+						renderItem={(item, index) => (
 							<CharmResult
-								result={
-									item.result as CharmCalculationResult
-								}
-								history={
-									activeHistory
-								}
-								title={
-									index === 0
-										? "Result"
-										: undefined
-								}
-								showAddButton={
-									index ===
-									historyItems.length -
-										1
-								}
-								onAddItem={
-									handleAddItem
-								}
+								result={item.result as CharmCalculationResult}
+								history={activeHistory}
+								title={index === 0 ? "Result" : undefined}
+								showAddButton={index === historyItems.length - 1}
+								onAddItem={handleAddItem}
 							/>
 						)}
-						renderTotal={(
-							items,
-						) => (
-							<CharmTotalResult
-								items={
-									items
-								}
-							/>
-						)}
+						renderTotal={(items) => <CharmTotalResult items={items} />}
 					/>
 				)}
 
-			{activeHistory && (
+				{activeHistory && (
 					<div className="px-4 py-2">
 						<button
 							type="button"
@@ -300,7 +219,7 @@ function buildHistoryPayload(
 						</button>
 					</div>
 				)}
-	</div>
+			</div>
 		</div>
 	);
 }

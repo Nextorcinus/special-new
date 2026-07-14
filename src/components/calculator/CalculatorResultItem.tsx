@@ -20,7 +20,7 @@ export default function CalculatorResourceItem({ item }: Props) {
 	return (
 		<div
 			className={cn(
-				"grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2",
+				"grid grid-cols-[auto_1fr_auto_auto] items-top gap-x-2",
 				item.className,
 			)}
 		>

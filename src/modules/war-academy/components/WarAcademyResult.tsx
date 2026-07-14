@@ -39,6 +39,12 @@ type WarAcademyResultProps = {
 	onAddItem?: () => void;
 };
 
+type ParsedWarAcademyBuff = {
+	value: number;
+	label: string;
+	isPercent: boolean;
+};
+
 function formatBonus(value: unknown): string {
 	const number = Number(value ?? 0);
 
@@ -59,20 +65,6 @@ function formatReduction(value: unknown): string {
 	return `-${formatNumber(number)}%`;
 }
 
-function formatBuffs(values: string[]): string {
-	if (!values.length) {
-		return "No Buff";
-	}
-
-	return values
-		.flatMap((value) =>
-			value.split(/,\s*(?=[+-]\s*\d)/),
-		)
-		.map((value) => value.trim())
-		.filter(Boolean)
-		.join("\n");
-}
-
 function formatShard(value: unknown): string {
 	const number = Number(value ?? 0);
 
@@ -81,6 +73,135 @@ function formatShard(value: unknown): string {
 	}
 
 	return formatNumber(number);
+}
+
+function normalizeBuffText(value: string): string {
+	return value.trim().replace(/\s+/g, " ");
+}
+
+function splitWarAcademyBuffs(value: string): string[] {
+	return value
+		.split(/,\s*(?=[+-]\s*\d)/)
+		.map((buff) => normalizeBuffText(buff))
+		.filter(Boolean);
+}
+
+function parseWarAcademyBuff(value: string): ParsedWarAcademyBuff | null {
+	const normalizedValue = normalizeBuffText(value);
+
+	if (!normalizedValue) {
+		return null;
+	}
+
+	const match = normalizedValue.match(/^([+-]?\s*[\d,.]+)\s*(%)?\s*(.*)$/);
+
+	if (!match) {
+		return null;
+	}
+
+	const numericValue = Number(match[1].replace(/\s/g, "").replace(/,/g, ""));
+
+	if (!Number.isFinite(numericValue)) {
+		return null;
+	}
+
+	return {
+		value: numericValue,
+		isPercent: Boolean(match[2]),
+		label: normalizeBuffText(match[3] ?? ""),
+	};
+}
+
+function formatWarAcademyBuffValue(value: number, isPercent: boolean): string {
+	const formattedValue = Math.abs(value).toLocaleString("en-US", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
+	});
+
+	const sign = value < 0 ? "-" : "+";
+
+	return `${sign}${formattedValue}${isPercent ? "%" : ""}`;
+}
+
+function getResultBuffs(result: WarAcademyCalculationResult): string[] {
+	const selectedLevels = result.selectedLevels ?? [];
+
+	if (selectedLevels.length > 0) {
+		return selectedLevels.flatMap((level) =>
+			splitWarAcademyBuffs(level.buff ?? ""),
+		);
+	}
+
+	return (result.buffs ?? []).flatMap((buff) => splitWarAcademyBuffs(buff));
+}
+
+function aggregateResultBuffs(result: WarAcademyCalculationResult): string[] {
+	const groupedBuffs = new Map<string, ParsedWarAcademyBuff>();
+
+	const unmatchedBuffs = new Map<string, string>();
+
+	for (const rawBuff of getResultBuffs(result)) {
+		const buff = normalizeBuffText(rawBuff);
+
+		if (!buff) {
+			continue;
+		}
+
+		const parsed = parseWarAcademyBuff(buff);
+
+		if (!parsed) {
+			const unmatchedKey = buff.toLowerCase();
+
+			if (!unmatchedBuffs.has(unmatchedKey)) {
+				unmatchedBuffs.set(unmatchedKey, buff);
+			}
+
+			continue;
+		}
+
+		const normalizedLabel = parsed.label
+			.toLowerCase()
+			.replace(/\s+/g, " ")
+			.trim();
+
+		const groupKey = [
+			parsed.isPercent ? "percent" : "flat",
+			normalizedLabel,
+		].join(":");
+
+		const existingBuff = groupedBuffs.get(groupKey);
+
+		if (existingBuff) {
+			existingBuff.value += parsed.value;
+			continue;
+		}
+
+		groupedBuffs.set(groupKey, {
+			...parsed,
+			label: normalizeBuffText(parsed.label),
+		});
+	}
+
+	const calculatedBuffs = Array.from(groupedBuffs.values()).map((buff) => {
+		const formattedValue = formatWarAcademyBuffValue(
+			buff.value,
+			buff.isPercent,
+		);
+
+		return buff.label ? `${formattedValue} ${buff.label}` : formattedValue;
+	});
+
+	return [...calculatedBuffs, ...Array.from(unmatchedBuffs.values())];
+}
+
+function formatBuffs(result: WarAcademyCalculationResult): string {
+	const buffs = aggregateResultBuffs(result);
+
+	if (buffs.length === 0) {
+		return "No Buff";
+	}
+
+	return buffs.join("\n");
 }
 
 export default function WarAcademyResult({
@@ -108,6 +229,8 @@ export default function WarAcademyResult({
 		result.time.totalSeconds !== result.time.finalSeconds;
 
 	const shardRequired = Number(result.resources?.Shard ?? 0);
+
+	const aggregatedBuffs = aggregateResultBuffs(result);
 
 	return (
 		<>
@@ -150,11 +273,10 @@ export default function WarAcademyResult({
 								label: "Reduced",
 								icon: "/icons/reducedTime.png",
 								value: result.time.final,
-								valueClassName:hasTimeReduction
+								valueClassName: hasTimeReduction
 									? "text-green-400"
 									: "text-[var(--sl-text-muted)]",
 							},
-						
 						],
 					},
 					{
@@ -181,20 +303,14 @@ export default function WarAcademyResult({
 						icon: <Zap size={18} />,
 						items: [
 							{
-	id: "buff",
-	label: "Buff",
-	icon: "/icons/Buff.png",
-	value: formatBuffs(result.buffs),
-	valueClassName:
-		result.buffs.length > 0
-			? "whitespace-pre-line text-white"
-			: "text-[var(--sl-text-muted)]",
-},
-							{
-								id: "selected-levels",
-								label: "Levels Researched",
-								icon: "/category/war-academy.png",
-								value: formatNumber(result.selectedLevels?.length ?? 0),
+								id: "buff",
+								label: "Buff",
+								icon: "/icons/Buff.png",
+								value: formatBuffs(result),
+								valueClassName:
+									aggregatedBuffs.length > 0
+										? "text-white"
+										: "text-[var(--sl-text-muted)]",
 							},
 						],
 					},

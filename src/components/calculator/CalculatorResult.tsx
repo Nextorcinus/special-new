@@ -20,7 +20,7 @@ export default function CalculatorResult({
 	return (
 		<section className="space-y-5">
 			{title && (
-				<h2 className="px-1 text-[26px] font-medium text-[var(--text)]">
+				<h2 className="px-1 text-[20px] font-medium text-[var(--text)]">
 					{title}
 				</h2>
 			)}

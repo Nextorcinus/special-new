@@ -1,0 +1,178 @@
+[
+  {
+    "heroes": "GEN 1 molly",
+    "exploration": "boosting damage dealt by",
+    "expedition": "Defender Troops' Lethality is increased by"
+  },
+  {
+    "heroes": "GEN 1 zinman",
+    "exploration": "increasing his Attack by",
+    "expedition": "increasing Defender Troops' Attack is increased by"
+  },
+  {
+    "heroes": "GEN 1 natalia",
+    "exploration": "increasing damage dealt by",
+    "expedition": "increasing Rally Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 1 Jeronimo",
+    "exploration": "reducing his damage received by",
+    "expedition": "increasing Rally Troops' Attack by"
+  },
+  {
+    "heroes": "GEN 2 Alonso",
+    "exploration": "healing your weakest hero by",
+    "expedition": "increasing Rally Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 2 Flint",
+    "exploration": "boosting Attack by",
+    "expedition": "increasing Defender Troops' Attack by"
+  },
+  {
+    "heroes": "GEN 2 Philly",
+    "exploration": "increasing their healing effects by",
+    "expedition": "increasing Defender Troops' Health by"
+  },
+  {
+    "heroes": "GEN 3 greg",
+    "exploration": "dealing Attack by",
+    "expedition": "increasing Rally Troops' Health by"
+  },
+  {
+    "heroes": "GEN 3 logan",
+    "exploration": "make them more powerful and deal damage by",
+    "expedition": "increasing Defender Troops' Defense by"
+  },
+  {
+    "heroes": "GEN 3 mia",
+    "exploration": "increasing the upper limit and lower limit of all \"fluctuating\" skills of Mia by",
+    "expedition": "increasing Rally Troops' Attack by"
+  },
+  {
+    "heroes": "GEN 4 Ahmose",
+    "exploration": "increasing Attack by",
+    "expedition": "increasing Defender Troops' Health by"
+  },
+  {
+    "heroes": "GEN 4 lynn",
+    "exploration": "lynn increases Attack by",
+    "expedition": "increasing Defender Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 4 Reina",
+    "exploration": "dealing Attack damage with normal attack by",
+    "expedition": "increases Rally Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 5 Gwen",
+    "exploration": "dealing Attack damage by",
+    "expedition": "boosting Rally Troops Lethality by"
+  },
+  {
+    "heroes": "GEN 5 Hector",
+    "exploration": "Hector\u2019s health damage dealt",
+    "expedition": "increasing Defender Troops Attack by"
+  },
+  {
+    "heroes": "GEN 5 Norah",
+    "exploration": "chance of stunning the target granting",
+    "expedition": "boosting Defender Troops Defense by"
+  },
+  {
+    "heroes": "GEN 6 Renee",
+    "exploration": "granting attacks a",
+    "expedition": "increasing Rally Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 6 Wayne",
+    "exploration": "dealing Attack random enemy damage",
+    "expedition": "increases Defender Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 6 Wu ming",
+    "exploration": "increasing damage dealt by",
+    "expedition": "increasing Defender Troops' Defense by"
+  },
+  {
+    "heroes": "GEN 7 Gordon",
+    "exploration": "Damage Dealt by",
+    "expedition": "increasing Rally Squads' Lethality by"
+  },
+  {
+    "heroes": "GEN 7 Bradley",
+    "exploration": "increases Attack Speeds by",
+    "expedition": "increasing Defender Troops' Attack by"
+  },
+  {
+    "heroes": "GEN 7 Edith",
+    "exploration": "restores an amount of Health",
+    "expedition": "increasing Defender Troops' Health by"
+  },
+  {
+    "heroes": "GEN 8 Gatot",
+    "exploration": "Reflecting 30% enemy attack and protection 95%",
+    "expedition": "increasing Defender Troops' Defense by"
+  },
+  {
+    "heroes": "GEN 8 Sonya",
+    "exploration": "increases Attack by",
+    "expedition": "increasing Defender Troops' Lethality by"
+  },
+  {
+    "heroes": "GEN 8 Hendrik",
+    "exploration": "Initial Health ",
+    "expedition": "increasing Rally Troops' Attack by"
+  },
+  {
+    "heroes": "GEN 9 Magnus",
+    "exploration": "Reducing Damage by",
+    "expedition": "Defender increasing Health by"
+  },
+  {
+    "heroes": "GEN 8 Fred",
+    "exploration": "increases Attack by",
+    "expedition": "increasing Rally Troops Attack by"
+  },
+  {
+    "heroes": "GEN 9 Xura",
+    "exploration": "increases their damage by",
+    "expedition": "increasing Their Rally Attack by"
+  },
+  {
+    "heroes": "GEN 10 Gregory",
+    "exploration": "Increase His defense",
+    "expedition": "Defender increasing Troops Lethality by",
+    "status": "*new"
+  },
+  {
+    "heroes": "GEN 10 Freya",
+    "exploration": "Increase her damage",
+    "expedition": "increases Defender Troops Defense by",
+    "status": "*new"
+  },
+  {
+    "heroes": "GEN 10 Blanchette",
+    "exploration": "increases her attack speed by",
+    "expedition": "increases Rally Troops' Lethality by",
+    "status": "*new"
+  },
+  {
+    "heroes": "GEN 11 Eleonora",
+    "exploration": "Increasing Attack and defense",
+    "expedition": "Defender increasing Troops Health by",
+    "status": "*next update"
+  },
+  {
+    "heroes": "GEN 11 Lloyd",
+    "exploration": "Extra damage by",
+    "expedition": "increasing Defender Troops Attack by",
+    "status": "*next update"
+  },
+  {
+    "heroes": "GEN 11 Rufus",
+    "exploration": "dealing Attack by",
+    "expedition": "increasing Rally Troops Attack by",
+    "status": "*next update"
+  }
+]
