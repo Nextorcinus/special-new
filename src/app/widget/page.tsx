@@ -1,6 +1,6 @@
 import widgetData from "@/modules/widgets/data/widget.json";
-import WidgetCalculatorPage from "@/modules/widgets/WidgetCalculatorPage";
+import WidgetPage from "@/modules/widgets/WidgetPage";
 
 export default function WidgetsPage() {
-	return <WidgetCalculatorPage data={widgetData} />;
+	return <WidgetPage title="Hero Widget" data={widgetData} />;
 }

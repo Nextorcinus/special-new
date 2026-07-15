@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { WidgetDatabaseItem, WidgetFormValues } from "../type";
 
@@ -20,22 +20,41 @@ const LEVEL_OPTIONS = Array.from({ length: 11 }, (_, index) => ({
 	label: `Lv. ${index}`,
 }));
 
+function createFormValues(
+	initialValues?: Partial<WidgetFormValues>,
+): WidgetFormValues {
+	return {
+		...DEFAULT_VALUES,
+		...initialValues,
+	};
+}
+
 export default function useWidgetForm({
 	data,
 	initialValues,
 }: UseWidgetFormParams) {
-	const [values, setValues] = useState<WidgetFormValues>({
-		...DEFAULT_VALUES,
-		...initialValues,
-	});
-
-	const [errors, setErrors] = useState<
-		Partial<Record<keyof WidgetFormValues, string>>
-	>({});
+	const [values, setValues] = useState<WidgetFormValues>(() =>
+		createFormValues(initialValues),
+	);
 
 	const selectedHero = useMemo(() => {
 		return data.find((hero) => hero.id === values.heroId);
 	}, [data, values.heroId]);
+
+	const heroOptions = useMemo(() => {
+		return [...data]
+			.sort((a, b) => {
+				if (a.generation !== b.generation) {
+					return b.generation - a.generation;
+				}
+
+				return a.name.localeCompare(b.name);
+			})
+			.map((hero) => ({
+				value: hero.id,
+				label: `GEN ${hero.generation} · ${hero.name}`,
+			}));
+	}, [data]);
 
 	const fromLevelOptions = useMemo(() => {
 		return LEVEL_OPTIONS.filter((option) => Number(option.value) < 10);
@@ -51,108 +70,81 @@ export default function useWidgetForm({
 		return LEVEL_OPTIONS.filter((option) => Number(option.value) > fromLevel);
 	}, [values.fromLevel]);
 
-	const setField = useCallback(
-		<K extends keyof WidgetFormValues>(
-			field: K,
-			value: WidgetFormValues[K],
-		) => {
-			setValues((current) => ({
-				...current,
-				[field]: value,
-			}));
-
-			setErrors((current) => ({
-				...current,
-				[field]: undefined,
-			}));
-		},
-		[],
-	);
-
-	const selectHero = useCallback((heroId: string) => {
+	const setHero = useCallback((heroId: string) => {
 		setValues((current) => ({
 			...current,
 			heroId,
-		}));
-
-		setErrors((current) => ({
-			...current,
-			heroId: undefined,
+			fromLevel: "",
+			toLevel: "",
 		}));
 	}, []);
 
-	const selectFromLevel = useCallback((fromLevel: string) => {
+	const setFromLevel = useCallback((fromLevel: string) => {
 		setValues((current) => ({
 			...current,
 			fromLevel,
 			toLevel: "",
 		}));
+	}, []);
 
-		setErrors((current) => ({
+	const setToLevel = useCallback((toLevel: string) => {
+		setValues((current) => ({
 			...current,
-			fromLevel: undefined,
-			toLevel: undefined,
+			toLevel,
 		}));
 	}, []);
 
-	const validate = useCallback(() => {
-		const nextErrors: Partial<Record<keyof WidgetFormValues, string>> = {};
+	const loadValues = useCallback((nextValues?: Partial<WidgetFormValues>) => {
+		setValues(createFormValues(nextValues));
+	}, []);
 
+	const resetForm = useCallback(() => {
+		setValues({
+			...DEFAULT_VALUES,
+		});
+	}, []);
+
+	const isSelectionComplete = useMemo(() => {
 		if (!values.heroId) {
-			nextErrors.heroId = "Please select a hero.";
+			return false;
 		}
 
 		if (values.fromLevel === "") {
-			nextErrors.fromLevel = "Please select the starting level.";
+			return false;
 		}
 
 		if (values.toLevel === "") {
-			nextErrors.toLevel = "Please select the target level.";
+			return false;
 		}
 
-		if (
-			values.fromLevel !== "" &&
-			values.toLevel !== "" &&
-			Number(values.toLevel) <= Number(values.fromLevel)
-		) {
-			nextErrors.toLevel = "Target level must be higher than starting level.";
-		}
+		const fromLevel = Number(values.fromLevel);
 
-		setErrors(nextErrors);
+		const toLevel = Number(values.toLevel);
 
-		return Object.keys(nextErrors).length === 0;
+		return (
+			Number.isFinite(fromLevel) &&
+			Number.isFinite(toLevel) &&
+			fromLevel >= 0 &&
+			toLevel <= 10 &&
+			toLevel > fromLevel
+		);
 	}, [values]);
-
-	const reset = useCallback(() => {
-		setValues({
-			...DEFAULT_VALUES,
-			...initialValues,
-		});
-
-		setErrors({});
-	}, [initialValues]);
-
-	useEffect(() => {
-		if (!initialValues) {
-			return;
-		}
-
-		setValues({
-			...DEFAULT_VALUES,
-			...initialValues,
-		});
-	}, [initialValues]);
 
 	return {
 		values,
-		errors,
 		selectedHero,
+
+		heroOptions,
 		fromLevelOptions,
 		toLevelOptions,
-		setField,
-		selectHero,
-		selectFromLevel,
-		validate,
-		reset,
+
+		setHero,
+		setFromLevel,
+		setToLevel,
+
+		loadValues,
+		resetForm,
+
+		isSelectionComplete,
 	};
 }

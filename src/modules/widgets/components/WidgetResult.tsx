@@ -34,10 +34,14 @@ function formatPercent(value: unknown): string {
 	})}%`;
 }
 
-function formatLevel(level: unknown): string {
-	const number = Number(level ?? 0);
+function formatLevel(value: unknown): string {
+	const number = Number(value ?? 0);
 
-	return `Lv.${Number.isFinite(number) ? number : 0}`;
+	if (!Number.isFinite(number)) {
+		return "Lv.0";
+	}
+
+	return `Lv.${number}`;
 }
 
 function formatStatus(
@@ -57,7 +61,7 @@ function formatStatus(
 export default function WidgetResult({
 	result,
 	history,
-	title = "Widget Result",
+	title,
 	showAddButton = false,
 	onAddItem,
 }: WidgetResultProps) {
@@ -79,8 +83,8 @@ export default function WidgetResult({
 			items: [
 				{
 					id: "widget-stone",
-					label: "Widget Stone",
-					icon: "/icons/widget-stone.png",
+					label: "Widget Exclusive Items",
+					icon: "/category/widget.png",
 					value: formatNumber(widgetStone),
 				},
 			],
@@ -92,7 +96,7 @@ export default function WidgetResult({
 				{
 					id: "level-range",
 					label: "Level",
-					icon: "/icons/level.png",
+					icon: "/icons/levelup.png",
 					value: `${formatLevel(
 						result.fromLevel,
 					)} → ${formatLevel(result.toLevel)}`,
@@ -109,7 +113,7 @@ export default function WidgetResult({
 				{
 					id: "widget-value",
 					label: "Widget Bonus",
-					icon: "/icons/widget.png",
+					icon: "/icons/bonus.png",
 					value: formatPercent(result.value),
 				},
 			],
@@ -152,10 +156,10 @@ export default function WidgetResult({
 				<button
 					type="button"
 					onClick={onAddItem}
-					className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-primary)] px-4 text-sm font-semibold text-[var(--sl-primary-foreground)] transition hover:opacity-90"
+					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-active)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
 				>
-					<Plus className="size-4" />
-					Add Widget
+					<Plus className="size-5" />
+					<span className="text-base font-medium">Add more items</span>
 				</button>
 			)}
 		</div>

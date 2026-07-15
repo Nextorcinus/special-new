@@ -1,163 +1,108 @@
 "use client";
 
-import { Plus } from "lucide-react";
-
 import CalculatorResult from "@/components/calculator/CalculatorResult";
 import { formatNumber } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
-import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+import type { CalculationHistoryEntry } from "@/features/inventory/store/history/types";
 
 import type { WidgetCalculationResult, WidgetFormValues } from "../type";
 
-type WidgetHistoryItem = CalculationHistoryItem<
+type WidgetHistoryEntry = CalculationHistoryEntry<
 	WidgetFormValues,
 	WidgetCalculationResult
 >;
 
-type WidgetResultProps = {
-	result: WidgetCalculationResult;
-	history?: WidgetHistoryItem | null;
+type WidgetTotalResultProps = {
+	items: WidgetHistoryEntry[];
 	title?: string;
-	showAddButton?: boolean;
-	onAddItem?: () => void;
 };
 
-function formatPercent(value: unknown): string {
+function toNumber(value: unknown): number {
 	const number = Number(value ?? 0);
 
-	if (!Number.isFinite(number)) {
-		return "0%";
-	}
-
-	return `${number.toLocaleString("en-US", {
-		maximumFractionDigits: 2,
-	})}%`;
+	return Number.isFinite(number) ? number : 0;
 }
 
-function formatLevel(level: unknown): string {
-	const number = Number(level ?? 0);
+export default function WidgetTotalResult({
+	items,
+	title = "Total Result",
+}: WidgetTotalResultProps) {
+	const category = NAVIGATION.find((item) => item.id === "widget");
 
-	return `Lv.${Number.isFinite(number) ? number : 0}`;
-}
+	const totalWidgetStone = items.reduce((total, item) => {
+		return total + toNumber(item.result?.resources?.WidgetStone);
+	}, 0);
 
-function formatStatus(
-	status?: WidgetCalculationResult["status"],
-): string | undefined {
-	if (status === "next-update") {
-		return "Next Update";
-	}
+	const totalLevels = items.reduce((total, item) => {
+		const fromLevel = toNumber(item.result?.fromLevel);
 
-	if (status === "new") {
-		return "New";
-	}
+		const toLevel = toNumber(item.result?.toLevel);
 
-	return undefined;
-}
+		return total + Math.max(0, toLevel - fromLevel);
+	}, 0);
 
-export default function WidgetResult({
-	result,
-	history,
-	title = "Widget Result",
-	showAddButton = false,
-	onAddItem,
-}: WidgetResultProps) {
-	const category = NAVIGATION.find(
-		(item) => item.id === "widget" || item.id === "widgets",
+	const heroNames = Array.from(
+		new Set(
+			items
+				.map((item) => item.result?.heroName)
+				.filter(
+					(name): name is string => typeof name === "string" && name.length > 0,
+				),
+		),
 	);
 
-	const widgetStone = Number(result.resources?.WidgetStone ?? 0);
-
-	const status = formatStatus(result.status);
-
-	const skillType =
-		result.type === "exploration" ? "Exploration" : "Expedition";
-
-	const sections = [
-		{
-			id: "required-resources",
-			title: "Required Resources",
-			items: [
-				{
-					id: "widget-stone",
-					label: "Widget Stone",
-					icon: "/icons/widget-stone.png",
-					value: formatNumber(widgetStone),
-				},
-			],
-		},
-		{
-			id: "widget-upgrade",
-			title: "Widget Upgrade",
-			items: [
-				{
-					id: "level-range",
-					label: "Level",
-					icon: "/icons/level.png",
-					value: `${formatLevel(
-						result.fromLevel,
-					)} → ${formatLevel(result.toLevel)}`,
-				},
-				{
-					id: "skill-type",
-					label: "Skill Type",
-					icon:
-						result.type === "exploration"
-							? "/icons/exploration.png"
-							: "/icons/expedition.png",
-					value: skillType,
-				},
-				{
-					id: "widget-value",
-					label: "Widget Bonus",
-					icon: "/icons/widget.png",
-					value: formatPercent(result.value),
-				},
-			],
-		},
-		{
-			id: "widget-skill",
-			title: "Unlocked Skill",
-			items: [
-				{
-					id: "skill",
-					label: result.skill,
-					icon:
-						result.type === "exploration"
-							? "/icons/exploration.png"
-							: "/icons/expedition.png",
-					value: formatPercent(result.value),
-				},
-			],
-		},
-	];
+	const firstItem = items[0];
 
 	return (
-		<div className="space-y-4">
-			<CalculatorResult
-				title={title}
-				categoryTitle={category?.title ?? "Widget"}
-				categoryIcon={category?.icon ?? "/category/widget.png"}
-				name={result.heroName}
-				subtitle={[`GEN ${result.generation}`, status]
-					.filter(Boolean)
-					.join(" · ")}
-				highlightLabel="Widget Stone"
-				highlightValue={formatNumber(widgetStone)}
-				createdAt={history?.createdAt}
-				updatedAt={history?.updatedAt}
-				sections={sections}
-			/>
-
-			{showAddButton && onAddItem && (
-				<button
-					type="button"
-					onClick={onAddItem}
-					className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-primary)] px-4 text-sm font-semibold text-[var(--sl-primary-foreground)] transition hover:opacity-90"
-				>
-					<Plus className="size-4" />
-					Add Widget
-				</button>
-			)}
-		</div>
+		<CalculatorResult
+			title={title}
+			categoryTitle={category?.title ?? "Widget"}
+			categoryIcon={category?.icon ?? "/category/widget.png"}
+			name={
+				heroNames.length === 1
+					? heroNames[0]
+					: `${items.length} Widget Upgrades`
+			}
+			subtitle={
+				heroNames.length > 1
+					? heroNames.join(", ")
+					: "Combined widget calculation"
+			}
+			highlightLabel="Total Widget Stone"
+			highlightValue={formatNumber(totalWidgetStone)}
+			createdAt={firstItem?.createdAt}
+			sections={[
+				{
+					id: "required-resources",
+					title: "Required Resources",
+					items: [
+						{
+							id: "widget-stone",
+							label: "Widget Stone",
+							icon: "/category/widget.png",
+							value: formatNumber(totalWidgetStone),
+						},
+					],
+				},
+				{
+					id: "upgrade-summary",
+					title: "Upgrade Summary",
+					items: [
+						{
+							id: "widget-count",
+							label: "Widget Upgrades",
+							icon: "/category/widget.png",
+							value: formatNumber(items.length),
+						},
+						{
+							id: "total-levels",
+							label: "Total Levels",
+							icon: "/icons/levelup.png",
+							value: formatNumber(totalLevels),
+						},
+					],
+				},
+			]}
+		/>
 	);
 }
