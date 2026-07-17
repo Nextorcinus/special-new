@@ -1,0 +1,1793 @@
+{
+	"game": "Whiteout Survival",
+	"category": "Pets",
+	"dataVersion": "woscontrol-96cb6c18e1a3c4d1",
+	"totalPets": 13,
+	"scoringRules": {
+		"PetFood": 5,
+		"TamingManual": 1500,
+		"EnergizingPotion": 300,
+		"StrengtheningSerum": 2500,
+		"CommonWildMark": 100,
+		"AdvancedWildMark": 500
+	},
+	"resources": [
+		"PetFood",
+		"TamingManual",
+		"EnergizingPotion",
+		"StrengtheningSerum"
+	],
+	"pets": [
+		{
+			"id": "cave-hyena",
+			"name": "Cave Hyena",
+			"rarity": "Common",
+			"generation": 1,
+			"maxLevel": 50,
+			"image": "/icons/pets/cave-hyena.png",
+			"unlock": {
+				"days": 54,
+				"furnace": 18,
+				"pet": null,
+				"petLevel": null
+			},
+			"skill": {
+				"name": "Builder's Aide",
+				"description": "Increases Construction Speed by the given percentage for 5 minutes."
+			},
+			"food": [
+				0, 150, 160, 170, 180, 190, 200, 210, 220, 235, 250, 265, 280, 295, 310,
+				325, 340, 355, 370, 390, 410, 430, 450, 470, 490, 510, 530, 550, 570,
+				600, 630, 660, 690, 720, 750, 780, 810, 840, 870, 910, 950, 990, 1030,
+				1070, 1110, 1150, 1190, 1230, 1270, 1320
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "5%",
+					"cooldown": "23h",
+					"passiveTroopADPct": 0.92,
+					"power": 66240,
+					"advancement": {
+						"manual": 15,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "7%",
+					"cooldown": "23h",
+					"passiveTroopADPct": 1.85,
+					"power": 102960,
+					"advancement": {
+						"manual": 30,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "9%",
+					"cooldown": "23h",
+					"passiveTroopADPct": 2.87,
+					"power": 169200,
+					"advancement": {
+						"manual": 45,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "12%",
+					"cooldown": "23h",
+					"passiveTroopADPct": 3.9,
+					"power": 280800,
+					"advancement": {
+						"manual": 60,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "15%",
+					"cooldown": "23h",
+					"passiveTroopADPct": 5.02,
+					"power": 361440,
+					"advancement": {
+						"manual": 90,
+						"potion": 30,
+						"serum": 10
+					}
+				}
+			]
+		},
+		{
+			"id": "arctic-wolf",
+			"name": "Arctic Wolf",
+			"rarity": "Uncommon",
+			"generation": 1,
+			"maxLevel": 60,
+			"image": "/icons/pets/arctic-wolf.png",
+			"unlock": {
+				"days": 54,
+				"furnace": 18,
+				"pet": null,
+				"petLevel": null
+			},
+			"skill": {
+				"name": "Arctic Embrace",
+				"description": "Instantly restores Chief Stamina by the given amount."
+			},
+			"food": [
+				0, 200, 220, 240, 260, 280, 300, 320, 340, 370, 400, 430, 460, 490, 520,
+				550, 580, 610, 640, 680, 720, 760, 800, 840, 880, 920, 960, 1000, 1040,
+				1100, 1160, 1220, 1280, 1340, 1400, 1460, 1520, 1580, 1640, 1720, 1800,
+				1880, 1960, 2040, 2120, 2200, 2280, 2360, 2440, 2540, 2640, 2740, 2840,
+				2940, 3040, 3140, 3240, 3340, 3440, 3560
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "35",
+					"cooldown": "23h",
+					"passiveTroopADPct": 1.51,
+					"power": 108720,
+					"advancement": {
+						"manual": 20,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "40",
+					"cooldown": "23h",
+					"passiveTroopADPct": 3.02,
+					"power": 169200,
+					"advancement": {
+						"manual": 40,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "45",
+					"cooldown": "23h",
+					"passiveTroopADPct": 4.69,
+					"power": 337680,
+					"advancement": {
+						"manual": 60,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "50",
+					"cooldown": "23h",
+					"passiveTroopADPct": 6.37,
+					"power": 458640,
+					"advancement": {
+						"manual": 90,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "55",
+					"cooldown": "23h",
+					"passiveTroopADPct": 8.21,
+					"power": 591120,
+					"advancement": {
+						"manual": 130,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "60",
+					"cooldown": "23h",
+					"passiveTroopADPct": 10.06,
+					"power": 724320,
+					"advancement": {
+						"manual": 175,
+						"potion": 50,
+						"serum": 20
+					}
+				}
+			]
+		},
+		{
+			"id": "musk-ox",
+			"name": "Musk Ox",
+			"rarity": "Uncommon",
+			"generation": 1,
+			"maxLevel": 60,
+			"image": "/icons/pets/musk-ox.png",
+			"unlock": {
+				"days": 54,
+				"furnace": 18,
+				"pet": null,
+				"petLevel": null
+			},
+			"skill": {
+				"name": "Burden Bearer",
+				"description": "Instantly completes gathering upon reaching the next wilderness tile."
+			},
+			"food": [
+				0, 200, 220, 240, 260, 280, 300, 320, 340, 370, 400, 430, 460, 490, 520,
+				550, 580, 610, 640, 680, 720, 760, 800, 840, 880, 920, 960, 1000, 1040,
+				1100, 1160, 1220, 1280, 1340, 1400, 1460, 1520, 1580, 1640, 1720, 1800,
+				1880, 1960, 2040, 2120, 2200, 2280, 2360, 2440, 2540, 2640, 2740, 2840,
+				2940, 3040, 3140, 3240, 3340, 3440, 3560
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "35h",
+					"cooldown": "35h",
+					"passiveTroopADPct": 1.51,
+					"power": 108720,
+					"advancement": {
+						"manual": 20,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "31h",
+					"cooldown": "31h",
+					"passiveTroopADPct": 3.02,
+					"power": 169200,
+					"advancement": {
+						"manual": 40,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "27h",
+					"cooldown": "27h",
+					"passiveTroopADPct": 4.69,
+					"power": 337680,
+					"advancement": {
+						"manual": 60,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "23h",
+					"cooldown": "23h",
+					"passiveTroopADPct": 6.37,
+					"power": 458640,
+					"advancement": {
+						"manual": 90,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "19h",
+					"cooldown": "19h",
+					"passiveTroopADPct": 8.21,
+					"power": 591120,
+					"advancement": {
+						"manual": 130,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "15h",
+					"cooldown": "15h",
+					"passiveTroopADPct": 10.06,
+					"power": 724320,
+					"advancement": {
+						"manual": 175,
+						"potion": 50,
+						"serum": 20
+					}
+				}
+			]
+		},
+		{
+			"id": "giant-tapir",
+			"name": "Giant Tapir",
+			"rarity": "Rare",
+			"generation": 2,
+			"maxLevel": 70,
+			"image": "/icons/pets/giant-tapir.png",
+			"unlock": {
+				"days": 90,
+				"furnace": null,
+				"pet": "musk-ox",
+				"petLevel": 15
+			},
+			"skill": {
+				"name": "Natural Intuition",
+				"description": "Instantly locates the given amount of Pet Food."
+			},
+			"food": [
+				0, 300, 330, 360, 390, 420, 450, 480, 510, 555, 600, 645, 690, 735, 780,
+				825, 870, 915, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440,
+				1500, 1560, 1650, 1740, 1830, 1920, 2010, 2100, 2190, 2280, 2370, 2460,
+				2580, 2700, 2820, 2940, 3060, 3180, 3300, 3420, 3540, 3660, 3810, 3960,
+				4110, 4260, 4410, 4560, 4710, 4860, 5010, 5160, 5340, 5520, 5700, 5880,
+				6060, 6240, 6420, 6600, 6780, 6960, 7140
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "200",
+					"cooldown": "23h",
+					"passiveTroopADPct": 1.92,
+					"power": 138240,
+					"advancement": {
+						"manual": 25,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "250",
+					"cooldown": "23h",
+					"passiveTroopADPct": 3.83,
+					"power": 275760,
+					"advancement": {
+						"manual": 50,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "300",
+					"cooldown": "23h",
+					"passiveTroopADPct": 5.95,
+					"power": 428400,
+					"advancement": {
+						"manual": 75,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "350",
+					"cooldown": "23h",
+					"passiveTroopADPct": 8.08,
+					"power": 581760,
+					"advancement": {
+						"manual": 100,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "400",
+					"cooldown": "23h",
+					"passiveTroopADPct": 10.42,
+					"power": 750240,
+					"advancement": {
+						"manual": 155,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "450",
+					"cooldown": "23h",
+					"passiveTroopADPct": 12.74,
+					"power": 917280,
+					"advancement": {
+						"manual": 200,
+						"potion": 50,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "500",
+					"cooldown": "23h",
+					"passiveTroopADPct": 15.08,
+					"power": 1085760,
+					"advancement": {
+						"manual": 255,
+						"potion": 80,
+						"serum": 40
+					}
+				}
+			]
+		},
+		{
+			"id": "titan-roc",
+			"name": "Titan Roc",
+			"rarity": "Rare",
+			"generation": 2,
+			"maxLevel": 70,
+			"image": "/icons/pets/titan-roc.png",
+			"unlock": {
+				"days": 90,
+				"furnace": null,
+				"pet": "giant-tapir",
+				"petLevel": 15
+			},
+			"skill": {
+				"name": "Razorbeak",
+				"description": "Reduces enemy troop Health by the given percentage for 2 hours."
+			},
+			"food": [
+				0, 300, 330, 360, 390, 420, 450, 480, 510, 555, 600, 645, 690, 735, 780,
+				825, 870, 915, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440,
+				1500, 1560, 1650, 1740, 1830, 1920, 2010, 2100, 2190, 2280, 2370, 2460,
+				2580, 2700, 2820, 2940, 3060, 3180, 3300, 3420, 3540, 3660, 3810, 3960,
+				4110, 4260, 4410, 4560, 4710, 4860, 5010, 5160, 5340, 5520, 5700, 5880,
+				6060, 6240, 6420, 6600, 6780, 6960, 7140
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "1.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 1.92,
+					"power": 138240,
+					"advancement": {
+						"manual": 25,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "2%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 3.83,
+					"power": 275760,
+					"advancement": {
+						"manual": 50,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.95,
+					"power": 428400,
+					"advancement": {
+						"manual": 75,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.08,
+					"power": 581760,
+					"advancement": {
+						"manual": 100,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 10.42,
+					"power": 750240,
+					"advancement": {
+						"manual": 155,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 12.74,
+					"power": 917280,
+					"advancement": {
+						"manual": 200,
+						"potion": 50,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.08,
+					"power": 1085760,
+					"advancement": {
+						"manual": 255,
+						"potion": 80,
+						"serum": 40
+					}
+				}
+			]
+		},
+		{
+			"id": "giant-elk",
+			"name": "Giant Elk",
+			"rarity": "Epic",
+			"generation": 3,
+			"maxLevel": 80,
+			"image": "/icons/pets/giant-elk.png",
+			"unlock": {
+				"days": 140,
+				"furnace": null,
+				"pet": "titan-roc",
+				"petLevel": 15
+			},
+			"skill": {
+				"name": "Mystical Finding",
+				"description": "Unearths a lost item on the Tundra. Cooldown reduces as the skill levels up."
+			},
+			"food": [
+				0, 400, 440, 480, 520, 560, 600, 640, 680, 740, 800, 860, 920, 980,
+				1040, 1100, 1160, 1220, 1280, 1360, 1440, 1520, 1600, 1680, 1760, 1840,
+				1920, 2000, 2080, 2200, 2320, 2440, 2560, 2680, 2800, 2920, 3040, 3160,
+				3280, 3440, 3600, 3760, 3920, 4080, 4240, 4400, 4560, 4720, 4880, 5080,
+				5280, 5480, 5680, 5880, 6080, 6280, 6480, 6680, 6880, 7120, 7360, 7600,
+				7840, 8080, 8320, 8560, 8800, 9040, 9280, 9520, 9760, 10000, 10240,
+				10480, 10720, 10960, 11200, 11440, 11680, 12000
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "51h",
+					"cooldown": "51h",
+					"passiveTroopADPct": 2.37,
+					"power": 170640,
+					"advancement": {
+						"manual": 30,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "47h",
+					"cooldown": "47h",
+					"passiveTroopADPct": 4.75,
+					"power": 342000,
+					"advancement": {
+						"manual": 60,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "43h",
+					"cooldown": "43h",
+					"passiveTroopADPct": 7.38,
+					"power": 531360,
+					"advancement": {
+						"manual": 95,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "39h",
+					"cooldown": "39h",
+					"passiveTroopADPct": 10.01,
+					"power": 720720,
+					"advancement": {
+						"manual": 125,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "35h",
+					"cooldown": "35h",
+					"passiveTroopADPct": 12.89,
+					"power": 928080,
+					"advancement": {
+						"manual": 190,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "31h",
+					"cooldown": "31h",
+					"passiveTroopADPct": 15.77,
+					"power": 1135440,
+					"advancement": {
+						"manual": 250,
+						"potion": 50,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "27h",
+					"cooldown": "27h",
+					"passiveTroopADPct": 18.65,
+					"power": 1342800,
+					"advancement": {
+						"manual": 310,
+						"potion": 80,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "23h",
+					"cooldown": "23h",
+					"passiveTroopADPct": 21.78,
+					"power": 1568160,
+					"advancement": {
+						"manual": 380,
+						"potion": 100,
+						"serum": 60
+					}
+				}
+			]
+		},
+		{
+			"id": "snow-leopard",
+			"name": "Snow Leopard",
+			"rarity": "Epic",
+			"generation": 3,
+			"maxLevel": 80,
+			"image": "/icons/pets/snow-leopard.png",
+			"unlock": {
+				"days": 140,
+				"furnace": null,
+				"pet": "giant-elk",
+				"petLevel": 15
+			},
+			"skill": {
+				"name": "Lightning Raid",
+				"description": "Increases March Speed and reduces enemy Troop Lethality for 2 hours."
+			},
+			"food": [
+				0, 400, 440, 480, 520, 560, 600, 640, 680, 740, 800, 860, 920, 980,
+				1040, 1100, 1160, 1220, 1280, 1360, 1440, 1520, 1600, 1680, 1760, 1840,
+				1920, 2000, 2080, 2200, 2320, 2440, 2560, 2680, 2800, 2920, 3040, 3160,
+				3280, 3440, 3600, 3760, 3920, 4080, 4240, 4400, 4560, 4720, 4880, 5080,
+				5280, 5480, 5680, 5880, 6080, 6280, 6480, 6680, 6880, 7120, 7360, 7600,
+				7840, 8080, 8320, 8560, 8800, 9040, 9280, 9520, 9760, 10000, 10240,
+				10480, 10720, 10960, 11200, 11440, 11680, 12000
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "+15% / -1.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.37,
+					"power": 170640,
+					"advancement": {
+						"manual": 30,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "+17% / -2%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 4.75,
+					"power": 342000,
+					"advancement": {
+						"manual": 60,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "+19% / -2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 7.38,
+					"power": 531360,
+					"advancement": {
+						"manual": 95,
+						"potion": 10,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "+21% / -3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 10.01,
+					"power": 720720,
+					"advancement": {
+						"manual": 125,
+						"potion": 20,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "+23% / -3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 12.89,
+					"power": 928080,
+					"advancement": {
+						"manual": 190,
+						"potion": 30,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "+25% / -4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.77,
+					"power": 1135440,
+					"advancement": {
+						"manual": 250,
+						"potion": 50,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "+27% / -4.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.65,
+					"power": 1342800,
+					"advancement": {
+						"manual": 310,
+						"potion": 80,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "+30% / -5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 21.78,
+					"power": 1568160,
+					"advancement": {
+						"manual": 380,
+						"potion": 100,
+						"serum": 60
+					}
+				}
+			]
+		},
+		{
+			"id": "cave-lion",
+			"name": "Cave Lion",
+			"rarity": "Legendary",
+			"generation": 4,
+			"maxLevel": 100,
+			"image": "/icons/pets/cave-lion.png",
+			"unlock": {
+				"days": 200,
+				"furnace": 25,
+				"pet": "snow-leopard",
+				"petLevel": 15
+			},
+			"skill": {
+				"name": "Feral Anthem",
+				"description": "Increases all troops' Attack by the given percentage for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "6%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "7%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "8%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "9%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "10%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "snow-ape",
+			"name": "Snow Ape",
+			"rarity": "Legendary",
+			"generation": 4,
+			"maxLevel": 100,
+			"image": "/icons/pets/snow-ape.png",
+			"unlock": {
+				"days": 200,
+				"furnace": 25,
+				"pet": "cave-lion",
+				"petLevel": 30
+			},
+			"skill": {
+				"name": "Tumbling Power",
+				"description": "Increases Squad Capacity by the given amount for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "1,500",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "3,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "4,500",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "6,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "7,500",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "9,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "10,500",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "12,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "13,500",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "15,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "iron-rhino",
+			"name": "Iron Rhino",
+			"rarity": "Epic",
+			"generation": 5,
+			"maxLevel": 100,
+			"image": "/icons/pets/iron-rhino.png",
+			"unlock": {
+				"days": 280,
+				"furnace": null,
+				"pet": "snow-ape",
+				"petLevel": 30
+			},
+			"skill": {
+				"name": "Rallying Beasts",
+				"description": "Increases Rally Capacity by the given amount for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "60,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "70,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "80,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "90,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "100,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "110,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "120,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "130,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "140,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "150,000",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "saber-tooth-tiger",
+			"name": "Saber-tooth Tiger",
+			"rarity": "Legendary",
+			"generation": 5,
+			"maxLevel": 100,
+			"image": "/icons/pets/saber-tooth-tiger.png",
+			"unlock": {
+				"days": 280,
+				"furnace": null,
+				"pet": "iron-rhino",
+				"petLevel": 30
+			},
+			"skill": {
+				"name": "Apex Assault",
+				"description": "Increases Troops Lethality by the given percentage for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "6%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "7%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "8%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "9%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "10%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "mammoth",
+			"name": "Mammoth",
+			"rarity": "Legendary",
+			"generation": 6,
+			"maxLevel": 100,
+			"image": "/icons/pets/mammoth.png",
+			"unlock": {
+				"days": 370,
+				"furnace": null,
+				"pet": "saber-tooth-tiger",
+				"petLevel": 30
+			},
+			"skill": {
+				"name": "Hardened Skin",
+				"description": "Increases Troops Defense by the given percentage for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "6%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "7%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "8%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "9%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "10%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "frostscale-chameleon",
+			"name": "Frostscale Chameleon",
+			"rarity": "Legendary",
+			"generation": 7,
+			"maxLevel": 100,
+			"image": "/icons/pets/frostscale-chameleon.png",
+			"unlock": {
+				"days": 450,
+				"furnace": null,
+				"pet": "mammoth",
+				"petLevel": 30
+			},
+			"skill": {
+				"name": "Earthbound Vigor",
+				"description": "Reduces enemy Troops' Defense by the given percentage for 2 hours."
+			},
+			"food": [
+				0, 500, 550, 600, 650, 700, 750, 800, 850, 925, 1000, 1075, 1150, 1225,
+				1300, 1375, 1450, 1525, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+				2400, 2500, 2600, 2750, 2900, 3050, 3200, 3350, 3500, 3650, 3800, 3950,
+				4100, 4300, 4500, 4700, 4900, 5100, 5300, 5500, 5700, 5900, 6100, 6350,
+				6600, 6850, 7100, 7350, 7600, 7850, 8100, 8350, 8600, 8900, 9200, 9500,
+				9800, 10100, 10400, 10700, 11000, 11300, 11600, 11900, 12200, 12500,
+				12800, 13100, 13400, 13700, 14000, 14300, 14600, 15000, 15400, 15800,
+				16200, 16600, 17000, 17400, 17800, 18200, 18600, 19000, 19400, 19800,
+				20200, 20600, 21000, 21400, 21800, 22200, 22600, 23100
+			],
+			"milestones": [
+				{
+					"level": 10,
+					"skillLevel": 1,
+					"skillValue": "2.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 2.86,
+					"power": 205920,
+					"advancement": {
+						"manual": 35,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 20,
+					"skillLevel": 2,
+					"skillValue": "3%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 5.7,
+					"power": 410400,
+					"advancement": {
+						"manual": 70,
+						"potion": 0,
+						"serum": 0
+					}
+				},
+				{
+					"level": 30,
+					"skillLevel": 3,
+					"skillValue": "3.5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 8.85,
+					"power": 637200,
+					"advancement": {
+						"manual": 110,
+						"potion": 15,
+						"serum": 0
+					}
+				},
+				{
+					"level": 40,
+					"skillLevel": 4,
+					"skillValue": "4%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 11.99,
+					"power": 863280,
+					"advancement": {
+						"manual": 145,
+						"potion": 35,
+						"serum": 0
+					}
+				},
+				{
+					"level": 50,
+					"skillLevel": 5,
+					"skillValue": "5%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 15.44,
+					"power": 1116680,
+					"advancement": {
+						"manual": 220,
+						"potion": 50,
+						"serum": 10
+					}
+				},
+				{
+					"level": 60,
+					"skillLevel": 6,
+					"skillValue": "6%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 18.88,
+					"power": 1359360,
+					"advancement": {
+						"manual": 290,
+						"potion": 65,
+						"serum": 20
+					}
+				},
+				{
+					"level": 70,
+					"skillLevel": 7,
+					"skillValue": "7%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 22.32,
+					"power": 1607040,
+					"advancement": {
+						"manual": 365,
+						"potion": 85,
+						"serum": 40
+					}
+				},
+				{
+					"level": 80,
+					"skillLevel": 8,
+					"skillValue": "8%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 26.05,
+					"power": 1875600,
+					"advancement": {
+						"manual": 440,
+						"potion": 100,
+						"serum": 60
+					}
+				},
+				{
+					"level": 90,
+					"skillLevel": 9,
+					"skillValue": "9%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 29.78,
+					"power": 2144160,
+					"advancement": {
+						"manual": 585,
+						"potion": 115,
+						"serum": 80
+					}
+				},
+				{
+					"level": 100,
+					"skillLevel": 10,
+					"skillValue": "10%",
+					"cooldown": "20h",
+					"passiveTroopADPct": 33.52,
+					"power": 2413440,
+					"advancement": {
+						"manual": 730,
+						"potion": 135,
+						"serum": 100
+					}
+				}
+			]
+		}
+	]
+}

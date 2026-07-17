@@ -66,7 +66,7 @@ export default function CalculatorResourceItem({ item }: Props) {
 
 			<div
 				className={cn(
-					"min-w-0 text-right text-sm font-medium text-[var(--sl-text)]",
+					"min-w-0 truncate text-right text-sm font-medium text-[var(--sl-text)]",
 					item.valueClassName,
 				)}
 			>

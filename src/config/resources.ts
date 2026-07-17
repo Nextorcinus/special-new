@@ -81,6 +81,33 @@ export const RESOURCES = {
 		label: "Secret Charm",
 		icon: "/icons/charm-secret.png",
 	},
+
+
+// Pets
+PetFood: {
+	id: "pet-food",
+	label: "Pet Food",
+	icon: "/icons/pet-food.png",
+},
+
+TamingManual: {
+	id: "taming-manual",
+	label: "Taming Manual",
+	icon: "/icons/taming-manual.png",
+},
+
+EnergizingPotion: {
+	id: "energizing-potion",
+	label: "Energizing Potion",
+	icon: "/icons/energizing-potion.png",
+},
+
+StrengtheningSerum: {
+	id: "strengthening-serum",
+	label: "Strengthening Serum",
+	icon: "/icons/strengthening-serum.png",
+},
+
 } as const;
 
 export type ResourceKey = keyof typeof RESOURCES;

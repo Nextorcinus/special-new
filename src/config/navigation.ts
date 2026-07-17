@@ -36,10 +36,10 @@ export const NAVIGATION = [
 		href: "/heroes",
 	},
 	{
-		id: "pet",
+		id: "pets",
 		title: "Pet",
 		icon: "/category/pet-building.png",
-		href: "/pet",
+		href: "/pets",
 	},
 	{
 		id: "troops",
