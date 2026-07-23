@@ -1,0 +1,108 @@
+{
+	"id": "patrick",
+	"name": "Patrick",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Lancer",
+	"stats": {
+		"attack": 1776,
+		"defense": 2220,
+		"health": 17760
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "BBQ Feast",
+				"trigger-point": "All troops",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Restoring Health by Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["200%", "220%", "240%", "260%", "280%"],
+					"description": "Patrick prepares a lavish feast, restoring Health by Attack +200% \u2013 280% to all troops and increasing Attack by +5% \u2013 7% for all troops for 4s.",
+					"icon": "bbq_feast.png"
+				}
+			},
+			"2": {
+				"skill-name": "Thick Belly",
+				"trigger-point": "Enemy Attack Troops",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Reduce Damage Taken",
+					"affect-on": ["Point Target"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Patrick\u2019s protective blubber reduces damage taken by +10% \u2013 30% ",
+					"icon": "thick_belly.png"
+				}
+			},
+			"3": {
+				"skill-name": "Emergency Snack",
+				"trigger-point": "Attack",
+				"trigger-time": "5s",
+				"effects": {
+					"effect-name": "Restoring Health by Attack",
+					"affect-on": ["Self"],
+					"stats": ["50%", "55%", "60%", "65%", "70%"],
+					"description": " Patrick\u2019s regular snacking restores Health equal to Attack +50% \u2013 70% every 5s.",
+					"icon": "emergency_snack.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Super Nutrients",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Increasing Health",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": "Patrick\u2019s culinary masterpieces invigorate our troops, increasing Health by +5% \u2013 25%",
+						"icon": "super_nutrients.png"
+					}
+				},
+				"2": {
+					"skill-name": "Caloric Booster",
+					"trigger-point": "All Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Increasing Troops Attack",
+						"affect-on": ["Point Target"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": "Patrick\u2019s gourmet meals motivate and unleash the potential of our soldiers, increasing Attack by +5% \u2013 25%",
+						"icon": "caloric_booster.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "patrick_thumb.png",
+	"thumbnail": "patrick_thumb.png"
+}

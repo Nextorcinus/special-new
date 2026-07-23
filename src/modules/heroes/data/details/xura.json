@@ -1,0 +1,121 @@
+{
+  "id": "xura",
+  "name": "Xura",
+  "generation": "S9",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 12513,
+    "defense": 10300,
+    "health": 77256
+  },
+  "expedition": {
+    "attack": "940.75%",
+    "defense": "940.75%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Life Dance",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Heal Allies + Damage Taken Reduced",
+          "affect-on": ["All friendly heroes"],
+          "stats": ["20%","40%","60%","80%","100%"],
+          "description": "Xura summons divine aid by dance invocation, healing all friendly heroes' health equal to Attack x20%–100% per second while reducing their damage taken by 50% for 3 seconds. Xura is immune to control effects throughout.",
+          "icon": "life_dance.png"
+        }
+      },
+      "2": {
+        "skill-name": "Sporebind",
+        "trigger-point": "Target attacks",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage each target attack",
+          "affect-on": ["Target"],
+          "stats": ["100%","110%","120%","130%","140%"],
+          "description": "Xura infects the target with a deadly spore, dealing Attack x100%–140% damage each time the target attacks, lasts for 3s.",
+          "icon": "sporebind.png"
+        }
+      },
+      "3": {
+        "skill-name": "Numbing Dart",
+        "trigger-point": "Normal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack + / Chance Immobilize",
+          "affect-on": ["Self","Target"],
+          "stats": ["4%","6%","8%","10%","12%"],
+          "description": "A blow-dart lotion increases Xura’s Attack by 4%–12% with a 20% chance per dart of immobilising the target for 1 second.",
+          "icon": "numbing_dart.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Fungal Fog",
+          "trigger-point": "Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Taken by Friendly Troops −",
+            "affect-on": ["Friendly troops"],
+            "stats": ["4%","8%","12%","16%","20%"],
+            "description": "Xura releases an underground fungi that quickly multiplies to block enemy vision, reducing damage dealt to friendly troops by 4%–20%.",
+            "icon": "fungal_fog.png"
+          }
+        },
+        "2": {
+          "skill-name": "Piercing Arrow",
+          "trigger-point": "Every 2 strikes",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Marksmen Damage + / Target Damage Taken +",
+            "affect-on": ["Friendly Marksman troops","Target"],
+            "stats": ["20%/5%","40%/10%","60%/15%","80%/20%","100%/25%"],
+            "description": "Marksmen deal +20%–100% additional damage every 2 strikes and make their target take +5%–25% more damage for 1 turn.",
+            "icon": "piercing_arrow.png"
+          }
+        },
+        "3": {
+          "skill-name": "Unorthodoxy",
+          "trigger-point": "Passive",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Marksmen Damage + / Marksmen Damage Taken −",
+            "affect-on": ["Friendly Marksman troops"],
+            "stats": ["3%/2%","6%/4%","9%/6%","12%/8%","15%/10%"],
+            "description": "Xura’s unorthodox tactics increase Marksmen’s damage dealt by 3%–15% while reducing their damage taken by 2%–10%.",
+            "icon": "unorthodoxy.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Witch Mask",
+  "widget-icon": "witch_mask",
+  "widget-affect-on": "Highest Attack Ally / Defenders",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2533,
+      "defense": 2088,
+      "health": 15659,
+      "ability": "War Cry (Lv.5): Xura exhorts the highest Attack ally with a tribal war dance, increasing their damage dealt by 60% for 4s.",
+      "icon": "war_cry.png",
+      "name": "War Cry"
+    },
+    "expedition": {
+      "lethality": "232%",
+      "Health": "232%",
+      "ability": "Gaiac Hymn (Lv.5): Xura exhorts the City's Defenders with ancient hymns to Gaia, increasing their Attack by 15%.",
+      "icon": "gaiac_hymn.png",
+      "name": "Gaiac Hymn"
+    }
+  },
+  "uniquePassive": {},
+  "image": "xura-hero.png",
+  "thumbnail": "xura_thumb.png"
+}

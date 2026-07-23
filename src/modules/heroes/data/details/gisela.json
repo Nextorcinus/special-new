@@ -1,0 +1,121 @@
+{
+  "id": "gisela",
+  "name": "Gisela",
+  "generation": "S13",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 16416,
+    "defense":21400,
+    "health":321012
+  },
+  "expedition": {
+    "attack": 1621.29,
+    "defense":1621.29
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Superload",
+        "trigger-point": "Increase Attack Speed and Defense",
+        "trigger-time": "5 seconds",
+        "effects": {
+          "effect-name": "Increasing Attack Speed and Defense",
+          "affect-on": ["All Troops"],
+          "stats": ["20%", "30%", "40%", "50%", "60%", "50%", "75%", "100%", "125%", "150%"],
+          "description": "Gisela overloads her mech-arms in Attack Mode for 5s, gaining 50 Energy and increasing Attack Speed by 60% and Defense by 150%.",
+          "icon": "superload.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Steel Hammer",
+        "trigger-point": "Area Damage and Energy Gain",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Area Damage and Gaining Energy",
+          "affect-on": ["enemy Heroes"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Gisela smashes the target area with her mech-arms, dealing Attack * 140% Area of Effect damage and gaining 25 Energy.",
+          "icon": "steel_hammer.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Porta-Shield",
+        "trigger-point": "Attack and Energy Gain",
+        "trigger-time": "3 seconds",
+        "effects": {
+          "effect-name": "Energy Gain and Granting a Shield",
+          "affect-on": ["Self"],
+          "stats": ["3%", "6%", "9%", "12%", "15%", "70%", "100%", "130%", "160%", "190%"],
+          "description": "Gisela primes a mini-shield to activate on reaching 100 Energy with Attack * 190% for 3s. Each Normal Attack gains her 15 Energy.",
+          "icon": "porta-shield.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Alloyed Defense",
+          "trigger-point": "Infantry Defense Increase",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Granting All Troops a Chance to Increase Enemy Damage Taken",
+            "affect-on": ["Infantry"],
+            "stats": ["6%", "12%", "18%", "24%", "30%"],
+            "description": "Gisela’s advanced tech increases Infantry Defense by 30%.",
+            "icon": "alloyed_defense.webp"
+          }
+        },
+        "2": {
+          "skill-name": "Scavengeworks",
+          "trigger-point": "Infantry Defense Increase",
+          "trigger-time": "1 Turn",
+          "effects": {
+            "effect-name": "Infantry Defense",
+            "affect-on": ["Infantry "],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Gisela is a master of defensive scavenging. Infantry under Gisela’s command have a 40% chance of increasing all Troops’ Defense by 50% for 1 turn.",
+            "icon": "scavengeworks.webp"
+          }
+        },
+        "3": {
+          "skill-name": "Trial Shield",
+          "trigger-point": "Shield and reducing damage taken",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Infantry Troops Get Shield and Reduce Damage Taken",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Gisela provides an experimental version of her shield to all troops, granting a 40% chance of reducing Damage Taken by 50% for all troops.",
+            "icon": "trial_shield.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Helacore",
+  "widget-icon": "helacore",
+  "widget-affect-on": "Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 3325,
+      "defense": 4338,
+      "health": 65070,
+      "ability": "Gisela’s fine-tuned energy facility grants an additional 15 Energy per Normal Attack and increases shield strength by Attack * 190% on reaching 100 Energy.",
+      "icon": "energy_efficiency.webp",
+      "name": "Energy Efficiency"
+    },
+    "expedition": {
+      "lethality": "405.00%",
+      "Health": "405.00%",
+      "ability": "Gisela’s forays into the field of auto-turrets enhances Defender Troops’ Attack by 15%.",
+      "icon": "auto-target.webp",
+      "name": "Auto-Target"
+    }
+  },
+  "uniquePassive": {},
+  "image": "gisela.webp",
+  "thumbnail": "gisela.webp"
+}

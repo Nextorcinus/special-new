@@ -1,0 +1,108 @@
+{
+	"id": "lingxue",
+	"name": "Ling Xue",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Lancer",
+	"stats": {
+		"attack": 2157,
+		"defense": 2220,
+		"health": 17760
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Hurricane Whirl",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["300%", "330%", "360%", "390%", "420%"],
+					"description": "Ling Xue slashes the area ahead with stormlike fury, dealing Attack",
+					"icon": "hurricane_whirl.png"
+				}
+			},
+			"2": {
+				"skill-name": "Galeforce",
+				"trigger-point": "Targeting",
+				"trigger-time": "when over 50% health",
+				"effects": {
+					"effect-name": "Increasing Damage Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["16%", "24%", "32%", "40%", "48%"],
+					"description": "Ling Xue commands the Iron Eagles with strength and honor, increasing Attack ",
+					"icon": "galeforce.png"
+				}
+			},
+			"3": {
+				"skill-name": "Desperate Measures",
+				"trigger-point": "Self",
+				"trigger-time": "when over 50% health",
+				"effects": {
+					"effect-name": "Reducing Damage Taken",
+					"affect-on": ["Point Target"],
+					"stats": ["50%", "75%", "100%", "125%", "150%"],
+					"description": " Ling Xue is at her most cunning when cornered, increasing Defense",
+					"icon": "desperate_measures.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Fearsome Aura",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Reducing Damage Taken",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": "Ling Xue\u2019s withering assault has disturbed enemies\u2019 formation, reducing all enemy Troops\u2019 Attack",
+						"icon": "fearsome_aura.png"
+					}
+				},
+				"2": {
+					"skill-name": "Total Control",
+					"trigger-point": "Trainer Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Increase Training Speed",
+						"affect-on": ["City"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": "Ling Xue\u2019s hands-on, disciplined instruction increases Training Speed",
+						"icon": "total_control.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "ling_xue_thumb.jpg",
+	"thumbnail": "ling_xue_thumb.jpg"
+}

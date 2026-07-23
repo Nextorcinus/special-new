@@ -1,0 +1,129 @@
+{
+  "id": "smith",
+  "name": "Smith",
+  "generation": "rare",
+  "rarity": "Rare",
+  "class": "Infantry",
+  "stats": {
+    "attack": 1106,
+    "defense": 2220,
+    "health": 21644
+  },
+  "expedition": {
+    "attack": 90.07,
+    "defense": 90.07
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Hammer Burn",
+        "trigger-point": "Targeting and Near Enemies",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": [
+            "Point Target"
+          ],
+          "stats": [
+            "200%",
+            "220%",
+            "240%",
+            "260%",
+            "280%"
+          ],
+          "description": "Smith swings his hammer forward in a devastating arc",
+          "icon": "hammer_burn.png"
+        }
+      },
+      "2": {
+        "skill-name": "Armor Enhancement",
+        "trigger-point": "Around The Target",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Reduce Damage Taken",
+          "affect-on": [
+            "self"
+          ],
+          "stats": [
+            "10%",
+            "15%",
+            "20%",
+            "25%",
+            "30%"
+          ],
+          "description": "Smith upgrades his armor to reduce damage taken by ",
+          "icon": "armor_enhancement.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Burnished Iron",
+          "trigger-point": "City",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Iron Mine",
+            "affect-on": [
+              "City"
+            ],
+            "stats": [
+              "5%",
+              "10%",
+              "15%",
+              "20%",
+              "25%"
+            ],
+            "description": "Smith's contagious passion for the art of crafting has raised City Iron Mine Output by ",
+            "icon": "burnished_iron.png"
+          }
+        },
+        "2": {
+          "skill-name": "Craftmanship",
+          "trigger-point": "Iron Mine",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Iron Gathering Speed",
+            "affect-on": [
+              "Iron Mining"
+            ],
+            "stats": [
+              "5%",
+              "10%",
+              "15%",
+              "20%",
+              "25%"
+            ],
+            "description": " Smith has an extraordinary sixth sense when it comes to iron. ",
+            "icon": "craftmanship.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": false
+  },
+  "widget-name": "",
+  "widget-affect-on": "",
+  "widget-level": "",
+  "widget-stats": {
+    "exploration": {
+      "attack": "",
+      "defense": "",
+      "health": "",
+      "ability": ""
+    },
+    "expedition": {
+      "lethality": "",
+      "Health": "",
+      "ability": ""
+    }
+  },
+  "uniquePassive": {
+    "name": "",
+    "icon": "",
+    "ability": "",
+    "stats": ""
+  },
+  "image": "smith.png",
+  "thumbnail": "smith-thumb.png"
+}

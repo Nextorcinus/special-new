@@ -35,7 +35,7 @@ export default function PetCard({ pet }: PetCardProps) {
 	return (
 		<Link
 			href={`/pets/${pet.id}`}
-			className="group rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface-2)] p-3 transition hover:border-[var(--sl-primary)] hover:bg-[var(--sl-hover)]"
+			className="group rounded-2xl border border-[var(--sl-border)] bg-[var(--card)] p-3 transition"
 		>
 			<div className="flex flex-col items-center text-center">
 				<div className="relative size-14 overflow-hidden rounded-xl bg-[var(--sl-input)]">

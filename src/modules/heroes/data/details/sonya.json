@@ -1,0 +1,121 @@
+{
+  "id": "sonya",
+  "name": "Sonya",
+  "generation": "S8",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 8568,
+    "defense": 8568,
+    "health": 85692
+  },
+  "expedition": {
+    "attack": "780.62",
+    "defense": "780.62"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Extreme Cold",
+        "trigger-point": "Target + Nearby Enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Area of Effect Targets"],
+          "stats": ["220%", "240%", "260%", "280%", "300%"],
+          "description": "Sonya shoots jets of cryogen, freezing a target for 1.5s and dealing Attack ×220%–300% area damage to the target and nearby enemies.",
+          "icon": "extreme_cold.png"
+        }
+      },
+      "2": {
+        "skill-name": "Frozen Bomb",
+        "trigger-point": "Point Target",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack + Attack Speed ↓",
+          "affect-on": ["Enemy"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Sonya fires a frozen bomb, dealing Attack ×100%–140% damage to an enemy and reducing the Attack Speed of nearby enemies by 50% for 3s.",
+          "icon": "frozen_bomb.png"
+        }
+      },
+      "3": {
+        "skill-name": "Money-Hungry",
+        "trigger-point": "Self",
+        "trigger-time": "Passive",
+        "effects": {
+          "effect-name": "Attack Boost",
+          "affect-on": ["Self"],
+          "stats": ["10%", "15%", "20%", "25%", "30%"],
+          "description": "Sonya’s burning desire for bounty propels her into a frenzied state on the battlefield, increasing her Attack by 10%–30%.",
+          "icon": "money_hungry.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Treasure Hunter",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Damage Increase",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "“Everyone has a share when the legendary ocean treasure is found!” Sonya’s promise inspires everyone, increasing Damage by 4%–20% for all troops.",
+            "icon": "treasure_hunter.png"
+          }
+        },
+        "2": {
+          "skill-name": "Bounty Temptation",
+          "trigger-point": "Lancers & All Troops",
+          "trigger-time": "Every 2 Attacks",
+          "effects": {
+            "effect-name": "Lancer Damage ↑ & Attack ↑",
+            "affect-on": ["Lancer Troops", "All Troops"],
+            "stats": ["15%", "30%", "45%", "60%", "75%"],
+            "description": "Sonya motivates her Troops with bounty, making her Lancers deal 15%–75% more damage every 2 attacks and increasing Attack by 5%–25% for all troops for 1 turn.",
+            "icon": "bounty_temptation.png"
+          }
+        },
+        "3": {
+          "skill-name": "Torrential Impact",
+          "trigger-point": "Every 5 Turns (Lancers)",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Lancer Damage + Stun",
+            "affect-on": ["Lancer Troops"],
+            "stats": ["50%", "100%", "150%", "200%", "250%"],
+            "description": "Sonya’s Lancers will seize every chance to launch a surprise raid like underwater currents. Her Lancers deal 50%–250% damage every 5 turns and stun the target for 1 turn.",
+            "icon": "torrential_impact.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Mangrove Frog",
+  "widget-icon": "mangrove_frog",
+  "widget-affect-on": "Self",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1737,
+      "defense": 1737,
+      "health": 17370,
+      "ability": "Sonya improves the formula of her cryogen, increasing her Attack by 24%. When the freezing effect of Extreme Cold ends, shattered ice will deal Attack ×70% damage to nearby enemies.",
+      "icon": "chilled_to_the_bone.png",
+      "name": "Chilled to The Bone"
+    },
+    "expedition": {
+      "lethality": "193.00%",
+      "Health": "193.00%",
+      "ability": "Sonya sets up turrets that spurt out streams of water, increasing Defender Troops’ Lethality by 15%.",
+      "icon": "vortex_turret.png",
+      "name": "Vortex Turret"
+    }
+  },
+  "uniquePassive": {},
+  "image": "sonya.png",
+  "thumbnail": "sonya_thumb.png"
+}

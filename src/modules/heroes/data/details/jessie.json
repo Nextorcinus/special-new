@@ -1,0 +1,108 @@
+{
+	"id": "jessie",
+	"name": "Jessie",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Lancer",
+	"stats": {
+		"attack": 1776,
+		"defense": 2220,
+		"health": 17760
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Burst Fire",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["55%", "60%", "65%", "70%", "28075%"],
+					"description": " Jessie sprays enemies in a forward arc with her machine gun, dealing Attack damage0.5s for 2s",
+					"icon": "shielded_strike.png"
+				}
+			},
+			"2": {
+				"skill-name": "Defense Upgrade",
+				"trigger-point": "",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Defense",
+					"affect-on": ["Self"],
+					"stats": ["25%", "37.5%", "50%", "62.5%", "70%"],
+					"description": " Jessie upgrades her armor, increasing Defense",
+					"icon": "defense_upgrade.png"
+				}
+			},
+			"3": {
+				"skill-name": "Weapon Upgrade",
+				"trigger-point": "Self",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Boots Attack",
+					"affect-on": ["Self"],
+					"stats": ["8%", "12%", "16%", "20%", "24%"],
+					"description": "Jessie's upgraded weapon boosts Attack",
+					"icon": "weapon_upgrade.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Stand of Arms",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Increasing Damage Dealt",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Jessie implement advanced weaponry for our troops, increasing damage dealt for all troops",
+						"icon": "stand_of_arms.png"
+					}
+				},
+				"2": {
+					"skill-name": "Bulwarks",
+					"trigger-point": "Enemy Attack Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Reduce Attack Enemy",
+						"affect-on": ["All Enemy Troops"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": " With a keen engineering eye, Jessie enhances troops armor, reducing damage taken for all troops",
+						"icon": "bulwarks.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "jessie_thumb.png",
+	"thumbnail": "jessie_thumb.png"
+}

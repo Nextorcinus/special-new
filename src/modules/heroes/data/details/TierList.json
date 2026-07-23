@@ -1,0 +1,301 @@
+[
+  {
+    "generation": "1",
+    "setups": [
+      {
+        "type": "Best heroes",
+        "id": ["jeronimo", "molly", "bahiti"],
+        "formation": "3/3/4",
+        "suggest": "In most cases, you will have best stats on Jeronimo’s raw stats, so using equal formation with slightly more marksmen troops works the best"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["natalia", "molly", "bahiti"],
+        "formation": "2/4/4",
+        "suggest": "Mainly for people that didn’t go for Jeronimo yet, and giving opportunity to use Jero for joining rallies"
+      },
+      {
+        "type": "F2P",
+        "id": ["sergey", "molly", "bahiti"],
+        "formation": "3/3/4",
+        "suggest": "For f2p, recommended is to always use best 3 heroes you have for calling rally, in Gen1 it’s Sergey Molly Bahiti"
+      }
+    ]
+  },
+  {
+    "generation": "2",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "philly", "alonso"],
+        "formation": "2/3/5",
+        "suggest": "Alonso will boost damage a lot due to his widget. From Gen2 and up, you will always be either Jero or Natalia"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["natalia", "molly", "alonso"],
+        "formation": "2/3/5",
+        "suggest": "Use Natalia in Gen2+ only if Jeronimo is not maxed stars and widget level"
+      },
+      {
+        "type": "F2P",
+        "id": ["flint", "molly", "bahiti"],
+        "formation": "3/3/4",
+        "suggest": "No f2p hero with rally widget yet, so equal formation with slightly more marksman troops"
+      }
+    ]
+  },
+  {
+    "generation": "3",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["natalia", "mia", "alonso"],
+        "formation": "1/2/7",
+        "suggest": "Natalia performed better in Gen3 thanks to 2 lethality widgets and 1 attack widget"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["jeronimo", "mia", "alonso"],
+        "formation": "2/3/5",
+        "suggest": "Use Jeronimo instead if Natalia is not max stars and widgets"
+      },
+      {
+        "type": "F2P",
+        "id": ["flint", "mia", "bahiti"],
+        "formation": "2/4/4",
+        "suggest": "Gen3 gives you your first rally widget hero, a good time to try new formations"
+      }
+    ]
+  },
+  {
+    "generation": "4",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "reina", "alonso"],
+        "formation": "1/3/6",
+        "suggest": "Again, 2x Lethality and 1x Attack widget. 30 percent Lancer troops will do great with Reina’s 3rd skill especially since Lancers are FC 5"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["natalia", "mia", "lynn"],
+        "formation": "1/1/8",
+        "suggest": "Using Natalia if she has better star and widget level. Lynn’s 3rd skill works for you"
+      },
+      {
+        "type": "F2P",
+        "id": ["flint", "mia", "lynn"],
+        "formation": "1/1/8",
+        "suggest": "Same reason as above. Lynn’s 3rd skill works best if you focus on heavy marksman formation"
+      }
+    ]
+  },
+  {
+    "generation": "5",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "reina", "gwen"],
+        "formation": "1/3/6",
+        "suggest": "In Gen5 you can retire Alonso. Gwen has same widget but better hero skills. Heavy marksman formation works well"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["jeronimo", "mia", "gwen"],
+        "formation": "1/1/8",
+        "suggest": "Even though Hector is Infantry, he has 2 damage skills that work great for marksman troops"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "lynn"],
+        "formation": "1/1/8",
+        "suggest": "Hector will replace Flint for rally. You can safely use up to 20 percent Infantry"
+      }
+    ]
+  },
+  {
+    "generation": "6",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "reina", "wayne"],
+        "formation": "1/3/6",
+        "suggest": "Even without rally widget, Wayne’s crit rate skill gives better total rally damage than Gwen"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "mia", "wayne"],
+        "formation": "1/1/8",
+        "suggest": "Mia’s skills can boost Wayne’s damage even more if luck is on your side"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "renee", "lynn"],
+        "formation": "1/2/7",
+        "suggest": "Due to Renee skills, you need 20 percent Lancers or her damage boost is lost"
+      }
+    ]
+  },
+  {
+    "generation": "7",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Bradley is latest gen hero that has highest stats for Marksman troops. You will have a huge Marksman attack stat"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "reina", "wayne"],
+        "formation": "1/3/6",
+        "suggest": "This comp allows Bradley and Mia to join other people’s rallies while you keep this rally strong"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Bradley gives highest stats, while Mia boosts Marksman Attack even higher"
+      }
+    ]
+  },
+  {
+    "generation": "8",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Sonya works only for lancer troops so not ideal for bear trap. Hendrik mainly defensive so not good for rally lead"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "sonya", "bradley"],
+        "formation": "1/3/6",
+        "suggest": "If Mia isn’t maxed, use Sonya with 30 percent Lancers for her skills to have impact"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Hector still better than newest gen hero for bear trap rally"
+      }
+    ]
+  },
+  {
+    "generation": "9",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Fred not compatible with Bradley. Xura focuses on opponent troops so not good for bear hunt rally"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "Same as P2W bear hunt. If you do not have Jeronimo yet, you can use Magnus for rally lead, but after buff hero hectro skill maybe Hector is still better"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "bradley"],
+        "formation": "1/1/8",
+        "suggest": "You get Fred in Gen 9 but Mia has better skills and highest widget level for damage scaling here"
+      }
+    ]
+  },
+  {
+    "generation": "10",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Blanchette is a masterpiece hero since all her skills boost damage. Freya not recommended here"
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["gregory", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Almost same as P2W bear hunt. If you do not have Jeronimo use Gregory. Some say Gregory performs better but after buff hero hectro skill maybe Hector is still better"
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Blanchette appears in lucky wheels and has insane damage for bear trap rally"
+      }
+    ]
+  },
+  {
+    "generation": "11",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Rufus can increase attack in their skill and the widget is Increasing attack same like mia. rufus + mia widget . "
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Almost same as P2W bear hunt. "
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Blanchette appears in lucky wheels and has insane damage for bear trap rally if you can’t get Rufus with Fragments"
+      }
+    ]
+  },
+   {
+    "generation": "12",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Rufus can increase attack in their skill and the widget is Increasing attack same like mia. rufus + mia widget . "
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Almost same as P2W bear hunt. "
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Blanchette appears in lucky wheels and has insane damage for bear trap rally if you can’t get Rufus with Fragments"
+      }
+    ]
+  },
+   {
+    "generation": "13",
+    "setups": [
+      {
+        "type": "Best Hero",
+        "id": ["jeronimo", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Rufus can increase attack in their skill and the widget is Increasing attack same like mia. rufus + mia widget . "
+      },
+      {
+        "type": "Alternative Best Hero",
+        "id": ["hector", "mia", "rufus"],
+        "formation": "1/1/8",
+        "suggest": "Almost same as P2W bear hunt. "
+      },
+      {
+        "type": "F2P",
+        "id": ["hector", "mia", "blanchette"],
+        "formation": "1/1/8",
+        "suggest": "Blanchette appears in lucky wheels and has insane damage for bear trap rally if you can’t get Rufus with Fragments"
+      }
+    ]
+  }
+]

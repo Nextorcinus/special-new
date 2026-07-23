@@ -1,0 +1,181 @@
+{
+  "id": "natalia",
+  "name": "Natalia",
+  "generation": "1",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 1873,
+    "defense": 2220,
+    "health": 36630
+  },
+  "expedition": {
+    "attack": 200.16,
+    "defense": 200.16
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Beast Charge",
+        "trigger-point": "Area of Effects",
+        "trigger-time": "2s",
+        "effects": {
+          "effect-name": "Deal Attack",
+          "affect-on": [
+            "Area of Effect Enemy"
+          ],
+          "stats": [
+            "160%",
+            "176%",
+            "192%",
+            "208%",
+            "224%"
+          ],
+          "description": " Natalia's bear violently smashes the ground, knocking back enemies in range and stunning them for 1s, ",
+          "icon": "beast_charge.png"
+        }
+      },
+      "2": {
+        "skill-name": "Whip",
+        "trigger-point": "Nearby Friendly troops",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Increasing Nearby Attack",
+          "affect-on": [
+            "Point Target"
+          ],
+          "stats": [
+            "15%",
+            "20%",
+            "25%",
+            "30%",
+            "35%"
+          ],
+          "description": "Natalia wields her whip against a target for Attack",
+          "icon": "whip.png"
+        }
+      },
+      "3": {
+        "skill-name": "Rage Response",
+        "trigger-point": "Taking Damage",
+        "trigger-time": "3s",
+        "effects": {
+          "effect-name": "Increasing Damage Attack",
+          "affect-on": [
+            "Self"
+          ],
+          "stats": [
+            "4%",
+            "6%",
+            "8%",
+            "10%",
+            "12%"
+          ],
+          "description": " Only fools would dare anger Natalia or her furry companion. Natalia has a 10% chance of gaining a  Attack boost for 3s upon taking damage (max 5 stacks",
+          "icon": "rage_response.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Wildling Roar",
+          "trigger-point": "Rally Opener",
+          "trigger-time": "1 turn",
+          "effects": {
+            "effect-name": "Reduce Damage Taken",
+            "affect-on": [
+              "All Troops Rally",
+              "All Troops Joiner"
+            ],
+            "stats": [
+              "5%",
+              "10%",
+              "15%",
+              "20%",
+              "25%"
+            ],
+            "description": "Natalia's bear roars and instills terror into the hearts enemies, granting all troops' attack a chance of stunning enemies for 1 turn.",
+            "icon": "wildling_roar.png"
+          }
+        },
+        "2": {
+          "skill-name": "Queen of The Wild",
+          "trigger-point": "March",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Increasing Attack",
+            "affect-on": [
+              "All troops"
+            ],
+            "stats": [
+              "20%",
+              "40%",
+              "60%",
+              "80%",
+              "100%"
+            ],
+            "description": "Natalia is a natural leader, increasing Attack by level for all troops.",
+            "icon": "queen_of_the_wild.png"
+          }
+        },
+        "3": {
+          "skill-name": "Call of The Wild",
+          "trigger-point": "March",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Increasing March Speed",
+            "affect-on": [
+              "All Troops"
+            ],
+            "stats": [
+              "20%",
+              "40%",
+              "60%",
+              "80%",
+              "100%"
+            ],
+            "description": "Natalia's unexplained connection with nature allows her to rally wild beast, increasing damage dealt by level for all troops.",
+            "icon": "call_of_the_wild.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Gale Force",
+  "widget-icon": "gale_force",
+  "widget-affect-on": "Only Rally Opener",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 379,
+      "defense": 495,
+      "health": 7425,
+      "ability": " Natalia and the Polar Bear are in perfect synchrony, increasing damage dealt by 30%. (maxed)",
+      "icon": "unity.png",
+      "name": "Unity"
+    },
+    "expedition": {
+      "lethality": "55.50%",
+      "Health": "55.50%",
+      "ability": "  Natalia summons a herd of beasts to join the rally, raising the rallying Troops' Lethality by 15%. (maxed)",
+      "icon": "invincibles.png",
+      "name": "Invincibles"
+    }
+  },
+  "uniquePassive": {
+    "name": "Ursus Strength",
+    "icon": "ursus_strength",
+    "ability": " Natalia exhibits the ferocity of a polar bear on the field, inspiring friendlies even in her absence, increasing all troops' Attack and Defense",
+    "stats": [
+      "2%",
+      "4%",
+      "6%",
+      "8%",
+      "10%"
+    ]
+  },
+  "image": "natalia.png",
+  "thumbnail": "natalia_thumb.png"
+}

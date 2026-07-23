@@ -1,0 +1,97 @@
+{
+	"id": "eugene",
+	"name": "Eugene",
+	"generation": "rare",
+	"rarity": "Rare",
+	"class": "Infantry",
+	"stats": {
+		"attack": 1106,
+		"defense": 2220,
+		"health": 21644
+	},
+	"expedition": {
+		"attack": 90.07,
+		"defense": 90.07
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Axe Whirl",
+				"trigger-point": "Nearby Enemies",
+				"trigger-time": "per 0.5s-3s",
+				"effects": {
+					"effect-name": "Damage of Attack",
+					"affect-on": ["Self"],
+					"stats": ["80%", "88%", "96%", "104%", "110%"],
+					"description": " Eugene's axe pirouette deals damage of Attack ",
+					"icon": "axe_whirl.png"
+				}
+			},
+			"2": {
+				"skill-name": "Razor Sharp",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Added Damage per Second",
+					"affect-on": ["Point Target"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Eugene's sharpened axe deals ",
+					"icon": "razor_sharp.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Woodland Inheritor",
+					"trigger-point": "City Sawmill",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Sawmill",
+						"affect-on": ["City"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": "Eugene's consummate knowledge of timber processing has raised City Sawmill Output by",
+						"icon": "woodland_inheritor.png"
+					}
+				},
+				"2": {
+					"skill-name": "Master Woodcutter",
+					"trigger-point": "Wood Mining",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Wood Gathering Speed",
+						"affect-on": ["Wood Mining"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Eugene is always focused on achieving the perfect logging technique. ",
+						"icon": "master_woodcutter.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": "",
+			"ability": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": "",
+			"ability": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "eugene-thumb.png",
+	"thumbnail": "eugene-thumb.png"
+}

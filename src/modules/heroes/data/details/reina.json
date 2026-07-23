@@ -1,0 +1,121 @@
+{
+  "id": "reina",
+  "name": "Reina",
+  "generation": "S4",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 4106,
+    "defense": 4106,
+    "health": 41070
+  },
+  "expedition": {
+    "attack": 370.29,
+    "defense": 370.29
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Phantom Assault",
+        "trigger-point": "Behind Enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Area of Effect Targets"],
+          "stats": ["300%", "330%", "360%", "390%", "420%"],
+          "description": "Reina conjures an illusion to ambush enemy forces from behind, dealing Attack ×300%–420% area damage.",
+          "icon": "phantom_assault.png"
+        }
+      },
+      "2": {
+        "skill-name": "Vanishing Technique",
+        "trigger-point": "Receiving Normal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Confuse & Dodge Chance",
+          "affect-on": ["Self"],
+          "stats": ["5%", "10%", "15%", "20%", "25%"],
+          "description": "Reina has a 5%–25% chance of confusing the opponent with Illusion and dodging the damage when receiving a Normal Attack.",
+          "icon": "vanishing_technique.png"
+        }
+      },
+      "3": {
+        "skill-name": "Poison of Demon",
+        "trigger-point": "Enemy Hero First",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack + Immobilize",
+          "affect-on": ["Enemy"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Reina inflicts Illusion on enemy targets (hero first), dealing Attack ×100%–140% damage and immobilizing them for 1.5 s.",
+          "icon": "poison_of_demon.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Assassin’s Instinct",
+          "trigger-point": "Enemy Weak Spots",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Normal Attack Damage +",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "15%", "20%", "25%", "30%"],
+            "description": "Reina targets enemy weak spots, increasing normal attack damage by 10%–30% for all troops.",
+            "icon": "assassins_instinct.png"
+          }
+        },
+        "2": {
+          "skill-name": "Swift Jive",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Chance Dodge",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Reina’s adept leadership grants all troops a 4%–20% chance of dodging normal attacks.",
+            "icon": "swift_jive.png"
+          }
+        },
+        "3": {
+          "skill-name": "Shadow Blade",
+          "trigger-point": "Friendly Lancers",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Extra Attack Chance",
+            "affect-on": ["Friendly Lancers"],
+            "stats": ["120%", "140%", "160%", "180%", "200%"],
+            "description": "With Reina's clever tactics, her lancers have a 25% chance of performing an extra attack, dealing 120%–200% damage.",
+            "icon": "shadow_blade.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Ninjaken – Raikiri",
+  "widget-icon": "ninjaken_raikiri",
+  "widget-affect-on": "Normal Attacks / Rally Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 832,
+      "defense": 832,
+      "health": 8325,
+      "ability": "Silhouette Strike: Reina has a 40% chance of throwing an extra kunai, dealing Attack ×45% damage with Normal Attack.",
+      "icon": "silhouette_strike.png",
+      "name": "Silhouette Strike"
+    },
+    "expedition": {
+      "lethality": "92.50%",
+      "Health": "92.50%",
+      "ability": "Fiery Invasion: Reina's unmatched precision increases Rally Troops' Lethality by 15%.",
+      "icon": "fiery_invasion.png",
+      "name": "Fiery Invasion"
+    }
+  },
+  "uniquePassive": {},
+  "image": "reina.png",
+  "thumbnail": "reina_thumb.png"
+}

@@ -1,0 +1,122 @@
+{
+  "id": "freya",
+  "name": "Freya",
+  "generation": "S10",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 12364,
+    "defense": 12364,
+    "health": 123654
+  },
+  "expedition": {
+    "attack": "1110.88%",
+    "defense": "1110.88%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Chain Sunder",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "AoE Chain Damage + Mark",
+          "affect-on": ["Target", "Surrounding enemies"],
+          "stats": ["200%","220%","240%","260%","280%"],
+          "description": "Freya attacks with chains, dealing Attack ×200%–280% damage to target and surrounding enemies, marking the target. When marked target is attacked, 40%–80% of the damage is dealt to its surrounding enemies (cooldown 0.5s).",
+          "icon": "chain_sunder.png"
+        }
+      },
+      "2": {
+        "skill-name": "Prickled Bind",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage + Immobilize",
+          "affect-on": ["Target"],
+          "stats": ["100%","110%","120%","130%","140%"],
+          "description": "Freya chain-smashes and binds a target, dealing Attack ×100%–140% damage and immobilizing them for 1.5 s.",
+          "icon": "prickled_bind.png"
+        }
+      },
+      "3": {
+        "skill-name": "Crystal Fury",
+        "trigger-point": "Normal Attacks",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Crit Rate + after Normal Attacks",
+          "affect-on": ["Self"],
+          "stats": ["60%","70%","80%","90%","100%"],
+          "description": "Freya’s condition periodically erupts: after 8 → 7 → 6 → 5 → 4 normal attacks, Crit Rate increases by 60%–100%.",
+          "icon": "crystal_fury.png"
+        }
+      },
+    
+    "expedition": {
+      "1": {
+        "skill-name": "Fog of War",
+        "trigger-point": "Troops",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Enemy Troop Attack −",
+          "affect-on": ["Enemy troops"],
+          "stats": ["4%","8%","12%","16%","20%"],
+          "description": "Freya throws a smoke grenade, reducing all enemy troops’ Attack by 4%–20%. :contentReference[oaicite:4]{index=4}",
+          "icon": "fog_of_war.png"
+        }
+      },
+      "2": {
+        "skill-name": "Blood Moon Scythe",
+        "trigger-point": "Normal Attack (chance)",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Extra Hit Chance",
+          "affect-on": ["Target"],
+          "stats": ["20%","40%","60%","80%","100%"],
+          "description": "After normal attack, Freya has 50% chance to perform Reap, dealing Attack ×(20%–100%) extra damage.",
+          "icon": "blood_moon_scythe.png"
+        }
+      },
+      "3": {
+        "skill-name": "Night's Vengeance",
+        "trigger-point": "Passive / Troops",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Friendly Infantry & Marksman Damage + / Damage Taken −",
+          "affect-on": ["Friendly Infantry & Marksman troops"],
+          "stats": ["3%/3%","6%/6%","9%/9%","12%/12%","15%/15%"],
+          "description": "Decreases damage taken by and increases damage dealt of friendly Infantry and Marksman by 3%–15%. ",
+          "icon": "nights_vengeance.png"
+        }
+      }
+    }
+   }
+},
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Blood Moon Scythe",
+  "widget-icon": "blood_moon_scythe_1",
+  "widget-affect-on": "Self / Lancer Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2506,
+      "defense": 2506,
+      "health": 25065,
+      "ability": "Night’s Raid (Lv.5): Freya’s rigorous training increases her damage by 30% while her instincts reflexively deal Attack ×300% damage to enemies’ summons. ",
+      "icon": "nights_raid.png",
+      "name": "Night’s Raid"
+    },
+    "expedition": {
+      "lethality": "277.50%",
+      "Health": "277.50%",
+      "ability": "Defender of the Watch (Lv.5): Freya’s vigilance increases Defender Troops’ Defense by 15%.",
+      "icon": "defender_of_the_watch.png",
+      "name": "Defender of the Watch"
+    }
+  },
+  "uniquePassive": {},
+  "image": "freya.png",
+  "thumbnail": "freya.jpg"
+}

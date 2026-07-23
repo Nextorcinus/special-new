@@ -1,0 +1,108 @@
+{
+	"id": "gina",
+	"name": "Gina",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Marksman",
+	"stats": {
+		"attack": 2157,
+		"defense": 2220,
+		"health": 13320
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Incendiary Arrow",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Area of effect target points"],
+					"stats": ["210%", "230%", "250%", "270%", "290%"],
+					"description": "Focus on Damage: Gina\u2019s Incendiary Arrow is her primary source of damage, both for single targets and AoE. Prioritize upgrading this skill to level 5 as soon as possible to maximize her damage output in Exploration and Arena battles",
+					"icon": "incendiary_arrow.png"
+				}
+			},
+			"2": {
+				"skill-name": "Windtalker",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Attack Speed",
+					"affect-on": ["Self"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Windtalker is a valuable skill that increases Gina\u2019s attack speed, but it doesn\u2019t offer as significant an impact as her other two Exploration Skills. Upgrade this skill last, focusing on maximizing her damage potential first",
+					"icon": "windtalker.png"
+				}
+			},
+			"3": {
+				"skill-name": "Eagle Eyes",
+				"trigger-point": "Enemy Weak Points",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Crit Rate",
+					"affect-on": ["Self"],
+					"stats": ["7%", "10%", "13%", "16%", "20%"],
+					"description": " Eagle Eyes enhances Gina\u2019s critical hit rate, boosting her damage output further. Upgrade this skill to level 5 after maxing Incendiary Arrow to make her attacks even more potent. ",
+					"icon": "eagle_eyes.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Endurance Training",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Reduce Stamina",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["10%", "12%", "15%", "18%", "20%"],
+						"description": " Gina\u2019s key strength lies in her ability to save stamina during hunting activities. Prioritize upgrading Endurance Training to level 5 immediately. This will allow you to hunt more Beasts and Polar Terrors, accumulating valuable resources more efficiently. ",
+						"icon": "endurance_training.png"
+					}
+				},
+				"2": {
+					"skill-name": "Quick Paced",
+					"trigger-point": "March",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Boost March Speed",
+						"affect-on": ["Self March"],
+						"stats": ["20%", "40%", "60%", "80%", "100%"],
+						"description": "Quick Paced is beneficial for quicker travel and gathering, but its impact isn\u2019t as crucial as stamina reduction. Upgrade this skill to level 5 after maxing Endurance Training to further enhance Gina\u2019s hunting efficiency",
+						"icon": "quick_paced.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "gina_thumb.png",
+	"thumbnail": "gina_thumb.png"
+}

@@ -1,0 +1,181 @@
+{
+  "id": "jeronimo",
+  "name": "Jeronimo",
+  "generation": "1",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 1776,
+    "defense": 2220,
+    "health": 17760
+  },
+  "expedition": {
+    "attack": 140.11,
+    "defense": 140.11
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Combo Slash",
+        "trigger-point": "Targeting and Area Enemies",
+        "trigger-time": "long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": [
+            "Area of effect target points"
+          ],
+          "stats": [
+            "160%",
+            "176%",
+            "192%",
+            "208%",
+            "224%"
+          ],
+          "description": " Jeronimo launches enemies in the target area into the air, following up with three slashes, each dealing Attack damage",
+          "icon": "combo_slash.png"
+        }
+      },
+      "2": {
+        "skill-name": "Sword Art",
+        "trigger-point": "Targeting and Near Enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": [
+            "Point Target"
+          ],
+          "stats": [
+            "15%",
+            "17%",
+            "19%",
+            "21%",
+            "23%"
+          ],
+          "description": " Each of Jeronimo's attacks releases sword energy, dealing Attack,  damage to enemies in a rectangular area straight ahead. ",
+          "icon": "sword_art.png"
+        }
+      },
+      "3": {
+        "skill-name": "Lone Wolf",
+        "trigger-point": "Over 50% Health",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Attack Boost",
+          "affect-on": [
+            "Self"
+          ],
+          "stats": [
+            "16%",
+            "24%",
+            "32%",
+            "40%",
+            "48%"
+          ],
+          "description": "  Jeronimo is a master at pressing advantages, gaining a Attack boost over 50% Health.",
+          "icon": "lone_wolf.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Battle Manifesto",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Increasing Damage Dealt",
+            "affect-on": [
+              "All Troops Rally",
+              "All Troops Joiner"
+            ],
+            "stats": [
+              "5%",
+              "10%",
+              "15%",
+              "20%",
+              "25%"
+            ],
+            "description": "  Jeronimo delivers a rousing rally speech ahead of the battle, increasing damage dealt for all troops.",
+            "icon": "battle_manifesto.png"
+          }
+        },
+        "2": {
+          "skill-name": "Swordmentor",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Increasing Troops Attack",
+            "affect-on": [
+              "All Troops"
+            ],
+            "stats": [
+              "20%",
+              "40%",
+              "60%",
+              "80%",
+              "100%"
+            ],
+            "description": " Jeronimo imparts the secrets of swordsmanship, increasing attack for all troops",
+            "icon": "emerald_warrior.png"
+          }
+        },
+        "3": {
+          "skill-name": "Exper Swordmanship",
+          "trigger-point": "All Troops Attack and Change Stun",
+          "trigger-time": "1s",
+          "effects": {
+            "effect-name": "Increasing Troops Attack",
+            "affect-on": [
+              "All Troops"
+            ],
+            "stats": [
+              "4%",
+              "8%",
+              "12%",
+              "16%",
+              "20%"
+            ],
+            "description": " Jeronimo's teachings in sword arts grants all troop's attack a chance of stunning the target for 1 turn.",
+            "icon": "expert_swordsmanship.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Dawnbreak",
+  "widget-icon": "dawnbreak",
+  "widget-affect-on": "Only Rally Opener",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 431,
+      "defense": 562,
+      "health": 8437,
+      "ability": " When attacking, Jeronimo's sword energy forms a shield, reducing his damage received by 30%.",
+      "icon": "shield_of_swords.png",
+      "name": "Shield of Swords"
+    },
+    "expedition": {
+      "lethality": "62.50%",
+      "Health": "62.50%",
+      "ability": "Jeronimo attacks with a sword formation, increasing Rally Troops' attack by 15%.",
+      "icon": "discernment.png",
+      "name": "Discernment"
+    }
+  },
+  "uniquePassive": {
+    "name": "Natural Leader",
+    "icon": "natural_leader",
+    "ability": " Jeronimo easily inspires others even from afar, boosting all troops' Lethality and Health by ",
+    "stats": [
+      "3%",
+      "6%",
+      "9%",
+      "12%",
+      "15%"
+    ]
+  },
+  "image": "jeronimo.png",
+  "thumbnail": "jeronimo_thumb.png"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "blanchette",
+  "name": "Blanchette",
+  "generation": "S10",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 15021,
+    "defense": 12364,
+    "health": 92740
+  },
+  "expedition": {
+    "attack": "1110.88%",
+    "defense": "1110.88%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Triple Blunderbuss",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Triple-target Shot + Healing Block",
+          "affect-on": ["Up to 3 enemies"],
+          "stats": ["200%", "220%", "240%", "260%", "280%"],
+          "description": "Blanchette’s modified musket instantaneously hits 3 targets, dealing Attack ×200%–280% damage and blocks their healing for 5 s.",
+          "icon": "triple_blunderbuss.png"
+        }
+      },
+      "2": {
+        "skill-name": "Scattershot",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Area Damage",
+          "affect-on": ["Enemies in area"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Blanchette fires a blunderbuss shot of crystal shards, dealing Attack ×100%–140% area-of-effect damage to enemies in the area.",
+          "icon": "scattershot.png"
+        }
+      },
+      "3": {
+        "skill-name": "Red Pursuit",
+        "trigger-point": "Passive",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Increasing Damage vs Low-Health Targets",
+          "affect-on": ["Self → Target"],
+          "stats": ["10%", "20%", "30%", "40%", "50%"],
+          "description": "Damage dealt by Blanchette increases by 10%–50% as the target’s health decreases.",
+          "icon": "red_pursuit.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Armed to the Teeth",
+          "trigger-point": "Rally Troops Start / Passive",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Troop Lethality +",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Increases all troops' Lethality by 5%–25%.",
+            "icon": "armed_to_the_teeth.png"
+          }
+        },
+        "2": {
+          "skill-name": "Blood Hunter",
+          "trigger-point": "Every 3 rounds / Troop Marksman fire",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Extra Damage by Marksmen",
+            "affect-on": ["Enemy target"],
+            "stats": ["15%", "30%", "45%", "60%", "75%"],
+            "description": "Marksmen under Blanchette fire a crystal blade every 3 rounds, dealing extra damage +15%–75%.",
+            "icon": "blood_hunter.png"
+          }
+        },
+        "3": {
+          "skill-name": "Crimson Sniper",
+          "trigger-point": "Every 2 strikes by Marksman troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Bonus Damage vs Lancer & Marksman",
+            "affect-on": ["Enemy Lancer", "Enemy Marksman"],
+            "stats": ["8%/4%", "16%/8%", "24%/12%", "32%/16%", "40%/20%"],
+            "description": "Marksmen deal +8%–40% extra damage vs enemy Lancers and +4%–20% vs enemy Marksmen every 2 strikes.",
+            "icon": "crimson_sniper.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Wolf Hunter",
+  "widget-icon": "wolf_hunter",
+  "widget-affect-on": "Self / Marksman Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 3041,
+      "defense": 2506,
+      "health": 18798,
+      "ability": "Hunter’s Rage (Lv.5): Blanchette increases her Attack Speed by 30% and extends Triple Blunderbuss healing-block effect by extra 5s.",
+      "icon": "hunters_rage.png",
+      "name": "Hunter’s Rage"
+    },
+    "expedition": {
+      "lethality": "277.50%",
+      "Health": "277.50%",
+      "ability": "Lightning Strike (Lv.5): Increases Rally Troops’ Lethality by 15%.",
+      "icon": "lightning_strike.png",
+      "name": "Lightning Strike"
+    }
+  },
+  "uniquePassive": {},
+  "image": "blanchette.png",
+  "thumbnail": "blanchette.jpg"
+}

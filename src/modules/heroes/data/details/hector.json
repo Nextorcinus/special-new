@@ -1,0 +1,132 @@
+{
+  "id": "hector",
+  "name": "Hector",
+  "generation": "S5",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 3780,
+    "defense": 4928,
+    "health": 73926
+  },
+  "expedition": {
+    "attack": "444.35",
+    "defense": "444.35"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Sword Whirlwind",
+        "trigger-point": "Area Enemies",
+        "trigger-time": "4s",
+        "effects": {
+          "effect-name": "Attack Speed + / Control Immunity",
+          "affect-on": ["Self"],
+          "stats": ["80%", "90%", "100%", "110%", "120%"],
+          "description": "Hector unleashes a whirlwind of blade strikes, increasing Attack Speed by 80%–120% and becoming immune to Freeze, Stun and other control effects for 4s.",
+          "icon": "sword_whirlwind.png"
+        }
+      },
+      "2": {
+        "skill-name": "Desperado",
+        "trigger-point": "Health < 50%",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage Taken Reduction",
+          "affect-on": ["Self"],
+          "stats": ["20%", "30%", "40%", "50%", "60%"],
+          "description": "Hector thrives with danger, reducing his damage taken by 20%–60% when his health falls below 50%.",
+          "icon": "desperado.png"
+        }
+      },
+      "3": {
+        "skill-name": "Adrenaline Surge",
+        "trigger-point": "Health < 50%",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack +",
+          "affect-on": ["Self"],
+          "stats": ["16%", "24%", "32%", "40%", "48%"],
+          "description": "When his health drops below 50%, Hector gains +16%–48% Attack.",
+          "icon": "adrenaline_surge.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Survival Instincts",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Chance Damage Taken Reduction",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Hector’s presence gives all troops a 40% chance to reduce damage taken by level stats.",
+            "icon": "survival_instincts.png"
+          }
+        },
+        "2": {
+          "skill-name": "Rampant",
+          "trigger-point": "Infantry & Marksman Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Infantry Damage + / Marksman Damage +",
+            "affect-on": ["Infantry Troops", "Marksman Troops"],
+            "stats": [
+              "100%",
+              "125%",
+              "150%",
+              "175% ",
+              "200%",
+              "20",
+              "40%",
+              "60%",
+              "80%",
+              "100%"
+            ],
+            "description": "Increases Infantry damage by 100%–200% and Marksman damage by level stats. Effect decreases by 80% each attack and ends after 5 attacks.",
+            "icon": "rampant.png"
+          }
+        },
+        "3": {
+          "skill-name": "Blitz",
+          "trigger-point": "Normal Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Chance Extra Damage",
+            "affect-on": ["Self"],
+            "stats": ["120%", "140%", "160%", "180%", "200%"],
+            "description": "Hector has a 25% chance to deal by level stats damage on attack.",
+            "icon": "blitz.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Steel Fangs",
+  "widget-icon": "steel_fangs",
+  "widget-affect-on": "Infantry Troops / Rally",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 765,
+      "defense": 999,
+      "health": 14985,
+      "ability": "Reaper’s Embrace extends Sword Whirlwind by 1.5 s and restores health equal to 15% of damage dealt.",
+      "icon": "reapers_embrace.png",
+      "name": "Reaper’s Embrace"
+    },
+    "expedition": {
+      "lethality": "111.00%",
+      "Health": "111.00%",
+      "ability": "Goliath increases Defender Troops’ Attack by 15%.",
+      "icon": "goliath.png",
+      "name": "Goliath"
+    }
+  },
+  "uniquePassive": {},
+  "image": "hector.png",
+  "thumbnail": "hector_thumb.png"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "wu-ming",
+  "name": "Wu Ming",
+  "generation": "S6",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 4546,
+    "defense": 5926,
+    "health": 88910
+  },
+  "expedition": {
+    "attack": "540.43",
+    "defense": "540.43"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Cyclone Barrier",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Area Damage + Invulnerability",
+          "affect-on": ["Enemies in area"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Wu Ming twirls his staff at blinding speed and forms an unyielding barrier, dealing Attack ×100%–140% area damage and gaining invulnerability for 2s.",
+          "icon": "cyclone_barrier.png"
+        }
+      },
+      "2": {
+        "skill-name": "Inner Clarity",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack + and Defense +",
+          "affect-on": ["Self"],
+          "stats": ["8%/16%", "12%/24%", "16%/32%", "20%/40%", "24%/48%"],
+          "description": "Wu Ming finds unparalleled clarity, increasing Attack by 8%–24% and Defense by 16%–48% for 4s.",
+          "icon": "inner_clarity.png"
+        }
+      },
+      "3": {
+        "skill-name": "Remote Impact",
+        "trigger-point": "Normal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Extra Hit to Random Enemy",
+          "affect-on": ["Random enemy"],
+          "stats": ["20%", "22%", "24%", "26%", "28%"],
+          "description": "With every normal attack, deals Attack ×20%–28% damage to a random enemy.",
+          "icon": "remote_impact.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Shadow's Evasion",
+          "trigger-point": "Troops in Rally/Expedition",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Taken Reduced",
+            "affect-on": ["Allied troops"],
+            "stats": ["5%/10%", "15%/20%", "25%"],
+            "description": "Reduces allied troops’ damage taken from normal attacks by 5%–25% and from skills by 6%–30%.",
+            "icon": "shadows_evasion.png"
+          }
+        },
+        "2": {
+          "skill-name": "Crescent Uplift",
+          "trigger-point": "Troops in Rally/Expedition",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Troop Damage +",
+            "affect-on": ["Allied troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Increases allied troops' damage dealt by 4%–20%.",
+            "icon": "crescent_uplift.png"
+          }
+        },
+        "3": {
+          "skill-name": "Elemental Resonance",
+          "trigger-point": "Troops in Rally/Expedition",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Troop Skill Damage +",
+            "affect-on": ["Allied troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Increases allied troops’ skill damage dealt by 5%–25%.",
+            "icon": "elemental_resonance.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Dragonslayer",
+  "widget-icon": "dragonslayer",
+  "widget-affect-on": "Self / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 921,
+      "defense": 1201,
+      "health": 18022,
+      "ability": "Martial Zenith (Lv.5): Wu Ming stands transcendent in the realm of martial arts, increasing damage dealt by 30%.",
+      "icon": "martial_zenith.png",
+      "name": "Martial Zenith"
+    },
+    "expedition": {
+      "lethality": "133.50%",
+      "Health": "133.50%",
+      "ability": "Steel Discipline (Lv.5): Wu Ming puts Defender Troops under stern tutelage, increasing Defender Troops' Defense by 15%.",
+      "icon": "steel_discipline.png",
+      "name": "Steel Discipline"
+    }
+  },
+  "uniquePassive": {},
+  "image": "wu_ming.png",
+  "thumbnail": "wu_ming_thumb.png"
+}

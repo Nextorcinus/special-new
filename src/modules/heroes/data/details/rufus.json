@@ -1,0 +1,121 @@
+{
+	"id": "rufus",
+	"name": "Rufus",
+	"generation": "S11",
+	"rarity": "Legendary",
+	"class": "Marksman",
+	"stats": {
+		"attack": 18042,
+		"defense": 14850,
+		"health": 111388
+	},
+	"expedition": {
+		"attack": "+1281.02%",
+		"defense": "+1281.02%"
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Starfall Impact",
+				"trigger-point": "Active Skill",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "AoE Damage + Fire Burn",
+					"affect-on": ["Enemies in area"],
+					"stats": ["200%", "220%", "240%", "260%", "280%"],
+					"description": "Rufus fires grenades that bombard the ground like meteors, dealing Attack ×200%–280% AoE damage. The grenades set the ground ablaze, dealing Attack ×20%–30% damage every 0.5s for 2s.",
+					"icon": "Starfall-Impact.png"
+				}
+			},
+			"2": {
+				"skill-name": "Splinter Blast",
+				"trigger-point": "Active Skill",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Single Target + Splash Damage",
+					"affect-on": ["Target", "Nearby enemies"],
+					"stats": ["100%/50%", "110%/55%", "120%/60%", "130%/65%", "140%/70%"],
+					"description": "Rufus fires explosive bullets dealing Attack ×100%–140% to the target, and Attack ×50%–70% splash damage to nearby enemies.",
+					"icon": "Splinter-Blast.png"
+				}
+			},
+			"3": {
+				"skill-name": "Raging Fury",
+				"trigger-point": "Passive / Buff",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Crit Rate +",
+					"affect-on": ["Self"],
+					"stats": ["7%", "10%", "13%", "16%", "20%"],
+					"description": "Increases Rufus’ Crit Rate by 7%–20%.",
+					"icon": "Raging-Fury.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Inferno Regiment",
+					"trigger-point": "Troops Rally / Expedition",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Troop Attack +",
+						"affect-on": ["All friendly troops"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": "Increases all allied troops’ Attack by 5%–25%.",
+						"icon": "Inferno-Regiment.png"
+					}
+				},
+				"2": {
+					"skill-name": "Armor Crush",
+					"trigger-point": "Marksman Troop Attack",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Extra Damage + Enemy Damage Taken +",
+						"affect-on": ["Enemy target"],
+						"stats": ["12%/5%", "24%/10%", "36%/15%", "48%/20%", "60%/25%"],
+						"description": "Marksmen deal +12%–60% extra damage per attack and increase enemy damage taken by 5%–25% for 1 turn.",
+						"icon": "Armor-Crush.png"
+					}
+				},
+				"3": {
+					"skill-name": "Wrathful Quake",
+					"trigger-point": "Troops Rally / Expedition",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Enemy Troop Lethality Down Chance",
+						"affect-on": ["Enemy troops"],
+						"stats": ["10%", "20%", "30%", "40%", "50%"],
+						"description": "Grants all allied troops a 20% chance to intimidate enemies, reducing enemy troops’ Lethality by 10%–50% for 2 turns.",
+						"icon": "Wrathful-Quake.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": true
+	},
+	"widget-name": "Meteor Blaster",
+	"widget-icon": "meteor_blaster",
+	"widget-affect-on": "Rally / Attack Troops",
+	"widget-level": "Lv5",
+	"widget-stats": {
+		"exploration": {
+			"attack": 3652,
+			"defense": 3010,
+			"health": 22578,
+			"ability": "Ember of Conflict (Lv.5): Rufus’ normal attacks shoot scorching bullets that set targets on fire, dealing Attack ×30% damage per second for 2s.",
+			"icon": "Ember-of-Conflict.png",
+			"name": "Ember of Conflict"
+		},
+		"expedition": {
+			"lethality": "320%",
+			"health": "320%",
+			"ability": "Blazing Legion (Lv.5): Rufus rallies his troops under his phoenix banner, increasing their Attack by 15%.",
+			"icon": "Blazing-Legion.png",
+			"name": "Blazing Legion"
+		}
+	},
+	"uniquePassive": {},
+	"image": "rufus.png",
+	"thumbnail": "rufus_thumb.png"
+}

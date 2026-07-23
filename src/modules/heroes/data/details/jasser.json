@@ -1,0 +1,108 @@
+{
+	"id": "jasser",
+	"name": "Jasser",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Marksman",
+	"stats": {
+		"attack": 2157,
+		"defense": 2220,
+		"health": 13320
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Triple Volley",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["150%", "160%", "180%", "195%", "210%"],
+					"description": "jasser precisely aims and fires three consecutive bullets, dealing Attack *100%, Attack +125%, 175%, and Attack +150%, 210% damage respectively, with the third being area of effect damage.",
+					"icon": "triple_volley.png"
+				}
+			},
+			"2": {
+				"skill-name": "Suppressive Fire",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Defense Friend",
+					"affect-on": ["Point Target"],
+					"stats": ["100%", "110%", "120%", "130%", "140%"],
+					"description": "Jasser relies on masterful marksmanship and overwhelming firepower to supress the enemy, dealing Attack +100% , 140% damage and reducing the targets Attack Speed by +30% , 50% for 2s ",
+					"icon": "suppressive_fire.png"
+				}
+			},
+			"3": {
+				"skill-name": "Natural Precision",
+				"trigger-point": "Self",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Damage Attack",
+					"affect-on": ["Self"],
+					"stats": ["8%", "12%", "2016%", "20%", "24%"],
+					"description": " Jasser\u2019s impeccable marksmanship has become second nature, increasing Attack by +8% \u2013 24%",
+					"icon": "natural_precision.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Tactical Genius",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Increasing Damage Dealt",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Jasser\u2019s combination of courage and wisdom enriches the army, increasing damage dealt by +5% \u2013 25% for all troops",
+						"icon": "tactical_genius.png"
+					}
+				},
+				"2": {
+					"skill-name": "Englightended Warfare ",
+					"trigger-point": "Research",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Increase Research Speed",
+						"affect-on": ["City"],
+						"stats": ["3%", "6%", "9%", "12%", "15%"],
+						"description": "Jasser\u2019s profound knowledge increases the city\u2019s Research Speed by +3% \u2013 15%",
+						"icon": "enlightended_warfare.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "jasser_thumb.jpg",
+	"thumbnail": "jasser_thumb.jpg"
+}

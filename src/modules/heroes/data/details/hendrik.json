@@ -1,0 +1,121 @@
+{
+  "id": "hendrik",
+  "name": "Hendrik",
+  "generation": "S8",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 10410,
+    "defense": 8568,
+    "health": 64268
+  },
+  "expedition": {
+    "attack": 780.62,
+    "defense": 780.62
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Song of R’lyeh",
+        "trigger-point": "Enemies in range",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Area of Effect targets"],
+          "stats": ["220%", "240%", "260%", "280%", "300%"],
+          "description": "Hendrik summons ancient spirits from the dark abyss to attack the enemies, dealing Attack ×220percent to 300percent damage to targets within range and stunning them for 1.5s.",
+          "icon": "song_of_rlyeh.png"
+        }
+      },
+      "2": {
+        "skill-name": "Sinking Anchor",
+        "trigger-point": "Enemies in range",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Enemies in range"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Captain Hendrik hurls a heavy anchor with unbelievable strength, dealing Attack ×100percent to 140percent damage to enemies within range.",
+          "icon": "sinking_anchor.png"
+        }
+      },
+      "3": {
+        "skill-name": "Lamprey’s Kiss",
+        "trigger-point": "Each defeated enemy",
+        "trigger-time": "Passive",
+        "effects": {
+          "effect-name": "Damage Boost",
+          "affect-on": ["Self"],
+          "stats": ["0.5%", "1%", "1.5%", "2%", "2.5%"],
+          "description": "Captain Hendrik gains power from each defeated enemy, dealing 0.5percent to 2.5percent more damage per kill. Max 15 stacks.",
+          "icon": "lampreys_kiss.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Worm's Ravage",
+          "trigger-point": "All Enemy Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Enemy Defense Reduction",
+            "affect-on": ["All Enemy Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "A gigantic naval shipworm gnaws at enemy armor, reducing all enemy troops Defense by 5percent to 25percent.",
+            "icon": "worms_ravage.png"
+          }
+        },
+        "2": {
+          "skill-name": "Armor of Barnacles",
+          "trigger-point": "Every 4 turns",
+          "trigger-time": "4 turns",
+          "effects": {
+            "effect-name": "Friendly Defense Increase",
+            "affect-on": ["All Friendly Troops"],
+            "stats": ["6%", "12%", "18%", "24%", "30%"],
+            "description": "Hendrik covers friendly troops with hard barnacles every 4 turns, increasing Defense by 6percent to 30percent for 2 turns.",
+            "icon": "armor_of_barnacles.png"
+          }
+        },
+        "3": {
+          "skill-name": "Dragon's Heir",
+          "trigger-point": "Every 3 turns",
+          "trigger-time": "3 turns",
+          "effects": {
+            "effect-name": "Damage to All Enemies",
+            "affect-on": ["All Enemy Troops"],
+            "stats": ["8%", "16%", "24%", "32%", "40%"],
+            "description": "Every 3 turns, ancient abyssal spirits assist Hendrik, dealing 8percent to 40percent damage to all enemies.",
+            "icon": "dragons_heir.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Abyss Driver",
+  "widget-icon": "abyss_driver",
+  "widget-affect-on": "Rally Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2107,
+      "defense": 1737,
+      "health": 13027,
+      "ability": "Hydra’s Dance leaves tentacles for 5s with 30percent of Hendrik’s Health when Song of R’lyeh spirit disappears.",
+      "icon": "hydras_dance.png",
+      "name": "Hydra’s Dance"
+    },
+    "expedition": {
+      "lethality": "193%",
+      "Health": "193%",
+      "ability": "Abyssal Blessing increases Rally Troops Attack by 15percent.",
+      "icon": "abyssal_blessing.png",
+      "name": "Abyssal Blessing"
+    }
+  },
+  "uniquePassive": {},
+  "image": "hendrik.png",
+  "thumbnail": "hendrik_thumb.png"
+}

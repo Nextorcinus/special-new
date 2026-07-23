@@ -1,0 +1,123 @@
+{
+  "id": "eleonora",
+  "name": "Eleonora",
+  "generation": "S11",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 11392,
+    "defense": 14850,
+    "health": 222776
+  },
+  "expedition": {
+    "attack": "1281.02%",
+    "defense": "1281.02%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Shield of Blaze",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Shield + Damage Reflection + Burst Damage",
+          "affect-on": ["Self (shield)", "Nearby enemies when shield breaks"],
+          "stats": ["100%/130%/160%/190%/220%", "60%/65%/70%/75%/80%"],
+          "description": "Eleonora raises a spiked shield equal to Attack × (100%–220%). Shield reflects 30% of damage taken to attacker; after 3s shield ruptures dealing Attack × (60%–80%) damage to nearby enemies.",
+          "icon": "Shield-of-Blaze.png"
+        }
+      },
+      "2": {
+        "skill-name": "Regal Sanction",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Single Target Damage + Defense Down",
+          "affect-on": ["Target"],
+          "stats": ["100%/110%/120%/130%/140%"],
+          "description": "Eleonora strikes a heavy hammer blow dealing Attack × (100%–140%) damage and reduces target’s Defense by 10%–30% for 2s.",
+          "icon": "Regal-Sanction.png"
+        }
+      },
+      "3": {
+        "skill-name": "Majestic Corona",
+        "trigger-point": "Passive / Self Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage Up + Damage Taken Down",
+          "affect-on": ["Self"],
+          "stats": ["5%/7.5%/10%/12.5%/15%", "5%/7.5%/10%/12.5%/15%"],
+          "description": "Reduces damage taken by 5%–15% and increases damage dealt by 5%–15%.",
+          "icon": "Majestic-Corona.png"
+        }
+      
+    },
+    "expedition": {
+      "1": {
+        "skill-name": "Scorching Sun",
+        "trigger-point": "Troops Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Troop Health +",
+          "affect-on": ["All friendly troops"],
+          "stats": ["5%", "10%", "15%", "20%", "25%"],
+          "description": "Increases all troops’ Health by 5%–25%.",
+          "icon": "Scorching-Sun.png"
+        }
+      },
+      "2": {
+        "skill-name": "Solaris Nexus",
+        "trigger-point": "Troops Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Infantry Damage Taken Down + Marksman Damage Up",
+          "affect-on": ["Friendly Infantry troops", "Friendly Marksman troops"],
+          "stats": ["2%/4%/6%/8%/10%", "2%/4%/6%/8%/10%"],
+          "description": "Reduces damage taken by Infantry troops by 2%–10% and increases damage dealt by Marksman troops by 2%–10%.",
+          "icon": "Solaris-Nexus.png"
+        }
+      },
+      "3": {
+        "skill-name": "Soaring Flame",
+        "trigger-point": "Every 5 Infantry attacks",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "All troop Damage Up + Damage Taken Down (temporary)",
+          "affect-on": ["All friendly troops"],
+          "stats": ["5%/10%/15%/20%/25%", "5%/10%/15%/20%/25%"],
+          "description": "After every 5 Infantry attacks, all troops gain +5%–25% damage and receive –5%–25% damage reduction for 2 turns.",
+          "icon": "Soaring-Flame.png"
+        }
+        
+      }
+    }
+  }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Scepter of Solaris",
+  "widget-icon": "Scepter-of-Solaris",
+  "widget-affect-on": "Self / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2308,
+      "defense": 3010,
+      "health": 45157,
+      "ability": "Hammer & Shield (Lv.5): Attack +24% when health > 50%, Defense +75% when health ≤ 50%.",
+      "icon": "Hammer-Shield.png",
+      "name": "Hammer & Shield"
+    },
+    "expedition": {
+      "lethality": "320.00%",
+      "health": "320.00%",
+      "ability": "Last Fortress (Lv.5): Defender Troops’ Health +15%.",
+      "icon": "Last-Fortress.png",
+      "name": "Last Fortress"
+    }
+  },
+  "uniquePassive": {},
+  "image": "eleonora.png",
+  "thumbnail": "eleonora_thumb.png"
+}

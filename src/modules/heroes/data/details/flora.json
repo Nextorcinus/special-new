@@ -1,0 +1,121 @@
+{
+  "id": "flora",
+  "name": "Flora",
+  "generation": "S13",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 21400,
+    "defense":21400,
+    "health":214008
+  },
+  "expedition": {
+    "attack": 1621.29,
+    "defense":1621.29
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Envelopment",
+        "trigger-point": "Deal Attack + Stun",
+        "trigger-time": "2 seconds",
+        "effects": {
+          "effect-name": "Dealing attack and Immobilize",
+          "affect-on": ["enemy"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Flora summons a fast-moving vine against enemies, dealing Attack * 140% Area Damage and stuns the target for 2s.",
+          "icon": "envelopment.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Rosebloom",
+        "trigger-point": "Aread Damage",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Area Damage and Summon Adoria Rose",
+          "affect-on": ["enemy Heroes"],
+          "stats": ["20%", "25%", "30%", "35%", "40%", "10%", "15%", "20%", "25%", "30%"],
+          "description": "Flora litters the target area with toxic Adoria bloom, dealing Attack * 40% Area Damage which sprouts into a flesh-eating Adoria Rose versus heroes. It inherits 30% of Flora’s attributes and attacks nearby enemies.",
+          "icon": "rosebloom.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Nature’s Strength",
+        "trigger-point": "Health and Defense Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Gain Health and Defense",
+          "affect-on": ["Self"],
+          "stats": ["2%", "4%", "6%", "8%", "10%", "4%", "8%", "12%", "16%", "20%"],
+          "description": "What does not kill the cultivator and the cultivated makes them stronger. Flora and summoned plants gain 10% Health and 20% Defense.",
+          "icon": "natures_strength.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Enmiring Vines",
+          "trigger-point": "Increase Enemy Damage Taken",
+          "trigger-time": "50% Chance",
+          "effects": {
+            "effect-name": "Granting All Troops a Chance to Increase Enemy Damage Taken",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Flora litters the ground with sharp vines to hobble enemy soldiers, granting all troops a 50% chance of increasing enemies’ Damage Taken by 50%.",
+            "icon": "enmiring_vines.webp"
+          }
+        },
+        "2": {
+          "skill-name": "Plantage",
+          "trigger-point": "Reduce Infantry Damage Taken",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Infantry Damage Reduction and Increase Joint Attack Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%", "5%", "10%", "15%", "20%", "25%"],
+            "description": "Flora’s defensive foliage reduces Infantry Damage Taken by 25% while better Adoria Rose coordination with Lancers gives joint attacks dealing 25% extra damage.",
+            "icon": "plantage.webp"
+          }
+        },
+        "3": {
+          "skill-name": "Confusion Pollen",
+          "trigger-point": "Infantry Damage Taken and Marksman Damage Dealt",
+          "trigger-time": "4 turns",
+          "effects": {
+            "effect-name": "Infantry Damage Taken Increase and Marksman Damage Dealt Reduction",
+            "affect-on": ["Infantry troops and Marksman troops"],
+            "stats": ["12%", "24%", "36%", "48%", "60%", "12%", "24%", "36%", "48%", "60%"],
+            "description": "Flora’s hallucinatory pollen increases enemy Infantry’s Damage Taken by 30%, and decreases enemy Marksmen’s Damage Dealt by 30% for 2 turns every 4 turns.",
+            "icon": "confusion_pollen.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Kernel of Plenty",
+  "widget-icon": "kernel_of_plenty",
+  "widget-affect-on": "Defending Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 4338,
+      "defense": 4338,
+      "health": 43380,
+      "ability": "Adoria Roses and vines can always be more toxic. Targets now suffer Attack * 25% damage every 0.5 seconds for 2 seconds.",
+      "icon": "venoms_heart.webp",
+      "name": "Venom’s Heart"
+    },
+    "expedition": {
+      "lethality": "405.00%",
+      "Health": "405.00%",
+      "ability": "The new fruit of Flora is highly rejuvenating, granting defending Troop 15% increased Health.",
+      "icon": "fruit_of_life.webp",
+      "name": "Fruit of Life"
+    }
+  },
+  "uniquePassive": {},
+  "image": "flora.webp",
+  "thumbnail": "flora.webp"
+}

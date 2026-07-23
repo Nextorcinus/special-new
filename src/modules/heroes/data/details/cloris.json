@@ -1,0 +1,96 @@
+{
+	"id": "cloris",
+	"name": "Cloris",
+	"generation": "rare",
+	"rarity": "Rare",
+	"class": "Marksman",
+	"stats": {
+		"attack": 1752,
+		"defense": 2220,
+		"health": 10822
+	},
+	"expedition": {
+		"attack": 90.07,
+		"defense": 90.07
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Rain of Arrows",
+				"trigger-point": "Around The Target",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Area of effect target points"],
+					"stats": ["180%", "198%", "216%", "234%", "252%"],
+					"description": "Cloris launches a hail of arrows, dealing Attack ",
+					"icon": "rain_of_arrows.png"
+				}
+			},
+			"2": {
+				"skill-name": "Hunter's Mark",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Damage Inflicted",
+					"affect-on": ["Point Target"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Cloris paints a bullseye on a target, raising damage inflicted on the target",
+					"icon": "hunter_mark.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Top Hunter",
+					"trigger-point": "City",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Raise Meat Output",
+						"affect-on": ["City"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": "Cloris, the tundra's best hunter, has single-handedly raised City Hunter's Hut Output ",
+						"icon": "top_hunter.png"
+					}
+				},
+				"2": {
+					"skill-name": "Predator",
+					"trigger-point": "Meat farm",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Meat Gathering Speed",
+						"affect-on": ["Meat Farm"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Cloris knows the ecosystem like the back of her hand. Meat Gathering Speed on the map.",
+						"icon": "predator.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "cloris_thumb.png",
+	"thumbnail": "cloris_thumb.png"
+}

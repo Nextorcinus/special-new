@@ -1,0 +1,121 @@
+{
+  "id": "magnus",
+  "name": "Magnus",
+  "generation": "S9",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 7901,
+    "defense": 10300,
+    "health": 154511
+  },
+  "expedition": {
+    "attack": "940.75%",
+    "defense": "940.75%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Frozen Fury",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage over time + Taunt",
+          "affect-on": ["Nearby enemies"],
+          "stats": ["60%", "66%", "72%", "78%", "84%"],
+          "description": "Magnus whirls twin axes, taunting nearby enemies to attack while dealing Attack ×60%–84% damage to the same foes every 0.5 seconds for 3 seconds.",
+          "icon": "frozen_fury.png"
+        }
+      },
+      "2": {
+        "skill-name": "Wind Tomahawk",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Single target damage + Bleed",
+          "affect-on": ["Target"],
+          "stats": ["100%/50%", "110%/55%", "120%/60%", "130%/65%", "140%/70%"],
+          "description": "Magnus targets a hero with a devastating axe throw, dealing Attack ×100%–140% damage, also causing a wound that deals Attack ×50%–70% damage over 3 seconds.",
+          "icon": "wind_tomahawk.png"
+        }
+      },
+      "3": {
+        "skill-name": "Sunderer",
+        "trigger-point": "Normal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Chance Extra Damage + Defense Down",
+          "affect-on": ["Enemy"],
+          "stats": ["50%/5%", "55%/10%", "60%/15%", "65%/20%", "70%/25%"],
+          "description": "Magnus normal attacks have a 30% chance of sundering opponent armor, dealing Attack ×50%–70% additional damage and reducing Defense by 5%–25% for 2 seconds.",
+          "icon": "sunderer.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Rapacious",
+          "trigger-point": "Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Troop Attack +",
+            "affect-on": ["Friendly troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Magnus rouses his troops with brutal intensity, boosting friendly Troop Attack by 5%–25%.",
+            "icon": "rapacious.png"
+          }
+        },
+        "2": {
+          "skill-name": "Iron Phalanx",
+          "trigger-point": "Infantry attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Infantry Defense + chance",
+            "affect-on": ["Friendly Infantry troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Infantry under Magnus command enjoy a 40% chance of gaining 10%–50% Defense when attacking for 1 turn.",
+            "icon": "iron_phalanx.png"
+          }
+        },
+        "3": {
+          "skill-name": "Iceman",
+          "trigger-point": "Passive",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage reduction vs Infantry + Marksman damage +",
+            "affect-on": ["Friendly Infantry", "Friendly Marksman"],
+            "stats": ["2%/2%", "4%/4%", "6%/6%", "8%/8%", "10%/10%"],
+            "description": "Magnus adventuring skills provide a 2%–10% reduction in damage versus friendly Infantry while boosting friendly Marksmen damage by 2%–10%.",
+            "icon": "iceman.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Storm Axe",
+  "widget-icon": "storm_axe",
+  "widget-affect-on": "Self / Defender Squads",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1600,
+      "defense": 2088,
+      "health": 31319,
+      "ability": "Heroic Stock (Lv.5): A true son of the tundra, Magnus iron constitution reduces incoming damage by 15% while increasing Frozen Fury Defense bonus by 75%.",
+      "icon": "heroic_stock.png",
+      "name": "Heroic Stock"
+    },
+    "expedition": {
+      "lethality": "232%",
+      "Health": "232%",
+      "ability": "Valoric Inspiration (Lv.5): Ever the raconteur, Magnus inspires Defender Squads with 15% increased Health.",
+      "icon": "valoric_inspiration.png",
+      "name": "Valoric Inspiration"
+    }
+  },
+  "uniquePassive": {},
+  "image": "magnus-hero.png",
+  "thumbnail": "magnus_thumb.png"
+}

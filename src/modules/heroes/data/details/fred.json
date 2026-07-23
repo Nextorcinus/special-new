@@ -1,0 +1,121 @@
+{
+  "id": "fred",
+  "name": "Fred",
+  "generation": "S9",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 10300,
+    "defense": 10300,
+    "health": 103008
+  },
+  "expedition": {
+    "attack": "940.75%",
+    "defense": "940.75%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Acid Rain",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Damage over time + Damage Taken Up",
+          "affect-on": ["Enemies in area"],
+          "stats": ["60%", "66%", "72%", "78%", "84%"],
+          "description": "Fred rains down his special acidic formulation on the target area, dealing Attack ×60%–84% damage every 0.5s while increasing targets’ damage taken by 15% for 3s.",
+          "icon": "acid_rain.png"
+        }
+      },
+      "2": {
+        "skill-name": "Water Cannon",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Buff Strip + Single Target Damage",
+          "affect-on": ["Target"],
+          "stats": ["200%", "220%", "240%", "260%", "280%"],
+          "description": "Fred water-blasts the target, rinsing away their combat bonuses while dealing Attack ×200%–280% damage.",
+          "icon": "water_cannon.png"
+        }
+      },
+      "3": {
+        "skill-name": "Perfect Responder",
+        "trigger-point": "On <50% Health",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack + / Defense +",
+          "affect-on": ["Self"],
+          "stats": ["8%/24%", "12%/24%", "16%/24%", "20%/24%", "24%/24%"],
+          "description": "Fred performs better under extreme stress, increasing Attack by 8%–24% and Defense by 25%–75% when under 50% Health.",
+          "icon": "perfect_responder.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Hydraulic Suppression",
+          "trigger-point": "Troops every 2 turns",
+          "trigger-time": "2 turns",
+          "effects": {
+            "effect-name": "Enemy Troops’ Lethality −",
+            "affect-on": ["Enemy troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Fred’s water volleys destroy opponent momentum, reducing all enemy troops’ Lethality by 4%–20%.",
+            "icon": "hydraulic_suppression.png"
+          }
+        },
+        "2": {
+          "skill-name": "Acidification",
+          "trigger-point": "Troops damage to Infantry",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Taken by Enemy Infantry +",
+            "affect-on": ["Enemy Infantry"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Fred coats enemy Infantry shields with a special acidic blend, amplifying their damage taken by 4%–20%.",
+            "icon": "acidification.png"
+          }
+        },
+        "3": {
+          "skill-name": "Floodbringer",
+          "trigger-point": "Every 4 strikes",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Lancer Troops Damage + / Enemy Troop Damage −",
+            "affect-on": ["Friendly Lancer troops", "Enemy troops next turn"],
+            "stats": ["40%/4%", "80%/8%", "120%/12%", "160%/16%", "200%/20%"],
+            "description": "Fred’s Lancers deal +40%–200% extra damage every 4 strikes and reduce enemy troop damage by 4%–20% next turn.",
+            "icon": "floodbringer.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Blazebearer",
+  "widget-icon": "blazerbearer",
+  "widget-affect-on": "Self / Rally Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2088,
+      "defense": 2088,
+      "health": 20880,
+      "ability": "Idealism (Lv.5): The noble idealism of Fred’s calling increases his Attack by 24%, and increases his Defense by 10% for each bonus dispelled (max 5 stacks).",
+      "icon": "idealism.png",
+      "name": "Idealism"
+    },
+    "expedition": {
+      "lethality": "232%",
+      "Health": "232%",
+      "ability": "Call of the Firefighter (Lv.5): Few troops can remain unmoved by Fred’s heroics, increasing Rally Troops’ Attack by 15%.",
+      "icon": "call_of_the_firefighter.png",
+      "name": "Call of the Firefighter"
+    }
+  },
+  "uniquePassive": {},
+  "image": "fred-hero.png",
+  "thumbnail": "fred_thumb.png"
+}

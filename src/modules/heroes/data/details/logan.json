@@ -1,0 +1,121 @@
+{
+  "id": "logan",
+  "name": "Logan",
+  "generation": "S3",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 2554,
+    "defense": 3330,
+    "health": 49950
+  },
+  "expedition": {
+    "attack": 290.23,
+    "defense": 290.23
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Fists of Destruction",
+        "trigger-point": "Targeting and Area Enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Point Target"],
+          "stats": ["120%", "132%", "144%", "156%", "168%"],
+          "description": "Smashes Fists of Steel on the ground, releasing a powerful blast that deals Attack ×120%-168% damage and reduces the Target's Attack Speed by 50% for 4s.",
+          "icon": "fists_of_destruction.png"
+        }
+      },
+      "2": {
+        "skill-name": "Power Suit",
+        "trigger-point": "When Attacked",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Defense Boost Chance",
+          "affect-on": ["Self"],
+          "stats": ["8%/8%", "10%/11%", "12%/13%", "14%/17%", "16%/20%"],
+          "description": "Logan’s Power Suit has a chance (8%–16%) of increasing his Defense by 8%–20% when attacked, for 2s, up to 5 stacks.",
+          "icon": "power_suit.png"
+        }
+      },
+      "3": {
+        "skill-name": "Blustery Strike",
+        "trigger-point": "Cone-Area",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack + Stun Chance",
+          "affect-on": ["Area of effect targets"],
+          "stats": ["80%", "88%", "96%", "104%", "112%"],
+          "description": "Performs a powerful punch with freezing wind, dealing Attack ×80%–112% damage in a cone and has a 30% chance to stun targets for 1s.",
+          "icon": "blustery_strike.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Lion Strike",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Extra Damage Chance",
+            "affect-on": ["All Troops"],
+            "stats": ["8%", "16%", "24%", "32%", "40%"],
+            "description": "Grants all troops’ attack a 20% chance of dealing 8%–40% extra damage per turn for 3 turns.",
+            "icon": "lion_strike.png"
+          }
+        },
+        "2": {
+          "skill-name": "Lion Intimidation",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Damage Taken Reduction",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Reduces damage taken by all troops by 4%–20%.",
+            "icon": "lion_intimidation.png"
+          }
+        },
+        "3": {
+          "skill-name": "Leader Inspiration",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Health Boost",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Increases Health of all troops by 5%–25%.",
+            "icon": "leader_inspiration.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "First of Steel",
+  "widget-icon": "first_of_steel",
+  "widget-affect-on": "Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 482,
+      "defense": 630,
+      "health": 9450,
+      "ability": "Enhanced Fists of Steel upgrades damage by 30%.",
+      "icon": "enhanced_fists_of_steel.png",
+      "name": "Enhanced Fists of Steel"
+    },
+    "expedition": {
+      "lethality": "70%",
+      "Health": "70%",
+      "ability": "Strong Protection increases Defender Troop Defense by 15%.",
+      "icon": "strong_protection.png",
+      "name": "Strong Protection"
+    }
+  },
+  "uniquePassive": {},
+  "image": "logan.png",
+  "thumbnail": "logan_thumb.png"
+}

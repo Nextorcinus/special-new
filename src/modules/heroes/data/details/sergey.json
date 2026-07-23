@@ -1,0 +1,108 @@
+{
+	"id": "sergey",
+	"name": "Sergey",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Infantry",
+	"stats": {
+		"attack": 1361,
+		"defense": 2220,
+		"health": 26640
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Shielded Strike",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Area of effect target points"],
+					"stats": ["200%", "220%", "240%", "260%", "280%"],
+					"description": "Sergey gives an enemy a solid whack with his heavy shield, knocking the target back while dealing Attack",
+					"icon": "shielded_strike.png"
+				}
+			},
+			"2": {
+				"skill-name": "Joint Defense",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Defense Friend",
+					"affect-on": ["Point Target"],
+					"stats": ["5%", "7.5%", "10%", "12.5%", "15%"],
+					"description": "Sergey can organize strong perimeters, increasing all friendly hero Defense ",
+					"icon": "joint_defense.png"
+				}
+			},
+			"3": {
+				"skill-name": "Shield Block",
+				"trigger-point": "Self",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Reducing Damage Taken",
+					"affect-on": ["Self"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": " Sergey trades in his shield for an upgraded model, reducing damage taken",
+					"icon": "shield_block.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Defender's Edge",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Reduce Damage Taken",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": " Sergey's guards our troops with his shield, reducing damage taken for all troops ",
+						"icon": "defenders_edge.png"
+					}
+				},
+				"2": {
+					"skill-name": "Weaken",
+					"trigger-point": "Enemy Attack Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Reduce Attack Enemy",
+						"affect-on": ["All Enemy Troops"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": " Sergey's intimidating presence reduces Attack for All enemy troops",
+						"icon": "weaken.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "sergey_thumb.png",
+	"thumbnail": "sergey_thumb.png"
+}

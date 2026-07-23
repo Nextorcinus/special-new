@@ -1,0 +1,301 @@
+[
+	{
+		"generation": "1",
+		"setups": [
+			{
+				"type": "Best Heroes",
+				"id": ["jeronimo", "molly", "bahiti"],
+				"formation": "3/3/4",
+				"suggest": "In most cases, you will have best stats on Jeronimo’s raw stats, so using equal formation with slightly more marksmen troops works the best."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["natalia", "molly", "bahiti"],
+				"formation": "2/4/4",
+				"suggest": "Mainly for people that didn’t go for Jeronimo yet, and giving opportunity to use Jeronimo for joining rallies."
+			},
+			{
+				"type": "F2P",
+				"id": ["sergey", "molly", "bahiti"],
+				"formation": "3/3/4",
+				"suggest": "For F2P, it is recommended to always use the best three heroes you have for calling a rally. In Generation 1, it is Sergey, Molly, and Bahiti."
+			}
+		]
+	},
+	{
+		"generation": "2",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "philly", "alonso"],
+				"formation": "2/3/5",
+				"suggest": "Alonso will boost damage a lot due to his widget. From Generation 2 and above, you will usually use either Jeronimo or Natalia."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["natalia", "molly", "alonso"],
+				"formation": "2/3/5",
+				"suggest": "Use Natalia in Generation 2 and above only if Jeronimo is not maxed in stars and widget level."
+			},
+			{
+				"type": "F2P",
+				"id": ["flint", "molly", "bahiti"],
+				"formation": "3/3/4",
+				"suggest": "There is no F2P hero with a rally widget yet, so use an equal formation with slightly more Marksman troops."
+			}
+		]
+	},
+	{
+		"generation": "3",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["natalia", "mia", "alonso"],
+				"formation": "1/2/7",
+				"suggest": "Natalia performed better in Generation 3 thanks to two lethality widgets and one attack widget."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["jeronimo", "mia", "alonso"],
+				"formation": "2/3/5",
+				"suggest": "Use Jeronimo instead if Natalia is not maxed in stars and widgets."
+			},
+			{
+				"type": "F2P",
+				"id": ["flint", "mia", "bahiti"],
+				"formation": "2/4/4",
+				"suggest": "Generation 3 gives you your first rally widget hero, making it a good time to try new formations."
+			}
+		]
+	},
+	{
+		"generation": "4",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "reina", "alonso"],
+				"formation": "1/3/6",
+				"suggest": "This setup uses two lethality widgets and one attack widget. Thirty percent Lancer troops work well with Reina’s third skill, especially when Lancers have reached FC5."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["natalia", "mia", "lynn"],
+				"formation": "1/1/8",
+				"suggest": "Use Natalia if she has better star and widget levels. Lynn’s third skill works well with a Marksman-heavy formation."
+			},
+			{
+				"type": "F2P",
+				"id": ["flint", "mia", "lynn"],
+				"formation": "1/1/8",
+				"suggest": "Lynn’s third skill works best when you focus on a heavy Marksman formation."
+			}
+		]
+	},
+	{
+		"generation": "5",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "reina", "gwen"],
+				"formation": "1/3/6",
+				"suggest": "In Generation 5, Alonso can be retired. Gwen has a similar widget but better hero skills. A heavy Marksman formation works well."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["jeronimo", "mia", "gwen"],
+				"formation": "1/1/8",
+				"suggest": "This setup uses Mia and Gwen to support a heavy Marksman formation."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "lynn"],
+				"formation": "1/1/8",
+				"suggest": "Hector replaces Flint as the rally Infantry hero. You can safely use up to twenty percent Infantry."
+			}
+		]
+	},
+	{
+		"generation": "6",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "reina", "wayne"],
+				"formation": "1/3/6",
+				"suggest": "Even without a rally widget, Wayne’s critical rate skill can provide better total rally damage than Gwen."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "mia", "wayne"],
+				"formation": "1/1/8",
+				"suggest": "Mia’s skills can boost Wayne’s damage further when her effects trigger."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "renee", "lynn"],
+				"formation": "1/2/7",
+				"suggest": "Because of Renee’s skills, use twenty percent Lancers or part of her damage boost may be lost."
+			}
+		]
+	},
+	{
+		"generation": "7",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Bradley is the newest-generation hero with very high Marksman stats, resulting in a large Marksman attack value."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "reina", "wayne"],
+				"formation": "1/3/6",
+				"suggest": "This composition allows Bradley and Mia to join other players’ rallies while keeping your own rally strong."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Bradley provides high Marksman stats, while Mia can further increase Marksman attack."
+			}
+		]
+	},
+	{
+		"generation": "8",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Sonya mainly supports Lancer troops and Hendrik is mostly defensive, so the previous Marksman-heavy setup remains effective for Bear Hunt."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "sonya", "bradley"],
+				"formation": "1/3/6",
+				"suggest": "If Mia is not maxed, use Sonya with thirty percent Lancers so her skills have an impact."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Hector remains more suitable than the newest-generation Infantry hero for a Bear Hunt rally."
+			}
+		]
+	},
+	{
+		"generation": "9",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Fred is not especially compatible with Bradley, while Xura focuses more on enemy troops and is therefore less suitable for Bear Hunt."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "If you do not have Jeronimo, Hector can still be used as the rally Infantry hero. Magnus may also be considered depending on upgrades."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "bradley"],
+				"formation": "1/1/8",
+				"suggest": "Although Fred becomes available in Generation 9, Mia has more useful Bear Hunt skills and stronger damage scaling from her widget."
+			}
+		]
+	},
+	{
+		"generation": "10",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "Blanchette is extremely effective because all of her relevant skills increase damage. Freya is not recommended for this setup."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["gregory", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "This setup is close to the P2W composition. Use Gregory when Jeronimo is unavailable, although Hector may remain competitive depending on hero upgrades."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "Blanchette appears in Lucky Wheel events and provides very high damage for Bear Hunt rallies."
+			}
+		]
+	},
+	{
+		"generation": "11",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "Rufus can increase attack through his skill, while his widget also increases attack. Rufus and Mia provide strong combined attack bonuses."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "This setup is similar to the main P2W Bear Hunt composition, with Hector replacing Jeronimo."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "Blanchette remains a strong Lucky Wheel option when you cannot obtain enough Rufus fragments."
+			}
+		]
+	},
+	{
+		"generation": "12",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "Rufus can increase attack through his skill, while his widget also increases attack. Rufus and Mia provide strong combined attack bonuses."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "This setup is similar to the main P2W Bear Hunt composition, with Hector replacing Jeronimo."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "Blanchette remains a strong Lucky Wheel option when you cannot obtain enough Rufus fragments."
+			}
+		]
+	},
+	{
+		"generation": "13",
+		"setups": [
+			{
+				"type": "Best Hero",
+				"id": ["jeronimo", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "Rufus can increase attack through his skill, while his widget also increases attack. Rufus and Mia provide strong combined attack bonuses."
+			},
+			{
+				"type": "Alternative Best Hero",
+				"id": ["hector", "mia", "rufus"],
+				"formation": "1/1/8",
+				"suggest": "This setup is similar to the main P2W Bear Hunt composition, with Hector replacing Jeronimo."
+			},
+			{
+				"type": "F2P",
+				"id": ["hector", "mia", "blanchette"],
+				"formation": "1/1/8",
+				"suggest": "Blanchette remains a strong Lucky Wheel option when you cannot obtain enough Rufus fragments."
+			}
+		]
+	}
+]

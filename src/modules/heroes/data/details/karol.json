@@ -1,0 +1,121 @@
+{
+  "id": "karol",
+  "name": "Karol",
+  "generation": "S12",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 17826,
+    "defense": 17826,
+    "health": 178266
+  },
+  "expedition": {
+    "attack": 1451.16,
+    "defense": 1451.16
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Dawn Charge",
+        "trigger-point": "Area Target and Reduce Enemy Defense",
+        "trigger-time": "2 seconds",
+        "effects": {
+          "effect-name": "Dealing Attack + Reduce Enemy Defense",
+          "affect-on": ["Enemy Heroes and Troops"],
+          "stats": ["200%", "220%", "240%", "260%", "280%", "/", "5%" , "10%", "15%",  "20%", "25%"],
+          "description": "The dawn sun lights a path for Karol’s invincible charge, lancing frontal enemies with Attack * 280% area damage and reducing their Defense by 25% for 2 seconds.",
+          "icon": "dawn-charge.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Bristling Strike",
+        "trigger-point": "Deal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Enemy Certain Area"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Karol launches a blistering series of strikes dealing Attack * 140% damage against enemies within a certain area.",
+          "icon": "bristling-strike.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Soaring Victory",
+        "trigger-point": "Increase Karol Attack",
+        "trigger-time": "every fallen hero enemy",
+        "effects": {
+          "effect-name": "Increase Karol Attack + Restore Health",
+          "affect-on": ["Self"],
+          "stats": ["4%", "6%", "8%", "10%", "12%", "/", "2", "4%", "6%", "8%", "10%"],
+          "description": "The taste of victory gives sweet succor to the warrior, increasing Karol’s Attack by 12% for every fallen hero enemy while restoring 10% of Health.",
+          "icon": "soaring-victory.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "In the Wings",
+          "trigger-point": "Reduce Damage Taken",
+          "trigger-time": "Attack",
+          "effects": {
+            "effect-name": "Reduce Damage Taken",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "A great offence is a great defense in the case of Karol’s cavalry diversions, reducing all troops’ damage taken by 20%.",
+            "icon": "in-the-wings.webp"
+          }
+        },
+        "2": {
+          "skill-name": "Shieldbreaker",
+          "trigger-point": "Increase All Troops Damaege to Lancers and Infantry",
+          "trigger-time": "Attack",
+          "effects": {
+            "effect-name": "Increase All Troops Damage Dealt",
+            "affect-on": ["Lancers", "Infantry"],
+            "stats": ["6%", "12%", "18%", "24%", "40%", "5%", "10%", "15%", "20%", "25%"],
+            "description": "Karol knows exactly where enemy infantry are weakest against forces like his own, increasing all troops’ Damage Dealt to Lancers by 30% and 25% to Infantry.",
+            "icon": "shieldbreaker.webp"
+          }
+        },
+        "3": {
+          "skill-name": "Standard of Ages",
+          "trigger-point": "Increase All Troops Attack and Defense",
+          "trigger-time": "Attack",
+          "effects": {
+            "effect-name": "All Troops Attack + All Troops Defense",
+            "affect-on": ["All Troops"],
+            "stats": ["3%", "6%", "9%", "12%", "15%", "/", "2%", "4%", "6%", "8%", "10%"],
+            "description": "Karol has turned the lessons of past brigades into a roadmap for victory, increasing all Troops’ Attack by 15% and Defense by 10%.",
+            "icon": "standard-of-ages.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Spirit of Winterwind",
+  "widget-icon": "spirit-of-winterwind",
+  "widget-affect-on": "Friendly And Rally troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 3613,
+      "defense": 3613,
+      "health": 36135,
+      "ability": "The howling flutter of the Eagles of Karol is instantly recognizable, spurring an increase in friendly Squad Attack Speed by 14% and Movement Speed by 100% for 5 seconds with every Dawn Charge.",
+      "icon": "spider-queen.webp",
+      "name": "Eagle Flutter"
+    },
+    "expedition": {
+      "lethality": "362.50%",
+      "Health": "362.50%",
+      "ability": "The Eagle Brigade of Karol often relies on combined arms, enhancing the Attack of rallied Troop by 15%.",
+      "icon": "trap-nest.webp",
+      "name": "Triumphant March"
+    }
+  },
+  "uniquePassive": {},
+  "image": "karol.webp",
+  "thumbnail": "karol.webp"
+}

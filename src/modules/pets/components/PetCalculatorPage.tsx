@@ -1,9 +1,9 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import HistoryPanel from "@/features/inventory/components/HistoryPanel";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
@@ -439,31 +439,19 @@ export default function PetCalculatorPage({
 						/>
 					</div>
 				)}
-
 				{activeHistory && (
-					<div className="px-4">
+					<div className="px-4 py-2">
 						<button
 							type="button"
 							onClick={handleNewCalculation}
-							className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] transition hover:bg-[var(--sl-input-hover)]"
+							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 						>
-							New Calculation
+							<span>New Calculation {pet.name}</span>
+
+							<ArrowRight className="size-4" />
 						</button>
 					</div>
 				)}
-			</div>
-
-			<div className="p-4">
-				<HistoryPanel
-					items={petHistoryItems}
-					activeId={activeHistory?.id}
-					module="pet"
-					title={`${pet.name} History`}
-					compact
-					onSelect={handleHistorySelect}
-					onPin={togglePinHistory}
-					onDelete={handleDeleteHistory}
-				/>
 			</div>
 		</div>
 	);

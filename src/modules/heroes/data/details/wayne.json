@@ -1,0 +1,121 @@
+{
+  "id": "wayne",
+  "name": "Wayne",
+  "generation": "S6",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 7200,
+    "defense": 5926,
+    "health": 44454
+  },
+  "expedition": {
+    "attack": "540.43",
+    "defense": "540.43"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Hurricane Blowback",
+        "trigger-point": "Line of enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Enemies in a straight line", "Enemies on return path"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Wayne throws a boomerang dealing Attack ×100%–140% area damage in a straight line. On return, deals the same amount to enemies in its path.",
+          "icon": "hurricane_blowback.png"
+        }
+      },
+      "2": {
+        "skill-name": "Phantom Blitz",
+        "trigger-point": "Normal Attack",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Chance Extra Attack",
+          "affect-on": ["Self"],
+          "stats": ["15%", "20%", "25%", "30%", "35%"],
+          "description": "Each normal attack has a 15%–35% chance to trigger another normal attack.",
+          "icon": "phantom_blitz.png"
+        }
+      },
+      "3": {
+        "skill-name": "Noon Time",
+        "trigger-point": "On dealing damage",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Critical Rate +",
+          "affect-on": ["Self"],
+          "stats": ["3%", "6%", "9%", "12%", "15%"],
+          "description": "Wayne’s impeccable aim grants +3%–15% Crit Rate when dealing damage.",
+          "icon": "noon_time.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Thunder Strike",
+          "trigger-point": "All Troops every 4 turns",
+          "trigger-time": "4 turns",
+          "effects": {
+            "effect-name": "Extra Attack",
+            "affect-on": ["All Troops"],
+            "stats": ["20%", "40%", "60%", "80%", "100%"],
+            "description": "All troops launch an extra attack every 4 turns, dealing Attack ×20%–100% damage.",
+            "icon": "thunder_strike.png"
+          }
+        },
+        "2": {
+          "skill-name": "Roundabout Hit",
+          "trigger-point": "Every other attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Extra Damage vs Lancer/Marksman",
+            "affect-on": ["Enemy Lancer", "Enemy Marksman"],
+            "stats": ["8%/4%", "16%/8%", "24%/12%", "32%/16%", "40%/20%"],
+            "description": "On every other attack, troops deal +8%–40% extra damage vs enemy Lancers and +4%–20% vs enemy Marksmen.",
+            "icon": "roundabout_hit.png"
+          }
+        },
+        "3": {
+          "skill-name": "Fleet",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Crit Rate +",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Grants all troops +5%–25% Crit Rate.",
+            "icon": "fleet.png"
+          }
+        }
+      }
+    }
+  },
+ "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Power Boomerang",
+  "widget-icon": "power_boomerang",
+  "widget-affect-on": "Random Enemy / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1457,
+      "defense": 1201,
+      "health": 9011,
+      "ability": "Gunslinger (Lv.5): Wayne unleashes a rapid five-shot barrage, dealing Attack ×56% damage to a random enemy. If the target is an Escort, there is a 100% chance of instantly knocking them down.",
+      "icon": "gunslinger.png",
+      "name": "Gunslinger"
+    },
+    "expedition": {
+      "lethality": "133.50%",
+      "Health": "133.50%",
+      "ability": "Offensive Defense (Lv.5): Wayne's strategic brilliance increases Defender Troops' Lethality by 15%.",
+      "icon": "offensive_defense.png",
+      "name": "Offensive Defense"
+    }
+  },
+  "uniquePassive": {},
+  "image": "wayne.png",
+  "thumbnail": "wayne_thumb.png"
+}

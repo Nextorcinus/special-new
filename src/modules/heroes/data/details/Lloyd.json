@@ -1,0 +1,127 @@
+{
+  "id": "Lloyd",
+  "name": "Lloyd",
+  "generation": "S11",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 14850,
+    "defense": 14850,
+    "health": 148518
+  },
+  "expedition": {
+    "attack": "+1281.08%",
+    "defense": "+1281.08%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Rapid Bombardment",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "AOE Damage (Bombs)",
+          "affect-on": ["Enemy area"],
+          "stats": ["98%", "98%", "98%", "98%", "98%"],
+          "description": "Lloyd summons three propeller bombs to attack the target, each bomb dealing Attack ×98% area damage.",
+          "icon": "Rapid-Bombardment.png"
+        }
+      },
+      "2": {
+        "skill-name": "Weakness Focus",
+        "trigger-point": "Active Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Single Target Damage + Weakness Mark",
+          "affect-on": ["Target"],
+          "stats": ["140%", "140%", "140%", "140%", "140%"],
+          "description": "Lloyd fires bullets at the target's weaknesses, dealing Attack ×140% damage and marking the target for 3s — during which the target takes +20% damage.",
+          "icon": "Weakness-Focus.png"
+        }
+      },
+      "3": {
+        "skill-name": "Practiced Perfection",
+        "trigger-point": "Passive / Attack Speed Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack Speed +",
+          "affect-on": ["Self"],
+          "stats": ["30%", "30%", "30%", "30%", "30%"],
+          "description": "Lloyd sharpens his combat skills, increasing his Attack Speed by 30%.",
+          "icon": "Practiced-Perfection.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Bird Invasion",
+          "trigger-point": "Troops Rally / Expedition",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Enemy Troops’ Lethality Down",
+            "affect-on": ["Enemy troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Lloyd summons a swarm of mechanical birds that reduce all enemy troops’ Lethality by 4%–20%.",
+            "icon": "Bird-Invasion.png"
+          }
+        },
+        "2": {
+          "skill-name": "Iceflare Bomb",
+          "trigger-point": "Every 3 turns",
+          "trigger-time": "3 turns",
+          "effects": {
+            "effect-name": "Lancer Troops Attack + / Enemy Damage Down",
+            "affect-on": ["Friendly Lancer troops", "Enemy troops"],
+            "stats": [
+              "150% / 30%",
+              "150% / 30%",
+              "150% / 30%",
+              "150% / 30%",
+              "150% / 30%"
+            ],
+            "description": "Every 3 turns, increases Lancer troops' Attack by 150% and reduces enemy troops’ damage dealt by 30% for 1 turn.",
+            "icon": "Iceflare-Bomb.png"
+          }
+        },
+        "3": {
+          "skill-name": "Ingenious Mastery",
+          "trigger-point": "Troops Rally / Expedition",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Troops Lethality + (chance)",
+            "affect-on": ["All friendly troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Grants a chance to increase all friendly troops’ Lethality by 10%–50%.",
+            "icon": "Ingenious-Mastery.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Mastercraft Treasure",
+  "widget-icon": "mastercraft_treasure",
+  "widget-affect-on": "Self / Lancer Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 3010,
+      "defense": 3010,
+      "health": 30105,
+      "ability": "Frosty Whisper (Lv.5): Lloyd’s mechanical cuckoos freeze his bullets with liquid nitrogen, causing normal attacks to deal Attack ×15% extra damage and reduce target’s Attack Speed by 15% for 2s.",
+      "icon": "Frosty-Whisper.png",
+      "name": "Frosty Whisper"
+    },
+    "expedition": {
+      "lethality": "320.00%",
+      "health": "320.00%",
+      "ability": "Steel Maze (Lv.5): Lloyd installs defensive traps that increase Defender (Lancer) Troops’ Attack by 15%.",
+      "icon": "Steel-Maze.png",
+      "name": "Steel Maze"
+    }
+  },
+  "uniquePassive": {},
+  "image": "lloyd.png",
+  "thumbnail": "lloyd_thumb.png"
+}

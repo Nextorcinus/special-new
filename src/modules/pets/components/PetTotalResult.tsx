@@ -13,8 +13,8 @@ import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
+import { RESOURCES } from "@/config/resources";
 import type { CalculationHistoryEntry } from "@/features/inventory/store/history/types";
-
 import { createEmptyPetResources } from "../calculator/helpers";
 import type {
 	PetCalculationResult,
@@ -171,25 +171,25 @@ export default function PetTotalResult({ items }: PetTotalResultProps) {
 	const breakdownItems = [
 		{
 			id: "pet-total-level-food",
-			icon: PET_ICON,
+			icon: RESOURCES.PetFood.icon,
 			label: "Leveling Pet Food",
 			value: formatNumber(levelResources.PetFood),
 		},
 		{
 			id: "pet-total-gate-manual",
-			icon: PET_ICON,
+			icon: RESOURCES.TamingManual.icon,
 			label: "Gate Taming Manual",
 			value: formatNumber(advancementResources.TamingManual),
 		},
 		{
 			id: "pet-total-gate-potion",
-			icon: PET_ICON,
+			icon: RESOURCES.EnergizingPotion.icon,
 			label: "Gate Energizing Potion",
 			value: formatNumber(advancementResources.EnergizingPotion),
 		},
 		{
 			id: "pet-total-gate-serum",
-			icon: PET_ICON,
+			icon: RESOURCES.StrengtheningSerum.icon,
 			label: "Gate Strengthening Serum",
 			value: formatNumber(advancementResources.StrengtheningSerum),
 		},

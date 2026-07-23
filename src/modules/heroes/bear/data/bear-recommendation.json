@@ -1,0 +1,35 @@
+{
+	"openingRallies": {
+		"p2w": ["jeronimo", "natalia", "molly", "zinman"],
+		"f2p": ["sergey", "molly", "zinman", "bahiti"]
+	},
+	"joiningPriority": [
+		{
+			"id": "priority-1",
+			"priority": 1,
+			"heroId": "jessie"
+		},
+		{
+			"id": "priority-2",
+			"priority": 2,
+			"heroId": "jasser"
+		},
+		{
+			"id": "priority-3",
+			"priority": 3,
+			"heroId": "seoyoon"
+		},
+		{
+			"id": "priority-4",
+			"priority": 4,
+			"heroId": "jeronimo"
+		},
+		{
+			"id": "priority-5",
+			"priority": 5,
+			"heroId": null,
+			"label": "No Heroes"
+		}
+	],
+	"warning": "If you don't have the correct heroes, send troops with NO heroes. It's better to send no heroes than using the wrong heroes."
+}

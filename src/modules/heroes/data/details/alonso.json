@@ -1,0 +1,121 @@
+{
+  "id": "alonso",
+  "name": "Alonso",
+  "generation": "S2",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 3235,
+    "defense": 2220,
+    "health": 19980
+  },
+  "expedition": {
+    "attack": 240.19,
+    "defense": 240.19
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Trapnet",
+        "trigger-point": "Skill Use",
+        "trigger-time": "1.5s",
+        "effects": {
+          "effect-name": "Area Damage + Immobilize",
+          "affect-on": ["Enemy Heroes"],
+          "stats": ["200%", "220%", "240%", "260%", "280%"],
+          "description": "Deals 200%–280% area damage and immobilizes enemies.",
+          "icon": "trapnet.png"
+        }
+      },
+      "2": {
+        "skill-name": "Tidal Force",
+        "trigger-point": "Skill Use",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Area Damage",
+          "affect-on": ["Enemy Heroes"],
+          "stats": ["50%", "55%", "60%", "65%", "70%"],
+          "description": "Deals 50%–70% area damage.",
+          "icon": "tidal_force.png"
+        }
+      },
+      "3": {
+        "skill-name": "Harpoon Blast",
+        "trigger-point": "Every 8-5 Strikes",
+        "trigger-time": "Every few strikes",
+        "effects": {
+          "effect-name": "Stun",
+          "affect-on": ["Target"],
+          "stats": ["0.2s–0.5s"],
+          "description": "Stuns target after a series of hits.",
+          "icon": "harpoon_blast.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Onslaught",
+          "trigger-point": "Open Rally/ Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "All Troops Attack / Stun Chance",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Troops’ attacks have a chance to stun targets for 1 turn.",
+            "icon": "onslaught.png"
+          }
+        },
+        "2": {
+          "skill-name": "Iron Strength",
+          "trigger-point": "All Troops",
+          "trigger-time": "2 Turn",
+          "effects": {
+            "effect-name": "Reduce Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Reduces damage dealt by enemy troops.",
+            "icon": "iron_strength.png"
+          }
+        },
+        "3": {
+          "skill-name": "Poison Harpoon",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Extra Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Grants a chance to deal additional damage.",
+            "icon": "poison_harpoon.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Captain Ahab",
+  "widget-icon": "captain_ahab",
+  "widget-affect-on": "Weakest Hero / Rally Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 655,
+      "defense": 540,
+      "health": 4050,
+      "ability": "Ocean's Bounty heals the weakest hero by 15% with each basic attack.",
+      "icon": "ocean_bounty.png",
+      "name": "Ocean's Bounty"
+    },
+    "expedition": {
+      "lethality": "60%",
+      "Health": "60%",
+      "ability": "Harpoon Enhancement increases Rally Squad Lethality by 15%.",
+      "icon": "harpoon_enhancement.png",
+      "name": "Harpoon Enhancement"
+    }
+  },
+  "uniquePassive": {},
+  "image": "alonso.png",
+  "thumbnail": "alonso_thumb.jpg"
+}

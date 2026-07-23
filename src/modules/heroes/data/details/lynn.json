@@ -1,0 +1,121 @@
+{
+  "id": "lynn",
+  "name": "Lynn",
+  "generation": "S4",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 4989,
+    "defense": 4106,
+    "health": 30802
+  },
+  "expedition": {
+    "attack": 370.29,
+    "defense": 370.29
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Hymn of Sidrak",
+        "trigger-point": "All Allies",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack + / Debuff Immunity",
+          "affact-on": ["All Friendly Troops"],
+          "stats": ["3%", "4%", "5%", "6%", "7%"],
+          "description": "Lynn clears all debuffs from friendly troops and grants Attack +3%–7% for 3—5 s, during which they remain immune to debuffs.",
+          "icon": "hymn_of_sidrak.png"
+        }
+      },
+      "2": {
+        "skill-name": "Lethal Finale",
+        "trigger-point": "Point Target",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affact-on": ["Enemy"],
+          "stats": ["220%", "240%", "260%", "280%", "300%"],
+          "description": "Lynn fires a penetrating bullet dealing Attack ×220%–300% damage to enemies in its path.",
+          "icon": "lethal_finale.png"
+        }
+      },
+      "3": {
+        "skill-name": "Discordant Tune",
+        "trigger-point": "All Enemies",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Attack Speed – / Healing –",
+          "affact-on": ["All Enemy Troops"],
+          "stats": ["1%/40%", "1.5%/45%", "2%/50%", "2.5%/55%", "3%/60%"],
+          "description": "Lynn mystifies enemies, reducing their Attack Speed by 1 %–3 % and Healing effects by 40 %–60 %.",
+          "icon": "discordant_tune.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Song of Lion",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage + Chance",
+            "affact-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Grants all troops a 40% chance to increase damage dealt by 10%–50%.",
+            "icon": "song_of_lion.png"
+          }
+        },
+        "2": {
+          "skill-name": "Melancholic Ballad",
+          "trigger-point": "All Enemy Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Taken Reduction",
+            "affact-on": ["All Enemy Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Reduces damage dealt by all enemy troops by 4%–20%.",
+            "icon": "melancholic_ballad.png"
+          }
+        },
+        "3": {
+          "skill-name": "Oonai Cadenza",
+          "trigger-point": "Marksmen Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Marksmen Attack +",
+            "affact-on": ["Friendly Marksmen Troops"],
+            "stats": ["1%", "2%", "3%", "4%", "5%"],
+            "description": "Increases Marksmen’s Attack by 1%–5% for every 3 attacks. Stackable until end of battle.",
+            "icon": "oonai_cadenza.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Ella's Tears",
+  "widget-icon": "ellas_tear",
+  "widget-affect-on": "Normal Attacks / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1010,
+      "defense": 832,
+      "health": 6243,
+      "ability": "Aira’s Elegy increases Attack by 15% after casting Hymn of Sidrak.",
+      "icon": "airas_elegy.png",
+      "name": "Aira’s Elegy"
+    },
+    "expedition": {
+      "lethality": "92.50%",
+      "Health": "92.50%",
+      "ability": "Iranon’s Determination increases Defender Troops’ Lethality by 15%.",
+      "icon": "iranons_determination.png",
+      "name": "Iranon’s Determination"
+    }
+  },
+  "uniquePassive": {},
+  "image": "lynn.png",
+  "thumbnail": "lynn_thumb.png"
+}

@@ -1,0 +1,108 @@
+{
+	"id": "bahiti",
+	"name": "Bahiti",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Marksman",
+	"stats": {
+		"attack": 2157,
+		"defense": 2220,
+		"health": 13320
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Precise Shot ",
+				"trigger-point": "Enemy Weak Points",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["400%", "440%", "480%", "520%", "560%"],
+					"description": "Bahiti targets enemy weak points with devastating precision, dealing Attack +400% \u2013 560%",
+					"icon": "precise_shot.png"
+				}
+			},
+			"2": {
+				"skill-name": "Quick Shot",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing Attack Speed",
+					"affect-on": ["Self"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Bahiti gains +10% \u2013 30% Attack Speed as he is very experienced in wilderness survival",
+					"icon": "quick_shot.png"
+				}
+			},
+			"3": {
+				"skill-name": "Pathfinder Vision",
+				"trigger-point": "Self",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Deal Extra Damage",
+					"affect-on": ["Self"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": " Bahiti deals 20% extra damage.",
+					"icon": "pathfinder_vision.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Sixth Sense",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Reduce Damage Taken",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["4%", "8%", "12%", "16%", "20%"],
+						"description": "Bahiti senses for dangers ahead, reducing damage taken by +4% \u2013 20% for all troops",
+						"icon": "sixth_sense.png"
+					}
+				},
+				"2": {
+					"skill-name": "Fluorescence",
+					"trigger-point": "Enemy Attack Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Increasing Damage Dealt",
+						"affect-on": ["All Troops"],
+						"stats": ["10%", "20%", "30%", "40%", "50%"],
+						"description": " Bahiti\u2019s battlefield instincts grants all troops\u2019 attack a 50% chance of increasing damage dealt by +10% \u2013 50%",
+						"icon": "fluorescence.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "bahiti_thumb.png",
+	"thumbnail": "bahiti_thumb.png"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "mia",
+  "name": "Mia",
+  "generation": "S3",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 3330,
+    "defense": 3330,
+    "health": 33300
+  },
+  "expedition": {
+    "attack": 290.23,
+    "defense": 290.23
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Fate’s Finale",
+        "trigger-point": "Targeting Enemies",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Enemy"],
+          "stats": ["270%", "297%", "324%", "351%", "378%"],
+          "description": "Mia throws a tarot card at enemies, dealing Attack ×270%–378% damage, and can either reduce the target's Attack by 20% for 2s or stun the target for 1.5s.",
+          "icon": "fates_finale.png"
+        }
+      },
+      "2": {
+        "skill-name": "Bad Omen",
+        "trigger-point": "Point Target",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Fluctuating Damage",
+          "affect-on": ["Enemy"],
+          "stats": ["50%", "55%", "60%", "65%", "70%"],
+          "description": "Mia curses an enemy target, dealing fluctuating damage based on a base value of Mia's Attack ×50%–70%. The final damage dealt ranges from 5% to 600% of that base value.",
+          "icon": "bad_omen.png"
+        }
+      },
+      "3": {
+        "skill-name": "Guardian of Destiny",
+        "trigger-point": "Self/Weakest Ally",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Heal Ally",
+          "affect-on": ["Weakest Friendly Hero"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Mia protects the hero with the lowest remaining Health and restores Health for the hero based on Mia's Attack ×100%–140%. The final Health restored ranges from 5% to 400% of that base value.",
+          "icon": "guardian_of_destiny.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Bad Luck Streak",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Increasing Damage Taken",
+            "affect-on": ["All Enemy Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Grants all troops’ attack a 50% chance of cursing the target, increasing their damage taken by level.",
+            "icon": "bad_luck_streak.png"
+          }
+        },
+        "2": {
+          "skill-name": "Lucky Charm",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Chance Extra Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Mia brings good luck to our troops, granting all troops’ attack a 50% chance of dealing damage by level.",
+            "icon": "lucky_charm.png"
+          }
+        },
+        "3": {
+          "skill-name": "Ritual Deciphering",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Damage Taken Reduction",
+            "affect-on": ["All Troops"],
+            "stats": ["10%", "20%", "30%", "40%", "50%"],
+            "description": "Mia foresees potential dangers before battle, granting a 40% chance of reducing damage taken by level for all troops.",
+            "icon": "ritual_deciphering.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Fate Crystal",
+  "widget-icon": "fate_crystal",
+  "widget-affect-on": "All Troops / Rally",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 630,
+      "defense": 630,
+      "health": 6300,
+      "ability": "Vision of Truth increases the upper and lower limits of Mia’s fluctuating skills by 150%.",
+      "icon": "vision_of_truth.png",
+      "name": "Vision of Truth"
+    },
+    "expedition": {
+      "lethality": "70%",
+      "Health": "70%",
+      "ability": "Rally of Fate increases Rally Troop Attack by 15%.",
+      "icon": "rally_of_fate.png",
+      "name": "Rally of Fate"
+    }
+  },
+  "uniquePassive": {},
+  "image": "mia.png",
+  "thumbnail": "mia_thumb.png"
+}

@@ -1,0 +1,479 @@
+[
+  {
+    "id": "smith",
+    "name": "Smith",
+    "rarity": "Rare",
+    "class": "Infantry",
+    "thumbnail": "smith-thumb.png",
+    "generation": "Rare",
+    "tier": "D"
+  },
+  {
+    "id": "eugene",
+    "name": "Eugene",
+    "rarity": "Rare",
+    "class": "Infantry",
+    "thumbnail": "eugene-thumb.png",
+    "generation": "Rare",
+    "tier": "D"
+  },
+  {
+    "id": "charlie",
+    "name": "Charlie",
+    "rarity": "Rare",
+    "class": "Infantry",
+    "thumbnail": "charlie_thumb.png",
+    "generation": "Rare",
+    "tier": "D"
+  },
+  {
+    "id": "cloris",
+    "name": "Cloris",
+    "rarity": "Rare",
+    "class": "Marksman",
+    "thumbnail": "cloris_thumb.png",
+    "generation": "Rare",
+    "tier": "D"
+  },
+  {
+    "id": "sergey",
+    "name": "Sergey",
+    "rarity": "Epic",
+    "class": "Infantry",
+    "thumbnail": "sergey_thumb.png",
+    "generation": "Epic",
+    "tier": "C"
+  },
+  {
+    "id": "jessie",
+    "name": "Jessie",
+    "rarity": "Epic",
+    "class": "Lancer",
+    "thumbnail": "jessie_thumb.png",
+    "generation": "Epic",
+    "tier": "SS"
+  },
+  {
+    "id": "jasser",
+    "name": "Jasser",
+    "rarity": "Epic",
+    "class": "Marksman",
+    "thumbnail": "jasser_thumb.jpg",
+    "generation": "Epic",
+    "tier": "SS"
+  },
+  {
+    "id": "seoyoon",
+    "name": "Seo Yoon",
+    "rarity": "Epic",
+    "class": "Marksman",
+    "thumbnail": "seo_yoon_thumb.jpg",
+    "generation": "Epic",
+    "tier": "SS"
+  },
+  {
+    "id": "bahiti",
+    "name": "Bahiti",
+    "rarity": "Epic",
+    "class": "Marksman",
+    "thumbnail": "bahiti_thumb.png",
+    "generation": "Epic",
+    "tier": "C"
+  },
+  {
+    "id": "gina",
+    "name": "Gina",
+    "rarity": "Epic",
+    "class": "Marksman",
+    "thumbnail": "gina_thumb.png",
+    "generation": "Epic",
+    "tier": "D"
+  },
+  {
+    "id": "lingxue",
+    "name": "Ling Xue",
+    "rarity": "Epic",
+    "class": "Lancer",
+    "thumbnail": "ling_xue_thumb.jpg",
+    "generation": "Epic",
+    "tier": "C"
+  },
+  {
+    "id": "patrick",
+    "name": "Patrick",
+    "rarity": "Epic",
+    "class": "Lancer",
+    "thumbnail": "patrick_thumb.png",
+    "generation": "Epic",
+    "tier": "C"
+  },
+  {
+    "id": "lumakbokan",
+    "name": "Lumak Bokan",
+    "rarity": "Epic",
+    "class": "Lancer",
+    "thumbnail": "lumak_bokan_thumb.jpg",
+    "generation": "Epic",
+    "tier": "C"
+  },
+  {
+    "id": "zinman",
+    "name": "Zinman",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "zinman_thumb.png",
+    "generation": "S1",
+    "tier": "C"
+  },
+  {
+    "id": "jeronimo",
+    "name": "Jeronimo",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "jeronimo_thumb.png",
+    "generation": "S1",
+    "tier": "SS"
+  },
+  {
+    "id": "molly",
+    "name": "Molly",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "molly_thumb.png",
+    "generation": "S1",
+    "tier": "C"
+  },
+  {
+    "id": "natalia",
+    "name": "Natalia",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "natalia_thumb.png",
+    "generation": "S1",
+    "tier": "C"
+  },
+  {
+    "id": "alonso",
+    "name": "Alonso",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "alonso_thumb.jpg",
+    "generation": "S2",
+    "tier": "C"
+  },
+  {
+    "id": "philly",
+    "name": "Philly",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "philly_thumb.jpg",
+    "generation": "S2",
+    "tier": "B"
+  },
+  {
+    "id": "flint",
+    "name": "Flint",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "flint_thumb.jpg",
+    "generation": "S2",
+    "tier": "C"
+  },
+  {
+    "id": "greg",
+    "name": "Greg",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "greg_thumb.jpg",
+    "generation": "S3",
+    "tier": "B"
+  },
+  {
+    "id": "mia",
+    "name": "Mia",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "mia_thumb.jpg",
+    "generation": "S3",
+    "tier": "B"
+  },
+  {
+    "id": "logan",
+    "name": "Logan",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "logan_thumb.jpg",
+    "generation": "S3",
+    "tier": "C"
+  },
+  {
+    "id": "ahmose",
+    "name": "Ahmose",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "ahmose_thumb.jpg",
+    "generation": "S4",
+    "tier": "C"
+  },
+  {
+    "id": "reina",
+    "name": "Reina",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "reina_thumb.jpg",
+    "generation": "S4",
+    "tier": "A"
+  },
+  {
+    "id": "lynn",
+    "name": "Lynn",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "lynn_thumb.jpg",
+    "generation": "S4",
+    "tier": "B"
+  },
+  {
+    "id": "hector",
+    "name": "Hector",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "hector_thumb.jpg",
+    "generation": "S5",
+    "tier": "C"
+  },
+  {
+    "id": "norah",
+    "name": "Norah",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "norah_thumb.jpg",
+    "generation": "S5",
+    "tier": "B"
+  },
+  {
+    "id": "gwen",
+    "name": "Gwen",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "gwen_thumb.jpg",
+    "generation": "S5",
+    "tier": "B"
+  },
+  {
+    "id": "wu_ming",
+    "name": "Wu_ming",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "wuming_thumb.jpg",
+    "generation": "S6",
+    "tier": "C"
+  },
+  {
+    "id": "renee",
+    "name": "Renee",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "renee_thumb.jpg",
+    "generation": "S6",
+    "tier": "C"
+  },
+  {
+    "id": "wayne",
+    "name": "Wayne",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "wayne_thumb.jpg",
+    "generation": "S6",
+    "tier": "C"
+  },
+  {
+    "id": "edith",
+    "name": "Edith",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "edith.jpg",
+    "generation": "S7",
+    "tier": "C"
+  },
+  {
+    "id": "gordon",
+    "name": "Gordon",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "gordon.jpg",
+    "generation": "S7",
+    "tier": "C"
+  },
+  {
+    "id": "bradley",
+    "name": "Bradley",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "bradley.jpg",
+    "generation": "S7",
+    "tier": "SS"
+  },
+  {
+    "id": "gatot",
+    "name": "Gatot",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "gatot.jpg",
+    "generation": "S8",
+    "tier": "C"
+  },
+  {
+    "id": "sonya",
+    "name": "Sonya",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "sonya.jpg",
+    "generation": "S8",
+    "tier": "SS"
+  },
+  {
+    "id": "hendrik",
+    "name": "Hendrik",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "hendrik.jpg",
+    "generation": "S8",
+    "tier": "A"
+  },
+  {
+    "id": "magnus",
+    "name": "Magnus",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "magnus.jpg",
+    "generation": "S9",
+    "tier": "SS"
+  },
+  {
+    "id": "fred",
+    "name": "Fred",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "fred.jpg",
+    "generation": "S9",
+    "tier": "C"
+  },
+  {
+    "id": "xura",
+    "name": "Xura",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "xura.jpg",
+    "generation": "S9",
+    "tier": "C"
+  },
+  {
+    "id": "gregory",
+    "name": "Gregory",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "gregory.jpg",
+    "generation": "S10",
+    "tier": "B"
+  },
+  {
+    "id": "freya",
+    "name": "Freya",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "freya.jpg",
+    "generation": "S10",
+    "tier": "C"
+  },
+  {
+    "id": "blanchette",
+    "name": "Blanchette",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "blanchette.jpg",
+    "generation": "S10",
+    "tier": "SS"
+  },
+  {
+    "id": "eleonora",
+    "name": "Eleonora",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "eleonora_gold.png",
+    "generation": "S11",
+    "tier": "C"
+  },
+  {
+    "id": "Lloyd",
+    "name": "Lloyd",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "lloyd.png",
+    "generation": "S11",
+    "tier": "C"
+  },
+  {
+    "id": "rufus",
+    "name": "Rufus",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "rufus.png",
+    "generation": "S11",
+    "tier": "SS"
+  },
+  {
+    "id": "ligeia",
+    "name": "Ligeia",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "ligeia.webp",
+    "generation": "S12",
+    "tier": "SS"
+  },
+   {
+    "id": "karol",
+    "name": "Karol",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "karol.webp",
+    "generation": "S12",
+    "tier": "C"
+  },
+  {
+    "id": "hervor",
+    "name": "Hervor",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "hervor.webp",
+    "generation": "S12",
+    "tier": "SS"
+  },
+  {
+    "id": "vulcanus",
+    "name": "Vulcanus",
+    "rarity": "Legendary",
+    "class": "Marksman",
+    "thumbnail": "vulcanus.webp",
+    "generation": "S13",
+    "tier": "C"
+  },
+  {
+    "id": "flora",
+    "name": "Flora",
+    "rarity": "Legendary",
+    "class": "Lancer",
+    "thumbnail": "flora.webp",
+    "generation": "S13",
+    "tier": "B"
+  },
+  {
+    "id": "gisela",
+    "name": "Gisela",
+    "rarity": "Legendary",
+    "class": "Infantry",
+    "thumbnail": "gisela.webp",
+    "generation": "S13",
+    "tier": "C"
+  }
+]

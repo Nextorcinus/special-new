@@ -1,0 +1,121 @@
+{
+  "id": "hervor",
+  "name": "Hervor",
+  "generation": "S12",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 13674,
+    "defense": 17826,
+    "health": 267398
+  },
+  "expedition": {
+    "attack": 1451.16,
+    "defense": 1451.16
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Earthmover",
+        "trigger-point": "Increase Attack + Reduce Enemy Attack",
+        "trigger-time": "3 seconds",
+        "effects": {
+          "effect-name": "Stun + Dealing Attack + Reduce Enemy Attack",
+          "affect-on": ["Frontal Enemy Heroes and Troops"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Hervor hammer-strikes the ground with thunderous force, inflicting Attack * 140% damage to frontal enemies, a 1-second stun, and Intimidation that reduces enemy Attack by 25% for 3 seconds.",
+          "icon": "earthmover.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Mountain Strength",
+        "trigger-point": "Attack Chance And Increase Damage Taken",
+        "trigger-time": "3 Stacks",
+        "effects": {
+          "effect-name": "Normal Attack + Increase Damage Taken",
+          "affect-on": ["Enemy"],
+          "stats": ["5%", "10%", "15%", "20%", "25%", "3", "6", "9", "12", "15%"],
+          "description": "Hervor’s miraculous strength is terrifying to behold, granting her normal attacks a 25% chance of inflicting “Intimidation” which increases enemy damage taken by 15% (max 3 stacks).",
+          "icon": "mountain-strength.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Stone Arms",
+        "trigger-point": "Reduce Damage Taken",
+        "trigger-time": "9s ",
+        "effects": {
+          "effect-name": "Reduce Damage Taken + Immune to Control Effect",
+          "affect-on": ["Self"],
+          "stats": ["5%", "10%", "15%", "20%", "25%"],
+          "description": "Brutal mountain life has endowed Hervor with superhuman endurance, reducing her damage taken by 25% and becoming immune to stun, paralysis or freeze and other control effect for the first 9 seconds of battle.",
+          "icon": "stone-arms.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Call For Blood",
+          "trigger-point": "Increase All Troops Lethality",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Increase All Troops Lethality",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Hervor’s heartfelt war cry ignites fearlessness in her soldiers, increasing all troops’ Lethality by 25%.",
+            "icon": "call-of-blood.webp"
+          }
+        },
+        "2": {
+          "skill-name": "Undying",
+          "trigger-point": "Reduce Enemy Attack",
+          "trigger-time": "Enemy Normal Attack and Skills",
+          "effects": {
+            "effect-name": "Reduce Enemy Attack and Skills",
+            "affect-on": ["self"],
+            "stats": ["5%", "10%", "15%", "20%", "25%", "6", "12", "18", "24", "30%"],
+            "description": "The enemy menace pales beside Hervor’s icy homeland, her Infantry’s Damage Taken from Normal Attacks is reduced by 25% and 30% from enemy skills.",
+            "icon": "undying.webp"
+          }
+        },
+        "3": {
+          "skill-name": "Battlethirsty",
+          "trigger-point": "Reduce Enemy Defense and Increase Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Reduce Enemy Defense and Increase Attack",
+            "affect-on": ["Infantry troops"],
+            "stats": ["3%", "6%", "9%", "12%", "15%", "2", "4%", "6%", "8%", "10%"],
+            "description": "Hervor and her Infantry are singularly devoted to the idea of battle, reducing her Infantry’s damage taken by 15% and increasing their damage dealt by 10%",
+            "icon": "battlethirsty.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Hammer of Sathla",
+  "widget-icon": "hammer-of-sathla",
+  "widget-affect-on": "Defending Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 2770,
+      "defense": 3613,
+      "health": 54202,
+      "ability": "The hammer of Hervor is a glorious symbol of the power of Sathla, increasing Attack Speed by 30% and the chance of Intimidation on normal attacks by 25%.",
+      "icon": "mark-of-chieftain.webp",
+      "name": "Mark of the Chieftain"
+    },
+    "expedition": {
+      "lethality": "362.50%",
+      "Health": "362.50%",
+      "ability": "Hervor reforges defenders in an unyielding image, increasing the Defence of defending Troop by 15%.",
+      "icon": "fort-of-rock.webp",
+      "name": "Fort of Rock"
+    }
+  },
+  "uniquePassive": {},
+  "image": "hervor.webp",
+  "thumbnail": "hervor.webp"
+}

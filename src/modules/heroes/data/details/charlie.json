@@ -1,0 +1,97 @@
+{
+	"id": "charlie",
+	"name": "Charlie",
+	"generation": "rare",
+	"rarity": "Rare",
+	"class": "Infantry",
+	"stats": {
+		"attack": 1442,
+		"defense": 2220,
+		"health": 14430
+	},
+	"expedition": {
+		"attack": 90.07,
+		"defense": 90.07
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Shrapnel Load",
+				"trigger-point": "Targeting and Near Enemies",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Area of effect target points"],
+					"stats": ["140%", "154%", "168%", "182%", "196%"],
+					"description": "Charlie throws out a homemade explosive, dealing Attack",
+					"icon": "shrapnel_load.png"
+				}
+			},
+			"2": {
+				"skill-name": "Grenadier",
+				"trigger-point": "Near Enemies",
+				"trigger-time": "0.5/0.5/1/1/1.5",
+				"effects": {
+					"effect-name": "Stunning",
+					"affect-on": ["Point Target"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": " Charlie's grenades have a chance of stunning targets",
+					"icon": "grenadier.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Demolitions Expert",
+					"trigger-point": "Coal Mine",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Coal Mine",
+						"affect-on": ["Coal Mining"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Charlie's precise demolition experience has raised City Coal Mine Output",
+						"icon": "demolitions_expert.png"
+					}
+				},
+				"2": {
+					"skill-name": "Coal Extraction",
+					"trigger-point": "Speed Coal Mine",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Coal Gathering Speed",
+						"affect-on": ["Coal Mining"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Charlie is an old hand at coal mining. coal gathering on the map",
+						"icon": "coal_extraction.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": "",
+			"ability": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": "",
+			"ability": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "charlie_thumb.png",
+	"thumbnail": "charlie_thumb.png"
+}

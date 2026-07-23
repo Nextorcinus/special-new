@@ -145,7 +145,7 @@ export default function PetForm({
 					</div>
 				</div>
 
-				<div className="mt-4 rounded-xl bg-[var(--sl-surface-2)] p-3">
+				<div className="mt-4 rounded-xl bg-[var(--sl-bg)] p-3">
 					<p className="text-xs font-bold text-[var(--sl-text)]">
 						{pet.skill.name}
 					</p>

@@ -1,0 +1,121 @@
+{
+  "id": "ligeia",
+  "name": "Ligeia",
+  "generation": "S12",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 21656,
+    "defense": 17826,
+    "health": 133698
+  },
+  "expedition": {
+    "attack": 1451.16,
+    "defense": 1451.16
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Acid Reflux",
+        "trigger-point": "Area Target",
+        "trigger-time": "2 seconds",
+        "effects": {
+          "effect-name": "Dealing Attack + Reduce Enemy Attack",
+          "affect-on": ["Enemy Heroes and Troops"],
+          "stats": ["70%", "77%", "84%", "91%", "98%", "5%" , "10%", "15%",  "20%", "25%"],
+          "description": "Ligeia summons 3 acid-lobbing Mech-spiders against an enemy, dealing Attack* 98% area damage and reducing Enemy’s Attack by 25% for 2 seconds.",
+          "icon": "acid-reflux.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Spider Madam",
+        "trigger-point": "Attack Target",
+        "trigger-time": "5 seconds",
+        "effects": {
+          "effect-name": "Dealing Attack + Reduce Enemy Attack",
+          "affect-on": ["Enemy"],
+          "stats": ["50%", "55%", "60%", "65%", "70%"],
+          "description": "Ligeia deploys steelweb against an enemy with the damage of Attack * 70% and a 100% chance to trigger a “Resonance” trap for 5 seconds. Resonance reapportions damage against Ligeia to the target.",
+          "icon": "spider-madam.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Mechanical Teeth",
+        "trigger-point": "Defflect Negative Status Effect",
+        "trigger-time": "Got stun, poison, freeze, silence",
+        "effects": {
+          "effect-name": "Deploy Guard Spider + Attack Boost",
+          "affect-on": ["Self"],
+          "stats": ["8%", "12%", "16%", "20%", "24%"],
+          "description": "Ligeia activates Queen Protection Mode to deflect a negative status effect at a cost of 1 Guard Spider, but gaining a 10-second 24% Attack boost. Ligeia can deploy up to 3 active Guard Spiders at a rate of 1 every 10 seconds.",
+          "icon": "merchanical-teeth.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Nerf Poison",
+          "trigger-point": "Reduce Enemy Defense",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Reduce Enemy Defense",
+            "affect-on": ["Enemy Heroes and Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Ligeia unleashes a swarm of biting Mech-spiders against well-armored foes, reducing all enemy Defense by 25%.",
+            "icon": "viper_formation.png"
+          }
+        },
+        "2": {
+          "skill-name": "Corrosion",
+          "trigger-point": "Infantry Attack",
+          "trigger-time": "Every 2 Attacks",
+          "effects": {
+            "effect-name": "Marksmen Attack + & Enemy Armor Reduction",
+            "affect-on": ["Marksmen", "Enemy Heroes and Troops"],
+            "stats": ["20%", "40%", "60%", "80%", "100%", "5%", "10%", "15%", "20%", "25%"],
+            "description": "Ligeia adds Mech-spiders to Marksmen’s fire, dealing 100% extra damage every 2 attacks; spider acid dissolves enemy armor, amplifying target damage received by 25% for 1 turn.",
+            "icon": "corrosion.webp"
+          }
+        },
+        "3": {
+          "skill-name": "Toxic Tip",
+          "trigger-point": "Increase Marksmen Attack",
+          "trigger-time": "2 Attacks",
+          "effects": {
+            "effect-name": "Marksmen Attack + Reduce Enemy Attack",
+            "affect-on": ["Marksmen", "Enemy Heroes and Troops"],
+            "stats": ["12%", "24%", "36%", "48%", "60%", "5%", "10%", "15%", "20%", "25%"],
+            "description": "Ligeia dips Marksmen arrowheads in spider toxin, increasing Marksmen’s damage by 100% against the target every 2 attacks while reducing the target’s damage dealt by 20% for 1 turn.",
+            "icon": "toxic-tip.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Fateweaver",
+  "widget-icon": "fateweaver",
+  "widget-affect-on": "Defending troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 4384,
+      "defense": 3613,
+      "health": 27101,
+      "ability": "Ligeia’s mech mastery is a sight to behold, allowing her to deploy 2 Guard Spider at the start of battle with a 100% chance Spider Madam of striking 1 extra target.",
+      "icon": "spider-queen.webp",
+      "name": "Spider Queen"
+    },
+    "expedition": {
+      "lethality": "362.50%",
+      "Health": "362.50%",
+      "ability": "Ligeia knows traps, particularly when she has time to prepare them herself, increasing Defender Troops’ Lethality by 15%.",
+      "icon": "trap-nest.webp",
+      "name": "Trap Nest"
+    }
+  },
+  "uniquePassive": {},
+  "image": "ligeia.webp",
+  "thumbnail": "ligeia.webp"
+}

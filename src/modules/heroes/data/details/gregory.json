@@ -1,0 +1,121 @@
+{
+  "id": "gregory",
+  "name": "Gregory",
+  "generation": "S10",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 9484,
+    "defense": 12364,
+    "health": 185480
+  },
+  "expedition": {
+    "attack": "1110.88%",
+    "defense": "1110.88%"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Sword of the Mountain",
+        "trigger-point": "Activate Skill",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Area Damage + Knockback + Stun",
+          "affect-on": ["Nearby enemies"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Gregory readies a furious strike, dealing Attack ×100%–140% area damage while knocking back and stunning nearby enemies for 1s.",
+          "icon": "sword_of_mountain.png"
+        }
+      },
+      "2": {
+        "skill-name": "Parryshield",
+        "trigger-point": "Passive / Defensive stance",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Chance to halve damage taken",
+          "affect-on": ["Self"],
+          "stats": ["10%", "20%", "30%", "40%", "50%"],
+          "description": "Gregory weaves his greatsword into a defensive posture, granting a 10%–50% chance of reducing damage taken by half.",
+          "icon": "parryshield.png"
+        }
+      },
+      "3": {
+        "skill-name": "Sacrificial Will",
+        "trigger-point": "On death",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Allied Troop Attack +",
+          "affect-on": ["All friendly troops"],
+          "stats": ["8%", "12%", "16%", "20%", "24%"],
+          "description": "After Gregory falls, increases all friendly troops’ Attack by 8%–24% for 5 seconds.",
+          "icon": "sacrificial_will.png"
+        }
+      },
+      "expedition": {
+      "1": {
+        "skill-name": "Legion of the Sun",
+        "trigger-point": "Troops Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Troop Attack + and Defense +",
+          "affect-on": ["All friendly troops"],
+          "stats": ["3%/2%", "6%/4%", "9%/6%", "12%/8%", "15%/10%"],
+          "description": "Increases all troops’ Attack by 3%–15% and Defense by 2%–10%.",
+          "icon": "legion_of_the_sun.png"
+        }
+      },
+      "2": {
+        "skill-name": "Charged Assault",
+        "trigger-point": "Troops’ normal attacks",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Chance Critical Hit on Troop normal attack",
+          "affect-on": ["All friendly troops"],
+          "stats": ["5%", "10%", "15%", "20%", "25%"],
+          "description": "Grants all troops’ normal attacks a 5%–25% chance to deal critical damage.",
+          "icon": "charged_assault.png"
+        }
+      },
+      "3": {
+        "skill-name": "Unbroken",
+        "trigger-point": "Passive / Troop Defensive Buff",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Infantry Damage Taken Reduction",
+          "affect-on": ["Friendly Infantry troops"],
+          "stats": ["4%", "8%", "12%", "16%", "20%"],
+          "description": "Reduces damage taken by friendly Infantry troops by 4%–20%.",
+          "icon": "unbroken.png"
+          }
+        }
+      }
+  }
+},
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Solarsword",
+  "widget-icon": "solarsword",
+  "widget-affect-on": "Self / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1921,
+      "defense": 2506,
+      "health": 37597,
+      "ability": "Indomitable Armor (Lv.5): Gregory’s plate armor increases his Defense by 50% and shields him from stuns, paralysis, and other interrupting effects.",
+      "icon": "indomitable_armor.png",
+      "name": "Indomitable Armor"
+    },
+    "expedition": {
+      "lethality": "277.50%",
+      "health": "277.50%",
+      "ability": "Day of the Guard (Lv.5): Gregory’s leadership increases Defender Troops’ Lethality by 15%.",
+      "icon": "day_of_the_guard.png",
+      "name": "Day of the Guard"
+    }
+  },
+  "uniquePassive": {},
+  "image": "gregory.png",
+  "thumbnail": "gregory_thumb.png"
+}

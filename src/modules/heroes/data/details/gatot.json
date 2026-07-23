@@ -1,0 +1,121 @@
+{
+  "id": "gatot",
+  "name": "Gatot",
+  "generation": "S8",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 6573,
+    "defense": 8568,
+    "health": 128538
+  },
+  "expedition": {
+    "attack": 780.62,
+    "defense": 780.62
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "King’s Resolve",
+        "trigger-point": "Self",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Shield",
+          "affect-on": ["Self"],
+          "stats": ["220%","260%","300%","340%","380%"],
+          "description": "Gatot activates a Shield of Resolve as the heir of kings, providing a shield equal to Attack ×220%-380% that will be deducted first. Lasts for 5 seconds. :contentReference[oaicite:1]{index=1}",
+          "icon": "kings_resolve.png"
+        }
+      },
+      "2": {
+        "skill-name": "Royal Authority",
+        "trigger-point": "Enemy Heroes",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Attack Reduce / Attack Increase",
+          "affect-on": ["Enemy Heroes","Self"],
+          "stats": ["1% / 1%","2% / 2%","3% / 3%","4% / 4%","5% / 5%"],
+          "description": "Gatot’s inherent regal aura intimidates all enemy heroes, reducing their Attack by 1%-5% and increasing his Attack by that same percentage multiplicatively by number of intimidated heroes, for 3 seconds. :contentReference[oaicite:2]{index=2}",
+          "icon": "royal_authority.png"
+        }
+      },
+      "3": {
+        "skill-name": "Regal Dance",
+        "trigger-point": "Normal Attacks Received",
+        "trigger-time": "Passive",
+        "effects": {
+          "effect-name": "Dodge Chance / Crit Rate Increase",
+          "affect-on": ["Self"],
+          "stats": ["3% / 4%","6% / 8%","9% / 12%","12% / 16%","15% / 20%"],
+          "description": "Gatot’s exceptional combat skills resemble a powerful war dance, granting him a 3%-15% chance of dodging enemy Normal Attacks and 4%-20% Crit Rate. :contentReference[oaicite:3]{index=3}",
+          "icon": "regal_dance.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Golden Guard",
+          "trigger-point": "Infantry Troops",
+          "trigger-time": "Passive",
+          "effects": {
+            "effect-name": "Infantry Defense Increase",
+            "affect-on": ["Infantry Troops"],
+            "stats": ["6%","12%","18%","24%","30%"],
+            "description": "Gatot commands his troops with imperial-guard tactics, increasing his Infantry’s Defense by 6%-30%. :contentReference[oaicite:4]{index=4}",
+            "icon": "golden_guard.png"
+          }
+        },
+        "2": {
+          "skill-name": "King’s Bestowal",
+          "trigger-point": "Infantry Attacks",
+          "trigger-time": "Per Attack",
+          "effects": {
+            "effect-name": "Shield Per Attack",
+            "affect-on": ["Infantry Troops"],
+            "stats": ["6%","12%","18%","24%","30%"],
+            "description": "The great king blesses his Infantry, granting them a Shield equal to Attack ×6%-30% each time they attack, lasting 1 turn. :contentReference[oaicite:5]{index=5}",
+            "icon": "kings_bestowal.png"
+          }
+        },
+        "3": {
+          "skill-name": "Royal Legion",
+          "trigger-point": "All Enemy Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Enemy Attack Reduction",
+            "affect-on": ["All Enemy Troops"],
+            "stats": ["5%","10%","15%","20%","25%"],
+            "description": "Gatot’s formidable legion instills fear in enemies, reducing their Attack by 5%-25%. :contentReference[oaicite:6]{index=6}",
+            "icon": "royal_legion.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Golden Fang",
+  "widget-icon": "golden_fang",
+  "widget-affect-on": "Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1331,
+      "defense": 1737,
+      "health": 26055,
+      "ability": "King’s Punishment grants extra Shield protection equal to Attack ×95% and reflects 30% of damage to the enemy while the shield is active. :contentReference[oaicite:7]{index=7}",
+      "icon": "kings_punishment.png",
+      "name": "King’s Punishment"
+    },
+    "expedition": {
+      "lethality": "193.00%",
+      "Health": "193.00%",
+      "ability": "Indestructible City increases Defender Troops’ Defense by 15%. :contentReference[oaicite:8]{index=8}",
+      "icon": "indestructible_city.png",
+      "name": "Indestructible City"
+    }
+  },
+  "uniquePassive": {},
+  "image": "gatot.png",
+  "thumbnail": "gatot_thumb.png"
+}

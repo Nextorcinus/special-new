@@ -1,0 +1,132 @@
+{
+  "id": "zinman",
+  "name": "Zinman",
+  "generation": "S1",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 2697,
+    "defense": 2220,
+    "health": 16650
+  },
+  "expedition": {
+    "attack": 200.16,
+    "defense": 200.16
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Nail Scatter",
+        "trigger-point": "Targeting and Near Enemies",
+        "trigger-time": "2s",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Point Target"],
+          "stats": ["55%", "60%", "65%", "70%", "75%"],
+          "description": "Zinman covers the target in a stream of nails, each dealing Attack ×55%–75% damage and a 2-second Stun.",
+          "icon": "nail_scatter.png"
+        }
+      },
+
+      "2": {
+        "skill-name": "Quick Defense",
+        "trigger-point": "Health < 50%",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Fortify Defense",
+          "affect-on": ["Self"],
+          "stats": ["50%", "75%", "100%", "125%", "150%"],
+          "description": "Zinman fortifies his Defense when under 50% Health.",
+          "icon": "quick_defense.png"
+        }
+      },
+
+      "3": {
+        "skill-name": "Robust",
+        "trigger-point": "Self",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Attack Speed Boost",
+          "affect-on": ["Self"],
+          "stats": ["10%", "15%", "20%", "25%", "30%"],
+          "description": "Zinman's energetic poise grants an Attack Speed boost.",
+          "icon": "robust.png"
+        }
+      },
+
+      "expedition": {
+        "1": {
+          "skill-name": "Implacable",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Reduce Damage Taken",
+            "affect-on": ["All Troops Rally", "All Troops Joiner"],
+            "stats": ["2%", "4%", "6%", "8%", "10%"],
+            "description": "Zinman strengthens defensive lines, reducing damage taken.",
+            "icon": "implacable.png"
+          }
+        },
+
+        "2": {
+          "skill-name": "Bastionist",
+          "trigger-point": "March",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Increase March Speed",
+            "affect-on": ["March"],
+            "stats": ["3%", "6%", "9%", "12%", "15%"],
+            "description": "Reduces building costs and accelerates building upgrades.",
+            "icon": "bastionist.png"
+          }
+        },
+
+        "3": {
+          "skill-name": "Positional Battler",
+          "trigger-point": "March",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Increasing Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["5%", "10%", "15%", "20%", "25%"],
+            "description": "Increases all troops’ damage.",
+            "icon": "positional_battler.png"
+          }
+        }
+      }
+    }
+  },
+
+  "widget": {
+    "has-widget": true
+  },
+
+  "widget-name": "Woodpecker",
+  "widget-icon": "woodpecker",
+  "widget-affect-on": "Exploration / Defender Troops",
+  "widget-level": "Lv5",
+
+  "widget-stats": {
+    "exploration": {
+      "attack": 546,
+      "defense": 450,
+      "health": 3375,
+      "ability": "Overclocked Nail Gun: Zinman's Nail Gun enters Overcharged Mode, increasing his Attack by 24%.",
+      "icon": "overclocked_nail_gun.png",
+      "name": "Overclocked Nail Gun"
+    },
+
+    "expedition": {
+      "lethality": "50%",
+      "Health": "50%",
+      "ability": "Defend to Attack: Zinman constructs Archer Towers, increasing Defender Troops' Attack by 15%.",
+      "icon": "defend_to_attack.png",
+      "name": "Defend to Attack"
+    }
+  },
+
+  "uniquePassive": {},
+
+  "image": "zinman.png",
+  "thumbnail": "zinman_thumb.png"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "vulcanus",
+  "name": "Vulcanus",
+  "generation": "S13",
+  "rarity": "Legendary",
+  "class": "Marksman",
+  "stats": {
+    "attack": 25998,
+    "defense":21400,
+    "health": 160506
+  },
+  "expedition": {
+    "attack": 1621.29,
+    "defense": 1621.29
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Siege Bolts",
+        "trigger-point": "Deal Attack + Inflict Bleed",
+        "trigger-time": "3 seconds",
+        "effects": {
+          "effect-name": "Dealing Attack ",
+          "affect-on": ["enemy"],
+          "stats": ["200%", "220%", "240%", "260%", "280%"],
+          "description": "Vulcanus rips a Barricade to shreds with three heavy bolts, dealing Attack * 280% damage and inflicting Bleed. Bleed deals Attack * 10% damage every 0.5s for 3s.",
+          "icon": "siege_bolts.webp"
+        }
+      },
+      "2": {
+        "skill-name": "Chainlinked",
+        "trigger-point": "Deal Attack + Immobilize and Stun",
+        "trigger-time": "2 seconds",
+        "effects": {
+          "effect-name": "Dealing attack and Immobilize",
+          "affect-on": ["enemy Heroes"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Vulcanus targets an enemy hero with a chained dart, dealing Attack * 140% damage, immobilizing and stuns the target for 2s.",
+          "icon": "chainlinked.webp"
+        }
+      },
+      "3": {
+        "skill-name": "Fire of Hope",
+        "trigger-point": "Increase Attack and Defense",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Escort Attack and Defense",
+          "affect-on": ["Enemy and Self"],
+          "stats": ["10%", "15%", "20%", "25%", "30%"],
+          "description": "Vulcanus shapes rage into resolve, increasing his Escorts’ Attack by 30% and Defense by 30%.",
+          "icon": "fire_of_hope.webp"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Raging Storm",
+          "trigger-point": "Reduce Enemy Attack",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Reduce All Enemy Troops Attack",
+            "affect-on": ["Enemy Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Vulcanus is skilled in the arts of terror and manipulation, reducing all enemy troops’ Attack by 20%.",
+            "icon": "raging_storm.webp"
+          }
+        },
+        "2": {
+          "skill-name": "Breaker Steel",
+          "trigger-point": "Extra Attack Damage",
+          "trigger-time": "every 5 Attacks",
+          "effects": {
+            "effect-name": "Extra Attack Damage and Increase Enemy Damage Taken",
+            "affect-on": ["All Troops"],
+            "stats": ["20%", "40%", "60%", "80%", "100%", "5%", "7.5%", "10%", "12.5%", "15%"],
+            "description": "There’s no steel like the blades in the Vulcanus’ armory, empowering all troops to deal 100% extra damage after every 5 attacks, increasing damage taken for the target by 15% in the next attack.",
+            "icon": "breaker_steel.webp"
+          }
+        },
+        "3": {
+          "skill-name": "True Strike",
+          "trigger-point": "Reduce Infantry and Lancer Defense",
+          "trigger-time": "3 turns and 1 turn",
+          "effects": {
+            "effect-name": "Reduce Enemy Defense and Increase Attack",
+            "affect-on": ["Infantry troops"],
+            "stats": ["12%", "24%", "36%", "48%", "60%", "12%", "24%", "36%", "48%", "60%"],
+            "description": "Vulcanus’ modified armor-piercing arrows reduce enemy Infantry and Lancer Defense by 60% for 3 turns and increase our Marksmen’s Attack by 60% for 1 turn.",
+            "icon": "true_strike.webp"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Doom Sigil",
+  "widget-icon": "doom-sigil",
+  "widget-affect-on": "Attack Rallied Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 5263,
+      "defense": 4338,
+      "health": 32535,
+      "ability": "Reforged in the Undercity workshops, the arrowheads of Vulcanus now inflict Bleed on all targets for all damage done. Bleed deals Attack * 20% damage every 0.5 seconds for 3 seconds.",
+      "icon": "Laceration.webp",
+      "name": "Laceration"
+    },
+    "expedition": {
+      "lethality": "405.00%",
+      "Health": "405.00%",
+      "ability": "The sense of confidence and unstoppable momentum of Vulcanus increases the Attack of rallied Troop by 15%.",
+      "icon": "born-king.webp",
+      "name": "Born King"
+    }
+  },
+  "uniquePassive": {},
+  "image": "vulcanus.webp",
+  "thumbnail": "vulcanus.webp"
+}

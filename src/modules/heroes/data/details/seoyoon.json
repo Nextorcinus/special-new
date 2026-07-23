@@ -1,0 +1,108 @@
+{
+	"id": "seoyoon",
+	"name": "Seo Yoon",
+	"generation": "Epic",
+	"rarity": "Epic",
+	"class": "Marksman",
+	"stats": {
+		"attack": 2157,
+		"defense": 2220,
+		"health": 13320
+	},
+	"expedition": {
+		"attack": 140.11,
+		"defense": 140.11
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Heartbeat of Valor",
+				"trigger-point": "All Troops",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Increasing All Troops Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["1.5%", "2%", "2.5%", "3%", "3.5%"],
+					"description": "Seo-yoon lifts the army\u2019s spirits with invigorating drum beats, increasing all hero and troops\u2019 Attack by +1.5% \u2013 3.5% and Attack Speed by +2.5% \u2013 4.5% for 4s",
+					"icon": "heartbeat_of_valor.png"
+				}
+			},
+			"2": {
+				"skill-name": "Bullseye Bash",
+				"trigger-point": "Targeting",
+				"trigger-time": "Long Interval",
+				"effects": {
+					"effect-name": "Dealing Attack",
+					"affect-on": ["Point Target"],
+					"stats": ["150%", "165%", "180%", "195%", "210%"],
+					"description": "Seo-yoon aims for the enemy\u2019s weak spot and hurls the drumstick with full force, dealing Attack +150% \u2013 210% damage. A focused strike that deals substantial damage to a single target, ideal for eliminating high-priority enemies. ",
+					"icon": "bullseye_bash.png"
+				}
+			},
+			"3": {
+				"skill-name": "Gale\u2019s Pulse",
+				"trigger-point": "Self",
+				"trigger-time": "3 Basic Attacks",
+				"effects": {
+					"effect-name": "Increasing Attack Speed",
+					"affect-on": ["Self"],
+					"stats": ["1%", "2%", "3%", "4%", "5"],
+					"description": "Seo-yoon dances to the rhythm, sharpening her assault. For every 3 basic attacks, increases Attack Speed by 1%- 5%. Lasts until the end of the battle",
+					"icon": "gale_pulse.png"
+				}
+			},
+			"expedition": {
+				"1": {
+					"skill-name": "Rallying Beat",
+					"trigger-point": "All Troops",
+					"trigger-time": "Long Interval",
+					"effects": {
+						"effect-name": "Increasing Troops Attack",
+						"affect-on": ["All Troops Rally", "All Troops Joiner"],
+						"stats": ["5%", "10%", "15%", "20%", "25%"],
+						"description": " Seo-yoon beats the war drum to boost morale, increasing all Troops Attack by 5% \u2013 25%",
+						"icon": "rallying_beat.png"
+					}
+				},
+				"2": {
+					"skill-name": "Soothing Dance",
+					"trigger-point": "Enemy Attack Troops",
+					"trigger-time": "",
+					"effects": {
+						"effect-name": "Increasing Healing Speed",
+						"affect-on": ["City Infirmary"],
+						"stats": ["10%", "20%", "30%", "40%", "50%"],
+						"description": " Seo-yoon treats wounded troops with traditional medicine, increasing Healing Speed in the infirmary by 10% \u2013 50%.",
+						"icon": "soothing_dance.png"
+					}
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": false
+	},
+	"widget-name": "",
+	"widget-affect-on": "",
+	"widget-description": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": "",
+			"defense": "",
+			"health": ""
+		},
+		"expedition": {
+			"lethality": "",
+			"Health": ""
+		}
+	},
+	"uniquePassive": {
+		"name": "",
+		"icon": "",
+		"ability": "",
+		"stats": ""
+	},
+	"image": "seo_yoon_thumb.jpg",
+	"thumbnail": "seo_yoon_thumb.jpg"
+}

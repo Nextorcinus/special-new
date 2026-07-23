@@ -5,6 +5,7 @@ import {
 	BriefcaseBusiness,
 	Clock3,
 	DoorOpen,
+	Plus,
 	TrendingUp,
 	Trophy,
 	Zap,
@@ -16,8 +17,8 @@ import {
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
+import { RESOURCES } from "@/config/resources";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
-
 import { createEmptyPetResources } from "../calculator/helpers";
 import type {
 	PetCalculationResult,
@@ -127,25 +128,25 @@ export default function PetResult({
 	const advancementItems = [
 		{
 			id: "pet-level-food-cost",
-			icon: itemIcon,
+			icon: RESOURCES.PetFood.icon,
 			label: "Leveling Pet Food",
 			value: formatNumber(levelResources.PetFood),
 		},
 		{
 			id: "pet-gate-manual-cost",
-			icon: itemIcon,
+			icon: RESOURCES.TamingManual.icon,
 			label: "Gate Taming Manual",
 			value: formatNumber(advancementResources.TamingManual),
 		},
 		{
 			id: "pet-gate-potion-cost",
-			icon: itemIcon,
+			icon: RESOURCES.EnergizingPotion.icon,
 			label: "Gate Energizing Potion",
 			value: formatNumber(advancementResources.EnergizingPotion),
 		},
 		{
 			id: "pet-gate-serum-cost",
-			icon: itemIcon,
+			icon: RESOURCES.StrengtheningSerum.icon,
 			label: "Gate Strengthening Serum",
 			value: formatNumber(advancementResources.StrengtheningSerum),
 		},
@@ -160,19 +161,19 @@ export default function PetResult({
 	const powerItems = [
 		{
 			id: "pet-current-power",
-			icon: itemIcon,
+			icon: "/icons/power.png",
 			label: "Current Power",
 			value: formatNumber(result.powerBefore),
 		},
 		{
 			id: "pet-target-power",
-			icon: itemIcon,
+			icon: "/icons/power.png",
 			label: "Target Power",
 			value: formatNumber(result.powerAfter),
 		},
 		{
 			id: "pet-power-increase",
-			icon: itemIcon,
+			icon: "/icons/power.png",
 			label: "Power Increase",
 			value: `+${formatNumber(result.powerIncrease)}`,
 			compareType:
@@ -183,19 +184,19 @@ export default function PetResult({
 	const passiveItems = [
 		{
 			id: "pet-current-passive",
-			icon: itemIcon,
+			icon: "/icons/attack.png",
 			label: "Current Troop A/D",
 			value: formatPercentage(result.passiveBeforePct),
 		},
 		{
 			id: "pet-target-passive",
-			icon: itemIcon,
+			icon: "/icons/attack.png",
 			label: "Target Troop A/D",
 			value: formatPercentage(result.passiveAfterPct),
 		},
 		{
 			id: "pet-passive-increase",
-			icon: itemIcon,
+			icon: "/icons/attack.png",
 			label: "Passive Increase",
 			value: formatPercentageIncrease(result.passiveIncreasePct),
 			compareType:
@@ -227,25 +228,25 @@ export default function PetResult({
 	const svsItems = [
 		{
 			id: "pet-level-svs",
-			icon: itemIcon,
+			icon: "/icons/SVS.png",
 			label: "Leveling SvS Points",
 			value: formatNumber(levelSvsPoints),
 		},
 		{
 			id: "pet-advancement-svs",
-			icon: itemIcon,
+			icon: "/icons/SVS.png",
 			label: "Open Gate SvS Points",
 			value: formatNumber(advancementSvsPoints),
 		},
 		{
 			id: "pet-base-svs",
-			icon: itemIcon,
+			icon: "/icons/SVS.png",
 			label: "Base SvS Points",
 			value: formatNumber(result.baseSvsPoints),
 		},
 		{
 			id: "pet-valeria-bonus",
-			icon: itemIcon,
+			icon: "/icons/valeria.png",
 			label: "Valeria Bonus",
 			value:
 				result.valeriaLevel > 0
@@ -254,7 +255,7 @@ export default function PetResult({
 		},
 		{
 			id: "pet-final-svs",
-			icon: itemIcon,
+			icon: "/icons/SVS.png",
 			label: "Final SvS Points",
 			value: formatNumber(result.finalSvsPoints),
 			compareType:
@@ -350,24 +351,8 @@ export default function PetResult({
 						icon: <Trophy size={18} />,
 						items: svsItems,
 					},
-					{
-						id: "pet-summary",
-						title: "Summary",
-						icon: <ArrowRight size={18} />,
-						items: summaryItems,
-					},
 				]}
 			/>
-
-			{showAddButton && onAddItem && (
-				<button
-					type="button"
-					onClick={onAddItem}
-					className="w-full rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface-2)] px-4 py-3 text-sm font-bold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-hover)]"
-				>
-					Add Item
-				</button>
-			)}
 		</div>
 	);
 }

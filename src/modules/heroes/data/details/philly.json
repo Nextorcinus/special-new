@@ -1,0 +1,127 @@
+{
+  "id": "philly",
+  "name": "Philly",
+  "generation": "S2",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 2664,
+    "defense": 2220,
+    "health": 26640
+  },
+  "expedition": {
+    "attack": 240.19,
+    "defense": 240.19
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "First Aid",
+        "trigger-point": "Skill Use",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Heal All Heroes",
+          "affect-on": ["All Friendly Heroes"],
+          "stats": ["200%", "220%", "240%", "260%", "280%"],
+          "description": "Philly restores the health of all friendly heroes by Attack ×200%–280%.",
+          "icon": "first_aid.png"
+        }
+      },
+      "2": {
+        "skill-name": "Restorative Hands",
+        "trigger-point": "Skill Use",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Heal Weakest Hero",
+          "affect-on": ["Weakest Friendly Hero"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Heals the weakest ally with Attack ×100%–140%.",
+          "icon": "restorative_hands.png"
+        }
+      },
+      "3": {
+        "skill-name": "Paralytic Lotion",
+        "trigger-point": "Skill Use",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Poison + Disable",
+          "affect-on": ["Target"],
+          "stats": ["140%", "154%", "168%", "182%", "196%"],
+          "description": "Deals Attack ×140%–196% damage and paralyzes target for 1 second.",
+          "icon": "paralytic_lotion.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Vigor Tactics",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Attack + Defense",
+            "affect-on": ["All Troops"],
+            "stats": [
+              "3% / 2%",
+              "6% / 4%",
+              "9% / 6%",
+              "12% / 8%",
+              "15% / 10%"
+            ],
+            "description": "Increases all troops’ Attack and Defense.",
+            "icon": "vigor_tactics.png"
+          }
+        },
+        "2": {
+          "skill-name": "Dosage Boost",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Chance Extra Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["120%", "140%", "160%", "180%", "200%"],
+            "description": "Grants all troops’ attack a 25% chance to deal 120%–200% extra damage.",
+            "icon": "dosage_boost.png"
+          }
+        },
+        "3": {
+          "skill-name": "Numbing Spores",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Chance Stun",
+            "affect-on": ["All Troops"],
+            "stats": ["4%", "8%", "12%", "16%", "20%"],
+            "description": "Grants a chance to stun enemies for 1 turn.",
+            "icon": "numbing_spores.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Pharmacologica",
+  "widget-icon": "pharmacologica",
+  "widget-affect-on": "All Heroes / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 540,
+      "defense": 540,
+      "health": 5400,
+      "ability": "Extraction increases healing effects by 70%.",
+      "icon": "extraction.png",
+      "name": "Extraction"
+    },
+    "expedition": {
+      "lethality": "60%",
+      "Health": "60%",
+      "ability": "First Aid Training increases Defender Troops’ Health by 15%.",
+      "icon": "first_aid_training.png",
+      "name": "First Aid Training"
+    }
+  },
+  "uniquePassive": {},
+  "image": "philly.png",
+  "thumbnail": "philly_thumb.jpg"
+}

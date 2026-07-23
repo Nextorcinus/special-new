@@ -1,0 +1,121 @@
+{
+  "id": "norah",
+  "name": "Norah",
+  "generation": "S5",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 4928,
+    "defense": 4928,
+    "health": 49284
+  },
+  "expedition": {
+    "attack": 444.35,
+    "defense": 444.35
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Barrage",
+        "trigger-point": "Random target (Heroes first)",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack",
+          "affect-on": ["Area of effect targets"],
+          "stats": ["60%", "66%", "72%", "78%", "84%"],
+          "description": "Norah unleashes a 5-grenade cascade against random targets (heroes first), dealing Attack ×60%–84% Area of Effect damage.",
+          "icon": "barrage.png"
+        }
+      },
+      "2": {
+        "skill-name": "Flashbang",
+        "trigger-point": "Target",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack + Stun",
+          "affect-on": ["Target"],
+          "stats": ["50%", "55%", "60%", "65%", "70%"],
+          "description": "Norah throws a flashbang, dealing Attack ×50%–70% damage and stunning the target for 1.5 s.",
+          "icon": "flashbang.png"
+        }
+      },
+      "3": {
+        "skill-name": "Valkyrie Cry",
+        "trigger-point": "All Troops",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Troops Attack +",
+          "affect-on": ["All Troops"],
+          "stats": ["3%", "3.5%", "4%", "4.5%", "5%"],
+          "description": "Norah blitzes the enemy, boosting all troops’ Attack by 3%–5%.",
+          "icon": "valkyrie_cry.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Combined Arms",
+          "trigger-point": "Infantry & Marksman Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Damage Taken ↓ & Damage Dealt ↑",
+            "affect-on": ["Infantry Troops", "Marksman Troops"],
+            "stats": ["3%/3%", "6%/6%", "9%/9%", "12%/12%", "15%/15%"],
+            "description": "Norah is well-trained in combined arms tactics, decreasing damage taken by 3%–15% and boosting damage dealt by 3%–15% for Infantry and Marksman.",
+            "icon": "combined_arms.png"
+          }
+        },
+        "2": {
+          "skill-name": "Sneak Strike",
+          "trigger-point": "All Troops",
+          "trigger-time": "Long Interval",
+          "effects": {
+            "effect-name": "Chance Extra Damage",
+            "affect-on": ["All Troops"],
+            "stats": ["20%", "40%", "60%", "80%", "100%"],
+            "description": "Norah has an eye for weaknesses, granting troops under her command a 20% chance of dealing 20%–100% extra damage to all enemies on attack.",
+            "icon": "sneak_strike.png"
+          }
+        },
+        "3": {
+          "skill-name": "Momentum",
+          "trigger-point": "Every 5 Attacks (Lancer)",
+          "trigger-time": "2 Turns",
+          "effects": {
+            "effect-name": "Damage Dealt ↑ & Damage Taken ↓",
+            "affect-on": ["All Troops"],
+            "stats": ["5%/5%", "10%/10%", "15%/15%", "20%/20%", "25%/25%"],
+            "description": "Norah motivates troops, increasing Damage Dealt by 5%–25% and reducing their Damage Taken by 5%–25% every 5 attacks for 2 turns.",
+            "icon": "momentum.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Snow Cruiser",
+  "widget-icon": "snow_cruiser",
+  "widget-affect-on": "Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 999,
+      "defense": 999,
+      "health": 9990,
+      "ability": "Disruptor (Lv5): Norah improves her Barrage grenades, granting a 35% chance of stunning the target for 1 s.",
+      "icon": "disruptor.png",
+      "name": "Disruptor"
+    },
+    "expedition": {
+      "lethality": "111%",
+      "Health": "111%",
+      "ability": "True Grit (Lv5): Norah inspires others with her courage under fire, boosting Defender Troops’ Defense by 15%.",
+      "icon": "true_grit.png",
+      "name": "True Grit"
+    }
+  },
+  "uniquePassive": {},
+  "image": "norah.png",
+  "thumbnail": "norah_thumb.png"
+}

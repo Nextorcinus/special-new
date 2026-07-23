@@ -1,0 +1,121 @@
+{
+  "id": "renee",
+  "name": "Renee",
+  "generation": "S6",
+  "rarity": "Legendary",
+  "class": "Lancer",
+  "stats": {
+    "attack": 5926,
+    "defense": 5926,
+    "health": 59274
+  },
+  "expedition": {
+    "attack": "540.43",
+    "defense": "540.43"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Illusion Cloud",
+        "trigger-point": "Area of Effect",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack + Confuse",
+          "affect-on": ["Enemies in area"],
+          "stats": ["100%", "110%", "120%", "130%", "140%"],
+          "description": "Renee’s colorful ball explodes and releases a strange cloud, dealing Attack ×100%–140% AoE damage and confusing targets for 1s.",
+          "icon": "illusion_cloud.png"
+        }
+      },
+      "2": {
+        "skill-name": "Starpaint",
+        "trigger-point": "Point Target",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Dealing Attack + Mark",
+          "affect-on": ["Target"],
+          "stats": ["50%", "55%", "60%", "65%", "70%"],
+          "description": "Renee splashes dreamy paint, dealing Attack ×50%–70% damage and placing a Star Mark; marked target takes +2%–6% damage for 4s.",
+          "icon": "starpaint.png"
+        }
+      },
+      "3": {
+        "skill-name": "Dream Vision",
+        "trigger-point": "Marked Enemy",
+        "trigger-time": "Long Interval",
+        "effects": {
+          "effect-name": "Attack + Damage to Marked",
+          "affect-on": ["Self", "Marked Enemy"],
+          "stats": ["8% / 4%", "12% / 6%", "16% / 8%", "20% / 10%", "24% / 12%"],
+          "description": "Renee’s targets painted with a Star Mark cannot escape her detection: increases her Attack by 8%–24% and damage to marked targets by 4%–12%.",
+          "icon": "dream_vision.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Nightmare Trace",
+          "trigger-point": "Every Two Turns",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Extra Lancer Damage Next Turn",
+            "affect-on": ["Friendly Lancers"],
+            "stats": ["40%", "80%", "120%", "160%", "200%"],
+            "description": "Troops she commands can place Dream Marks on their targets every two turns, dealing extra Lancer damage equal to 40%–200% next turn.",
+            "icon": "nightmare_trace.png"
+          }
+        },
+        "2": {
+          "skill-name": "Dreamcatcher",
+          "trigger-point": "Marked Enemy",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage to Marked Enemies",
+            "affect-on": ["Marked Enemy"],
+            "stats": ["30%", "60%", "90%", "120%", "150%"],
+            "description": "Renee’s Dream Marks highlight enemy vulnerabilities, increasing her troop’s damage to marked targets by 30%-150%.",
+            "icon": "dreamcatcher.png"
+          }
+        },
+        "3": {
+          "skill-name": "Dreamslice",
+          "trigger-point": "All Enemies Marked",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage to Marked Targets (All Troops)",
+            "affect-on": ["All Troops"],
+            "stats": ["15%", "30%", "45%", "60%", "75%"],
+            "description": "Renee’s Dream Marks expose enemy weaknesses, increasing damage dealt to marked targets by 15%–75% for all troops.",
+            "icon": "dreamslice.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Illusion Magiball",
+  "widget-icon": "illusion_magiball",
+  "widget-affect-on": "Random Enemy / Rally Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1201,
+      "defense": 1201,
+      "health": 12015,
+      "ability": "Dream Illusion: Attacks have an 8% chance to confuse the target for 1s.",
+      "icon": "dream_illusion.png",
+      "name": "Dream Illusion"
+    },
+    "expedition": {
+      "lethality": "133.50%",
+      "Health": "133.50%",
+      "ability": "Wistful Enchantment increases Rally Troops’ Lethality by 15%.",
+      "icon": "wistful_enchantment.png",
+      "name": "Wistful Enchantment"
+    }
+  },
+  "uniquePassive": {},
+  "image": "renee.png",
+  "thumbnail": "renee_thumb.png"
+}

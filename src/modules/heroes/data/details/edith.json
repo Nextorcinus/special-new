@@ -1,0 +1,121 @@
+{
+  "id": "edith",
+  "name": "Edith",
+  "generation": "S7",
+  "rarity": "Legendary",
+  "class": "Infantry",
+  "stats": {
+    "attack": 5466,
+    "defense": 7126,
+    "health": 106892
+  },
+  "expedition": {
+    "attack": "650.52",
+    "defense": "650.52"
+  },
+  "skills": {
+    "exploration": {
+      "1": {
+        "skill-name": "Ironclad Punch",
+        "trigger-point": "Enemies in fan-shaped area ahead",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Dealing Attack + Self Attack Boost",
+          "affect-on": ["Enemies in area", "Self"],
+          "stats": ["100%","110%","120%","130%","140%"],
+          "description": "Mr. Tin unleashes ironclad fury against Edith's assailants, punching all enemies in a fan-shaped area ahead, dealing Attack ×100%-140% damage and stuns the targets for 1s, while increasing his own Attack by 20%-100% for 2s.",
+          "icon": "ironclad_punch.png"
+        }
+      },
+      "2": {
+        "skill-name": "Escape Capsule",
+        "trigger-point": "When Edith reaches 0 Health",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Explosional Damage",
+          "affect-on": ["Nearby Enemies"],
+          "stats": ["200%","220%","240%","260%","280%"],
+          "description": "Mr. Tin ejects his core as an escape capsule for Edith at 0 Health, detonating the rest of his body in a fiery explosion, dealing Attack ×200%-280% damage to nearby enemies.",
+          "icon": "escape_capsule.png"
+        }
+      },
+      "3": {
+        "skill-name": "Preemptive Alerts",
+        "trigger-point": "Battle Start / Incoming Damage",
+        "trigger-time": "",
+        "effects": {
+          "effect-name": "Chance Damage Taken Reduction",
+          "affect-on": ["Self"],
+          "stats": ["10%","20%","30%","40%","50%"],
+          "description": "Edith's battlefield intel warns Mr. Tin of potential dangers, granting him a 10%-50% chance of reducing damage taken by 50%.",
+          "icon": "preemptive_alerts.png"
+        }
+      },
+      "expedition": {
+        "1": {
+          "skill-name": "Strategic Balance",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Dealt ↑ & Damage Taken ↓",
+            "affect-on": ["Marksmen Troops","Lancer Troops"],
+            "stats": ["4%","8%","12%","16%","20%"],
+            "description": "Mr. Tin's presence automatically shields friendly Marksmen (-4%--20% damage taken) and suppresses enemy boosting friendly Lancers’ damage by +4%-+20%.",
+            "icon": "strategic_balance.png"
+          }
+        },
+        "2": {
+          "skill-name": "Ironclad",
+          "trigger-point": "Infantry Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Damage Taken Reduction",
+            "affect-on": ["Infantry Troops"],
+            "stats": ["4%","8%","12%","16%","20%"],
+            "description": "Mr. Tin’s metallic body functions as a fortified wall on the field, reducing damage taken by Infantry troops by 4%-20%.",
+            "icon": "ironclad_defense.png"
+          }
+        },
+        "3": {
+          "skill-name": "Steel Sentinel",
+          "trigger-point": "All Troops",
+          "trigger-time": "",
+          "effects": {
+            "effect-name": "Health Boost",
+            "affect-on": ["All Troops"],
+            "stats": ["5%","10%","15%","20%","25%"],
+            "description": "Edith’s mobile defence system increases Health of all troops by 5%-25%.",
+            "icon": "steel_sentinel.png"
+          }
+        }
+      }
+    }
+  },
+  "widget": {
+    "has-widget": true
+  },
+  "widget-name": "Charm Toolkit",
+  "widget-icon": "charm_toolkit",
+  "widget-affect-on": "Self / Defender Troops",
+  "widget-level": "Lv5",
+  "widget-stats": {
+    "exploration": {
+      "attack": 1107,
+      "defense": 1444,
+      "health": 21667,
+      "ability": "Pocket Engineer restores 35% of Mr. Tin’s Max Health when first under 50% and increases his Defense by 30% until end of battle.",
+      "icon": "pocket_engineer.png",
+      "name": "Pocket Engineer"
+    },
+    "expedition": {
+      "lethality": "160.50%",
+      "Health": "160.50%",
+      "ability": "Fortworks increases Defender Troops’ Health by 15%.",
+      "icon": "fortworks.png",
+      "name": "Fortworks"
+    }
+  },
+  "uniquePassive": {},
+  "image": "edith.png",
+  "thumbnail": "edith_thumb.png"
+}
