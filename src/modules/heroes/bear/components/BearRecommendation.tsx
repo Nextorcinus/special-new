@@ -43,14 +43,24 @@ const BEAR_RECOMMENDATION: BearRecommendationData = {
 			title: "P2W",
 			subtitle: "Best premium setup for opening your own Bear Hunt rally.",
 			badge: "Premium",
-			heroIds: ["jeronimo", "natalia", "molly", "zinman"],
+			heroIds: ["jeronimo", "natalia", "zinman"],
 		},
 		{
 			id: "opening-f2p",
 			title: "F2P",
 			subtitle: "Recommended setup for free-to-play players.",
 			badge: "F2P",
-			heroIds: ["sergey", "molly", "bahiti"],
+			heroIds: [
+				"sergey",
+				"molly",
+				"hector",
+				"bahiti",
+				"lynn",
+				"gwen",
+				"mia",
+				"bradley",
+				"rufus",
+			],
 		},
 	],
 	joining: [
@@ -60,7 +70,7 @@ const BEAR_RECOMMENDATION: BearRecommendationData = {
 			subtitle:
 				"Use one of these heroes in the first position when joining another rally.",
 			badge: "Priority",
-			heroIds: ["jessie", "jasser", "seoyoon"],
+			heroIds: ["jessie", "jasser", "seoyoon", "reina", "jeronimo"],
 		},
 	],
 };

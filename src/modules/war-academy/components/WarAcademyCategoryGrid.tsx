@@ -19,6 +19,12 @@ const WAR_ACADEMY_CATEGORIES = [
 		icon: "/icons/marksman.png",
 		href: "/war-academy/marksman",
 	},
+	{
+		id: "flame-tech",
+		title: "Flame Tech",
+		icon: "/icons/flame-tech.png",
+		href: "/war-academy/flame-tech",
+	},
 ];
 
 export default function WarAcademyCategoryGrid() {

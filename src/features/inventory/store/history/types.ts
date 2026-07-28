@@ -4,6 +4,8 @@ export type CalculationModule =
 	| "charm"
 	| "research"
 	| "war-academy"
+	| "unlock-t12"
+	| "skill-t12"
 	| "widget"
 	| "pet"
 	| "troops";

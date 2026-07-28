@@ -1,39 +1,103 @@
-import type { CalculationHistoryItem } from "./types";
+import type { CalculationHistoryItem, CalculationModule } from "./types";
+
+function normalizeCategory(value?: string): string {
+	return String(value ?? "")
+		.trim()
+		.toLowerCase();
+}
 
 function normalizeCategoryPath(
-	module: CalculationHistoryItem["module"],
+	module: CalculationModule,
 	category?: string,
 ): string {
-	if (!category) {
+	const normalizedCategory = normalizeCategory(category);
+
+	if (!normalizedCategory) {
 		return "";
 	}
 
-	const normalizedCategory = category.trim().toLowerCase();
+	switch (module) {
+		case "research": {
+			const routes: Record<string, string> = {
+				growth: "growth",
+				economy: "economy",
+				battle: "battle",
+			};
 
-	if (module === "research") {
-		const researchRoutes: Record<string, string> = {
-			growth: "growth",
-			economy: "economy",
-			battle: "battle",
-		};
+			const route = routes[normalizedCategory];
 
-		const categoryRoute = researchRoutes[normalizedCategory];
+			return route ? `/${route}` : "/categories";
+		}
 
-		return categoryRoute ? `/${categoryRoute}` : "/categories";
+		case "buildings": {
+			const routes: Record<string, string> = {
+				regular: "regular",
+				fc: "fc",
+			};
+
+			const route = routes[normalizedCategory];
+
+			return route ? `/${route}` : "";
+		}
+
+		case "war-academy": {
+			const routes: Record<string, string> = {
+				infantry: "infantry",
+				lancer: "lancer",
+				marksman: "marksman",
+				cavalry: "cavalry",
+				support: "support",
+			};
+
+			const route = routes[normalizedCategory];
+
+			return route ? `/${route}` : "";
+		}
+
+		case "unlock-t12": {
+			const routes: Record<string, string> = {
+				"exalted infantry": "infantry",
+				"exalted lancer": "lancer",
+				"exalted marksman": "marksman",
+
+				infantry: "infantry",
+				lancer: "lancer",
+				marksman: "marksman",
+			};
+
+			const route = routes[normalizedCategory];
+
+			return route ? `/${route}` : "";
+		}
+
+		case "skill-t12": {
+			const routes: Record<string, string> = {
+				infantry: "infantry",
+				lancer: "lancer",
+				marksman: "marksman",
+
+				"exalted infantry": "infantry",
+				"exalted lancer": "lancer",
+				"exalted marksman": "marksman",
+			};
+
+			const route = routes[normalizedCategory];
+
+			return route ? `/${route}` : "";
+		}
+
+		case "gear":
+		case "charm":
+		case "widget":
+		case "troops":
+			return `/${normalizedCategory.replace(/\s+/g, "-")}`;
+
+		case "pet":
+			return "";
+
+		default:
+			return "";
 	}
-
-	if (module === "buildings") {
-		const buildingRoutes: Record<string, string> = {
-			regular: "regular",
-			fc: "fc",
-		};
-
-		const categoryRoute = buildingRoutes[normalizedCategory];
-
-		return categoryRoute ? `/${categoryRoute}` : "";
-	}
-
-	return `/${normalizedCategory}`;
 }
 
 function getPetId(item: CalculationHistoryItem): string | null {
@@ -60,39 +124,39 @@ function getPetId(item: CalculationHistoryItem): string | null {
 	return normalizedPetId || null;
 }
 
-export function getHistoryRoute(item: CalculationHistoryItem): string {
-	const historyId = encodeURIComponent(String(item.id));
-
-	if (item.module === "pet") {
-		const petId =
-			typeof item.result?.petId === "string"
-				? item.result.petId
-				: typeof item.form?.petId === "string"
-					? item.form.petId
-					: null;
-
-		if (!petId) {
-			return "/pets";
-		}
-
-		return `/pets/${encodeURIComponent(
-			petId,
-		)}?historyId=${encodeURIComponent(String(item.id))}`;
-	}
-
-	const categoryPath = normalizeCategoryPath(item.module, item.category);
-
-	const routes: Record<string, string> = {
+function getBaseRoute(module: CalculationModule, categoryPath: string): string {
+	const routes: Record<CalculationModule, string> = {
 		buildings: `/buildings${categoryPath}`,
 		gear: `/gear${categoryPath}`,
 		charm: `/charm${categoryPath}`,
 		research: `/research${categoryPath}`,
 		"war-academy": `/war-academy${categoryPath}`,
+		"unlock-t12": `/war-academy/flame-tech/unlock-t12${categoryPath}`,
+		"skill-t12": `/war-academy/flame-tech/skill-t12${categoryPath}`,
 		widget: `/widget${categoryPath}`,
+		pet: "/pets",
 		troops: `/troops${categoryPath}`,
 	};
 
-	const baseRoute = routes[item.module] ?? "/";
+	return routes[module];
+}
+
+export function getHistoryRoute(item: CalculationHistoryItem): string {
+	const historyId = encodeURIComponent(String(item.id));
+
+	if (item.module === "pet") {
+		const petId = getPetId(item);
+
+		if (!petId) {
+			return "/pets";
+		}
+
+		return `/pets/${encodeURIComponent(petId)}?historyId=${historyId}`;
+	}
+
+	const categoryPath = normalizeCategoryPath(item.module, item.category);
+
+	const baseRoute = getBaseRoute(item.module, categoryPath);
 
 	return `${baseRoute}?historyId=${historyId}`;
 }
