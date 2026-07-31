@@ -110,9 +110,9 @@ export default function FlameTechCategoryPage() {
 				<FlameTechCategoryCard
 					title="T12 Skills"
 					description="Calculate upgrades for Infantry, Lancer, and Marksman T12 skills."
+					href="/war-academy/flame-tech/skill-t12"
 					icon={<Sparkles size={21} />}
-					badge="Coming Soon"
-					disabled
+					badge="T12"
 				/>
 			</div>
 		</MobileContainer>

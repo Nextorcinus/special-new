@@ -79,7 +79,7 @@ export default function UnlockT12CategoryPage() {
 					title="Infantry"
 					description="Calculate all requirements needed to unlock T12 Infantry."
 					href="/war-academy/flame-tech/unlock-t12/exalted-infantry"
-					icon="/troops/infantry.png"
+					icon="/icons/infantry.png"
 					fallbackIcon={
 						<Shield size={24} className="text-[var(--sl-primary)]" />
 					}
@@ -89,7 +89,7 @@ export default function UnlockT12CategoryPage() {
 					title="Lancer"
 					description="Calculate all requirements needed to unlock T12 Lancer."
 					href="/war-academy/flame-tech/unlock-t12/exalted-lancer"
-					icon="/troops/lancer.png"
+					icon="/icons/lancer.png"
 					fallbackIcon={
 						<Navigation size={24} className="text-[var(--sl-primary)]" />
 					}
@@ -99,7 +99,7 @@ export default function UnlockT12CategoryPage() {
 					title="Marksman"
 					description="Calculate all requirements needed to unlock T12 Marksman."
 					href="/war-academy/flame-tech/unlock-t12/exalted-marksman"
-					icon="/troops/marksman.png"
+					icon="/icons/marksman.png"
 					fallbackIcon={
 						<Swords size={24} className="text-[var(--sl-primary)]" />
 					}

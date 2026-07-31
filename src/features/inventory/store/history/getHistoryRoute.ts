@@ -1,96 +1,180 @@
 import type { CalculationHistoryItem, CalculationModule } from "./types";
 
-function normalizeCategory(value?: string): string {
+type HistoryCategorySource = {
+	category?: unknown;
+};
+
+function normalizeCategory(value: unknown): string {
 	return String(value ?? "")
 		.trim()
-		.toLowerCase();
+		.toLowerCase()
+		.replace(/[_-]+/g, " ")
+		.replace(/\s+/g, " ");
+}
+
+function getHistoryCategory(item: CalculationHistoryItem): string {
+	const form = item.form as HistoryCategorySource | undefined;
+	const result = item.result as HistoryCategorySource | undefined;
+
+	const candidates = [item.category, form?.category, result?.category];
+
+	for (const candidate of candidates) {
+		const normalizedCategory = normalizeCategory(candidate);
+
+		if (normalizedCategory) {
+			return normalizedCategory;
+		}
+	}
+
+	return "";
+}
+
+function isUnlockT12Category(category: string): boolean {
+	return ["exalted infantry", "exalted lancer", "exalted marksman"].includes(
+		category,
+	);
+}
+
+function isSkillT12Category(category: string): boolean {
+	return [
+		"infantry skill",
+		"lancer skill",
+		"marksman skill",
+		"exalted infantry skill",
+		"exalted lancer skill",
+		"exalted marksman skill",
+	].includes(category);
+}
+
+/**
+ * Mendukung history lama yang pernah disimpan
+ * menggunakan module "war-academy".
+ */
+function resolveHistoryModule(
+	item: CalculationHistoryItem,
+	category: string,
+): CalculationModule {
+	if (item.module !== "war-academy") {
+		return item.module;
+	}
+
+	if (isUnlockT12Category(category)) {
+		return "unlock-t12";
+	}
+
+	if (isSkillT12Category(category)) {
+		return "skill-t12";
+	}
+
+	return item.module;
+}
+
+function getResearchCategoryPath(category: string): string {
+	const routes: Record<string, string> = {
+		growth: "growth",
+		economy: "economy",
+		battle: "battle",
+	};
+
+	const route = routes[category];
+
+	return route ? `/${route}` : "/categories";
+}
+
+function getBuildingCategoryPath(category: string): string {
+	const routes: Record<string, string> = {
+		regular: "regular",
+		fc: "fc",
+	};
+
+	const route = routes[category];
+
+	return route ? `/${route}` : "";
+}
+
+function getWarAcademyCategoryPath(category: string): string {
+	const routes: Record<string, string> = {
+		infantry: "infantry",
+		lancer: "lancer",
+		marksman: "marksman",
+		cavalry: "cavalry",
+		support: "support",
+	};
+
+	const route = routes[category];
+
+	return route ? `/${route}` : "";
+}
+
+function getUnlockT12CategoryPath(category: string): string {
+	const routes: Record<string, string> = {
+		"exalted infantry": "exalted-infantry",
+		"exalted lancer": "exalted-lancer",
+		"exalted marksman": "exalted-marksman",
+
+		infantry: "exalted-infantry",
+		lancer: "exalted-lancer",
+		marksman: "exalted-marksman",
+	};
+
+	const route = routes[category];
+
+	return route ? `/${route}` : "";
+}
+
+function getSkillT12CategoryPath(category: string): string {
+	const routes: Record<string, string> = {
+		"exalted infantry": "exalted-infantry",
+		"exalted lancer": "exalted-lancer",
+		"exalted marksman": "exalted-marksman",
+
+		"exalted infantry skill": "exalted-infantry",
+		"exalted lancer skill": "exalted-lancer",
+		"exalted marksman skill": "exalted-marksman",
+
+		"infantry skill": "exalted-infantry",
+		"lancer skill": "exalted-lancer",
+		"marksman skill": "exalted-marksman",
+
+		infantry: "exalted-infantry",
+		lancer: "exalted-lancer",
+		marksman: "exalted-marksman",
+	};
+
+	const route = routes[category];
+
+	return route ? `/${route}` : "";
 }
 
 function normalizeCategoryPath(
 	module: CalculationModule,
-	category?: string,
+	category: string,
 ): string {
-	const normalizedCategory = normalizeCategory(category);
-
-	if (!normalizedCategory) {
+	if (!category) {
 		return "";
 	}
 
 	switch (module) {
-		case "research": {
-			const routes: Record<string, string> = {
-				growth: "growth",
-				economy: "economy",
-				battle: "battle",
-			};
+		case "research":
+			return getResearchCategoryPath(category);
 
-			const route = routes[normalizedCategory];
+		case "buildings":
+			return getBuildingCategoryPath(category);
 
-			return route ? `/${route}` : "/categories";
-		}
+		case "war-academy":
+			return getWarAcademyCategoryPath(category);
 
-		case "buildings": {
-			const routes: Record<string, string> = {
-				regular: "regular",
-				fc: "fc",
-			};
+		case "unlock-t12":
+			return getUnlockT12CategoryPath(category);
 
-			const route = routes[normalizedCategory];
-
-			return route ? `/${route}` : "";
-		}
-
-		case "war-academy": {
-			const routes: Record<string, string> = {
-				infantry: "infantry",
-				lancer: "lancer",
-				marksman: "marksman",
-				cavalry: "cavalry",
-				support: "support",
-			};
-
-			const route = routes[normalizedCategory];
-
-			return route ? `/${route}` : "";
-		}
-
-		case "unlock-t12": {
-			const routes: Record<string, string> = {
-				"exalted infantry": "infantry",
-				"exalted lancer": "lancer",
-				"exalted marksman": "marksman",
-
-				infantry: "infantry",
-				lancer: "lancer",
-				marksman: "marksman",
-			};
-
-			const route = routes[normalizedCategory];
-
-			return route ? `/${route}` : "";
-		}
-
-		case "skill-t12": {
-			const routes: Record<string, string> = {
-				infantry: "infantry",
-				lancer: "lancer",
-				marksman: "marksman",
-
-				"exalted infantry": "infantry",
-				"exalted lancer": "lancer",
-				"exalted marksman": "marksman",
-			};
-
-			const route = routes[normalizedCategory];
-
-			return route ? `/${route}` : "";
-		}
+		case "skill-t12":
+			return getSkillT12CategoryPath(category);
 
 		case "gear":
 		case "charm":
 		case "widget":
 		case "troops":
-			return `/${normalizedCategory.replace(/\s+/g, "-")}`;
+			return `/${category.replace(/\s+/g, "-")}`;
 
 		case "pet":
 			return "";
@@ -125,20 +209,50 @@ function getPetId(item: CalculationHistoryItem): string | null {
 }
 
 function getBaseRoute(module: CalculationModule, categoryPath: string): string {
-	const routes: Record<CalculationModule, string> = {
-		buildings: `/buildings${categoryPath}`,
-		gear: `/gear${categoryPath}`,
-		charm: `/charm${categoryPath}`,
-		research: `/research${categoryPath}`,
-		"war-academy": `/war-academy${categoryPath}`,
-		"unlock-t12": `/war-academy/flame-tech/unlock-t12${categoryPath}`,
-		"skill-t12": `/war-academy/flame-tech/skill-t12${categoryPath}`,
-		widget: `/widget${categoryPath}`,
-		pet: "/pets",
-		troops: `/troops${categoryPath}`,
-	};
+	switch (module) {
+		case "buildings":
+			return `/buildings${categoryPath}`;
 
-	return routes[module];
+		case "gear":
+			return `/gear${categoryPath}`;
+
+		case "charm":
+			return `/charm${categoryPath}`;
+
+		case "research":
+			return `/research${categoryPath}`;
+
+		case "war-academy":
+			return `/war-academy${categoryPath}`;
+
+		case "unlock-t12":
+			return `/war-academy/flame-tech/unlock-t12${categoryPath}`;
+
+		case "skill-t12":
+			return `/war-academy/flame-tech/skill-t12${categoryPath}`;
+
+		case "widget":
+			return `/widget${categoryPath}`;
+
+		case "pet":
+			return "/pets";
+
+		case "troops":
+			return `/troops${categoryPath}`;
+
+		default:
+			return "";
+	}
+}
+
+function appendHistoryId(route: string, historyId: string): string {
+	if (!route) {
+		return "/";
+	}
+
+	const separator = route.includes("?") ? "&" : "?";
+
+	return `${route}${separator}historyId=${historyId}`;
 }
 
 export function getHistoryRoute(item: CalculationHistoryItem): string {
@@ -151,12 +265,18 @@ export function getHistoryRoute(item: CalculationHistoryItem): string {
 			return "/pets";
 		}
 
-		return `/pets/${encodeURIComponent(petId)}?historyId=${historyId}`;
+		const petRoute = `/pets/${encodeURIComponent(petId)}`;
+
+		return appendHistoryId(petRoute, historyId);
 	}
 
-	const categoryPath = normalizeCategoryPath(item.module, item.category);
+	const category = getHistoryCategory(item);
 
-	const baseRoute = getBaseRoute(item.module, categoryPath);
+	const resolvedModule = resolveHistoryModule(item, category);
 
-	return `${baseRoute}?historyId=${historyId}`;
+	const categoryPath = normalizeCategoryPath(resolvedModule, category);
+
+	const baseRoute = getBaseRoute(resolvedModule, categoryPath);
+
+	return appendHistoryId(baseRoute, historyId);
 }

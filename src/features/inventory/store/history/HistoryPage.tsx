@@ -11,9 +11,31 @@ import type {
 	CalculationHistoryItem,
 	CalculationModule,
 } from "@/features/inventory/store/history/types";
+
 import HistoryFilterTabs from "./components/HistoryFilterTabs";
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
+
+const WAR_ACADEMY_MODULES: CalculationModule[] = [
+	"war-academy",
+	"unlock-t12",
+	"skill-t12",
+];
+
+function matchesModule(
+	item: CalculationHistoryItem,
+	activeModule: CalculationModule | "all",
+): boolean {
+	if (activeModule === "all") {
+		return true;
+	}
+
+	if (activeModule === "war-academy") {
+		return WAR_ACADEMY_MODULES.includes(item.module);
+	}
+
+	return item.module === activeModule;
+}
 
 export default function HistoryPage() {
 	const router = useRouter();
@@ -23,12 +45,15 @@ export default function HistoryPage() {
 	);
 
 	const items = useHistoryStore((state: HistoryStoreState) => state.items);
+
 	const loadHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.loadHistory,
 	);
+
 	const togglePinHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.togglePinHistory,
 	);
+
 	const deleteHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.deleteHistory,
 	);
@@ -38,9 +63,7 @@ export default function HistoryPage() {
 	}, [loadHistory]);
 
 	const filteredItems = useMemo(() => {
-		if (activeModule === "all") return items;
-
-		return items.filter((item) => item.module === activeModule);
+		return items.filter((item) => matchesModule(item, activeModule));
 	}, [items, activeModule]);
 
 	function handleSelectHistory(item: CalculationHistoryItem) {
@@ -48,13 +71,14 @@ export default function HistoryPage() {
 	}
 
 	return (
-		<main className="min-h-screen bg-special px-4 py-6 ">
+		<main className="min-h-screen bg-special px-4 py-6">
 			<div className="mx-auto w-full max-w-md space-y-6">
 				<div className="relative flex items-center justify-center">
 					<button
 						type="button"
 						onClick={() => router.back()}
 						className="absolute left-0 rounded-full bg-white p-2 text-black"
+						aria-label="Back"
 					>
 						<ArrowLeft className="h-4 w-4" />
 					</button>

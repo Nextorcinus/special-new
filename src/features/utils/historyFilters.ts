@@ -1,5 +1,3 @@
-// src/features/history/utils/historyFilters.ts
-
 import type {
 	CalculationHistoryItem,
 	CalculationModule,
@@ -9,48 +7,66 @@ type FilterHistoryParams = {
 	items: CalculationHistoryItem[];
 	search?: string;
 	module?: CalculationModule | "all";
-	category?: string;
 };
+
+function normalizeValue(value: unknown): string {
+	return String(value ?? "")
+		.trim()
+		.toLowerCase();
+}
+
+function isWarAcademyModule(itemModule: CalculationModule): boolean {
+	return ["war-academy", "unlock-t12", "skill-t12"].includes(itemModule);
+}
+
+function matchesModule(
+	item: CalculationHistoryItem,
+	module: CalculationModule | "all",
+): boolean {
+	if (module === "all") {
+		return true;
+	}
+
+	/*
+	 * Unlock T12 dan Skill T12 tetap ditampilkan
+	 * di kelompok History War Academy.
+	 */
+	if (module === "war-academy") {
+		return isWarAcademyModule(item.module);
+	}
+
+	return item.module === module;
+}
+
+function matchesSearch(item: CalculationHistoryItem, search: string): boolean {
+	const normalizedSearch = normalizeValue(search);
+
+	if (!normalizedSearch) {
+		return true;
+	}
+
+	const values = [item.title, item.subtitle, item.category, item.module];
+
+	return values.some((value) =>
+		normalizeValue(value).includes(normalizedSearch),
+	);
+}
 
 export function filterHistory({
 	items,
 	search = "",
 	module = "all",
-	category,
-}: FilterHistoryParams) {
-	const keyword = search.trim().toLowerCase();
-
+}: FilterHistoryParams): CalculationHistoryItem[] {
 	return items
-		.filter((item) => {
-			if (module !== "all" && item.module !== module) {
-				return false;
-			}
-
-			if (category && item.category !== category) {
-				return false;
-			}
-
-			if (!keyword) {
-				return true;
-			}
-
-			const searchableText = [
-				item.title,
-				item.subtitle,
-				item.module,
-				item.category,
-			]
-				.filter(Boolean)
-				.join(" ")
-				.toLowerCase();
-
-			return searchableText.includes(keyword);
-		})
+		.filter((item) => matchesModule(item, module))
+		.filter((item) => matchesSearch(item, search))
 		.sort((a, b) => {
-			if (a.isPinned && !b.isPinned) return -1;
-			if (!a.isPinned && b.isPinned) return 1;
+			if (a.isPinned !== b.isPinned) {
+				return a.isPinned ? -1 : 1;
+			}
 
 			const dateA = new Date(a.updatedAt ?? a.createdAt).getTime();
+
 			const dateB = new Date(b.updatedAt ?? b.createdAt).getTime();
 
 			return dateB - dateA;

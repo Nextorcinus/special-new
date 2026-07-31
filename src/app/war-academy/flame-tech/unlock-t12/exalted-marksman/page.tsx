@@ -1,9 +1,10 @@
-import UnlockT12CalculatorPage from "@/modules/war-academy/flame-tech/unlock-t12/components/UnlockT12CalculatorPage";
+import UnlockT12Page from "@/modules/war-academy/flame-tech/UnlockT12Page";
 import { UNLOCK_T12_DATA } from "@/modules/war-academy/flame-tech/unlock-t12/data";
 
 export default function Page() {
 	return (
-		<UnlockT12CalculatorPage
+		<UnlockT12Page
+			title="Exalted Marksman"
 			category="Exalted Marksman"
 			data={UNLOCK_T12_DATA}
 		/>

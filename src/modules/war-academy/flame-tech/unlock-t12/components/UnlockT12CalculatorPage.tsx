@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -40,6 +39,53 @@ type UnlockT12HistoryEntry = CalculationHistoryEntry<
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
+function normalizeCategory(value: unknown): string {
+	return String(value ?? "")
+		.trim()
+		.toLowerCase()
+		.replace(/[_-]+/g, " ")
+		.replace(/\s+/g, " ");
+}
+
+function isMatchingCategory(
+	history: UnlockT12HistoryItem,
+	category: UnlockT12Category,
+): boolean {
+	const expectedCategory = normalizeCategory(category);
+
+	const historyCategory = normalizeCategory(history.category);
+	const formCategory = normalizeCategory(history.form?.category);
+	const resultCategory = normalizeCategory(history.result?.category);
+
+	return (
+		historyCategory === expectedCategory ||
+		formCategory === expectedCategory ||
+		resultCategory === expectedCategory
+	);
+}
+
+function isUnlockT12History(history: UnlockT12HistoryItem): boolean {
+	if (history.module === "unlock-t12") {
+		return true;
+	}
+
+	/*
+	 * Dukungan untuk history lama yang sebelumnya
+	 * masih disimpan menggunakan module war-academy.
+	 */
+	if (history.module !== "war-academy") {
+		return false;
+	}
+
+	const category = normalizeCategory(
+		history.category ?? history.form?.category ?? history.result?.category,
+	);
+
+	return ["exalted infantry", "exalted lancer", "exalted marksman"].includes(
+		category,
+	);
+}
+
 export default function UnlockT12CalculatorPage({
 	category,
 	data,
@@ -51,9 +97,7 @@ export default function UnlockT12CalculatorPage({
 		useState<UnlockT12HistoryItem | null>(null);
 
 	const [formKey, setFormKey] = useState("unlock-t12-new");
-
 	const [isAddingItem, setIsAddingItem] = useState(false);
-
 	const [isEditingHistory, setIsEditingHistory] = useState(false);
 
 	const formRef = useRef<HTMLDivElement>(null);
@@ -96,21 +140,35 @@ export default function UnlockT12CalculatorPage({
 
 		const selected = items.find((item) => String(item.id) === historyId);
 
-		if (
-			!selected ||
-			selected.module !== "war-academy" ||
-			selected.category !== category
-		) {
+		if (!selected) {
 			return;
 		}
 
 		const selectedHistory = selected as UnlockT12HistoryItem;
 
-		/*
-		 * Mencegah history War Academy biasa
-		 * dibaca sebagai history Unlock T12.
-		 */
-		if (selectedHistory.form?.category !== category) {
+		const normalizedCategory = String(category).trim().toLowerCase();
+
+		const selectedCategory = String(
+			selectedHistory.category ??
+				selectedHistory.form?.category ??
+				selectedHistory.result?.category ??
+				"",
+		)
+			.trim()
+			.toLowerCase();
+
+		const isCurrentHistory = selectedHistory.module === "unlock-t12";
+
+		const isLegacyHistory =
+			selectedHistory.module === "war-academy" &&
+			["exalted infantry", "exalted lancer", "exalted marksman"].includes(
+				selectedCategory,
+			);
+
+		if (
+			(!isCurrentHistory && !isLegacyHistory) ||
+			selectedCategory !== normalizedCategory
+		) {
 			return;
 		}
 
@@ -136,7 +194,7 @@ export default function UnlockT12CalculatorPage({
 					]
 				: [];
 
-	const initialValues: Partial<UnlockT12FormValues> | undefined =
+	const initialValues: Partial<UnlockT12FormValues> =
 		activeHistory && !isAddingItem
 			? {
 					...activeHistory.form,
@@ -156,7 +214,7 @@ export default function UnlockT12CalculatorPage({
 		result: UnlockT12CalculationResult,
 	) {
 		return {
-			module: "war-academy" as const,
+			module: "unlock-t12" as const,
 			category,
 			title: result.research || "Unlock T12",
 			subtitle: `${category} · Lv.${result.fromLevel} → Lv.${result.toLevel}`,
@@ -183,12 +241,14 @@ export default function UnlockT12CalculatorPage({
 				| UnlockT12HistoryItem
 				| undefined;
 
-			if (updated) {
-				setActiveHistory(updated);
-				setIsAddingItem(false);
-				setIsEditingHistory(false);
-				setFormKey(`unlock-t12-${updated.id}`);
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(updated);
+			setIsAddingItem(false);
+			setIsEditingHistory(false);
+			setFormKey(`unlock-t12-${updated.id}`);
 
 			return;
 		}
@@ -198,12 +258,14 @@ export default function UnlockT12CalculatorPage({
 				| UnlockT12HistoryItem
 				| undefined;
 
-			if (updated) {
-				setActiveHistory(updated);
-				setIsAddingItem(false);
-				setIsEditingHistory(true);
-				setFormKey(`unlock-t12-${updated.id}`);
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(updated);
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+			setFormKey(`unlock-t12-${updated.id}`);
 
 			return;
 		}
@@ -228,23 +290,10 @@ export default function UnlockT12CalculatorPage({
 		scrollToForm();
 	}
 
-	function handleNewCalculation() {
-		setActiveHistory(null);
-		setIsEditingHistory(false);
-		setIsAddingItem(false);
-
-		setFormKey(`unlock-t12-new-${Date.now()}`);
-
-		window.history.replaceState(null, "", window.location.pathname);
-
-		scrollToForm();
-	}
-
 	function handleReset() {
 		if (isAddingItem) {
 			setIsAddingItem(false);
 			setIsEditingHistory(Boolean(activeHistory));
-
 			setFormKey(`unlock-t12-cancel-add-${Date.now()}`);
 
 			return;
@@ -270,36 +319,21 @@ export default function UnlockT12CalculatorPage({
 					/>
 				</div>
 
-				{activeHistory && (
+				{activeHistory && historyItems.length > 0 && (
 					<CalculationGroupResult
 						items={historyItems}
 						getKey={(item) => item.id}
 						renderItem={(item, index) => (
 							<UnlockT12Result
 								result={item.result}
-								title={index === 0 ? "Result" : undefined}
 								showAddButton={index === historyItems.length - 1}
 								onAddItem={handleAddItem}
 							/>
 						)}
 						renderTotal={(groupItems) => (
-							<UnlockT12TotalResult items={groupItems} />
+							<UnlockT12TotalResult items={groupItems} title="Total Result" />
 						)}
 					/>
-				)}
-
-				{activeHistory && (
-					<div className="px-4 py-2">
-						<button
-							type="button"
-							onClick={handleNewCalculation}
-							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
-						>
-							<span>New Calculation</span>
-
-							<ArrowRight className="size-4" />
-						</button>
-					</div>
 				)}
 			</div>
 		</div>

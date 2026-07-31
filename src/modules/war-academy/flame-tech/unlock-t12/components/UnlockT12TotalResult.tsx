@@ -34,102 +34,41 @@ type TotalAttribute = {
 
 const RESOURCE_KEYS: UnlockT12ResourceKey[] = ["Steel", "RFC", "Shard"];
 
+function toFiniteNumber(value: unknown): number {
+	const number = Number(value ?? 0);
+
+	return Number.isFinite(number) ? number : 0;
+}
+
 function sumNumber(
 	items: UnlockT12HistoryEntry[],
 	getValue: (item: UnlockT12HistoryEntry) => unknown,
 ): number {
-	return items.reduce((total, item) => {
-		const value = Number(getValue(item) ?? 0);
-
-		if (!Number.isFinite(value)) {
-			return total;
-		}
-
-		return total + value;
-	}, 0);
+	return items.reduce(
+		(total, item) => total + toFiniteNumber(getValue(item)),
+		0,
+	);
 }
 
-function normalizeAttributeName(value: unknown): string {
+function normalizeText(value: unknown): string {
 	return String(value ?? "")
 		.trim()
 		.replace(/\s+/g, " ");
 }
 
-function aggregateAttributes(items: UnlockT12HistoryEntry[]): TotalAttribute[] {
-	const attributeMap = new Map<string, TotalAttribute>();
-
-	for (const item of items) {
-		const attributes = item.result?.attributes ?? [];
-
-		for (const attribute of attributes) {
-			const name = normalizeAttributeName(attribute.name);
-
-			const unit = String(attribute.unit ?? "");
-
-			if (!name) {
-				continue;
-			}
-
-			const value = Number(attribute.value ?? 0);
-
-			if (!Number.isFinite(value)) {
-				continue;
-			}
-
-			/*
-			 * Attribute persen dan flat dengan nama
-			 * yang sama tidak boleh digabung.
-			 */
-			const key = [name.toLowerCase(), unit.toLowerCase()].join(":");
-
-			const current = attributeMap.get(key);
-
-			if (current) {
-				current.value += value;
-				continue;
-			}
-
-			attributeMap.set(key, {
-				name,
-				value,
-				unit,
-			});
-		}
-	}
-
-	return Array.from(attributeMap.values()).sort((a, b) =>
-		a.name.localeCompare(b.name),
-	);
+function normalizeId(value: unknown): string {
+	return normalizeText(value)
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
 }
 
-function getResearchNames(items: UnlockT12HistoryEntry[]): string[] {
-	return Array.from(
-		new Set(
-			items
-				.map((item) => item.result?.research?.trim())
-				.filter((value): value is string => Boolean(value)),
-		),
-	);
-}
+function formatSignedValue(value: unknown, unit = ""): string {
+	const number = toFiniteNumber(value);
 
-function getCategories(items: UnlockT12HistoryEntry[]): string[] {
-	return Array.from(
-		new Set(
-			items
-				.map((item) => item.result?.category?.trim())
-				.filter((value): value is string => Boolean(value)),
-		),
-	);
-}
+	const sign = number < 0 ? "-" : "+";
 
-function formatAttributeValue(value: unknown, unit?: string): string {
-	const number = Number(value ?? 0);
-
-	if (!Number.isFinite(number)) {
-		return `+0${unit ?? ""}`;
-	}
-
-	return `+${formatNumber(number)}${unit ?? ""}`;
+	return `${sign}${formatNumber(Math.abs(number))}${unit}`;
 }
 
 function sumResources(items: UnlockT12HistoryEntry[]): UnlockT12ResourceTotals {
@@ -146,6 +85,67 @@ function sumResources(items: UnlockT12HistoryEntry[]): UnlockT12ResourceTotals {
 	return totals;
 }
 
+function aggregateAttributes(items: UnlockT12HistoryEntry[]): TotalAttribute[] {
+	const groupedAttributes = new Map<string, TotalAttribute>();
+
+	for (const item of items) {
+		const attributes = item.result?.attributes ?? [];
+
+		for (const attribute of attributes) {
+			const name = normalizeText(attribute.name);
+			const unit = normalizeText(attribute.unit);
+			const value = toFiniteNumber(attribute.value);
+
+			if (!name) {
+				continue;
+			}
+
+			/*
+			 * Attribute dengan nama sama tetapi unit berbeda
+			 * tidak boleh digabung.
+			 *
+			 * Contoh:
+			 * Infantry Health 5%
+			 * Infantry Health 500
+			 */
+			const groupKey = [name.toLowerCase(), unit.toLowerCase()].join(":");
+
+			const current = groupedAttributes.get(groupKey);
+
+			if (current) {
+				current.value += value;
+				continue;
+			}
+
+			groupedAttributes.set(groupKey, {
+				name,
+				value,
+				unit,
+			});
+		}
+	}
+
+	return Array.from(groupedAttributes.values())
+		.filter((attribute) => attribute.value !== 0)
+		.sort((first, second) => first.name.localeCompare(second.name));
+}
+
+function getUniqueResearchNames(items: UnlockT12HistoryEntry[]): string[] {
+	return Array.from(
+		new Set(
+			items.map((item) => normalizeText(item.result?.research)).filter(Boolean),
+		),
+	);
+}
+
+function getUniqueCategories(items: UnlockT12HistoryEntry[]): string[] {
+	return Array.from(
+		new Set(
+			items.map((item) => normalizeText(item.result?.category)).filter(Boolean),
+		),
+	);
+}
+
 export default function UnlockT12TotalResult({
 	items,
 	title = "Total Result",
@@ -154,17 +154,53 @@ export default function UnlockT12TotalResult({
 		(item) => item.id === "war-academy",
 	);
 
-	const resources = sumResources(items);
+	const validItems = items.filter((item) => Boolean(item.result));
 
-	const totalPower = sumNumber(items, (item) => item.result?.power);
+	const resources = sumResources(validItems);
 
-	const attributes = aggregateAttributes(items);
+	const totalPower = sumNumber(validItems, (item) => item.result?.power);
 
-	const researchNames = getResearchNames(items);
+	const attributes = aggregateAttributes(validItems);
 
-	const categories = getCategories(items);
+	const researchNames = getUniqueResearchNames(validItems);
+
+	const categories = getUniqueCategories(validItems);
 
 	const { createResourceItem } = useCompareResources(resources);
+
+	const powerItems = [
+		{
+			id: "total-power-increase",
+			label: "Power Increase",
+			icon: "/icons/power.png",
+			value: formatSignedValue(totalPower),
+			valueClassName:
+				totalPower > 0 ? "text-yellow-500" : "text-[var(--sl-text-muted)]",
+		},
+		{
+			id: "total-calculations",
+			label: "Calculations",
+			icon: "/icons/Buff.png",
+			value: formatNumber(validItems.length),
+		},
+	];
+
+	const attributeItems = attributes.map((attribute, index) => ({
+		id: [
+			"total-attribute",
+			index,
+			normalizeId(attribute.name),
+			normalizeId(attribute.unit || "flat"),
+		].join("-"),
+
+		label: attribute.name,
+		icon: "/icons/Buff.png",
+
+		value: formatSignedValue(attribute.value, attribute.unit),
+
+		valueClassName:
+			attribute.value !== 0 ? "text-white" : "text-[var(--sl-text-muted)]",
+	}));
 
 	const baseResourceItems = [
 		...(resources.Steel > 0 ? [createResourceItem("Steel")] : []),
@@ -176,50 +212,25 @@ export default function UnlockT12TotalResult({
 		...(resources.Shard > 0 ? [createResourceItem("Shard")] : []),
 	];
 
-	const powerItems = [
-		{
-			id: "total-power",
-			label: "Power Increase",
-			icon: "/icons/power.png",
-			value: `+${formatNumber(totalPower)}`,
-			valueClassName:
-				totalPower > 0 ? "text-yellow-500" : "text-[var(--sl-text-muted)]",
-		},
-	];
-
-	const attributeItems = attributes.map((attribute, index) => ({
-		id: [
-			"attribute",
-			index,
-			attribute.name.toLowerCase().replace(/\s+/g, "-"),
-			attribute.unit || "flat",
-		].join("-"),
-
-		label: attribute.name,
-		icon: "/icons/Buff.png",
-
-		value: formatAttributeValue(attribute.value, attribute.unit),
-
-		valueClassName: "text-white",
-	}));
-
-	const firstItem = items[0];
+	const firstItem = validItems[0];
 
 	const resultName =
 		researchNames.length === 1
 			? researchNames[0]
-			: `${items.length} Unlock T12 Items`;
+			: `${validItems.length} Unlock T12 Calculations`;
 
 	const subtitle =
-		researchNames.length > 1
-			? researchNames.join(", ")
-			: categories.length > 0
+		categories.length === 1
+			? categories[0]
+			: categories.length > 1
 				? categories.join(", ")
-				: "Combined Unlock T12 calculation";
+				: researchNames.length > 1
+					? researchNames.join(", ")
+					: "Combined Unlock T12 calculation";
 
 	const sections = [
 		{
-			id: "power",
+			id: "total-power",
 			title: "Power",
 			icon: <Zap size={18} />,
 			items: powerItems,
@@ -228,7 +239,7 @@ export default function UnlockT12TotalResult({
 		...(attributeItems.length > 0
 			? [
 					{
-						id: "attributes",
+						id: "total-attributes",
 						title: "Attributes",
 						icon: <ShieldCheck size={18} />,
 						items: attributeItems,
@@ -239,7 +250,7 @@ export default function UnlockT12TotalResult({
 		...(baseResourceItems.length > 0
 			? [
 					{
-						id: "resources",
+						id: "total-base-resources",
 						title: "Base Resources",
 						icon: <BriefcaseBusiness size={18} />,
 						items: baseResourceItems,
@@ -250,7 +261,7 @@ export default function UnlockT12TotalResult({
 		...(fireCrystalItems.length > 0
 			? [
 					{
-						id: "fire-crystals",
+						id: "total-fire-crystals",
 						title: "Fire Crystals",
 						icon: <Gem size={18} />,
 						items: fireCrystalItems,
@@ -262,12 +273,12 @@ export default function UnlockT12TotalResult({
 	return (
 		<CalculatorResult
 			title={title}
-			categoryTitle="Unlock T12"
+			categoryTitle="Flame Tech"
 			categoryIcon={warAcademyNavigation?.icon ?? "/category/war-academy.png"}
 			name={resultName}
 			subtitle={subtitle}
 			highlightLabel="Total Power Increase"
-			highlightValue={`+${formatNumber(totalPower)}`}
+			highlightValue={formatSignedValue(totalPower)}
 			createdAt={firstItem?.createdAt}
 			sections={sections}
 		/>
