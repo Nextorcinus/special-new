@@ -1,3 +1,5 @@
+"use client";
+
 import type { ResourceGroup as ResourceGroupType } from "../types";
 import ResourceInput from "./ResourceInput";
 

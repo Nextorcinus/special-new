@@ -1,6 +1,9 @@
 "use client";
 
+import SLAccordion from "@/components/ui/sl-ui/SLAccordion";
+
 import { RESOURCE_GROUPS } from "../constants";
+import LunarAmberExchange from "./LunarAmberExchange";
 import ResourceGroup from "./ResourceGroup";
 
 type ResourceBagContentProps = {
@@ -18,11 +21,23 @@ export default function ResourceBagContent({
 
 			<div className="space-y-5">
 				{RESOURCE_GROUPS.map((group) => (
-					<ResourceGroup key={group.id} group={group} />
+					<div key={group.id} className="space-y-3">
+						<ResourceGroup group={group} />
+
+						{group.id === "chief-gear" && (
+							<SLAccordion
+								title="Lunar Amber Exchange"
+								defaultOpen={false}
+								className="border border-[var(--sl-border)] bg-[var(--sl-surface-2)]"
+							>
+								<LunarAmberExchange />
+							</SLAccordion>
+						)}
+					</div>
 				))}
 			</div>
 
-			<div className="sticky bottom-0 mt-2 flex gap-3 bg-[var(--sl-surface)] p-4">
+			<div className="sticky bottom-0 mt-4 flex gap-3 bg-[var(--sl-surface)] py-4">
 				<button
 					type="button"
 					onClick={onClose}

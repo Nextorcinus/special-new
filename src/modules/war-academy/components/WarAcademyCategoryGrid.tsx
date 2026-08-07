@@ -22,7 +22,7 @@ const WAR_ACADEMY_CATEGORIES = [
 	{
 		id: "flame-tech",
 		title: "Flame Tech",
-		icon: "/icons/flame-tech.png",
+		icon: "/category/war-academy.png",
 		href: "/war-academy/flame-tech",
 	},
 ];

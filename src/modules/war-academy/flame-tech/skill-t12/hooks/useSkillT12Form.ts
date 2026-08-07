@@ -23,6 +23,11 @@ const DEFAULT_VALUES: Omit<SkillT12FormValues, "category"> = {
 	research: "",
 	fromLevel: "0",
 	toLevel: "",
+
+	researchSpeed: "0",
+	vpLevel: "0",
+	agnesLevel: "0",
+	presidentSkill: false,
 };
 
 export default function useSkillT12Form({
@@ -32,24 +37,28 @@ export default function useSkillT12Form({
 }: UseSkillT12FormProps) {
 	const [values, setValues] = useState<SkillT12FormValues>(() => ({
 		category,
+
 		research: initialValues?.research ?? DEFAULT_VALUES.research,
+
 		fromLevel: initialValues?.fromLevel ?? DEFAULT_VALUES.fromLevel,
+
 		toLevel: initialValues?.toLevel ?? DEFAULT_VALUES.toLevel,
+
+		researchSpeed: initialValues?.researchSpeed ?? DEFAULT_VALUES.researchSpeed,
+
+		vpLevel: initialValues?.vpLevel ?? DEFAULT_VALUES.vpLevel,
+
+		agnesLevel: initialValues?.agnesLevel ?? DEFAULT_VALUES.agnesLevel,
+
+		presidentSkill:
+			initialValues?.presidentSkill ?? DEFAULT_VALUES.presidentSkill,
 	}));
 
 	useEffect(() => {
-		setValues((previous) => {
-			if (previous.category === category) {
-				return previous;
-			}
-
-			return {
-				category,
-				research: "",
-				fromLevel: "0",
-				toLevel: "",
-			};
-		});
+		setValues((previous) => ({
+			...previous,
+			category,
+		}));
 	}, [category]);
 
 	useEffect(() => {
@@ -59,9 +68,22 @@ export default function useSkillT12Form({
 
 		setValues({
 			category: initialValues.category ?? category,
-			research: initialValues.research ?? "",
-			fromLevel: initialValues.fromLevel ?? "0",
-			toLevel: initialValues.toLevel ?? "",
+
+			research: initialValues.research ?? DEFAULT_VALUES.research,
+
+			fromLevel: initialValues.fromLevel ?? DEFAULT_VALUES.fromLevel,
+
+			toLevel: initialValues.toLevel ?? DEFAULT_VALUES.toLevel,
+
+			researchSpeed:
+				initialValues.researchSpeed ?? DEFAULT_VALUES.researchSpeed,
+
+			vpLevel: initialValues.vpLevel ?? DEFAULT_VALUES.vpLevel,
+
+			agnesLevel: initialValues.agnesLevel ?? DEFAULT_VALUES.agnesLevel,
+
+			presidentSkill:
+				initialValues.presidentSkill ?? DEFAULT_VALUES.presidentSkill,
 		});
 	}, [category, initialValues]);
 
@@ -103,7 +125,7 @@ export default function useSkillT12Form({
 	}, [levelOptions, maxLevel]);
 
 	const toOptions = useMemo(() => {
-		const fromLevel = Number(values.fromLevel || 0);
+		const fromLevel = Number(values.fromLevel);
 
 		return levelOptions.filter((option) => Number(option.value) > fromLevel);
 	}, [levelOptions, values.fromLevel]);
@@ -133,6 +155,7 @@ export default function useSkillT12Form({
 	const setFromLevel = useCallback((fromLevel: string) => {
 		setValues((previous) => {
 			const currentToLevel = Number(previous.toLevel || 0);
+
 			const nextFromLevel = Number(fromLevel || 0);
 
 			return {
@@ -153,9 +176,8 @@ export default function useSkillT12Form({
 	const reset = useCallback(() => {
 		setValues({
 			category,
-			research: "",
-			fromLevel: "0",
-			toLevel: "",
+
+			...DEFAULT_VALUES,
 		});
 	}, [category]);
 
@@ -164,14 +186,15 @@ export default function useSkillT12Form({
 			return false;
 		}
 
-		const fromLevel = Number(values.fromLevel);
-		const toLevel = Number(values.toLevel);
+		const from = Number(values.fromLevel);
 
-		if (!Number.isFinite(fromLevel) || !Number.isFinite(toLevel)) {
+		const to = Number(values.toLevel);
+
+		if (!Number.isFinite(from) || !Number.isFinite(to)) {
 			return false;
 		}
 
-		if (fromLevel < 0 || toLevel <= fromLevel) {
+		if (to <= from) {
 			return false;
 		}
 
@@ -179,8 +202,8 @@ export default function useSkillT12Form({
 			return false;
 		}
 
-		return toLevel <= selectedResearch.maxLevel;
-	}, [selectedResearch, values.fromLevel, values.research, values.toLevel]);
+		return to <= selectedResearch.maxLevel;
+	}, [selectedResearch, values.fromLevel, values.toLevel, values.research]);
 
 	return {
 		values,
