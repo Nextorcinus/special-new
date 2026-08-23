@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-
 import {
 	getFromLevelOptions,
 	getToLevelOptions,
@@ -10,13 +9,13 @@ import {
 } from "@/modules/gear/calculator";
 import type {
 	ChiefGearType,
-	GearDataItem,
+	GearData,
 	GearFormValues,
 } from "../type";
 import { DEFAULT_GEAR_FORM_VALUES } from "../type";
 
 type UseGearFormProps = {
-	data: GearDataItem[];
+	data: GearData;
 	initialValues?: Partial<GearFormValues>;
 };
 
@@ -26,7 +25,7 @@ type SetGearFormValue = <Key extends keyof GearFormValues>(
 ) => void;
 
 function createInitialValues(
-	data: GearDataItem[],
+	data: GearData,
 	initialValues?: Partial<GearFormValues>,
 ): GearFormValues {
 	const values: GearFormValues = {
@@ -45,51 +44,67 @@ export default function useGearForm({
 		createInitialValues(data, initialValues),
 	);
 
-	const fromLevelOptions = useMemo(() => {
-		return getFromLevelOptions(data, values.gear);
-	}, [data, values.gear]);
+	const fromLevelOptions = useMemo(
+		() => getFromLevelOptions(data, values.gear),
+		[data, values.gear],
+	);
 
-	const toLevelOptions = useMemo(() => {
-		return getToLevelOptions(
-			data,
-			values.gear,
-			values.fromLevel,
-		);
-	}, [data, values.gear, values.fromLevel]);
+	const toLevelOptions = useMemo(
+		() =>
+			getToLevelOptions(
+				data,
+				values.gear,
+				values.fromLevel,
+			),
+		[data, values.gear, values.fromLevel],
+	);
 
-	const isValid = useMemo(() => {
-		return isValidGearSelection(data, values);
-	}, [data, values]);
+	const isValid = useMemo(
+		() => isValidGearSelection(data, values),
+		[data, values],
+	);
 
-	const setValue: SetGearFormValue = useCallback((key, value) => {
-		setValues((currentValues) => ({
-			...currentValues,
-			[key]: value,
-		}));
-	}, []);
+	const setValue: SetGearFormValue = useCallback(
+		(key, value) => {
+			setValues((currentValues) => ({
+				...currentValues,
+				[key]: value,
+			}));
+		},
+		[],
+	);
 
-	const setGear = useCallback((gear: ChiefGearType | "") => {
-		setValues({
-			gear,
-			fromLevel: "",
-			toLevel: "",
-		});
-	}, []);
+	const setGear = useCallback(
+		(gear: ChiefGearType | "") => {
+			setValues({
+				gear,
+				fromLevel: "",
+				toLevel: "",
+			});
+		},
+		[],
+	);
 
-	const setFromLevel = useCallback((fromLevel: string) => {
-		setValues((currentValues) => ({
-			...currentValues,
-			fromLevel,
-			toLevel: "",
-		}));
-	}, []);
+	const setFromLevel = useCallback(
+		(fromLevel: string) => {
+			setValues((currentValues) => ({
+				...currentValues,
+				fromLevel,
+				toLevel: "",
+			}));
+		},
+		[],
+	);
 
-	const setToLevel = useCallback((toLevel: string) => {
-		setValues((currentValues) => ({
-			...currentValues,
-			toLevel,
-		}));
-	}, []);
+	const setToLevel = useCallback(
+		(toLevel: string) => {
+			setValues((currentValues) => ({
+				...currentValues,
+				toLevel,
+			}));
+		},
+		[],
+	);
 
 	const setFormValues = useCallback(
 		(nextValues: GearFormValues) => {

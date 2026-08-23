@@ -167,6 +167,7 @@ export default function GearTotalResult({
 		(item) => item.result?.stats?.deploymentIncrease,
 	);
 
+
 	const { createResourceItem } =
 		useCompareResources(resources);
 

@@ -15,14 +15,14 @@ import useGearForm from "@/modules/gear/hooks/useGearForm";
 import type {
 	ChiefGearType,
 	GearCalculationResult,
-	GearDataItem,
+	GearData,
 	GearFormValues,
 } from "@/modules/gear/type";
 
 type GearFormMode = "create" | "update";
 
 type GearFormProps = {
-	data: GearDataItem[];
+	data: GearData;
 	initialValues?: GearFormValues | null;
 	mode?: GearFormMode;
 	lockMainFields?: boolean;
@@ -85,9 +85,7 @@ export default function GearForm({
 		setError(null);
 	}
 
-	function handleSubmit(
-		event: React.FormEvent<HTMLFormElement>,
-	) {
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		if (!isValid) {
@@ -99,7 +97,6 @@ export default function GearForm({
 
 		try {
 			const result = calculateGear(values, data);
-
 			onCalculate(result);
 			setError(null);
 		} catch (submitError) {
@@ -117,15 +114,10 @@ export default function GearForm({
 	}
 
 	const submitLabel =
-		mode === "update"
-			? "Update Calculation"
-			: "Calculate";
+		mode === "update" ? "Update Calculation" : "Calculate";
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className="space-y-5"
-		>
+		<form onSubmit={handleSubmit} className="space-y-5">
 			<div className="rounded-2xl bg-[var(--sl-surface)] p-4 sm:p-5">
 				<div>
 					<p className="text-sm font-bold text-[var(--sl-text)]">
@@ -139,9 +131,7 @@ export default function GearForm({
 
 				<div className="mt-5 space-y-4">
 					<div className="space-y-2">
-						<SLLabel>
-							Gear Type
-						</SLLabel>
+						<SLLabel>Gear Type</SLLabel>
 
 						<SLSelect
 							value={gear}
@@ -154,9 +144,7 @@ export default function GearForm({
 
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<div className="space-y-2">
-							<SLLabel>
-								From
-							</SLLabel>
+							<SLLabel>From</SLLabel>
 
 							<SLSelect
 								value={fromLevel}
@@ -176,9 +164,7 @@ export default function GearForm({
 						</div>
 
 						<div className="space-y-2">
-								<SLLabel>
-								To
-								</SLLabel>
+							<SLLabel>To</SLLabel>
 
 							<SLSelect
 								value={toLevel}
@@ -204,28 +190,25 @@ export default function GearForm({
 					)}
 
 					<div className="grid grid-cols-2 gap-4 pt-1">
-				
+						<SLButton
+							type="submit"
+							disabled={!isValid}
+							className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
+						>
+							{submitLabel}
+						</SLButton>
 
-				<SLButton
-					type="submit"
-					disabled={!isValid}
-					className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
-				>
-					{submitLabel}
-				</SLButton>
-				<SLButton
-					type="button"
-					variant="secondary"
-					onClick={handleReset}
-					className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
-				>
-					Reset
-				</SLButton>
-			</div>
+						<SLButton
+							type="button"
+							variant="secondary"
+							onClick={handleReset}
+							className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+						>
+							Reset
+						</SLButton>
+					</div>
 				</div>
 			</div>
-
-			
 		</form>
 	);
 }

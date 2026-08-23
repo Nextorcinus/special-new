@@ -2,11 +2,11 @@ import HeaderOther from "@/components/layout/Header/HeaderOther";
 import MobileContainer from "@/components/layout/MobileContainer";
 
 import GearCalculatorPage from "./components/GearCalculatorPage";
-import type { GearDataItem } from "./type";
+import type { GearData } from "./type";
 
 type GearPageProps = {
 	title: string;
-	data: GearDataItem[];
+	data: GearData;
 };
 
 export default function GearPage({

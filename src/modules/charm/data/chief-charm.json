@@ -185,5 +185,27 @@
     "stat_diff": 5.0,
     "svs_point": 1470000,
     "jewel_cost": 100
+  },
+  {
+    "level": 17,
+    "guide_cost": 85,
+    "design_cost": 70,
+    "jewel_cost": 15,
+    "power_total": 2616000,
+    "stat_total": 109.0,
+    "power_diff": 24000,
+    "stat_diff": 1.0,
+    "svs_point": 0
+  },
+  {
+    "level": 18,
+    "guide_cost": 150,
+    "design_cost": 130,
+    "jewel_cost": 20,
+    "power_total": 2832000,
+    "stat_total": 118.0,
+    "power_diff": 24000,
+    "stat_diff": 1.0,
+    "svs_point": 0
   }
 ]

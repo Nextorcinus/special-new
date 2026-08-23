@@ -1,46 +1,73 @@
-export const NAVIGATION = [
+export type NavigationGroup =
+	| "chief"
+	| "heroes"
+	| "development";
+
+export type NavigationItem = {
+	id: string;
+	title: string;
+	icon: string;
+	href: string;
+	group?: NavigationGroup;
+};
+
+export const NAVIGATION: NavigationItem[] = [
+	// Chief
 	{
 		id: "charm",
-		title: "Charm",
+		title: "Chief Charm",
 		icon: "/category/chief-charm.png",
 		href: "/charm",
+		group: "chief",
 	},
 	{
 		id: "gear",
-		title: "Gear",
+		title: "Chief Gear",
 		icon: "/category/chief-gear.png",
 		href: "/gear",
+		group: "chief",
 	},
+
+	// Heroes
+	{
+		id: "heroes",
+		title: "Heroes List",
+		icon: "/category/heroes.png",
+		href: "/heroes",
+		group: "heroes",
+	},
+	{
+		id: "experts",
+		title: "Heroes Expert",
+		icon: "/category/heroes-expert.png",
+		href: "/experts",
+		group: "heroes",
+	},
+
+	// Development
 	{
 		id: "buildings",
 		title: "Buildings",
 		icon: "/category/building-upgrade.png",
 		href: "/buildings",
-	},
-	{
-		id: "experts",
-		title: "Experts",
-		icon: "/category/heroes-expert.png",
-		href: "/experts",
+		group: "development",
 	},
 	{
 		id: "research",
 		title: "Research",
 		icon: "/category/research.png",
 		href: "/research",
-	},
-	{
-		id: "heroes",
-		title: "Heroes",
-		icon: "/category/heroes.png",
-		href: "/heroes",
+		group: "development",
 	},
 	{
 		id: "pets",
-		title: "Pet",
+		title: "Pets",
 		icon: "/category/pet-building.png",
 		href: "/pets",
+		group: "development",
 	},
+
+	// Other
 	{
 		id: "troops",
 		title: "Troops",

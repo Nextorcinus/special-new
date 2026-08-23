@@ -1,8 +1,9 @@
 import type {
 	ChiefGearType,
 	GearCalculationResult,
-	GearDataItem,
+	GearData,
 	GearFormValues,
+	GearProgressionItem,
 	GearResourceMap,
 	GearStatResult,
 } from "../type";
@@ -10,16 +11,10 @@ import {
 	EMPTY_GEAR_RESOURCES,
 	EMPTY_GEAR_STATS,
 } from "../type";
-
-type GearNumericField =
-	| "Plans"
-	| "Polish"
-	| "Alloy"
-	| "Amber"
-	| "SvS Points"
-	| "Attack"
-	| "Defense"
-	| "troops deployment capacity";
+import {
+	getGearUpgradeRows,
+	getGearLevelRow,
+} from "./helpers";
 
 function parseNumber(value: unknown): number {
 	if (typeof value === "number") {
@@ -61,105 +56,15 @@ function parseNumber(value: unknown): number {
 	}
 }
 
-function normalizeText(value: unknown): string {
-	return String(value ?? "")
-		.trim()
-		.toLowerCase();
-}
-
-function getNumericValue(
-	item: GearDataItem,
-	field: GearNumericField,
-): number {
-	return parseNumber(item[field]);
-}
-
-function isSameGearType(
-	itemType: GearDataItem["Type"],
-	selectedType: ChiefGearType,
-): boolean {
-	return normalizeText(itemType) === normalizeText(selectedType);
-}
-
-function isSameLevel(
-	itemLevel: GearDataItem["Level"],
-	selectedLevel: string,
-): boolean {
-	return normalizeText(itemLevel) === normalizeText(selectedLevel);
-}
-
-function getGearRows(
-	data: GearDataItem[],
-	gear: ChiefGearType,
-): GearDataItem[] {
-	return data.filter((item) =>
-		isSameGearType(item.Type, gear),
-	);
-}
-
-function getLevelIndex(
-	rows: GearDataItem[],
-	level: string,
-): number {
-	return rows.findIndex((item) =>
-		isSameLevel(item.Level, level),
-	);
-}
-
-function getSelectedRows(
-	rows: GearDataItem[],
-	fromLevel: string,
-	toLevel: string,
-) {
-	const fromIndex = getLevelIndex(rows, fromLevel);
-	const toIndex = getLevelIndex(rows, toLevel);
-
-	if (fromIndex === -1) {
-		throw new Error(
-			`From level "${fromLevel}" tidak ditemukan.`,
-		);
-	}
-
-	if (toIndex === -1) {
-		throw new Error(
-			`To level "${toLevel}" tidak ditemukan.`,
-		);
-	}
-
-	if (toIndex <= fromIndex) {
-		throw new Error(
-			"To level harus lebih tinggi dari From level.",
-		);
-	}
-
-	return {
-		fromRow: rows[fromIndex],
-		toRow: rows[toIndex],
-
-		/*
-		 * Biaya upgrade dijumlahkan mulai dari level setelah From
-		 * sampai level To.
-		 *
-		 * Contoh:
-		 * From: Purple
-		 * To: Purple 2 Star
-		 *
-		 * Yang dihitung:
-		 * Purple 1 Star + Purple 2 Star
-		 */
-		upgradeRows: rows.slice(fromIndex + 1, toIndex + 1),
-	};
-}
-
 function calculateResources(
-	rows: GearDataItem[],
+	rows: GearProgressionItem[],
 ): GearResourceMap {
 	return rows.reduce<GearResourceMap>(
 		(total, item) => {
-			total.Plans += getNumericValue(item, "Plans");
-			total.Polish += getNumericValue(item, "Polish");
-			total.Alloy += getNumericValue(item, "Alloy");
-			total.Amber += getNumericValue(item, "Amber");
+			total.Plans += parseNumber(item.scroll);
+			total.Polish += parseNumber(item.potion);
+			total.Alloy += parseNumber(item.ingot);
+			total.Amber += parseNumber(item.amber);
 
 			return total;
 		},
@@ -168,39 +73,34 @@ function calculateResources(
 }
 
 function calculateSvsPoints(
-	rows: GearDataItem[],
+	rows: GearProgressionItem[],
 ): number {
 	return rows.reduce(
-		(total, item) =>
-			total + getNumericValue(item, "SvS Points"),
+		(total, item) => total + parseNumber(item.svsPoints),
 		0,
 	);
 }
 
 function calculateStats(
-	fromRow: GearDataItem,
-	toRow: GearDataItem,
+	fromRow: GearProgressionItem,
+	toRow: GearProgressionItem,
 ): GearStatResult {
-	const attackFrom = getNumericValue(fromRow, "Attack");
-	const attackTo = getNumericValue(toRow, "Attack");
+	const attackFrom = parseNumber(fromRow.stat);
+	const attackTo = parseNumber(toRow.stat);
 
-	const defenseFrom = getNumericValue(
-		fromRow,
-		"Defense",
-	);
-	const defenseTo = getNumericValue(
-		toRow,
-		"Defense",
+	const defenseFrom = parseNumber(fromRow.stat);
+	const defenseTo = parseNumber(toRow.stat);
+
+	const deploymentFrom = parseNumber(
+		fromRow.deploymentCapacity,
 	);
 
-	const deploymentFrom = getNumericValue(
-		fromRow,
-		"troops deployment capacity",
+	const deploymentTo = parseNumber(
+		toRow.deploymentCapacity,
 	);
-	const deploymentTo = getNumericValue(
-		toRow,
-		"troops deployment capacity",
-	);
+
+	const powerFrom = parseNumber(fromRow.power);
+	const powerTo = parseNumber(toRow.power);
 
 	return {
 		...EMPTY_GEAR_STATS,
@@ -217,6 +117,10 @@ function calculateStats(
 		deploymentTo,
 		deploymentIncrease:
 			deploymentTo - deploymentFrom,
+
+		powerFrom,
+		powerTo,
+		powerIncrease: powerTo - powerFrom,
 	};
 }
 
@@ -246,55 +150,105 @@ function validateForm(
 
 export function calculateGear(
 	values: GearFormValues,
-	data: GearDataItem[],
+	data: GearData,
 ): GearCalculationResult {
 	validateForm(values);
 
-	if (!Array.isArray(data) || data.length === 0) {
+	if (
+		!data ||
+		!Array.isArray(data.progression) ||
+		data.progression.length === 0
+	) {
 		throw new Error(
 			"Data Chief Gear tidak tersedia.",
 		);
 	}
 
-	const gearRows = getGearRows(
-		data,
-		values.gear,
-	);
-
-	if (gearRows.length === 0) {
+	if (!data.gearTypes?.[values.gear]) {
 		throw new Error(
 			`Data untuk Chief Gear "${values.gear}" tidak ditemukan.`,
 		);
 	}
 
-	const {
-		fromRow,
-		toRow,
-		upgradeRows,
-	} = getSelectedRows(
-		gearRows,
+	const fromRow = getGearLevelRow(
+		data,
+		values.gear,
 		values.fromLevel,
+	);
+
+	const toRow = getGearLevelRow(
+		data,
+		values.gear,
 		values.toLevel,
 	);
 
+	if (!fromRow) {
+		throw new Error(
+			`From level "${values.fromLevel}" tidak ditemukan.`,
+		);
+	}
+
+	if (!toRow) {
+		throw new Error(
+			`To level "${values.toLevel}" tidak ditemukan.`,
+		);
+	}
+
+	const fromIndex = data.progression.findIndex(
+		(item) => item.step === fromRow.step,
+	);
+
+	const toIndex = data.progression.findIndex(
+		(item) => item.step === toRow.step,
+	);
+
+	if (fromIndex === -1 || toIndex === -1) {
+		throw new Error(
+			"Progression Chief Gear tidak valid.",
+		);
+	}
+
+	if (toIndex <= fromIndex) {
+		throw new Error(
+			"To level harus lebih tinggi dari From level.",
+		);
+	}
+
+	const upgradeRows = getGearUpgradeRows(
+		data,
+		values,
+	);
+
+	if (upgradeRows.length === 0) {
+		throw new Error(
+			"Tidak ada progression upgrade yang ditemukan.",
+		);
+	}
+
 	return {
-	gear: values.gear,
-	fromLevel: values.fromLevel,
-	toLevel: values.toLevel,
+		gear: values.gear,
 
-	form: {
-		...values,
-	},
+		fromLevel: values.fromLevel,
 
-	resources: calculateResources(upgradeRows),
+		toLevel: values.toLevel,
 
-	svsPoints: calculateSvsPoints(upgradeRows),
+		form: {
+			...values,
+		},
 
-	stats: calculateStats(
-		fromRow,
-		toRow,
-	),
-};
+		resources: calculateResources(
+			upgradeRows,
+		),
+
+		svsPoints: calculateSvsPoints(
+			upgradeRows,
+		),
+
+		stats: calculateStats(
+			fromRow,
+			toRow,
+		),
+	};
 }
 
 export default calculateGear;

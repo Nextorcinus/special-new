@@ -11,17 +11,19 @@ import GearResult from "@/modules/gear/components/GearResult";
 import GearTotalResult from "@/modules/gear/components/GearTotalResult";
 import type {
 	GearCalculationResult,
-	GearDataItem,
+	GearData,
 	GearFormValues,
 } from "@/modules/gear/type";
 
 type GearCalculatorPageProps = {
-	data: GearDataItem[];
+	data: GearData;
 };
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
-export default function GearCalculatorPage({ data }: GearCalculatorPageProps) {
+export default function GearCalculatorPage({
+	data,
+}: GearCalculatorPageProps) {
 	const searchParams = useSearchParams();
 	const historyId = searchParams.get("historyId");
 
@@ -34,7 +36,9 @@ export default function GearCalculatorPage({ data }: GearCalculatorPageProps) {
 
 	const formRef = useRef<HTMLDivElement>(null);
 
-	const items = useHistoryStore((state: HistoryStoreState) => state.items);
+	const items = useHistoryStore(
+		(state: HistoryStoreState) => state.items,
+	);
 
 	const loadHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.loadHistory,
@@ -196,11 +200,15 @@ export default function GearCalculatorPage({ data }: GearCalculatorPageProps) {
 								result={item.result as GearCalculationResult}
 								history={activeHistory}
 								title={index === 0 ? "Result" : undefined}
-								showAddButton={index === historyItems.length - 1}
+								showAddButton={
+									index === historyItems.length - 1
+								}
 								onAddItem={handleAddItem}
 							/>
 						)}
-						renderTotal={(items) => <GearTotalResult items={items} />}
+						renderTotal={(items) => (
+							<GearTotalResult items={items} />
+						)}
 					/>
 				)}
 
@@ -212,7 +220,6 @@ export default function GearCalculatorPage({ data }: GearCalculatorPageProps) {
 							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 						>
 							<span>New Calculation</span>
-
 							<ArrowRight className="size-4" />
 						</button>
 					</div>

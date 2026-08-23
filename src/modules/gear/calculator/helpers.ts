@@ -1,8 +1,9 @@
 import type {
 	ChiefGearType,
-	GearDataItem,
+	GearData,
 	GearFormValues,
 	GearLevelOption,
+	GearProgressionItem,
 } from "../type";
 
 export const CHIEF_GEAR_TYPES: ChiefGearType[] = [
@@ -14,10 +15,7 @@ export const CHIEF_GEAR_TYPES: ChiefGearType[] = [
 	"Weapon",
 ];
 
-export const CHIEF_GEAR_LABELS: Record<
-	ChiefGearType,
-	string
-> = {
+export const CHIEF_GEAR_LABELS: Record<ChiefGearType, string> = {
 	Cap: "Cap",
 	Watch: "Watch",
 	Coat: "Coat",
@@ -26,56 +24,53 @@ export const CHIEF_GEAR_LABELS: Record<
 	Weapon: "Weapon",
 };
 
+export const CHIEF_GEAR_TROOP_TYPES: Record<
+	ChiefGearType,
+	GearData["gearTypes"][ChiefGearType]
+> = {
+	Cap: "Lancer",
+	Watch: "Lancer",
+	Coat: "Infantry",
+	Pants: "Infantry",
+	Belt: "Marksman",
+	Weapon: "Marksman",
+};
+
 function normalizeText(value: unknown): string {
-	return String(value ?? "")
-		.trim()
-		.toLowerCase();
+	return String(value ?? "").trim().toLowerCase();
 }
 
-function isSameText(
-	firstValue: unknown,
-	secondValue: unknown,
-): boolean {
-	return (
-		normalizeText(firstValue) ===
-		normalizeText(secondValue)
-	);
+function isSameText(firstValue: unknown, secondValue: unknown): boolean {
+	return normalizeText(firstValue) === normalizeText(secondValue);
+}
+
+function getProgression(data: GearData): GearProgressionItem[] {
+	if (!data || !Array.isArray(data.progression)) {
+		return [];
+	}
+
+	return data.progression;
 }
 
 export function getGearRows(
-	data: GearDataItem[],
-	gear: ChiefGearType | "",
-): GearDataItem[] {
-	if (!Array.isArray(data) || !gear) {
-		return [];
-	}
-
-	return data.filter((item) =>
-		isSameText(item.Type, gear),
-	);
+	data: GearData,
+	_gear: ChiefGearType | "",
+): GearProgressionItem[] {
+	return getProgression(data);
 }
 
 export function getGearLevels(
-	data: GearDataItem[],
-	gear: ChiefGearType | "",
+	data: GearData,
+	_gear: ChiefGearType | "",
 ): string[] {
-	if (!gear) {
-		return [];
-	}
+	const progression = getProgression(data);
 
-	const uniqueLevels = new Set<string>();
-
-	for (const item of getGearRows(data, gear)) {
-		const level = String(item.Level ?? "").trim();
-
-		if (!level || uniqueLevels.has(level)) {
-			continue;
-		}
-
-		uniqueLevels.add(level);
-	}
-
-	return Array.from(uniqueLevels);
+	// Intermediate .1-.4 stages stay in the calculation data,
+	// but are not shown as selectable UI levels.
+	return progression
+		.filter((item) => item.stage === 0)
+		.map((item) => item.name)
+		.filter((level, index, levels) => levels.indexOf(level) === index);
 }
 
 export function createGearLevelOptions(
@@ -88,7 +83,7 @@ export function createGearLevelOptions(
 }
 
 export function getFromLevelOptions(
-	data: GearDataItem[],
+	data: GearData,
 	gear: ChiefGearType | "",
 ): GearLevelOption[] {
 	const levels = getGearLevels(data, gear);
@@ -97,14 +92,11 @@ export function getFromLevelOptions(
 		return createGearLevelOptions(levels);
 	}
 
-
-	return createGearLevelOptions(
-		levels.slice(0, -1),
-	);
+	return createGearLevelOptions(levels.slice(0, -1));
 }
 
 export function getToLevelOptions(
-	data: GearDataItem[],
+	data: GearData,
 	gear: ChiefGearType | "",
 	fromLevel: string,
 ): GearLevelOption[] {
@@ -122,13 +114,11 @@ export function getToLevelOptions(
 		return [];
 	}
 
-	return createGearLevelOptions(
-		levels.slice(fromIndex + 1),
-	);
+	return createGearLevelOptions(levels.slice(fromIndex + 1));
 }
 
 export function getGearLevelIndex(
-	data: GearDataItem[],
+	data: GearData,
 	gear: ChiefGearType | "",
 	level: string,
 ): number {
@@ -136,15 +126,13 @@ export function getGearLevelIndex(
 		return -1;
 	}
 
-	const levels = getGearLevels(data, gear);
-
-	return levels.findIndex((currentLevel) =>
+	return getGearLevels(data, gear).findIndex((currentLevel) =>
 		isSameText(currentLevel, level),
 	);
 }
 
 export function getNextGearLevel(
-	data: GearDataItem[],
+	data: GearData,
 	gear: ChiefGearType | "",
 	currentLevel: string,
 ): string | null {
@@ -153,15 +141,11 @@ export function getNextGearLevel(
 	}
 
 	const levels = getGearLevels(data, gear);
-
 	const currentIndex = levels.findIndex((level) =>
 		isSameText(level, currentLevel),
 	);
 
-	if (
-		currentIndex === -1 ||
-		currentIndex >= levels.length - 1
-	) {
+	if (currentIndex === -1 || currentIndex >= levels.length - 1) {
 		return null;
 	}
 
@@ -169,7 +153,7 @@ export function getNextGearLevel(
 }
 
 export function getPreviousGearLevel(
-	data: GearDataItem[],
+	data: GearData,
 	gear: ChiefGearType | "",
 	currentLevel: string,
 ): string | null {
@@ -178,7 +162,6 @@ export function getPreviousGearLevel(
 	}
 
 	const levels = getGearLevels(data, gear);
-
 	const currentIndex = levels.findIndex((level) =>
 		isSameText(level, currentLevel),
 	);
@@ -191,37 +174,30 @@ export function getPreviousGearLevel(
 }
 
 export function getGearLevelRow(
-	data: GearDataItem[],
-	gear: ChiefGearType | "",
+	data: GearData,
+	_gear: ChiefGearType | "",
 	level: string,
-): GearDataItem | null {
-	if (!gear || !level) {
+): GearProgressionItem | null {
+	if (!level) {
 		return null;
 	}
 
 	return (
-		getGearRows(data, gear).find((item) =>
-			isSameText(item.Level, level),
+		getProgression(data).find((item) =>
+			isSameText(item.name, level),
 		) ?? null
 	);
 }
 
 export function isValidGearSelection(
-	data: GearDataItem[],
+	data: GearData,
 	values: GearFormValues,
 ): boolean {
-	if (
-		!values.gear ||
-		!values.fromLevel ||
-		!values.toLevel
-	) {
+	if (!values.gear || !values.fromLevel || !values.toLevel) {
 		return false;
 	}
 
-	const levels = getGearLevels(
-		data,
-		values.gear,
-	);
+	const levels = getGearLevels(data, values.gear);
 
 	const fromIndex = levels.findIndex((level) =>
 		isSameText(level, values.fromLevel),
@@ -239,7 +215,7 @@ export function isValidGearSelection(
 }
 
 export function sanitizeGearFormValues(
-	data: GearDataItem[],
+	data: GearData,
 	values: GearFormValues,
 ): GearFormValues {
 	if (!values.gear) {
@@ -250,11 +226,7 @@ export function sanitizeGearFormValues(
 		};
 	}
 
-	const gearExists = CHIEF_GEAR_TYPES.includes(
-		values.gear,
-	);
-
-	if (!gearExists) {
+	if (!CHIEF_GEAR_TYPES.includes(values.gear)) {
 		return {
 			gear: "",
 			fromLevel: "",
@@ -262,10 +234,7 @@ export function sanitizeGearFormValues(
 		};
 	}
 
-	const levels = getGearLevels(
-		data,
-		values.gear,
-	);
+	const levels = getGearLevels(data, values.gear);
 
 	const fromIndex = levels.findIndex((level) =>
 		isSameText(level, values.fromLevel),
@@ -328,9 +297,9 @@ export function getGearUpgradeSubtitle(
 }
 
 export function getGearUpgradeRows(
-	data: GearDataItem[],
+	data: GearData,
 	values: GearFormValues,
-): GearDataItem[] {
+): GearProgressionItem[] {
 	if (
 		!values.gear ||
 		!values.fromLevel ||
@@ -339,17 +308,14 @@ export function getGearUpgradeRows(
 		return [];
 	}
 
-	const rows = getGearRows(
-		data,
-		values.gear,
+	const progression = getProgression(data);
+
+	const fromIndex = progression.findIndex((item) =>
+		isSameText(item.name, values.fromLevel),
 	);
 
-	const fromIndex = rows.findIndex((item) =>
-		isSameText(item.Level, values.fromLevel),
-	);
-
-	const toIndex = rows.findIndex((item) =>
-		isSameText(item.Level, values.toLevel),
+	const toIndex = progression.findIndex((item) =>
+		isSameText(item.name, values.toLevel),
 	);
 
 	if (
@@ -360,8 +326,8 @@ export function getGearUpgradeRows(
 		return [];
 	}
 
-	return rows.slice(
-		fromIndex + 1,
-		toIndex + 1,
-	);
+	// IMPORTANT:
+	// This includes .1-.4 intermediate stages even though those stages
+	// are hidden from the UI.
+	return progression.slice(fromIndex + 1, toIndex + 1);
 }

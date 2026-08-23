@@ -145,35 +145,32 @@ export default function GearResult({
 						],
 					},
 					{
-						id: "stats",
-						title: "Stats Increase",
-						items: [
-							{
-								id: "attack",
-								label: "Attack",
-								icon: "/icons/attack.png",
-								value: formatStat(
-									stats.attackIncrease,
-								),
-							},
-							{
-								id: "defense",
-								label: "Defense",
-								icon: "/icons/defense.png",
-								value: formatStat(
-									stats.defenseIncrease,
-								),
-							},
-							{
-								id: "deployment-capacity",
-								label: "Deployment Capacity",
-								icon: "/icons/deployment.png",
-								value: formatDeployment(
-									stats.deploymentIncrease,
-								),
-							},
-						],
-					},
+	id: "stats",
+	title: "Stats Increase",
+	items: [
+		{
+			id: "attack",
+			label: "Attack",
+			icon: "/icons/attack.png",
+			value: formatStat(stats.attackIncrease),
+		},
+		{
+			id: "defense",
+			label: "Defense",
+			icon: "/icons/defense.png",
+			value: formatStat(stats.defenseIncrease),
+		},
+		{
+			id: "deployment-capacity",
+			label: "Deployment Capacity",
+			icon: "/icons/deployment.png",
+			value: formatDeployment(
+				stats.deploymentIncrease,
+			),
+		},
+
+	],
+},
 				]}
 			/>
 
