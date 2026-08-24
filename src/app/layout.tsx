@@ -4,6 +4,7 @@ import ThemeProvider from "@/providers/ThemeProvider";
 import "@/styles/globals.css";
 import "@/styles/theme.css";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
+import AppToaster from "@/components/ui/toaster";
 
 const geist = Geist({
 	variable: "--font-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
 				<ThemeProvider>
 					<main className="pb-28 md:pb-0">{children}</main>
 					<MobileBottomBar />
+					<AppToaster />
 				</ThemeProvider>
 			</body>
 		</html>
