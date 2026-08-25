@@ -9,6 +9,8 @@ import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
 
+import { toast } from "@/lib/toast";
+
 import useResearchForm from "../hooks/useResearchForm";
 import type {
 	ResearchCategory,
@@ -112,26 +114,60 @@ export default function ResearchForm({
 		loadValues(initialValues);
 	}, [initialValues, loadValues]);
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(
+		event: React.FormEvent<HTMLFormElement>,
+	) {
 		event.preventDefault();
 
 		if (!isSelectionComplete) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the research, tier, current level, and target level.",
+			);
+
 			return;
 		}
 
-		onSubmit({
-			...values,
-			category,
-		});
+		try {
+			onSubmit({
+				...values,
+				category,
+			});
+
+			toast.success(
+				mode === "update"
+					? "Calculation updated"
+					: "Calculation completed",
+				`${category} Research ${values.research} Lv.${values.fromLevel} → Lv.${values.toLevel}`,
+			);
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate research upgrade.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+		}
 	}
 
 	function handleReset() {
 		resetForm();
 		onReset?.();
+
+		toast.success(
+			"Form reset",
+			`${category} Research calculation form has been reset.`,
+		);
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4">
+		<form
+			onSubmit={handleSubmit}
+			className="space-y-4"
+		>
 			<div className="relative space-y-4 rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4 text-[var(--sl-text)]">
 				<div>
 					<h2 className="text-sm font-bold text-[var(--sl-text)]">
@@ -144,55 +180,97 @@ export default function ResearchForm({
 				</div>
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div className="sm:col-span-2 space-y-2">
-						<SLLabel>Research</SLLabel>
+					<div className="space-y-2 sm:col-span-2">
+						<SLLabel>
+							Research
+						</SLLabel>
 
 						<SLSelect
-							value={values.research}
-							onChange={setResearch}
+							value={
+								values.research
+							}
+							onChange={
+								setResearch
+							}
 							placeholder="Select research"
-							options={researchOptions}
-							disabled={lockMainFields}
+							options={
+								researchOptions
+							}
+							disabled={
+								lockMainFields
+							}
 						/>
 					</div>
 
-					<div className="sm:col-span-2 space-y-2">
-						<SLLabel>Tier</SLLabel>
+					<div className="space-y-2 sm:col-span-2">
+						<SLLabel>
+							Tier
+						</SLLabel>
 
 						<SLSelect
-							value={values.tier}
-							onChange={setTier}
+							value={
+								values.tier
+							}
+							onChange={
+								setTier
+							}
 							placeholder="Select tier"
-							options={tierOptions}
-							disabled={lockMainFields || !values.research}
+							options={
+								tierOptions
+							}
+							disabled={
+								lockMainFields ||
+								!values.research
+							}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>From</SLLabel>
+						<SLLabel>
+							From
+						</SLLabel>
 
 						<SLSelect
-							value={values.fromLevel}
-							onChange={setFromLevel}
+							value={
+								values.fromLevel
+							}
+							onChange={
+								setFromLevel
+							}
 							placeholder="Select level"
-							options={fromLevelOptions}
-							disabled={lockMainFields || !values.research || !values.tier}
+							options={
+								fromLevelOptions
+							}
+							disabled={
+								lockMainFields ||
+								!values.research ||
+								!values.tier
+							}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>To</SLLabel>
+						<SLLabel>
+							To
+						</SLLabel>
 
 						<SLSelect
-							value={values.toLevel}
-							onChange={setToLevel}
+							value={
+								values.toLevel
+							}
+							onChange={
+								setToLevel
+							}
 							placeholder="Select level"
-							options={toLevelOptions}
+							options={
+								toLevelOptions
+							}
 							disabled={
 								lockMainFields ||
 								!values.research ||
 								!values.tier ||
-								values.fromLevel === ""
+								values.fromLevel ===
+									""
 							}
 						/>
 					</div>
@@ -201,11 +279,23 @@ export default function ResearchForm({
 				<SLAccordion title="Configuration">
 					<div className="space-y-4">
 						<div className="space-y-2">
-							<SLLabel>Research Speed (%)</SLLabel>
+							<SLLabel>
+								Research Speed (%)
+							</SLLabel>
 
 							<SLInput
-								value={values.researchSpeed}
-								onChange={(event) => setResearchSpeed(event.target.value)}
+								value={
+									values.researchSpeed
+								}
+								onChange={(
+									event,
+								) =>
+									setResearchSpeed(
+										event
+											.target
+											.value,
+									)
+								}
 								inputMode="decimal"
 								placeholder="e.g. 68 for 68%"
 							/>
@@ -213,22 +303,38 @@ export default function ResearchForm({
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 							<div className="space-y-2">
-								<SLLabel>Vice President</SLLabel>
+								<SLLabel>
+									Vice President
+								</SLLabel>
 
 								<SLSelect
-									value={values.vpLevel}
-									onChange={setVpLevel}
-									options={VP_OPTIONS}
+									value={
+										values.vpLevel
+									}
+									onChange={
+										setVpLevel
+									}
+									options={
+										VP_OPTIONS
+									}
 								/>
 							</div>
 
 							<div className="space-y-2">
-								<SLLabel>Agnes Skill</SLLabel>
+								<SLLabel>
+									Agnes Skill
+								</SLLabel>
 
 								<SLSelect
-									value={values.agnesLevel}
-									onChange={setAgnesLevel}
-									options={AGNES_OPTIONS}
+									value={
+										values.agnesLevel
+									}
+									onChange={
+										setAgnesLevel
+									}
+									options={
+										AGNES_OPTIONS
+									}
 								/>
 							</div>
 						</div>
@@ -252,8 +358,12 @@ export default function ResearchForm({
 								<div className="shrink-0 pt-0.5">
 									<SLSwitch
 										label="President Skill"
-										checked={values.presidentSkill}
-										onCheckedChange={setPresidentSkill}
+										checked={
+											values.presidentSkill
+										}
+										onCheckedChange={
+											setPresidentSkill
+										}
 									/>
 								</div>
 							</div>
@@ -264,15 +374,21 @@ export default function ResearchForm({
 				<div className="grid grid-cols-2 gap-4 pt-1">
 					<button
 						type="submit"
-						disabled={!isSelectionComplete}
+						disabled={
+							!isSelectionComplete
+						}
 						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)] disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						{mode === "update" ? "Update" : "Submit"}
+						{mode === "update"
+							? "Update"
+							: "Submit"}
 					</button>
 
 					<SLButton
 						type="button"
-						onClick={handleReset}
+						onClick={
+							handleReset
+						}
 						className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 					>
 						Reset

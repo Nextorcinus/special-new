@@ -12,7 +12,7 @@ export default function CategoryCard({ item }: { item: CategoryItem }) {
 	return (
 		<Link href={item.href} className="text-center">
 			<div className="flex aspect-square items-center justify-center rounded-3xl bg-[var(--card)]">
-				<Image src={item.icon} alt={item.title} width={88} height={88} />
+				<Image src={item.icon} alt={item.title} width={100} height={100} />
 			</div>
 
 			<span className="mt-4 block text-sm text-[var(--foreground)]">

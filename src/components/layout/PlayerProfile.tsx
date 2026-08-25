@@ -13,7 +13,7 @@ const player = playerData as PlayerData;
 
 export default function PlayerProfile() {
 	return (
-		<div className="w-full rounded-2xl border border-zinc-100/20 bg-[#0e2642] p-3 shadow-md">
+		<div className="w-full rounded-2xl border border-zinc-100/20 bg-[#0f0f0f] p-3 shadow-md">
 			<div className="flex items-center gap-3">
 				{/* Avatar */}
 				<div className="shrink-0">

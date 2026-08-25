@@ -8,12 +8,14 @@ import SLInput from "@/components/ui/sl-ui/SLInput";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
+
+import { toast } from "@/lib/toast";
+
 import {
 	type BuildingType,
 	calculateUpgrade,
 } from "@/modules/buildings/calculator/calculateUpgrade";
 import type { BuildingFormValues } from "@/modules/buildings/types";
-import styles from "@/styles/global.css";
 
 type BuildingFormProps = {
 	type: BuildingType;
@@ -93,9 +95,10 @@ export default function BuildingForm({
 	mode = "create",
 	lockMainFields = false,
 }: BuildingFormProps) {
-	const [values, setValues] = useState<BuildingFormValues>(
-		defaultBuildingFormValues,
-	);
+	const [values, setValues] =
+		useState<BuildingFormValues>(
+			defaultBuildingFormValues,
+		);
 
 	useEffect(() => {
 		if (initialValues) {
@@ -106,7 +109,9 @@ export default function BuildingForm({
 		setValues(defaultBuildingFormValues);
 	}, [initialValues]);
 
-	const updateValue = <K extends keyof BuildingFormValues>(
+	const updateValue = <
+		K extends keyof BuildingFormValues,
+	>(
 		key: K,
 		value: BuildingFormValues[K],
 	) => {
@@ -116,7 +121,9 @@ export default function BuildingForm({
 		}));
 	};
 
-	const updateValues = (patch: Partial<BuildingFormValues>) => {
+	const updateValues = (
+		patch: Partial<BuildingFormValues>,
+	) => {
 		setValues((prev) => ({
 			...prev,
 			...patch,
@@ -130,72 +137,133 @@ export default function BuildingForm({
 	}, [data]);
 
 	const levelOptions = useMemo(() => {
-		if (!values.building) return [];
+		if (!values.building) {
+			return [];
+		}
 
 		return data
-			.filter((item) => String(item.Building) === values.building)
+			.filter(
+				(item) =>
+					String(item.Building) ===
+					values.building,
+			)
 			.map((item) => String(item.Level))
 			.filter(Boolean);
 	}, [data, values.building]);
 
 	const filteredToLevels = useMemo(() => {
-		if (!values.fromLevel) return [];
+		if (!values.fromLevel) {
+			return [];
+		}
 
-		const fromIndex = levelOptions.findIndex(
-			(level) => level === values.fromLevel,
-		);
+		const fromIndex =
+			levelOptions.findIndex(
+				(level) =>
+					level === values.fromLevel,
+			);
 
-		if (fromIndex === -1) return [];
+		if (fromIndex === -1) {
+			return [];
+		}
 
 		return levelOptions.slice(fromIndex + 1);
 	}, [levelOptions, values.fromLevel]);
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(
+		event: React.FormEvent<HTMLFormElement>,
+	) {
 		event.preventDefault();
 
-		if (!values.building || !values.fromLevel || !values.toLevel) {
-			alert("Please select building, current level, and target level.");
+		if (
+			!values.building ||
+			!values.fromLevel ||
+			!values.toLevel
+		) {
+			toast.error(
+				"Invalid calculation",
+				"Please select building, current level, and target level.",
+			);
+
 			return;
 		}
 
-		const calculated = calculateUpgrade({
-			type,
-			building: values.building,
-			fromLevel: values.fromLevel,
-			toLevel: values.toLevel,
-			buffs: {
-				petLevel: values.petLevel,
-				vpLevel: values.vpLevel,
-				doubleTime: values.doubleTime,
-				zinmanSkill: values.zinmanSkill,
-				agnesLevel: values.agnesLevel,
-				constructionSpeed: Number(values.constructionSpeed) || 0,
-				valeriaBonus: Number(values.valeriaLevel) * 2,
-			},
-		});
+		try {
+			const calculated = calculateUpgrade({
+				type,
+				building: values.building,
+				fromLevel: values.fromLevel,
+				toLevel: values.toLevel,
+				buffs: {
+					petLevel: values.petLevel,
+					vpLevel: values.vpLevel,
+					doubleTime:
+						values.doubleTime,
+					zinmanSkill:
+						values.zinmanSkill,
+					agnesLevel:
+						values.agnesLevel,
+					constructionSpeed:
+						Number(
+							values.constructionSpeed,
+						) || 0,
+					valeriaBonus:
+						Number(
+							values.valeriaLevel,
+						) * 2,
+				},
+			});
 
-		if (!calculated) {
-			alert("Calculation failed.");
-			return;
+			if (!calculated) {
+				toast.error(
+					"Calculation failed",
+					"Unable to calculate the building upgrade.",
+				);
+
+				return;
+			}
+
+			onCalculate({
+				...calculated,
+				form: structuredClone(values),
+			});
+
+			toast.success(
+				mode === "update"
+					? "Calculation updated"
+					: "Calculation completed",
+				`Building ${values.fromLevel} → ${values.toLevel}`,
+			);
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate building upgrade.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
 		}
-
-		onCalculate({
-			...calculated,
-			form: structuredClone(values),
-		});
 	}
 
 	function handleReset() {
 		setValues(defaultBuildingFormValues);
+
+		toast.success(
+			"Form reset",
+			"Building calculation form has been reset.",
+		);
 	}
 
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="relative space-y-4 p-4 text-[var(--sl-text)] bg-[var(--sl-surface)] rounded-2xl border border-[var(--sl-border)] "
+			className="relative space-y-4 rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4 text-[var(--sl-text)]"
 		>
 			<div className="relative z-50 space-y-1.5">
-				<SLLabel>Building Name</SLLabel>
+				<SLLabel>
+					Building Name
+				</SLLabel>
 
 				<SLSelect
 					value={values.building}
@@ -207,17 +275,21 @@ export default function BuildingForm({
 						})
 					}
 					placeholder="choose building"
-					options={buildingOptions.map((item) => ({
-						value: item,
-						label: item,
-					}))}
+					options={buildingOptions.map(
+						(item) => ({
+							value: item,
+							label: item,
+						}),
+					)}
 					disabled={lockMainFields}
 				/>
 			</div>
 
 			<div className="relative z-40 grid grid-cols-2 gap-3">
 				<div className="space-y-1.5">
-					<SLLabel>Current</SLLabel>
+					<SLLabel>
+						Current
+					</SLLabel>
 
 					<SLSelect
 						value={values.fromLevel}
@@ -228,29 +300,44 @@ export default function BuildingForm({
 							})
 						}
 						placeholder="Select current"
-						options={levelOptions.map((item) => ({
-							value: item,
-							label: item,
-						}))}
-						disabled={lockMainFields || !values.building}
+						options={levelOptions.map(
+							(item) => ({
+								value: item,
+								label: item,
+							}),
+						)}
+						disabled={
+							lockMainFields ||
+							!values.building
+						}
 					/>
 				</div>
 
 				<div className="space-y-1.5">
-					<SLLabel>To</SLLabel>
+					<SLLabel>
+						To
+					</SLLabel>
 
 					<SLSelect
 						value={values.toLevel}
-						onChange={(value: string) => updateValue("toLevel", value)}
+						onChange={(value: string) =>
+							updateValue(
+								"toLevel",
+								value,
+							)
+						}
 						placeholder="Select target"
-						options={filteredToLevels.map((item) => ({
-							value: item,
-							label: item,
-						}))}
+						options={filteredToLevels.map(
+							(item) => ({
+								value: item,
+								label: item,
+							}),
+						)}
 						disabled={
 							lockMainFields ||
 							!values.fromLevel ||
-							filteredToLevels.length === 0
+							filteredToLevels.length ===
+								0
 						}
 					/>
 				</div>
@@ -258,13 +345,20 @@ export default function BuildingForm({
 
 			<SLAccordion title="Configuration">
 				<div className="space-y-1.5">
-					<SLLabel>Construction Speed %</SLLabel>
+					<SLLabel>
+						Construction Speed %
+					</SLLabel>
 
 					<SLInput
 						type="number"
-						value={values.constructionSpeed}
+						value={
+							values.constructionSpeed
+						}
 						onChange={(event) =>
-							updateValue("constructionSpeed", event.target.value)
+							updateValue(
+								"constructionSpeed",
+								event.target.value,
+							)
 						}
 						placeholder="e.g. 68"
 						className="bg-[lab(87 0 -0.01)] text-[var(--sl-text)] placeholder:text-[var(--sl-text-muted)]"
@@ -273,53 +367,118 @@ export default function BuildingForm({
 
 				<div className="grid grid-cols-2 gap-3">
 					<div className="space-y-1.5">
-						<SLLabel>Pet Skill</SLLabel>
+						<SLLabel>
+							Pet Skill
+						</SLLabel>
 
 						<SLSelect
-							value={values.petLevel}
-							onChange={(value: string) => updateValue("petLevel", value)}
-							options={petOptions}
+							value={
+								values.petLevel
+							}
+							onChange={(
+								value: string,
+							) =>
+								updateValue(
+									"petLevel",
+									value,
+								)
+							}
+							options={
+								petOptions
+							}
 						/>
 					</div>
 
 					<div className="space-y-1.5">
-						<SLLabel>VP</SLLabel>
+						<SLLabel>
+							VP
+						</SLLabel>
 
 						<SLSelect
-							value={values.vpLevel}
-							onChange={(value: string) => updateValue("vpLevel", value)}
-							options={vpOptions}
+							value={
+								values.vpLevel
+							}
+							onChange={(
+								value: string,
+							) =>
+								updateValue(
+									"vpLevel",
+									value,
+								)
+							}
+							options={
+								vpOptions
+							}
 						/>
 					</div>
 				</div>
 
 				<div className="space-y-1.5">
-					<SLLabel>Zinman Skill</SLLabel>
+					<SLLabel>
+						Zinman Skill
+					</SLLabel>
 
 					<SLSelect
-						value={values.zinmanSkill}
-						onChange={(value: string) => updateValue("zinmanSkill", value)}
-						options={zinmanOptions}
+						value={
+							values.zinmanSkill
+						}
+						onChange={(
+							value: string,
+						) =>
+							updateValue(
+								"zinmanSkill",
+								value,
+							)
+						}
+						options={
+							zinmanOptions
+						}
 					/>
 				</div>
 
 				<div className="space-y-1.5">
-					<SLLabel>Agnes Skill</SLLabel>
+					<SLLabel>
+						Agnes Skill
+					</SLLabel>
 
 					<SLSelect
-						value={values.agnesLevel}
-						onChange={(value: string) => updateValue("agnesLevel", value)}
-						options={agnesOptions}
+						value={
+							values.agnesLevel
+						}
+						onChange={(
+							value: string,
+						) =>
+							updateValue(
+								"agnesLevel",
+								value,
+							)
+						}
+						options={
+							agnesOptions
+						}
 					/>
 				</div>
 
 				<div className="space-y-1.5">
-					<SLLabel>Valerie Skill</SLLabel>
+					<SLLabel>
+						Valerie Skill
+					</SLLabel>
 
 					<SLSelect
-						value={values.valeriaLevel}
-						onChange={(value: string) => updateValue("valeriaLevel", value)}
-						options={valeriaOptions}
+						value={
+							values.valeriaLevel
+						}
+						onChange={(
+							value: string,
+						) =>
+							updateValue(
+								"valeriaLevel",
+								value,
+							)
+						}
+						options={
+							valeriaOptions
+						}
 					/>
 				</div>
 
@@ -331,9 +490,16 @@ export default function BuildingForm({
 					<SLSwitch
 						label="Double Time"
 						description="+20%"
-						checked={values.doubleTime}
-						onCheckedChange={(checked: boolean) =>
-							updateValue("doubleTime", checked)
+						checked={
+							values.doubleTime
+						}
+						onCheckedChange={(
+							checked: boolean,
+						) =>
+							updateValue(
+								"doubleTime",
+								checked,
+							)
 						}
 					/>
 				</div>
@@ -344,7 +510,9 @@ export default function BuildingForm({
 					type="submit"
 					className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
 				>
-					{mode === "update" ? "Update" : "Submit"}
+					{mode === "update"
+						? "Update"
+						: "Submit"}
 				</button>
 
 				<SLButton

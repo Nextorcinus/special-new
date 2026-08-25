@@ -6,9 +6,14 @@ import SLButton from "@/components/ui/sl-ui/SLButton";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 
+import { toast } from "@/lib/toast";
+
 import useWidgetForm from "../hooks/useWidgetForm";
 
-import type { WidgetDatabaseItem, WidgetFormValues } from "../type";
+import type {
+	WidgetDatabaseItem,
+	WidgetFormValues,
+} from "../type";
 
 type WidgetFormProps = {
 	data: WidgetDatabaseItem[];
@@ -55,27 +60,80 @@ export default function WidgetForm({
 		}
 
 		resetForm();
-	}, [initialValues, loadValues, resetForm]);
+	}, [
+		initialValues,
+		loadValues,
+		resetForm,
+	]);
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(
+		event: React.FormEvent<HTMLFormElement>,
+	) {
 		event.preventDefault();
 
+		/**
+		 * Validation
+		 */
 		if (!isSelectionComplete) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the hero, current level, and target level.",
+			);
+
 			return;
 		}
 
-		onSubmit({
-			...values,
-		});
+		try {
+			/**
+			 * Parent hanya menangani:
+			 * - calculation
+			 * - result
+			 * - history
+			 *
+			 * Parent TIDAK perlu membuat toast.
+			 */
+			onSubmit({
+				...values,
+			});
+
+			/**
+			 * Satu-satunya success toast
+			 * untuk aksi Calculate / Update.
+			 */
+			toast.success(
+				mode === "update"
+					? "Calculation updated"
+					: "Calculation completed",
+				`${selectedHero?.name ?? "Hero Widget"} Lv.${values.fromLevel} → Lv.${values.toLevel}`,
+			);
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate Hero Widget.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+		}
 	}
 
 	function handleReset() {
 		resetForm();
 		onReset?.();
+
+		toast.success(
+			"Form reset",
+			"Hero Widget calculation form has been reset.",
+		);
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4">
+		<form
+			onSubmit={handleSubmit}
+			className="space-y-4"
+		>
 			<div className="relative space-y-4 rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4 text-[var(--sl-text)]">
 				<div>
 					<h2 className="text-sm font-bold text-[var(--sl-text)]">
@@ -89,38 +147,70 @@ export default function WidgetForm({
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div className="space-y-2 sm:col-span-2">
-						<SLLabel>Hero</SLLabel>
+						<SLLabel>
+							Hero
+						</SLLabel>
 
 						<SLSelect
-							value={values.heroId}
-							onChange={setHero}
+							value={
+								values.heroId
+							}
+							onChange={
+								setHero
+							}
 							placeholder="Select hero"
-							options={heroOptions}
-							disabled={lockMainFields}
+							options={
+								heroOptions
+							}
+							disabled={
+								lockMainFields
+							}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>From</SLLabel>
+						<SLLabel>
+							From
+						</SLLabel>
 
 						<SLSelect
-							value={values.fromLevel}
-							onChange={setFromLevel}
+							value={
+								values.fromLevel
+							}
+							onChange={
+								setFromLevel
+							}
 							placeholder="Select level"
-							options={fromLevelOptions}
-							disabled={lockMainFields}
+							options={
+								fromLevelOptions
+							}
+							disabled={
+								lockMainFields
+							}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>To</SLLabel>
+						<SLLabel>
+							To
+						</SLLabel>
 
 						<SLSelect
-							value={values.toLevel}
-							onChange={setToLevel}
+							value={
+								values.toLevel
+							}
+							onChange={
+								setToLevel
+							}
 							placeholder="Select level"
-							options={toLevelOptions}
-							disabled={lockMainFields || values.fromLevel === ""}
+							options={
+								toLevelOptions
+							}
+							disabled={
+								lockMainFields ||
+								values.fromLevel ===
+									""
+							}
 						/>
 					</div>
 				</div>
@@ -130,17 +220,23 @@ export default function WidgetForm({
 						<div className="flex items-start justify-between gap-4">
 							<div className="min-w-0">
 								<p className="text-sm font-bold text-[var(--sl-text)]">
-									{selectedHero.name}
+									{
+										selectedHero.name
+									}
 								</p>
 
 								<p className="mt-1 text-[11px] text-[var(--sl-text-muted)]">
-									Generation {selectedHero.generation}
+									Generation{" "}
+									{
+										selectedHero.generation
+									}
 								</p>
 							</div>
 
 							{selectedHero.status && (
 								<span className="shrink-0 rounded-full border border-[var(--sl-border)] px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-[var(--sl-text-muted)]">
-									{selectedHero.status === "next-update"
+									{selectedHero.status ===
+									"next-update"
 										? "Next Update"
 										: "New"}
 								</span>
@@ -154,7 +250,9 @@ export default function WidgetForm({
 								</p>
 
 								<p className="mt-1 text-xs leading-5 text-[var(--sl-text)]">
-									{selectedHero.exploration}
+									{
+										selectedHero.exploration
+									}
 								</p>
 							</div>
 
@@ -164,7 +262,9 @@ export default function WidgetForm({
 								</p>
 
 								<p className="mt-1 text-xs leading-5 text-[var(--sl-text)]">
-									{selectedHero.expedition}
+									{
+										selectedHero.expedition
+									}
 								</p>
 							</div>
 						</div>
@@ -172,18 +272,23 @@ export default function WidgetForm({
 				)}
 
 				<div className="grid grid-cols-2 gap-4 pt-1">
-					<button
+					<SLButton
 						type="submit"
-						disabled={!isSelectionComplete}
-						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+						disabled={
+							!isSelectionComplete
+						}
 					>
-						{mode === "update" ? "Update" : "Submit"}
-					</button>
+						{mode === "update"
+							? "Update"
+							: "Calculate"}
+					</SLButton>
 
 					<SLButton
 						type="button"
-						onClick={handleReset}
-						className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+						onClick={
+							handleReset
+						}
+						className="bg-[var(--sl-input)] text-[var(--sl-text)] text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 					>
 						Reset
 					</SLButton>

@@ -275,7 +275,7 @@ export default function Sidebar() {
 					className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
 				>
 				
-					<span>Join Discord</span>
+					<span>Chat Me on Discord</span>
 				</a>
 
 				<div className="rounded-2xl bg-[var(--sl-active)] p-3">

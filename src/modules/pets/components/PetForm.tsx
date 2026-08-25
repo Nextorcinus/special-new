@@ -7,8 +7,13 @@ import SLButton from "@/components/ui/sl-ui/SLButton";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 
+import { toast } from "@/lib/toast";
+
 import usePetForm from "../hooks/usePetForm";
-import type { PetData, PetFormValues } from "../type";
+import type {
+	PetData,
+	PetFormValues,
+} from "../type";
 
 type PetFormProps = {
 	pet: PetData;
@@ -55,25 +60,51 @@ export default function PetForm({
 		loadValues(initialValues);
 	}, [initialValues, loadValues]);
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(
+		event: React.FormEvent<HTMLFormElement>,
+	) {
 		event.preventDefault();
 
 		if (!validate()) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the current level, target level, and Valeria level.",
+			);
+
 			return;
 		}
 
-		onSubmit({
-			...values,
-			petId: pet.id,
-		});
+		try {
+			onSubmit({
+				...values,
+				petId: pet.id,
+			});
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate Pet upgrade.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+		}
 	}
 
 	function handleReset() {
 		resetForm();
 		onReset?.();
+
+		toast.success(
+			"Form reset",
+			`${pet.name} calculation form has been reset.`,
+		);
 	}
 
-	function getRarityClass(rarity: PetData["rarity"]) {
+	function getRarityClass(
+		rarity: PetData["rarity"],
+	) {
 		switch (rarity) {
 			case "Common":
 				return "bg-amber-500/30 text-amber-200";
@@ -96,7 +127,10 @@ export default function PetForm({
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-5">
+		<form
+			onSubmit={handleSubmit}
+			className="space-y-5"
+		>
 			<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
 				<div className="flex items-center gap-4">
 					<div className="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-[var(--sl-input)]">
@@ -123,7 +157,7 @@ export default function PetForm({
 								{pet.rarity}
 							</span>
 
-							<span className="rounded-full border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 py-0.5 text-[10px] font-bold text-[var(--sl-text-muted)] ">
+							<span className="rounded-full border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 py-0.5 text-[10px] font-bold text-[var(--sl-text-muted)]">
 								GEN {pet.generation}
 							</span>
 						</div>
@@ -136,7 +170,8 @@ export default function PetForm({
 
 						{pet.unlock.days !== null && (
 							<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
-								Unlock Day {pet.unlock.days}
+								Unlock Day{" "}
+								{pet.unlock.days}
 								{pet.unlock.furnace !== null
 									? ` · Furnace ${pet.unlock.furnace}`
 									: ""}
@@ -156,35 +191,59 @@ export default function PetForm({
 				</div>
 			</div>
 
-			<div className=" bg-[var(--sl-surface)] p-4 rounded-xl">
+			<div className="rounded-xl bg-[var(--sl-surface)] p-4">
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div className="space-y-2">
-						<SLLabel>Current Level</SLLabel>
+						<SLLabel>
+							Current Level
+						</SLLabel>
 
 						<SLSelect
-							value={String(values.fromLevel)}
-							onChange={setFromLevel}
+							value={String(
+								values.fromLevel,
+							)}
+							onChange={
+								setFromLevel
+							}
 							placeholder="Select current level"
-							options={fromLevelOptions}
+							options={
+								fromLevelOptions
+							}
 						/>
 
 						{errors.fromLevel && (
-							<p className="text-xs text-rose-500">{errors.fromLevel}</p>
+							<p className="text-xs text-rose-500">
+								{
+									errors.fromLevel
+								}
+							</p>
 						)}
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>Target Level</SLLabel>
+						<SLLabel>
+							Target Level
+						</SLLabel>
 
 						<SLSelect
-							value={String(values.toLevel)}
-							onChange={setToLevel}
+							value={String(
+								values.toLevel,
+							)}
+							onChange={
+								setToLevel
+							}
 							placeholder="Select target level"
-							options={toLevelOptions}
+							options={
+								toLevelOptions
+							}
 						/>
 
 						{errors.toLevel && (
-							<p className="text-xs text-rose-500">{errors.toLevel}</p>
+							<p className="text-xs text-rose-500">
+								{
+									errors.toLevel
+								}
+							</p>
 						)}
 					</div>
 				</div>
@@ -195,21 +254,35 @@ export default function PetForm({
 					</p>
 
 					<div className="space-y-2">
-						<SLLabel>Valeria Level</SLLabel>
+						<SLLabel>
+							Valeria Level
+						</SLLabel>
 
 						<SLSelect
-							value={String(values.valeriaLevel)}
-							onChange={setValeriaLevel}
+							value={String(
+								values.valeriaLevel,
+							)}
+							onChange={
+								setValeriaLevel
+							}
 							placeholder="Select Valeria level"
-							options={valeriaOptions}
+							options={
+								valeriaOptions
+							}
 						/>
 
 						<p className="text-[11px] leading-5 text-[var(--sl-text-muted)]">
-							Each Valeria level increases SvS points by 2%.
+							Each Valeria level
+							increases SvS points
+							by 2%.
 						</p>
 
 						{errors.valeriaLevel && (
-							<p className="text-xs text-rose-500">{errors.valeriaLevel}</p>
+							<p className="text-xs text-rose-500">
+								{
+									errors.valeriaLevel
+								}
+							</p>
 						)}
 					</div>
 				</div>
@@ -218,12 +291,20 @@ export default function PetForm({
 					<SLButton
 						type="submit"
 						className="flex-1"
-						disabled={!isSelectionComplete}
+						disabled={
+							!isSelectionComplete
+						}
 					>
-						{mode === "update" ? "Update Calculation" : "Calculate"}
+						{mode === "update"
+							? "Update Calculation"
+							: "Calculate"}
 					</SLButton>
 
-					<SLButton type="button" variant="secondary" onClick={handleReset}>
+					<SLButton
+						type="button"
+						variant="secondary"
+						onClick={handleReset}
+					>
 						Reset
 					</SLButton>
 				</div>

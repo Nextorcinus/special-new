@@ -63,7 +63,7 @@ const LEVEL_DATA: WidgetLevelData[] = [
 		level: 10,
 		required: 50,
 		value: 15,
-		type: "exploration",
+		type: "expedition",
 	},
 ];
 

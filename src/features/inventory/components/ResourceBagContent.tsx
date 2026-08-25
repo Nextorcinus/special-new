@@ -28,7 +28,7 @@ export default function ResourceBagContent({
 							<SLAccordion
 								title="Lunar Amber Exchange"
 								defaultOpen={false}
-								className="border border-[var(--sl-border)] bg-[var(--sl-surface-2)]"
+								className="border border-[var(--sl-border)] bg-[var(--sl-active] text-[var(--sl-text)]"
 							>
 								<LunarAmberExchange />
 							</SLAccordion>
@@ -49,7 +49,7 @@ export default function ResourceBagContent({
 				<button
 					type="button"
 					onClick={onClose}
-					className="h-11 flex-1 rounded-full bg-[var(--sl-surface-2)] text-sm font-semibold text-[var(--sl-text)]"
+					className="h-11 flex-1 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 				>
 					Close
 				</button>

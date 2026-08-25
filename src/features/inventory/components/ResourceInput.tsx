@@ -54,13 +54,13 @@ export default function ResourceInput({ item }: ResourceInputProps) {
 
 	return (
 		<label className="block">
-			<span className="mb-1 block text-[11px] text-zinc-400">{item.label}</span>
+			<span className="mb-1 block text-[11px] text-zinc-500">{item.label}</span>
 
 			<div
 				className={`flex h-10 items-center gap-2 rounded-lg border px-3 transition-colors ${
 					error
 						? "border-red-500 bg-red-500/5"
-						: "border-transparent bg-[#292929]"
+						: "border-transparent bg-[var(--sl-input)] hover:border-[var(--sl-border)]"
 				}`}
 			>
 				<Image src={item.icon} alt={item.label} width={30} height={30} />
@@ -76,7 +76,7 @@ export default function ResourceInput({ item }: ResourceInputProps) {
 					placeholder="0 / 134K / 3.4M"
 					aria-invalid={Boolean(error)}
 					aria-describedby={error ? errorId : undefined}
-					className="w-full bg-transparent text-xs text-white outline-none placeholder:text-zinc-500"
+					className="w-full bg-transparent text-xs text-[var(--sl-text)] outline-none placeholder:text-zinc-500"
 				/>
 			</div>
 

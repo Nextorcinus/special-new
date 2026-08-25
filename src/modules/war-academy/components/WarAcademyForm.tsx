@@ -7,6 +7,8 @@ import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
 
+import { toast } from "@/lib/toast";
+
 import useWarAcademyForm from "../hooks/useWarAcademyForm";
 import type {
 	WarAcademyCategory,
@@ -97,22 +99,56 @@ export default function WarAcademyForm({
 		onReset,
 	});
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(
+		event: React.FormEvent<HTMLFormElement>,
+	) {
 		event.preventDefault();
 
 		if (!canSubmit) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the research, current level, and target level.",
+			);
+
 			return;
 		}
 
-		submit();
+		try {
+			submit();
+
+			toast.success(
+				mode === "update"
+					? "Calculation updated"
+					: "Calculation completed",
+				`${category} ${values.research} Lv.${values.fromLevel} → Lv.${values.toLevel}`,
+			);
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate War Academy upgrade.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+		}
 	}
 
 	function handleReset() {
 		reset();
+
+		toast.success(
+			"Form reset",
+			`${category} War Academy calculation form has been reset.`,
+		);
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="relative space-y-4 p-4 text-[var(--sl-text)] bg-[var(--sl-surface)] rounded-2xl border border-[var(--sl-border)]">
+		<form
+			onSubmit={handleSubmit}
+			className="relative space-y-4 rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4 text-[var(--sl-text)]"
+		>
 			<div className="space-y-5 p-4">
 				<div>
 					<h2 className="text-sm font-bold text-[var(--sl-text)]">
@@ -124,55 +160,103 @@ export default function WarAcademyForm({
 					</p>
 				</div>
 
-				<div className="relative z-50 space-y-1.5">				
-					<SLLabel>Research</SLLabel>
+				<div className="relative z-50 space-y-1.5">
+					<SLLabel>
+						Research
+					</SLLabel>
 
-						<SLSelect
-							value={values.research}
-							onChange={setResearch}
-							placeholder="Select research"
-							options={researchOptions}
-							disabled={lockMainFields}
-						/>
+					<SLSelect
+						value={
+							values.research
+						}
+						onChange={
+							setResearch
+						}
+						placeholder="Select research"
+						options={
+							researchOptions
+						}
+						disabled={
+							lockMainFields
+						}
+					/>
 				</div>
 
 				<div className="relative z-40 grid grid-cols-2 gap-3">
 					<div className="space-y-1.5">
-						<SLLabel>From</SLLabel>
+						<SLLabel>
+							From
+						</SLLabel>
 
 						<SLSelect
-							value={values.fromLevel}
-							onChange={setFromLevel}
+							value={
+								values.fromLevel
+							}
+							onChange={
+								setFromLevel
+							}
 							placeholder="Select level"
-							options={fromLevelOptions}
-							disabled={lockMainFields || !values.research}
+							options={
+								fromLevelOptions
+							}
+							disabled={
+								lockMainFields ||
+								!values.research
+							}
 						/>
 					</div>
 
 					<div className="space-y-1.5">
-						<SLLabel>To</SLLabel>
+						<SLLabel>
+							To
+						</SLLabel>
 
 						<SLSelect
-							value={values.toLevel}
-							onChange={(value) => setField("toLevel", value)}
+							value={
+								values.toLevel
+							}
+							onChange={(
+								value,
+							) =>
+								setField(
+									"toLevel",
+									value,
+								)
+							}
 							placeholder="Select level"
-							options={toLevelOptions}
+							options={
+								toLevelOptions
+							}
 							disabled={
-								lockMainFields || !values.research || values.fromLevel === ""
+								lockMainFields ||
+								!values.research ||
+								values.fromLevel ===
+									""
 							}
 						/>
 					</div>
 				</div>
 
 				<SLAccordion title="Configuration">
-					<div className="space-y-1.5">
+					<div className="space-y-4">
 						<div className="space-y-1.5">
-							<SLLabel>Research Speed (%)</SLLabel>
+							<SLLabel>
+								Research Speed (%)
+							</SLLabel>
 
 							<SLInput
-								value={values.researchSpeed}
-								onChange={(event) =>
-									setField("researchSpeed", event.target.value)
+								value={
+									values.researchSpeed
+								}
+								onChange={(
+									event,
+								) =>
+									setField(
+										"researchSpeed",
+										event
+											.target
+											.value,
+									)
 								}
 								inputMode="decimal"
 								placeholder="e.g. 68 for 68%"
@@ -181,51 +265,84 @@ export default function WarAcademyForm({
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 							<div className="space-y-1.5">
-								<SLLabel>Vice President</SLLabel>
+								<SLLabel>
+									Vice President
+								</SLLabel>
 
 								<SLSelect
-									value={values.vpLevel}
-									onChange={(value) => setField("vpLevel", value)}
-									options={VP_OPTIONS}
+									value={
+										values.vpLevel
+									}
+									onChange={(
+										value,
+									) =>
+										setField(
+											"vpLevel",
+											value,
+										)
+									}
+									options={
+										VP_OPTIONS
+									}
 								/>
 							</div>
 
 							<div className="space-y-1.5">
-								<SLLabel>Agnes Skill</SLLabel>
+								<SLLabel>
+									Agnes Skill
+								</SLLabel>
 
 								<SLSelect
-									value={values.agnesLevel}
-									onChange={(value) => setField("agnesLevel", value)}
-									options={AGNES_OPTIONS}
+									value={
+										values.agnesLevel
+									}
+									onChange={(
+										value,
+									) =>
+										setField(
+											"agnesLevel",
+											value,
+										)
+									}
+									options={
+										AGNES_OPTIONS
+									}
 								/>
 							</div>
 						</div>
 
 						<div className="mt-5 border-t border-[var(--sl-border)] pt-3">
-	<p className="text-xs font-bold text-[var(--sl-text)]">
-		Additional Bonus
-	</p>
+							<p className="text-xs font-bold text-[var(--sl-text)]">
+								Additional Bonus
+							</p>
 
-	<div className="mt-3 flex items-center justify-between gap-4">
-		<div className="min-w-0 flex-1">
-			<p className="text-sm font-semibold text-[var(--sl-text)]">
-				Double Time
-			</p>
+							<div className="mt-3 flex items-center justify-between gap-4">
+								<div className="min-w-0 flex-1">
+									<p className="text-sm font-semibold text-[var(--sl-text)]">
+										Double Time
+									</p>
 
-			<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
-				+20% Research Speed while Double Time is active.
-			</p>
-		</div>
+									<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
+										+20% Research Speed while Double Time is active.
+									</p>
+								</div>
 
-		<SLSwitch
-			label=""
-			checked={values.doubleTime}
-			onCheckedChange={(checked) =>
-				setField("doubleTime", checked)
-			}
-		/>
-	</div>
-</div>
+								<SLSwitch
+									label=""
+									checked={
+										values.doubleTime
+									}
+									onCheckedChange={(
+										checked,
+									) =>
+										setField(
+											"doubleTime",
+											checked,
+										)
+									}
+								/>
+							</div>
+						</div>
 					</div>
 				</SLAccordion>
 
@@ -235,12 +352,16 @@ export default function WarAcademyForm({
 						disabled={!canSubmit}
 						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)] disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						{mode === "update" ? "Update" : "Submit"}
+						{mode === "update"
+							? "Update"
+							: "Submit"}
 					</button>
 
 					<SLButton
 						type="button"
-						onClick={handleReset}
+						onClick={
+							handleReset
+						}
 						className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 					>
 						Reset

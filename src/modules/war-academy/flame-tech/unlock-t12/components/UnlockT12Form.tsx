@@ -6,6 +6,8 @@ import SLButton from "@/components/ui/sl-ui/SLButton";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 
+import { toast } from "@/lib/toast";
+
 import useUnlockT12Form from "../hooks/useUnlockT12Form";
 import type {
 	UnlockT12Category,
@@ -47,28 +49,68 @@ export default function UnlockT12Form({
 	});
 
 	useEffect(() => {
-		if (!values.research && researchOptions.length === 1) {
-			setResearch(researchOptions[0].value);
+		if (
+			!values.research &&
+			researchOptions.length === 1
+		) {
+			setResearch(
+				researchOptions[0].value,
+			);
 		}
-	}, [researchOptions, setResearch, values.research]);
+	}, [
+		researchOptions,
+		setResearch,
+		values.research,
+	]);
 
-	const handleSubmit = () => {
+	function handleSubmit() {
 		if (!isComplete) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the unlock, current level, and target level.",
+			);
+
 			return;
 		}
 
-		onSubmit(values);
-	};
+		try {
+			onSubmit(values);
 
-	const handleReset = () => {
+			toast.success(
+				mode === "update"
+					? "Calculation updated"
+					: "Calculation completed",
+				`${category} ${values.research} Lv.${values.fromLevel} → Lv.${values.toLevel}`,
+			);
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Failed to calculate T12 unlock.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+		}
+	}
+
+	function handleReset() {
 		reset();
 		onReset?.();
-	};
+
+		toast.success(
+			"Form reset",
+			`${category} T12 unlock calculation form has been reset.`,
+		);
+	}
 
 	return (
 		<div className="space-y-5">
 			<div className="space-y-2">
-				<SLLabel>Unlock</SLLabel>
+				<SLLabel>
+					Unlock
+				</SLLabel>
 
 				<SLSelect
 					value={values.research}
@@ -80,7 +122,9 @@ export default function UnlockT12Form({
 
 			<div className="grid grid-cols-2 gap-3">
 				<div className="space-y-2">
-					<SLLabel>From</SLLabel>
+					<SLLabel>
+						From
+					</SLLabel>
 
 					<SLSelect
 						value={values.fromLevel}
@@ -92,14 +136,19 @@ export default function UnlockT12Form({
 				</div>
 
 				<div className="space-y-2">
-					<SLLabel>To</SLLabel>
+					<SLLabel>
+						To
+					</SLLabel>
 
 					<SLSelect
 						value={values.toLevel}
 						onChange={setToLevel}
 						placeholder="Select level"
 						options={toLevelOptions}
-						disabled={!values.research || values.fromLevel === ""}
+						disabled={
+							!values.research ||
+							values.fromLevel === ""
+						}
 					/>
 				</div>
 			</div>
@@ -120,7 +169,9 @@ export default function UnlockT12Form({
 					disabled={!isComplete}
 					onClick={handleSubmit}
 				>
-					{mode === "update" ? "Update" : "Calculate"}
+					{mode === "update"
+						? "Update"
+						: "Calculate"}
 				</SLButton>
 			</div>
 		</div>

@@ -9,6 +9,8 @@ import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 import SLSwitch from "@/components/ui/sl-ui/SLSwitch";
 
+import { toast } from "@/lib/toast";
+
 import {
 	getSkillT12ResearchOption,
 	getSkillT12ResearchOptions,
@@ -86,7 +88,8 @@ function createInitialValues(
 		researchSpeed: initialValues?.researchSpeed ?? "",
 		vpLevel: initialValues?.vpLevel ?? "Off",
 		agnesLevel: initialValues?.agnesLevel ?? "0",
-		presidentSkill: initialValues?.presidentSkill ?? false,
+		presidentSkill:
+			initialValues?.presidentSkill ?? false,
 	};
 }
 
@@ -124,9 +127,13 @@ export default function SkillT12Form({
 	onSubmit,
 	onReset,
 }: SkillT12FormProps) {
-	const [values, setValues] = useState<SkillT12FormValues>(() =>
-		createInitialValues(category, initialValues),
-	);
+	const [values, setValues] =
+		useState<SkillT12FormValues>(() =>
+			createInitialValues(
+				category,
+				initialValues,
+			),
+		);
 
 	useEffect(() => {
 		setValues(
@@ -153,7 +160,11 @@ export default function SkillT12Form({
 			category,
 			values.research,
 		);
-	}, [data, category, values.research]);
+	}, [
+		data,
+		category,
+		values.research,
+	]);
 
 	const fromLevelOptions = useMemo(() => {
 		return createLevelOptions(
@@ -171,14 +182,21 @@ export default function SkillT12Form({
 			selectedResearch?.maxLevel ?? 0,
 			false,
 		).filter((option) => {
-			return Number(option.value) > fromLevel;
+			return (
+				Number(option.value) >
+				fromLevel
+			);
 		});
-	}, [selectedResearch, values.fromLevel]);
+	}, [
+		selectedResearch,
+		values.fromLevel,
+	]);
 
-	const isValid = isValidSkillT12Selection(
-		data,
-		values,
-	);
+	const isValid =
+		isValidSkillT12Selection(
+			data,
+			values,
+		);
 
 	function setField<
 		Key extends keyof SkillT12FormValues,
@@ -192,7 +210,9 @@ export default function SkillT12Form({
 		}));
 	}
 
-	function setResearch(research: string) {
+	function setResearch(
+		research: string,
+	) {
 		setValues((current) => ({
 			...current,
 			research,
@@ -201,21 +221,26 @@ export default function SkillT12Form({
 		}));
 	}
 
-	function setFromLevel(fromLevel: string) {
+	function setFromLevel(
+		fromLevel: string,
+	) {
 		setValues((current) => {
-			const currentToLevel = Number(
-				current.toLevel || 0,
-			);
+			const currentToLevel =
+				Number(
+					current.toLevel || 0,
+				);
 
-			const nextFromLevel = Number(
-				fromLevel || 0,
-			);
+			const nextFromLevel =
+				Number(
+					fromLevel || 0,
+				);
 
 			return {
 				...current,
 				fromLevel,
 				toLevel:
-					currentToLevel > nextFromLevel
+					currentToLevel >
+					nextFromLevel
 						? current.toLevel
 						: "",
 			};
@@ -223,9 +248,16 @@ export default function SkillT12Form({
 	}
 
 	function handleReset() {
-		setValues(createInitialValues(category));
+		setValues(
+			createInitialValues(category),
+		);
 
 		onReset?.();
+
+		toast.success(
+			"Form reset",
+			`${category} T12 Skills calculation form has been reset.`,
+		);
 	}
 
 	function handleSubmit(
@@ -234,13 +266,41 @@ export default function SkillT12Form({
 		event.preventDefault();
 
 		if (!isValid) {
+			toast.error(
+				"Invalid calculation",
+				"Please select the skill, current level, and target level.",
+			);
+
 			return;
 		}
 
-		onSubmit({
+		const result: SkillT12FormValues = {
 			...values,
 			category,
-		});
+		};
+
+		try {
+			onSubmit(result);
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "Failed to calculate T12 Skill upgrade.";
+
+			toast.error(
+				"Calculation failed",
+				message,
+			);
+
+			return;
+		}
+
+		toast.success(
+			mode === "update"
+				? "Calculation updated"
+				: "Calculation completed",
+			`${category} ${values.research} Lv.${values.fromLevel} → Lv.${values.toLevel}`,
+		);
 	}
 
 	return (
@@ -261,25 +321,43 @@ export default function SkillT12Form({
 
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div className="space-y-2 sm:col-span-2">
-						<SLLabel>Skill</SLLabel>
+						<SLLabel>
+							Skill
+						</SLLabel>
 
 						<SLSelect
-							value={values.research}
-							onChange={setResearch}
+							value={
+								values.research
+							}
+							onChange={
+								setResearch
+							}
 							placeholder="Select skill"
-							options={researchOptions}
-							disabled={lockMainFields}
+							options={
+								researchOptions
+							}
+							disabled={
+								lockMainFields
+							}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>From</SLLabel>
+						<SLLabel>
+							From
+						</SLLabel>
 
 						<SLSelect
-							value={values.fromLevel}
-							onChange={setFromLevel}
+							value={
+								values.fromLevel
+							}
+							onChange={
+								setFromLevel
+							}
 							placeholder="Select level"
-							options={fromLevelOptions}
+							options={
+								fromLevelOptions
+							}
 							disabled={
 								lockMainFields ||
 								!values.research
@@ -288,21 +366,30 @@ export default function SkillT12Form({
 					</div>
 
 					<div className="space-y-2">
-						<SLLabel>To</SLLabel>
+						<SLLabel>
+							To
+						</SLLabel>
 
 						<SLSelect
-							value={values.toLevel}
-							onChange={(value) =>
+							value={
+								values.toLevel
+							}
+							onChange={(
+								value,
+							) =>
 								setField(
 									"toLevel",
 									value,
 								)
 							}
 							placeholder="Select level"
-							options={toLevelOptions}
+							options={
+								toLevelOptions
+							}
 							disabled={
 								lockMainFields ||
-								!values.research
+								!values.research ||
+								!values.fromLevel
 							}
 						/>
 					</div>
@@ -319,10 +406,14 @@ export default function SkillT12Form({
 								value={
 									values.researchSpeed
 								}
-								onChange={(event) =>
+								onChange={(
+									event,
+								) =>
 									setField(
 										"researchSpeed",
-										event.target.value,
+										event
+											.target
+											.value,
 									)
 								}
 								inputMode="decimal"
@@ -337,14 +428,20 @@ export default function SkillT12Form({
 								</SLLabel>
 
 								<SLSelect
-									value={values.vpLevel}
-									onChange={(value) =>
+									value={
+										values.vpLevel
+									}
+									onChange={(
+										value,
+									) =>
 										setField(
 											"vpLevel",
 											value,
 										)
 									}
-									options={VP_OPTIONS}
+									options={
+										VP_OPTIONS
+									}
 								/>
 							</div>
 
@@ -354,14 +451,20 @@ export default function SkillT12Form({
 								</SLLabel>
 
 								<SLSelect
-									value={values.agnesLevel}
-									onChange={(value) =>
+									value={
+										values.agnesLevel
+									}
+									onChange={(
+										value,
+									) =>
 										setField(
 											"agnesLevel",
 											value,
 										)
 									}
-									options={AGNES_OPTIONS}
+									options={
+										AGNES_OPTIONS
+									}
 								/>
 							</div>
 						</div>
@@ -378,8 +481,7 @@ export default function SkillT12Form({
 									</p>
 
 									<p className="mt-1 text-[11px] leading-5 text-[var(--sl-text-muted)]">
-										+10% Research Speed while the
-										President skill is active.
+										+10% Research Speed while the President skill is active.
 									</p>
 								</div>
 
@@ -405,10 +507,7 @@ export default function SkillT12Form({
 				</SLAccordion>
 
 				<div className="grid grid-cols-2 gap-4 pt-1">
-					<SLButton
-						type="submit"
-						disabled={!isValid}
-					>
+					<SLButton type="submit">
 						{mode === "update"
 							? "Update"
 							: "Calculate"}
@@ -416,7 +515,9 @@ export default function SkillT12Form({
 
 					<SLButton
 						type="button"
-						onClick={handleReset}
+						onClick={
+							handleReset
+						}
 						className="bg-[var(--sl-input)] text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
 					>
 						Reset

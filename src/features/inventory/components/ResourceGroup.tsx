@@ -10,9 +10,9 @@ type ResourceGroupProps = {
 export default function ResourceGroup({ group }: ResourceGroupProps) {
 	return (
 		<div>
-			<h3 className="mb-2 text-xs text-zinc-300">{group.title}</h3>
+			<h3 className="mb-2 text-xs text-[var(--sl-text)]">{group.title}</h3>
 
-			<div className="grid grid-cols-2 gap-3 rounded-xl bg-[#353535] p-3">
+			<div className="grid grid-cols-2 gap-3 rounded-xl bg-[var(--sl-active)] p-3">
 				{group.items.map((item) => (
 					<ResourceInput key={item.id} item={item} />
 				))}

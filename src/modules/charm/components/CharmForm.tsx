@@ -9,6 +9,8 @@ import SLButton from "@/components/ui/sl-ui/SLButton";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
 import SLSelect from "@/components/ui/sl-ui/SLSelect";
 
+import { toast } from "@/lib/toast";
+
 import { calculateCharm } from "@/modules/charm/calculator";
 import useCharmForm from "@/modules/charm/hooks/useCharmForm";
 import type {
@@ -110,40 +112,58 @@ export default function CharmForm({
 	}
 
 	function handleSubmit(
-		event:
-			React.FormEvent<HTMLFormElement>,
-	) {
-		event.preventDefault();
+	event: React.FormEvent<HTMLFormElement>,
+) {
+	event.preventDefault();
 
-		if (!isValid) {
-			setError(
-				"Select the charm type, current level, and target level.",
-			);
+	if (!isValid) {
+		const message =
+			"Select the charm type, current level, and target level.";
 
-			return;
-		}
+		setError(message);
+		toast.error("Invalid calculation", message);
 
-		try {
-			const result = calculateCharm(
-				values,
-				data,
-			);
-
-			onCalculate(result);
-			setError(null);
-		} catch (submitError) {
-			setError(
-				submitError instanceof Error
-					? submitError.message
-					: "Failed to calculate Chief Charm.",
-			);
-		}
+		return;
 	}
 
-	function handleReset() {
-		resetForm();
+	try {
+		const result = calculateCharm(
+			values,
+			data,
+		);
+
+		onCalculate(result);
 		setError(null);
+
+		toast.success(
+			mode === "update"
+				? "Calculation updated"
+				: "Calculation completed",
+			`Chief Charm Lv.${fromLevel} → Lv.${toLevel}`,
+		);
+	} catch (submitError) {
+		const message =
+			submitError instanceof Error
+				? submitError.message
+				: "Failed to calculate Chief Charm.";
+
+		setError(message);
+		toast.error(
+			"Calculation failed",
+			message,
+		);
 	}
+}
+
+function handleReset() {
+	resetForm();
+	setError(null);
+
+	toast.success(
+		"Form reset",
+		"Chief Charm calculation form has been reset.",
+	);
+}
 
 	const submitLabel =
 		mode === "update"
