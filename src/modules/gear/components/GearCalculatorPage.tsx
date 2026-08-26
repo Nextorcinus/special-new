@@ -2,10 +2,19 @@
 
 import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import {
+	Suspense,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
-import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+import type {
+	CalculationHistoryEntry,
+	CalculationHistoryItem,
+} from "@/features/inventory/store/history/types";
 import GearForm from "@/modules/gear/components/GearForm";
 import GearResult from "@/modules/gear/components/GearResult";
 import GearTotalResult from "@/modules/gear/components/GearTotalResult";
@@ -19,42 +28,134 @@ type GearCalculatorPageProps = {
 	data: GearData;
 };
 
-type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
+type GearHistoryItem = CalculationHistoryItem<
+	GearFormValues,
+	GearCalculationResult
+>;
 
-export default function GearCalculatorPage({
+type GearHistoryEntry = CalculationHistoryEntry<
+	GearFormValues,
+	GearCalculationResult
+>;
+
+type HistoryStoreState = ReturnType<
+	typeof useHistoryStore.getState
+>;
+
+/*
+ * ================================================================
+ * Main Page
+ *
+ * useSearchParams() harus berada di dalam Suspense boundary.
+ * ================================================================
+ */
+
+export default function GearCalculatorPage(
+	props: GearCalculatorPageProps,
+) {
+	return (
+		<Suspense
+			fallback={
+				<div className="grid gap-6">
+					<div className="space-y-6 p-4">
+						<div className="flex min-h-[200px] items-center justify-center">
+							<div className="text-sm text-[var(--sl-text-muted)]">
+								Loading...
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		>
+			<GearCalculatorPageContent
+				{...props}
+			/>
+		</Suspense>
+	);
+}
+
+/*
+ * ================================================================
+ * Page Content
+ *
+ * useSearchParams() berada di sini karena component ini merupakan
+ * child dari Suspense.
+ * ================================================================
+ */
+
+function GearCalculatorPageContent({
 	data,
 }: GearCalculatorPageProps) {
-	const searchParams = useSearchParams();
-	const historyId = searchParams.get("historyId");
+	const searchParams =
+		useSearchParams();
 
-	const [activeHistory, setActiveHistory] =
-		useState<CalculationHistoryItem | null>(null);
+	const historyId =
+		searchParams.get("historyId");
 
-	const [formKey, setFormKey] = useState("new");
-	const [isAddingItem, setIsAddingItem] = useState(false);
-	const [isEditingHistory, setIsEditingHistory] = useState(false);
+	const [
+		activeHistory,
+		setActiveHistory,
+	] =
+		useState<GearHistoryItem | null>(
+			null,
+		);
 
-	const formRef = useRef<HTMLDivElement>(null);
+	const [formKey, setFormKey] =
+		useState("gear-new");
+
+	const [
+		isAddingItem,
+		setIsAddingItem,
+	] = useState(false);
+
+	const [
+		isEditingHistory,
+		setIsEditingHistory,
+	] = useState(false);
+
+	const formRef =
+		useRef<HTMLDivElement>(null);
+
+	/*
+	 * ================================================================
+	 * History Store
+	 * ================================================================
+	 */
 
 	const items = useHistoryStore(
-		(state: HistoryStoreState) => state.items,
+		(state: HistoryStoreState) =>
+			state.items,
 	);
 
-	const loadHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.loadHistory,
-	);
+	const loadHistory =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.loadHistory,
+		);
 
-	const saveCalculation = useHistoryStore(
-		(state: HistoryStoreState) => state.saveCalculation,
-	);
+	const saveCalculation =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.saveCalculation,
+		);
 
-	const updateCalculation = useHistoryStore(
-		(state: HistoryStoreState) => state.updateCalculation,
-	);
+	const updateCalculation =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.updateCalculation,
+		);
 
-	const addCalculationItem = useHistoryStore(
-		(state: HistoryStoreState) => state.addCalculationItem,
-	);
+	const addCalculationItem =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.addCalculationItem,
+		);
+
+	/*
+	 * ================================================================
+	 * Scroll
+	 * ================================================================
+	 */
 
 	function scrollToForm() {
 		requestAnimationFrame(() => {
@@ -65,98 +166,240 @@ export default function GearCalculatorPage({
 		});
 	}
 
+	/*
+	 * ================================================================
+	 * Load History
+	 * ================================================================
+	 */
+
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
 
+	/*
+	 * ================================================================
+	 * Load Selected History
+	 * ================================================================
+	 */
+
 	useEffect(() => {
-		if (!historyId || items.length === 0) {
+		if (
+			!historyId ||
+			items.length === 0
+		) {
 			return;
 		}
 
 		const selected = items.find(
-			(item) => item.id === historyId && item.module === "gear",
+			(item) =>
+				String(item.id) ===
+					historyId &&
+				item.module === "gear",
 		);
 
 		if (!selected) {
 			return;
 		}
 
-		setActiveHistory(selected);
+		const selectedHistory =
+			selected as GearHistoryItem;
+
+		setActiveHistory(
+			selectedHistory,
+		);
+
 		setIsEditingHistory(true);
 		setIsAddingItem(false);
-		setFormKey(selected.id);
-	}, [historyId, items]);
 
-	const historyItems =
-		activeHistory?.items && activeHistory.items.length > 0
-			? activeHistory.items
+		setFormKey(
+			`gear-${selectedHistory.id}`,
+		);
+	}, [
+		historyId,
+		items,
+	]);
+
+	/*
+	 * ================================================================
+	 * History Items
+	 * ================================================================
+	 */
+
+	const historyItems:
+		GearHistoryEntry[] =
+		activeHistory?.items &&
+		activeHistory.items.length > 0
+			? (activeHistory.items as GearHistoryEntry[])
 			: activeHistory
 				? [
 						{
-							id: activeHistory.id,
-							title: activeHistory.title,
-							subtitle: activeHistory.subtitle,
-							form: activeHistory.form,
-							result: activeHistory.result,
-							createdAt: activeHistory.createdAt,
+							id:
+								activeHistory.id,
+							title:
+								activeHistory.title,
+							subtitle:
+								activeHistory.subtitle,
+							form:
+								activeHistory.form,
+							result:
+								activeHistory.result,
+							createdAt:
+								activeHistory.createdAt,
 						},
 					]
 				: [];
 
+	/*
+	 * ================================================================
+	 * Initial Values
+	 * ================================================================
+	 */
+
 	const initialValues =
-		activeHistory && !isAddingItem
+		activeHistory &&
+		!isAddingItem
 			? (activeHistory.form as GearFormValues)
 			: null;
 
-	const isUpdateMode = isEditingHistory && !isAddingItem;
+	const isUpdateMode =
+		isEditingHistory &&
+		!isAddingItem;
 
-	function buildHistoryPayload(result: GearCalculationResult) {
+	/*
+	 * ================================================================
+	 * History Payload
+	 * ================================================================
+	 */
+
+	function buildHistoryPayload(
+		result: GearCalculationResult,
+	) {
 		return {
 			module: "gear" as const,
-			title: result.gear ?? result.form?.gear ?? "Chief Gear",
+
+			title:
+				result.gear ??
+				result.form?.gear ??
+				"Chief Gear",
+
 			subtitle: `${result.fromLevel ?? result.form?.fromLevel} → ${
-				result.toLevel ?? result.form?.toLevel
+				result.toLevel ??
+				result.form?.toLevel
 			}`,
+
 			form: result.form,
+
 			result,
 		};
 	}
 
-	function handleCalculate(result: GearCalculationResult) {
-		const payload = buildHistoryPayload(result);
+	/*
+	 * ================================================================
+	 * Calculate
+	 * ================================================================
+	 */
 
-		if (activeHistory && isAddingItem) {
-			const updated = addCalculationItem(activeHistory.id, payload);
+	function handleCalculate(
+		result: GearCalculationResult,
+	) {
+		const payload =
+			buildHistoryPayload(result);
 
-			if (updated) {
-				setActiveHistory(updated);
-				setIsAddingItem(false);
-				setIsEditingHistory(false);
-				setFormKey(updated.id);
+		/*
+		 * ------------------------------------------------------------
+		 * Add item ke history yang sedang aktif
+		 * ------------------------------------------------------------
+		 */
+
+		if (
+			activeHistory &&
+			isAddingItem
+		) {
+			const updated =
+				addCalculationItem(
+					activeHistory.id,
+					payload,
+				) as
+					| GearHistoryItem
+					| undefined;
+
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(
+				updated,
+			);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(false);
+
+			setFormKey(
+				`gear-${updated.id}`,
+			);
 
 			return;
 		}
+
+		/*
+		 * ------------------------------------------------------------
+		 * Update history
+		 * ------------------------------------------------------------
+		 */
 
 		if (activeHistory) {
-			const updated = updateCalculation(activeHistory.id, payload);
+			const updated =
+				updateCalculation(
+					activeHistory.id,
+					payload,
+				) as
+					| GearHistoryItem
+					| undefined;
 
-			if (updated) {
-				setActiveHistory(updated);
-				setFormKey(updated.id);
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(
+				updated,
+			);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+
+			setFormKey(
+				`gear-${updated.id}`,
+			);
 
 			return;
 		}
 
-		const saved = saveCalculation(payload);
+		/*
+		 * ------------------------------------------------------------
+		 * Create new history
+		 * ------------------------------------------------------------
+		 */
+
+		const saved =
+			saveCalculation(
+				payload,
+			) as GearHistoryItem;
 
 		setActiveHistory(saved);
+
 		setIsEditingHistory(false);
 		setIsAddingItem(false);
-		setFormKey(saved.id);
+
+		setFormKey(
+			`gear-${saved.id}`,
+		);
 	}
+
+	/*
+	 * ================================================================
+	 * Add Item
+	 * ================================================================
+	 */
 
 	function handleAddItem() {
 		if (!activeHistory) {
@@ -165,17 +408,38 @@ export default function GearCalculatorPage({
 
 		setIsAddingItem(true);
 		setIsEditingHistory(false);
-		setFormKey(`add-item-${Date.now()}`);
+
+		setFormKey(
+			`gear-add-item-${Date.now()}`,
+		);
+
 		scrollToForm();
 	}
 
+	/*
+	 * ================================================================
+	 * New Calculation
+	 * ================================================================
+	 */
+
 	function handleNewCalculation() {
 		setActiveHistory(null);
+
 		setIsEditingHistory(false);
 		setIsAddingItem(false);
-		setFormKey(`new-${Date.now()}`);
+
+		setFormKey(
+			`gear-new-${Date.now()}`,
+		);
+
 		scrollToForm();
 	}
+
+	/*
+	 * ================================================================
+	 * Render
+	 * ================================================================
+	 */
 
 	return (
 		<div className="grid gap-6">
@@ -184,42 +448,85 @@ export default function GearCalculatorPage({
 					<GearForm
 						key={formKey}
 						data={data}
-						onCalculate={handleCalculate}
-						initialValues={initialValues}
-						mode={isUpdateMode ? "update" : "create"}
-						lockMainFields={isUpdateMode}
+						onCalculate={
+							handleCalculate
+						}
+						initialValues={
+							initialValues
+						}
+						mode={
+							isUpdateMode
+								? "update"
+								: "create"
+						}
+						lockMainFields={
+							isUpdateMode
+						}
 					/>
 				</div>
 
-				{activeHistory && (
-					<CalculationGroupResult
-						items={historyItems}
-						getKey={(item) => item.id}
-						renderItem={(item, index) => (
-							<GearResult
-								result={item.result as GearCalculationResult}
-								history={activeHistory}
-								title={index === 0 ? "Result" : undefined}
-								showAddButton={
-									index === historyItems.length - 1
-								}
-								onAddItem={handleAddItem}
-							/>
-						)}
-						renderTotal={(items) => (
-							<GearTotalResult items={items} />
-						)}
-					/>
-				)}
+				{activeHistory &&
+					historyItems.length >
+						0 && (
+						<CalculationGroupResult
+							items={
+								historyItems
+							}
+							getKey={(item) =>
+								item.id
+							}
+							renderItem={(
+								item,
+								index,
+							) => (
+								<GearResult
+									result={
+										item.result as GearCalculationResult
+									}
+									history={
+										activeHistory
+									}
+									title={
+										index ===
+										0
+											? "Result"
+											: undefined
+									}
+									showAddButton={
+										index ===
+										historyItems.length -
+											1
+									}
+									onAddItem={
+										handleAddItem
+									}
+								/>
+							)}
+							renderTotal={(
+								groupItems,
+							) => (
+								<GearTotalResult
+									items={
+										groupItems
+									}
+								/>
+							)}
+						/>
+					)}
 
 				{activeHistory && (
 					<div className="px-4 py-2">
 						<button
 							type="button"
-							onClick={handleNewCalculation}
+							onClick={
+								handleNewCalculation
+							}
 							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 						>
-							<span>New Calculation</span>
+							<span>
+								New Calculation
+							</span>
+
 							<ArrowRight className="size-4" />
 						</button>
 					</div>

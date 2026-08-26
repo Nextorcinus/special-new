@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import {
+	Suspense,
 	useEffect,
 	useRef,
 	useState,
@@ -93,7 +94,46 @@ function isSkillT12History(
 	return history.module === "skill-t12";
 }
 
-export default function SkillT12CalculatorPage({
+/*
+ * ================================================================
+ * Main Page
+ * ================================================================
+ */
+
+export default function SkillT12CalculatorPage(
+	props: SkillT12CalculatorPageProps,
+) {
+	return (
+		<Suspense
+			fallback={
+				<div className="grid gap-6">
+					<div className="space-y-6 p-4">
+						<div className="flex min-h-[200px] items-center justify-center">
+							<div className="text-sm text-[var(--sl-text-muted)]">
+								Loading...
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		>
+			<SkillT12CalculatorPageContent
+				{...props}
+			/>
+		</Suspense>
+	);
+}
+
+/*
+ * ================================================================
+ * Page Content
+ *
+ * useSearchParams() is inside this component because this
+ * component is rendered inside Suspense.
+ * ================================================================
+ */
+
+function SkillT12CalculatorPageContent({
 	category,
 	data,
 }: SkillT12CalculatorPageProps) {
@@ -265,8 +305,7 @@ export default function SkillT12CalculatorPage({
 		result: SkillT12CalculationResult,
 	) {
 		return {
-			module:
-				"skill-t12" as const,
+			module: "skill-t12" as const,
 			category,
 			title:
 				result.research ||

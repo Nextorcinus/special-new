@@ -1,7 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import {
+	Suspense,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import HistoryPanel from "@/features/inventory/components/HistoryPanel";
@@ -49,7 +54,9 @@ const DEFAULT_FORM_VALUES: WarAcademyFormValues = {
 };
 
 function createEntryId(): string {
-	return `war-academy_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+	return `war-academy_${Date.now()}_${Math.random()
+		.toString(36)
+		.slice(2, 8)}`;
 }
 
 function createEntryFromHistory(
@@ -72,7 +79,10 @@ function getHistoryEntries(
 		return [];
 	}
 
-	if (Array.isArray(history.items) && history.items.length > 0) {
+	if (
+		Array.isArray(history.items) &&
+		history.items.length > 0
+	) {
 		return history.items as WarAcademyHistoryEntry[];
 	}
 
@@ -83,7 +93,9 @@ function getHistoryEntries(
 	return [createEntryFromHistory(history)];
 }
 
-function createHistoryTitle(values: WarAcademyFormValues): string {
+function createHistoryTitle(
+	values: WarAcademyFormValues,
+): string {
 	return values.research || "War Academy";
 }
 
@@ -94,233 +106,496 @@ function createHistorySubtitle(
 	return `${category} · Lv.${values.fromLevel} → Lv.${values.toLevel}`;
 }
 
-export default function WarAcademyCalculatorPage({
+/*
+ * ================================================================
+ * Main Page
+ *
+ * useSearchParams() harus berada di dalam Suspense boundary.
+ * ================================================================
+ */
+
+export default function WarAcademyCalculatorPage(
+	props: WarAcademyCalculatorPageProps,
+) {
+	return (
+		<Suspense
+			fallback={
+				<div className="grid gap-6">
+					<div className="space-y-6 p-4">
+						<div className="flex min-h-[200px] items-center justify-center">
+							<div className="text-sm text-[var(--sl-text-muted)]">
+								Loading...
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		>
+			<WarAcademyCalculatorPageContent
+				{...props}
+			/>
+		</Suspense>
+	);
+}
+
+/*
+ * ================================================================
+ * Page Content
+ *
+ * Component ini berada di dalam Suspense sehingga
+ * useSearchParams() aman digunakan untuk production build.
+ * ================================================================
+ */
+
+function WarAcademyCalculatorPageContent({
 	category,
 	data,
 }: WarAcademyCalculatorPageProps) {
-	const searchParams = useSearchParams();
-	const historyId = searchParams.get("historyId");
+	const searchParams =
+		useSearchParams();
 
-	const historyItems = useHistoryStore((state) => state.items);
+	const historyId =
+		searchParams.get("historyId");
 
-	const loadHistory = useHistoryStore((state) => state.loadHistory);
+	/*
+	 * ================================================================
+	 * History Store
+	 * ================================================================
+	 */
 
-	const saveCalculation = useHistoryStore((state) => state.saveCalculation);
-
-	const updateCalculation = useHistoryStore((state) => state.updateCalculation);
-
-	const addCalculationItem = useHistoryStore(
-		(state) => state.addCalculationItem,
+	const historyItems = useHistoryStore(
+		(state) => state.items,
 	);
 
-	const togglePinHistory = useHistoryStore((state) => state.togglePinHistory);
-
-	const deleteHistory = useHistoryStore((state) => state.deleteHistory);
-
-	const [activeHistory, setActiveHistory] =
-		useState<WarAcademyHistoryItem | null>(null);
-
-	const [result, setResult] = useState<WarAcademyCalculationResult | null>(
-		null,
+	const loadHistory = useHistoryStore(
+		(state) => state.loadHistory,
 	);
 
-	const [formKey, setFormKey] = useState(0);
+	const saveCalculation =
+		useHistoryStore(
+			(state) => state.saveCalculation,
+		);
 
-	const [isAddingItem, setIsAddingItem] = useState(false);
+	const updateCalculation =
+		useHistoryStore(
+			(state) => state.updateCalculation,
+		);
 
-	const [isEditingHistory, setIsEditingHistory] = useState(false);
+	const addCalculationItem =
+		useHistoryStore(
+			(state) => state.addCalculationItem,
+		);
+
+	const togglePinHistory =
+		useHistoryStore(
+			(state) => state.togglePinHistory,
+		);
+
+	const deleteHistory =
+		useHistoryStore(
+			(state) => state.deleteHistory,
+		);
+
+	/*
+	 * ================================================================
+	 * Local State
+	 * ================================================================
+	 */
+
+	const [
+		activeHistory,
+		setActiveHistory,
+	] =
+		useState<WarAcademyHistoryItem | null>(
+			null,
+		);
+
+	const [result, setResult] =
+		useState<WarAcademyCalculationResult | null>(
+			null,
+		);
+
+	const [formKey, setFormKey] =
+		useState(0);
+
+	const [
+		isAddingItem,
+		setIsAddingItem,
+	] = useState(false);
+
+	const [
+		isEditingHistory,
+		setIsEditingHistory,
+	] = useState(false);
+
+	/*
+	 * ================================================================
+	 * Load History
+	 * ================================================================
+	 */
 
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
+
+	/*
+	 * ================================================================
+	 * Load History from URL
+	 * ================================================================
+	 */
 
 	useEffect(() => {
 		if (!historyId) {
 			return;
 		}
 
-		const selectedHistory = historyItems.find(
-			(item) => item.id === historyId && item.module === "war-academy",
-		) as WarAcademyHistoryItem | undefined;
+		const selectedHistory =
+			historyItems.find(
+				(item) =>
+					String(item.id) ===
+						historyId &&
+					item.module ===
+						"war-academy",
+			) as
+				| WarAcademyHistoryItem
+				| undefined;
 
 		if (!selectedHistory) {
 			return;
 		}
 
-		setActiveHistory(selectedHistory);
-		setResult(selectedHistory.result ?? null);
+		setActiveHistory(
+			selectedHistory,
+		);
+
+		setResult(
+			selectedHistory.result ??
+				null,
+		);
+
 		setIsAddingItem(false);
 		setIsEditingHistory(true);
-		setFormKey((current) => current + 1);
-	}, [historyId, historyItems]);
 
-	const activeHistoryId = activeHistory?.id;
+		setFormKey(
+			(current) => current + 1,
+		);
+	}, [
+		historyId,
+		historyItems,
+	]);
+
+	/*
+	 * ================================================================
+	 * Keep active history synchronized with store
+	 * ================================================================
+	 */
+
+	const activeHistoryId =
+		activeHistory?.id;
 
 	useEffect(() => {
 		if (!activeHistoryId) {
 			return;
 		}
 
-		const latestHistory = historyItems.find(
-			(item) => item.id === activeHistoryId,
-		) as WarAcademyHistoryItem | undefined;
+		const latestHistory =
+			historyItems.find(
+				(item) =>
+					String(item.id) ===
+					String(activeHistoryId),
+			) as
+				| WarAcademyHistoryItem
+				| undefined;
 
 		if (!latestHistory) {
 			return;
 		}
 
-		setActiveHistory(latestHistory);
-	}, [activeHistoryId, historyItems]);
+		setActiveHistory(
+			latestHistory,
+		);
+	}, [
+		activeHistoryId,
+		historyItems,
+	]);
 
-	const warAcademyHistoryItems = useMemo(() => {
-		return historyItems.filter((item) => item.module === "war-academy");
-	}, [historyItems]);
+	/*
+	 * ================================================================
+	 * War Academy History
+	 * ================================================================
+	 */
 
-	const historyEntries = useMemo(() => {
-		return getHistoryEntries(activeHistory);
-	}, [activeHistory]);
+	const warAcademyHistoryItems =
+		useMemo(() => {
+			return historyItems.filter(
+				(item) =>
+					item.module ===
+					"war-academy",
+			);
+		}, [historyItems]);
 
-	const initialValues = useMemo<Partial<WarAcademyFormValues>>(() => {
-		if (isAddingItem) {
-			return {
-				...DEFAULT_FORM_VALUES,
+	/*
+	 * ================================================================
+	 * History Entries
+	 * ================================================================
+	 */
 
-				vpLevel: activeHistory?.form?.vpLevel ?? "Off",
+	const historyEntries =
+		useMemo(() => {
+			return getHistoryEntries(
+				activeHistory,
+			);
+		}, [activeHistory]);
 
-				agnesLevel: activeHistory?.form?.agnesLevel ?? "0",
+	/*
+	 * ================================================================
+	 * Initial Form Values
+	 * ================================================================
+	 */
 
-				researchSpeed: activeHistory?.form?.researchSpeed ?? "",
+	const initialValues =
+		useMemo<
+			Partial<WarAcademyFormValues>
+		>(() => {
+			if (isAddingItem) {
+				return {
+					...DEFAULT_FORM_VALUES,
 
-				doubleTime: activeHistory?.form?.doubleTime ?? false,
-			};
-		}
+					vpLevel:
+						activeHistory?.form
+							?.vpLevel ??
+						"Off",
 
-		if (activeHistory?.form) {
-			return activeHistory.form;
-		}
+					agnesLevel:
+						activeHistory?.form
+							?.agnesLevel ??
+						"0",
 
-		return DEFAULT_FORM_VALUES;
-	}, [activeHistory, isAddingItem]);
+					researchSpeed:
+						activeHistory?.form
+							?.researchSpeed ??
+						"",
+
+					doubleTime:
+						activeHistory?.form
+							?.doubleTime ??
+						false,
+				};
+			}
+
+			if (activeHistory?.form) {
+				return activeHistory.form;
+			}
+
+			return DEFAULT_FORM_VALUES;
+		}, [
+			activeHistory,
+			isAddingItem,
+		]);
+
+	/*
+	 * ================================================================
+	 * Clear Active Calculation
+	 * ================================================================
+	 */
 
 	function clearActiveCalculation() {
 		setActiveHistory(null);
 		setResult(null);
 		setIsAddingItem(false);
 		setIsEditingHistory(false);
-		setFormKey((current) => current + 1);
 
-		window.history.replaceState(null, "", window.location.pathname);
+		setFormKey(
+			(current) => current + 1,
+		);
+
+		window.history.replaceState(
+			null,
+			"",
+			window.location.pathname,
+		);
 	}
 
-	function handleSubmit(values: WarAcademyFormValues) {
-		const calculationResult = calculateWarAcademy({
-			category,
-			data,
-			values,
-		});
+	/*
+	 * ================================================================
+	 * Submit Calculation
+	 * ================================================================
+	 */
 
-		const title = createHistoryTitle(values);
+	function handleSubmit(
+		values: WarAcademyFormValues,
+	) {
+		const calculationResult =
+			calculateWarAcademy({
+				category,
+				data,
+				values,
+			});
 
-		const subtitle = createHistorySubtitle(category, values);
+		const title =
+			createHistoryTitle(values);
+
+		const subtitle =
+			createHistorySubtitle(
+				category,
+				values,
+			);
 
 		setResult(calculationResult);
 
 		/*
-		 * Tambahkan item baru ke dalam history yang sedang aktif.
+		 * ------------------------------------------------------------
+		 * Add item ke history aktif
+		 * ------------------------------------------------------------
 		 */
-		if (activeHistory && isAddingItem) {
-			addCalculationItem(activeHistory.id, {
-				module: "war-academy",
-				category,
-				title,
-				subtitle,
-				form: values,
-				result: calculationResult,
-			});
 
-			const newEntry: WarAcademyHistoryEntry = {
-				id: createEntryId(),
-				title,
-				subtitle,
-				form: values,
-				result: calculationResult,
-				createdAt: new Date().toISOString(),
-			};
-
-			setActiveHistory((current) => {
-				if (!current) {
-					return current;
-				}
-
-				const currentItems = getHistoryEntries(current);
-
-				return {
-					...current,
-					items: [...currentItems, newEntry],
-					updatedAt: new Date().toISOString(),
-				};
-			});
-
-			setIsAddingItem(false);
-			setIsEditingHistory(true);
-			setFormKey((current) => current + 1);
-
-			return;
-		}
-
-		/*
-		 * Update kalkulasi utama pada history aktif.
-		 */
-		if (activeHistory && isEditingHistory) {
-			updateCalculation(activeHistory.id, {
-				module: "war-academy",
-				category,
-				title,
-				subtitle,
-				form: values,
-				result: calculationResult,
-			});
-
-			setActiveHistory((current) => {
-				if (!current) {
-					return current;
-				}
-
-				return {
-					...current,
-					module: "war-academy",
+		if (
+			activeHistory &&
+			isAddingItem
+		) {
+			addCalculationItem(
+				activeHistory.id,
+				{
+					module:
+						"war-academy",
 					category,
 					title,
 					subtitle,
 					form: values,
-					result: calculationResult,
-					updatedAt: new Date().toISOString(),
+					result:
+						calculationResult,
+				},
+			);
+
+			const newEntry: WarAcademyHistoryEntry =
+				{
+					id: createEntryId(),
+					title,
+					subtitle,
+					form: values,
+					result:
+						calculationResult,
+					createdAt:
+						new Date().toISOString(),
 				};
-			});
+
+			setActiveHistory(
+				(current) => {
+					if (!current) {
+						return current;
+					}
+
+					const currentItems =
+						getHistoryEntries(
+							current,
+						);
+
+					return {
+						...current,
+						items: [
+							...currentItems,
+							newEntry,
+						],
+						updatedAt:
+							new Date().toISOString(),
+					};
+				},
+			);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+
+			setFormKey(
+				(current) =>
+					current + 1,
+			);
 
 			return;
 		}
 
 		/*
-		 * Simpan sebagai history baru.
+		 * ------------------------------------------------------------
+		 * Update history aktif
+		 * ------------------------------------------------------------
 		 */
-		const savedHistory = saveCalculation({
-			module: "war-academy",
-			category,
-			title,
-			subtitle,
-			form: values,
-			result: calculationResult,
-		}) as WarAcademyHistoryItem | undefined;
+
+		if (
+			activeHistory &&
+			isEditingHistory
+		) {
+			updateCalculation(
+				activeHistory.id,
+				{
+					module:
+						"war-academy",
+					category,
+					title,
+					subtitle,
+					form: values,
+					result:
+						calculationResult,
+				},
+			);
+
+			setActiveHistory(
+				(current) => {
+					if (!current) {
+						return current;
+					}
+
+					return {
+						...current,
+						module:
+							"war-academy",
+						category,
+						title,
+						subtitle,
+						form: values,
+						result:
+							calculationResult,
+						updatedAt:
+							new Date().toISOString(),
+					};
+				},
+			);
+
+			return;
+		}
+
+		/*
+		 * ------------------------------------------------------------
+		 * Save new history
+		 * ------------------------------------------------------------
+		 */
+
+		const savedHistory =
+			saveCalculation({
+				module:
+					"war-academy",
+				category,
+				title,
+				subtitle,
+				form: values,
+				result:
+					calculationResult,
+			}) as
+				| WarAcademyHistoryItem
+				| undefined;
 
 		if (!savedHistory) {
 			return;
 		}
 
-		setActiveHistory(savedHistory);
+		setActiveHistory(
+			savedHistory,
+		);
+
 		setIsAddingItem(false);
 		setIsEditingHistory(true);
-		setFormKey((current) => current + 1);
+
+		setFormKey(
+			(current) => current + 1,
+		);
 
 		window.history.replaceState(
 			null,
@@ -328,6 +603,12 @@ export default function WarAcademyCalculatorPage({
 			`${window.location.pathname}?historyId=${savedHistory.id}`,
 		);
 	}
+
+	/*
+	 * ================================================================
+	 * Add Item
+	 * ================================================================
+	 */
 
 	function handleAddItem() {
 		if (!activeHistory) {
@@ -337,13 +618,22 @@ export default function WarAcademyCalculatorPage({
 		setIsAddingItem(true);
 		setIsEditingHistory(false);
 		setResult(null);
-		setFormKey((current) => current + 1);
+
+		setFormKey(
+			(current) => current + 1,
+		);
 
 		window.scrollTo({
 			top: 0,
 			behavior: "smooth",
 		});
 	}
+
+	/*
+	 * ================================================================
+	 * New Calculation
+	 * ================================================================
+	 */
 
 	function handleNewCalculation() {
 		clearActiveCalculation();
@@ -354,39 +644,85 @@ export default function WarAcademyCalculatorPage({
 		});
 	}
 
+	/*
+	 * ================================================================
+	 * Reset
+	 * ================================================================
+	 */
+
 	function handleReset() {
 		if (isAddingItem) {
 			setIsAddingItem(false);
 			setIsEditingHistory(true);
-			setResult(activeHistory?.result ?? null);
-			setFormKey((current) => current + 1);
+
+			setResult(
+				activeHistory?.result ??
+					null,
+			);
+
+			setFormKey(
+				(current) =>
+					current + 1,
+			);
 
 			return;
 		}
 
 		if (activeHistory) {
-			setResult(activeHistory.result ?? null);
-			setFormKey((current) => current + 1);
+			setResult(
+				activeHistory.result ??
+					null,
+			);
+
+			setFormKey(
+				(current) =>
+					current + 1,
+			);
 
 			return;
 		}
 
 		setResult(null);
-		setFormKey((current) => current + 1);
+
+		setFormKey(
+			(current) => current + 1,
+		);
 	}
 
-	function handleHistorySelect(item: CalculationHistoryItem) {
-		if (item.module !== "war-academy") {
+	/*
+	 * ================================================================
+	 * Select History
+	 * ================================================================
+	 */
+
+	function handleHistorySelect(
+		item: CalculationHistoryItem,
+	) {
+		if (
+			item.module !==
+			"war-academy"
+		) {
 			return;
 		}
 
-		const selectedHistory = item as WarAcademyHistoryItem;
+		const selectedHistory =
+			item as WarAcademyHistoryItem;
 
-		setActiveHistory(selectedHistory);
-		setResult(selectedHistory.result ?? null);
+		setActiveHistory(
+			selectedHistory,
+		);
+
+		setResult(
+			selectedHistory.result ??
+				null,
+		);
+
 		setIsAddingItem(false);
 		setIsEditingHistory(true);
-		setFormKey((current) => current + 1);
+
+		setFormKey(
+			(current) => current + 1,
+		);
 
 		window.history.replaceState(
 			null,
@@ -400,24 +736,59 @@ export default function WarAcademyCalculatorPage({
 		});
 	}
 
-	function handlePinHistory(id: string) {
+	/*
+	 * ================================================================
+	 * Pin History
+	 * ================================================================
+	 */
+
+	function handlePinHistory(
+		id: string,
+	) {
 		togglePinHistory(id);
 	}
 
-	function handleDeleteHistory(id: string) {
+	/*
+	 * ================================================================
+	 * Delete History
+	 * ================================================================
+	 */
+
+	function handleDeleteHistory(
+		id: string,
+	) {
 		deleteHistory(id);
 
-		if (activeHistory?.id !== id) {
+		if (
+			activeHistory?.id !== id
+		) {
 			return;
 		}
 
 		clearActiveCalculation();
 	}
 
-	const showGroupResult =
-		activeHistory !== null && historyEntries.length > 1 && !isAddingItem;
+	/*
+	 * ================================================================
+	 * Result Visibility
+	 * ================================================================
+	 */
 
-	const showSingleResult = result !== null && !showGroupResult && !isAddingItem;
+	const showGroupResult =
+		activeHistory !== null &&
+		historyEntries.length > 1 &&
+		!isAddingItem;
+
+	const showSingleResult =
+		result !== null &&
+		!showGroupResult &&
+		!isAddingItem;
+
+	/*
+	 * ================================================================
+	 * Render
+	 * ================================================================
+ */
 
 	return (
 		<div className="grid gap-6">
@@ -427,40 +798,86 @@ export default function WarAcademyCalculatorPage({
 						key={formKey}
 						category={category}
 						data={data}
-						initialValues={initialValues}
-						mode={isEditingHistory && !isAddingItem ? "update" : "create"}
-						lockMainFields={isEditingHistory && !isAddingItem}
-						onSubmit={handleSubmit}
-						onReset={handleReset}
+						initialValues={
+							initialValues
+						}
+						mode={
+							isEditingHistory &&
+							!isAddingItem
+								? "update"
+								: "create"
+						}
+						lockMainFields={
+							isEditingHistory &&
+							!isAddingItem
+						}
+						onSubmit={
+							handleSubmit
+						}
+						onReset={
+							handleReset
+						}
 					/>
 				</div>
 
-				{showSingleResult && result && (
-					<WarAcademyResult
-						result={result}
-						history={activeHistory}
-						title="Result"
-						showAddButton={activeHistory !== null}
-						onAddItem={handleAddItem}
-					/>
-				)}
+				{showSingleResult &&
+					result && (
+						<WarAcademyResult
+							result={result}
+							history={
+								activeHistory
+							}
+							title="Result"
+							showAddButton={
+								activeHistory !==
+								null
+							}
+							onAddItem={
+								handleAddItem
+							}
+						/>
+					)}
 
 				{showGroupResult && (
 					<div className="space-y-5">
-						<h2 className="text-2xl font-bold text-[var(--sl-text)]">Result</h2>
+						<h2 className="text-2xl font-bold text-[var(--sl-text)]">
+							Result
+						</h2>
 
 						<CalculationGroupResult
-							items={historyEntries}
-							getKey={(item) => item.id}
-							renderItem={(item, index) => (
+							items={
+								historyEntries
+							}
+							getKey={(item) =>
+								item.id
+							}
+							renderItem={(
+								item,
+								index,
+							) => (
 								<WarAcademyResult
-									result={item.result}
-									showAddButton={index === historyEntries.length - 1}
-									onAddItem={handleAddItem}
+									result={
+										item.result
+									}
+									showAddButton={
+										index ===
+										historyEntries.length -
+											1
+									}
+									onAddItem={
+										handleAddItem
+									}
 								/>
 							)}
-							renderTotal={(items) => (
-								<WarAcademyTotalResult items={items} title="Total Result" />
+							renderTotal={(
+								items,
+							) => (
+								<WarAcademyTotalResult
+									items={
+										items
+									}
+									title="Total Result"
+								/>
 							)}
 						/>
 					</div>
@@ -469,7 +886,9 @@ export default function WarAcademyCalculatorPage({
 				{activeHistory && (
 					<button
 						type="button"
-						onClick={handleNewCalculation}
+						onClick={
+							handleNewCalculation
+						}
 						className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 					>
 						New Calculation
