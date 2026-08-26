@@ -5,9 +5,9 @@ import type {
 
 import { Geist } from "next/font/google";
 
-import AppToaster from "@/components/ui/toaster";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 import SplashScreen from "@/components/onboarding/SplashScreen";
+import AppToaster from "@/components/ui/toaster";
 import PWARegister from "@/components/pwa/PWARegister";
 import ThemeProvider from "@/providers/ThemeProvider";
 
@@ -59,7 +59,7 @@ export default function RootLayout({
 			suppressHydrationWarning
 			className={`${geist.variable} h-full antialiased`}
 		>
-			<body className="flex min-h-full flex-col bg-[var(--sl-background)] text-[var(--sl-text)]">
+			<body className="flex min-h-full flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
 				<ThemeProvider>
 					{/* PWA */}
 					<PWARegister />
