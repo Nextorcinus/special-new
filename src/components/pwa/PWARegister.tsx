@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 export default function PWARegister() {
+	// 1. useEffect Pertama: Registrasi Service Worker (Kode asli Anda)
 	useEffect(() => {
 		if (
 			typeof window === "undefined" ||
@@ -11,7 +12,6 @@ export default function PWARegister() {
 			console.log(
 				"[PWA] Service Worker is not supported.",
 			);
-
 			return;
 		}
 
@@ -40,13 +40,8 @@ export default function PWARegister() {
 					registration.scope,
 				);
 
-				/*
-				 * Check for updates.
-				 */
-
 				try {
 					await registration.update();
-
 					console.log(
 						"[PWA] Service Worker update checked.",
 					);
@@ -71,6 +66,30 @@ export default function PWARegister() {
 
 		return () => {
 			cancelled = true;
+		};
+	}, []);
+
+	// 2. useEffect Kedua: WAJIB UNTUK MENANGKAP BEFOREINSTALLPROMPT
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		const handleBeforeInstallPrompt = (e: Event) => {
+			// Mencegah Chrome memunculkan mini-infobar bawaan otomatis
+			e.preventDefault();
+			
+			console.log("[PWA] Event beforeinstallprompt BERHASIL ditangkap! 🎉");
+
+			// Simpan event ke objek global window agar bisa dipanggil oleh tombol UI mana saja
+			(window as any).deferredPrompt = e;
+
+			// Opsional: Kirim custom event ke window agar UI tahu tombol install sudah bisa dimunculkan
+			window.dispatchEvent(new CustomEvent("pwa-installable"));
+		};
+
+		window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+		return () => {
+			window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 		};
 	}, []);
 
