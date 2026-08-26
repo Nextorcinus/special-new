@@ -1,48 +1,66 @@
-// components/pwa/InstallButton.tsx
+// src/components/pwa/InstallButton.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
 
-export default function InstallButton() {
-  const [showButton, setShowButton] = useState(false);
+interface InstallButtonProps {
+	className?: string;
+	onManualTrigger?: () => void; // Tambahkan tanda tanya (?) agar tidak wajib diisi
+}
 
-  useEffect(() => {
-    // Cek apakah prompt sudah siap ditangkap sebelumnya
-    if ((window as any).deferredPrompt) {
-      setShowButton(true);
-    }
+export default function InstallButton({ className, onManualTrigger }: InstallButtonProps) {
+	const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
-    // Dengarkan custom event dari PWARegister jika prompt baru saja ditangkap
-    const handleInstallable = () => setShowButton(true);
-    window.addEventListener("pwa-installable", handleInstallable);
+	useEffect(() => {
+		if (typeof window !== "undefined" && (window as any).deferredPrompt) {
+			setDeferredPrompt((window as any).deferredPrompt);
+		}
 
-    return () => window.removeEventListener("pwa-installable", handleInstallable);
-  }, []);
+		const handlePwaReady = () => {
+			setDeferredPrompt((window as any).deferredPrompt);
+		};
 
-  const handleInstallClick = async () => {
-    const promptEvent = (window as any).deferredPrompt;
-    if (!promptEvent) return;
+		window.addEventListener("pwa-installable", handlePwaReady);
+		return () => window.removeEventListener("pwa-installable", handlePwaReady);
+	}, []);
 
-    // Munculkan pop-up dialog install bawaan Chrome Chrome
-    promptEvent.prompt();
+	const handleInstallClick = async () => {
+		console.log("[PWA] Tombol install diklik");
 
-    // Tunggu jawaban dari user (klik Install atau Cancel)
-    const { outcome } = await promptEvent.userChoice;
-    console.log(`[PWA] User response to install prompt: ${outcome}`);
+		if (!deferredPrompt) {
+			console.log("[PWA] Prompt sistem tidak siap. Memicu panduan manual.");
+			
+			// Tambahkan pengecekan aman (safe check) sebelum mengeksekusi fungsi
+			if (typeof onManualTrigger === "function") {
+				onManualTrigger();
+			} else {
+				console.warn("[PWA] Properti onManualTrigger tidak dilewatkan dari komponen induk.");
+			}
+			return;
+		}
 
-    // Bersihkan prompt karena hanya bisa digunakan sekali
-    (window as any).deferredPrompt = null;
-    setShowButton(false);
-  };
+		try {
+			deferredPrompt.prompt();
+			const { outcome } = await deferredPrompt.userChoice;
+			console.log(`[PWA] Respons pengguna terhadap dialog: ${outcome}`);
+		} catch (error) {
+			console.error("[PWA] Gagal memicu dialog asli Chrome:", error);
+			if (typeof onManualTrigger === "function") onManualTrigger();
+		}
 
-  if (!showButton) return null; // Tombol disembunyikan jika tidak memenuhi syarat PWA atau sudah terinstal
+		(window as any).deferredPrompt = null;
+		setDeferredPrompt(null);
+	};
 
-  return (
-    <button 
-      onClick={handleInstallClick}
-      className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium"
-    >
-      Install Aplikasi
-    </button>
-  );
+return (
+		<button
+			type="button"
+			onClick={handleInstallClick}
+			className={`flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface-elevated)] px-4 py-3 text-sm font-bold text-[var(--sl-text)] transition-all hover:opacity-90 active:scale-[0.98] ${className || ""}`}
+		>
+			<Download className="size-4 shrink-0" />
+			<span>Install App</span>
+		</button>
+	);
 }

@@ -21,7 +21,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { NAVIGATION } from "@/config/navigation";
-import InstallPWA from "@/components/pwa/InstallPWA";
+import InstallButton from "@/components/pwa/InstallButton";
 
 type MobileMenuDrawerProps = {
 	open: boolean;
@@ -390,7 +390,7 @@ export default function MobileMenuDrawer({
 				{/* Footer */}
 				<div className="shrink-0 space-y-3 border-t border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
 
-					<InstallPWA />
+					<InstallButton />
 					{/* Discord */}
 					<button
 						type="button"
