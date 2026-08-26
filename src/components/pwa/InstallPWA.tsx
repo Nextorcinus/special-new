@@ -38,6 +38,9 @@ export default function InstallPWA() {
 	const [showGuide, setShowGuide] =
 		useState(false);
 
+	const [promptAvailable, setPromptAvailable] =
+		useState(false);
+
 	useEffect(() => {
 		/*
 		 * ============================================================
@@ -51,7 +54,8 @@ export default function InstallPWA() {
 			).matches;
 
 		const iosStandalone =
-			"standalone" in window.navigator &&
+			"standalone" in
+				window.navigator &&
 			Boolean(
 				(
 					window.navigator as Navigator & {
@@ -91,18 +95,27 @@ export default function InstallPWA() {
 
 		/*
 		 * ============================================================
-		 * Android / Chrome / Edge install prompt
+		 * beforeinstallprompt
 		 * ============================================================
 		 */
 
 		function handleBeforeInstallPrompt(
 			event: Event,
 		) {
+			console.log(
+				"[PWA] beforeinstallprompt fired",
+			);
+
 			event.preventDefault();
 
+			const promptEvent =
+				event as BeforeInstallPromptEvent;
+
 			setInstallPrompt(
-				event as BeforeInstallPromptEvent,
+				promptEvent,
 			);
+
+			setPromptAvailable(true);
 		}
 
 		window.addEventListener(
@@ -112,13 +125,18 @@ export default function InstallPWA() {
 
 		/*
 		 * ============================================================
-		 * Detect when PWA gets installed
+		 * appinstalled
 		 * ============================================================
 		 */
 
 		function handleAppInstalled() {
+			console.log(
+				"[PWA] Application installed",
+			);
+
 			setIsInstalled(true);
 			setInstallPrompt(null);
+			setPromptAvailable(false);
 			setShowGuide(false);
 		}
 
@@ -126,6 +144,12 @@ export default function InstallPWA() {
 			"appinstalled",
 			handleAppInstalled,
 		);
+
+		/*
+		 * ============================================================
+		 * Cleanup
+		 * ============================================================
+		 */
 
 		return () => {
 			window.removeEventListener(
@@ -142,26 +166,88 @@ export default function InstallPWA() {
 
 	/*
 	 * ================================================================
-	 * Install using native browser prompt
+	 * Native installation
 	 * ================================================================
 	 */
 
 	async function handleInstall() {
-		if (!installPrompt) {
+		console.log(
+			"[PWA] Install clicked",
+		);
+
+		console.log(
+			"[PWA] Prompt available:",
+			Boolean(installPrompt),
+		);
+
+		/*
+		 * ------------------------------------------------------------
+		 * iOS
+		 * ------------------------------------------------------------
+		 */
+
+		if (isIOS) {
 			setShowGuide(true);
+
 			return;
 		}
 
-		await installPrompt.prompt();
+		/*
+		 * ------------------------------------------------------------
+		 * Native Chrome / Edge install prompt
+		 * ------------------------------------------------------------
+		 */
 
-		const result =
-			await installPrompt.userChoice;
+		if (installPrompt) {
+			try {
+				console.log(
+					"[PWA] Opening native install prompt",
+				);
 
-		if (
-			result.outcome === "accepted"
-		) {
-			setInstallPrompt(null);
+				setShowGuide(false);
+
+				await installPrompt.prompt();
+
+				const result =
+					await installPrompt.userChoice;
+
+				console.log(
+					"[PWA] User choice:",
+					result.outcome,
+				);
+
+				if (
+					result.outcome ===
+					"accepted"
+				) {
+					setInstallPrompt(null);
+					setPromptAvailable(false);
+				}
+
+				return;
+			} catch (error) {
+				console.error(
+					"[PWA] Failed to open install prompt:",
+					error,
+				);
+
+				setShowGuide(true);
+
+				return;
+			}
 		}
+
+		/*
+		 * ------------------------------------------------------------
+		 * Native prompt unavailable
+		 * ------------------------------------------------------------
+		 */
+
+		console.warn(
+			"[PWA] beforeinstallprompt is not available.",
+		);
+
+		setShowGuide(true);
 	}
 
 	/*
@@ -176,7 +262,9 @@ export default function InstallPWA() {
 
 	return (
 		<>
-			{/* Install / Save button */}
+			{/* ========================================================
+			    Save / Install Button
+			    ======================================================== */}
 
 			<button
 				type="button"
@@ -202,7 +290,9 @@ export default function InstallPWA() {
 						type="button"
 						aria-label="Close"
 						onClick={() =>
-							setShowGuide(false)
+							setShowGuide(
+								false,
+							)
 						}
 						className="absolute inset-0 bg-black/60 backdrop-blur-sm"
 					/>
@@ -219,9 +309,11 @@ export default function InstallPWA() {
 								</h2>
 
 								<p className="mt-1 text-xs leading-relaxed text-[var(--sl-text-muted)]">
-									Add Special Lazyness
-									to your Home Screen
-									for quick access.
+									Add Special
+									Lazyness to
+									your Home
+									Screen for
+									quick access.
 								</p>
 							</div>
 
@@ -242,8 +334,6 @@ export default function InstallPWA() {
 						{/* Steps */}
 
 						<div className="mt-5 space-y-4">
-							{/* iOS */}
-
 							{isIOS ? (
 								<>
 									<div className="flex items-start gap-3">
@@ -254,8 +344,10 @@ export default function InstallPWA() {
 										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
 											Tap the{" "}
 											<Share className="mx-1 inline size-4 align-text-bottom" />{" "}
-											Share button
-											in Safari.
+											Share
+											button
+											in
+											Safari.
 										</p>
 									</div>
 
@@ -267,7 +359,8 @@ export default function InstallPWA() {
 										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
 											Select{" "}
 											<span className="font-semibold text-[var(--sl-text)]">
-												Add to Home
+												Add to
+												Home
 												Screen
 											</span>
 											.
@@ -284,7 +377,8 @@ export default function InstallPWA() {
 											<span className="font-semibold text-[var(--sl-text)]">
 												Add
 											</span>{" "}
-											to finish.
+											to
+											finish.
 										</p>
 									</div>
 								</>
@@ -297,8 +391,10 @@ export default function InstallPWA() {
 
 										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
 											Open your
-											browser menu
-											using the{" "}
+											browser
+											menu
+											using
+											the{" "}
 											<span className="font-semibold text-[var(--sl-text)]">
 												⋮
 											</span>{" "}
@@ -314,13 +410,20 @@ export default function InstallPWA() {
 										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
 											Select{" "}
 											<span className="font-semibold text-[var(--sl-text)]">
-												Add to Home
+												Add to
+												Home
 												Screen
 											</span>{" "}
 											or{" "}
-											<span className="font-semibold text-[var(--sl-text)]">
+											<button
+												type="button"
+												onClick={
+													handleInstall
+												}
+												className="cursor-pointer font-semibold text-[var(--sl-primary)] underline decoration-[var(--sl-primary)]/40 underline-offset-2 transition-opacity hover:opacity-80"
+											>
 												Install App
-											</span>
+											</button>
 											.
 										</p>
 									</div>
@@ -335,6 +438,26 @@ export default function InstallPWA() {
 											installation.
 										</p>
 									</div>
+
+									{!promptAvailable && (
+										<div className="rounded-xl bg-white/5 px-3 py-2.5">
+											<p className="text-xs leading-relaxed text-[var(--sl-text-muted)]">
+												The direct
+												install
+												dialog is
+												not
+												available
+												in this
+												browser
+												right now.
+												Use the
+												browser
+												menu to
+												install
+												the app.
+											</p>
+										</div>
+									)}
 								</>
 							)}
 						</div>

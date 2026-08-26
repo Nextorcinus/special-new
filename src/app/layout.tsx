@@ -8,6 +8,7 @@ import { Geist } from "next/font/google";
 import AppToaster from "@/components/ui/toaster";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 import SplashScreen from "@/components/onboarding/SplashScreen";
+import PWARegister from "@/components/pwa/PWARegister";
 import ThemeProvider from "@/providers/ThemeProvider";
 
 import "@/styles/globals.css";
@@ -60,6 +61,9 @@ export default function RootLayout({
 		>
 			<body className="flex min-h-full flex-col bg-[#111111] text-[var(--sl-text)]">
 				<ThemeProvider>
+					{/* PWA */}
+					<PWARegister />
+
 					{/* Onboarding */}
 					<SplashScreen />
 
@@ -68,8 +72,10 @@ export default function RootLayout({
 						{children}
 					</main>
 
+					{/* Mobile Navigation */}
 					<MobileBottomBar />
 
+					{/* Toast */}
 					<AppToaster />
 				</ThemeProvider>
 			</body>
