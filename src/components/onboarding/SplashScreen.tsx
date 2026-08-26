@@ -20,6 +20,18 @@ const TOTAL_SLIDES = 2;
 const SWIPE_THRESHOLD = 60;
 
 export default function SplashScreen() {
+	/*
+	 * ============================================================
+	 * STATE
+	 * ============================================================
+	 */
+
+	/*
+	 * Splash dimulai visible supaya langsung menutupi
+	 * halaman utama ketika initial render.
+	 */
+	const [visible, setVisible] = useState(true);
+
 	const [slide, setSlide] = useState(0);
 
 	/*
@@ -28,40 +40,60 @@ export default function SplashScreen() {
 	 * ============================================================
 	 */
 
-	const viewportRef =
-		useRef<HTMLDivElement | null>(null);
-
 	const slideRefs =
 		useRef<(HTMLDivElement | null)[]>([]);
 
-	const previousSlideRef =
-		useRef(0);
+	const previousSlideRef = useRef(0);
 
-	const animationLock =
-		useRef(false);
+	const isFirstRender = useRef(true);
+
+	const animationLock = useRef(false);
 
 	/*
-	 * Swipe
+	 * Swipe refs
 	 */
-	const touchStartX =
-		useRef<number | null>(null);
+	const touchStartX = useRef<number | null>(
+		null,
+	);
 
-	const touchStartY =
-		useRef<number | null>(null);
+	const touchStartY = useRef<number | null>(
+		null,
+	);
 
-	const isSwiping =
-		useRef(false);
-
-	const suppressClick =
-		useRef(false);
+	const suppressClick = useRef(false);
 
 	/*
-	 * Character floating animation
+	 * Floating character animation
 	 */
 	const floatingTween =
-		useRef<gsap.core.Tween | null>(
-			null,
-		);
+		useRef<gsap.core.Tween | null>(null);
+
+	/*
+	 * ============================================================
+	 * ONBOARDING CHECK
+	 * ============================================================
+	 *
+	 * Jangan menggunakan mounted state.
+	 *
+	 * visible=true pada initial render sehingga Splash
+	 * langsung menutupi Home.
+	 *
+	 * Setelah browser membaca localStorage:
+	 *
+	 * true  -> Splash ditutup
+	 * false -> Splash tetap tampil
+	 */
+
+	useLayoutEffect(() => {
+		const completed =
+			localStorage.getItem(
+				ONBOARDING_STORAGE_KEY,
+			);
+
+		if (completed === "true") {
+			setVisible(false);
+		}
+	}, []);
 
 	/*
 	 * ============================================================
@@ -91,17 +123,27 @@ export default function SplashScreen() {
 
 	/*
 	 * ============================================================
-	 * COMPLETE
+	 * COMPLETE ONBOARDING
 	 * ============================================================
 	 */
 
 	function completeOnboarding() {
+		/*
+		 * Simpan status terlebih dahulu.
+		 */
 		localStorage.setItem(
 			ONBOARDING_STORAGE_KEY,
 			"true",
 		);
 
-		window.location.reload();
+		/*
+		 * Jangan reload.
+		 *
+		 * Reload akan membuat component dibuat ulang
+		 * dan dapat menyebabkan onboarding terlihat
+		 * kembali.
+		 */
+		setVisible(false);
 	}
 
 	/*
@@ -110,554 +152,627 @@ export default function SplashScreen() {
 	 * ============================================================
 	 */
 
-	function changeSlide(
-		nextIndex: number,
-	) {
+	function goToSlide(index: number) {
+		if (animationLock.current) {
+			return;
+		}
+
 		if (
-			animationLock.current ||
-			nextIndex === slide ||
-			nextIndex < 0 ||
-			nextIndex >= TOTAL_SLIDES
+			index < 0 ||
+			index >= TOTAL_SLIDES ||
+			index === slide
 		) {
 			return;
 		}
 
-		setSlide(nextIndex);
+		setSlide(index);
 	}
 
 	function nextSlide() {
-		changeSlide(
-			Math.min(
-				slide + 1,
-				TOTAL_SLIDES - 1,
-			),
-		);
+		if (slide >= TOTAL_SLIDES - 1) {
+			return;
+		}
+
+		goToSlide(slide + 1);
 	}
 
 	function previousSlide() {
-		changeSlide(
-			Math.max(slide - 1, 0),
-		);
-	}
+		if (slide <= 0) {
+			return;
+		}
 
-	function goToSlide(index: number) {
-		changeSlide(
-			Math.max(
-				0,
-				Math.min(
-					index,
-					TOTAL_SLIDES - 1,
-				),
-			),
-		);
+		goToSlide(slide - 1);
 	}
 
 	/*
 	 * ============================================================
-	 * GSAP
+	 * GSAP SLIDE ANIMATION
 	 * ============================================================
 	 */
 
 	useLayoutEffect(() => {
-	const current =
-		slideRefs.current[slide];
+		if (!visible) {
+			return;
+		}
 
-	if (!current) {
-		return;
-	}
+		const currentSlide =
+			slideRefs.current[slide];
 
-	const previousIndex =
-		previousSlideRef.current;
+		if (!currentSlide) {
+			return;
+		}
 
-	const direction =
-		slide > previousIndex ? 1 : -1;
+		const previousIndex =
+			previousSlideRef.current;
 
-	const previous =
-		slideRefs.current[previousIndex];
+		const initial =
+			isFirstRender.current;
 
-	animationLock.current = true;
+		const direction =
+			slide > previousIndex ? 1 : -1;
 
-	/*
-	 * ============================================================
-	 * CLEANUP ALL SLIDES
-	 * ============================================================
-	 */
+		/*
+		 * Lock selama animation.
+		 */
+		animationLock.current = true;
 
-	slideRefs.current.forEach(
-		(element, index) => {
-			if (!element) {
-				return;
-			}
+		/*
+		 * Kill animation lama.
+		 */
+		gsap.killTweensOf(
+			slideRefs.current.filter(
+				Boolean,
+			),
+		);
 
-			gsap.killTweensOf(element);
+		/*
+		 * Kill floating character.
+		 */
+		if (floatingTween.current) {
+			floatingTween.current.kill();
+			floatingTween.current = null;
+		}
 
-			gsap.killTweensOf(
-				element.querySelectorAll(
-					"[data-gsap], [data-logo], [data-title], [data-description], [data-character], [data-feature], [data-indicators], [data-buttons], [data-start]",
-				),
-			);
+		/*
+		 * ========================================================
+		 * PREPARE ALL SLIDES
+		 * ========================================================
+		 */
 
-			/*
-			 * IMPORTANT
-			 *
-			 * Semua slide selain slide aktif
-			 * harus benar-benar invisible.
-			 *
-			 * Ini yang mencegah slide 1 dan 2
-			 * tampil bersamaan ketika pertama
-			 * kali halaman dibuka.
-			 */
-			if (index !== slide) {
+		slideRefs.current.forEach(
+			(element, index) => {
+				if (!element) {
+					return;
+				}
+
+				/*
+				 * Slide aktif.
+				 */
+				if (index === slide) {
+					return;
+				}
+
+				/*
+				 * Slide inactive.
+				 */
 				gsap.set(element, {
 					xPercent:
 						index < slide
 							? -100
 							: 100,
-					scale: 0.92,
+					yPercent: 0,
+					scale: 0.94,
 					opacity: 0,
-					filter: "blur(8px)",
+					filter:
+						"blur(8px)",
 					zIndex: 1,
+					pointerEvents:
+						"none",
 				});
-			}
-		},
-	);
-
-	/*
-	 * Kill floating character animation.
-	 */
-	if (floatingTween.current) {
-		floatingTween.current.kill();
-		floatingTween.current = null;
-	}
-
-	/*
-	 * ============================================================
-	 * CURRENT SLIDE INITIAL STATE
-	 * ============================================================
-	 */
-
-	gsap.set(current, {
-		xPercent: direction * 100,
-		scale: 0.92,
-		opacity: 0,
-		filter: "blur(8px)",
-		zIndex: 2,
-	});
-
-	/*
-	 * ============================================================
-	 * PREVIOUS SLIDE
-	 * ============================================================
-	 */
-
-	if (
-		previous &&
-		previous !== current
-	) {
-		gsap.to(previous, {
-			xPercent:
-				-direction * 100,
-			scale: 0.92,
-			opacity: 0,
-			filter: "blur(8px)",
-			duration: 0.55,
-			ease: "power3.inOut",
-			overwrite: true,
-		});
-	}
-
-	/*
-	 * ============================================================
-	 * HIDE CURRENT CONTENT
-	 * ============================================================
-	 */
-
-	const content =
-		current.querySelectorAll(
-			"[data-logo], [data-title], [data-description], [data-character], [data-feature], [data-indicators], [data-buttons], [data-start]",
+			},
 		);
 
-	gsap.set(content, {
-		opacity: 0,
-	});
+		/*
+		 * ========================================================
+		 * PREPARE CURRENT SLIDE
+		 * ========================================================
+		 */
 
-	/*
-	 * ============================================================
-	 * MASTER TIMELINE
-	 * ============================================================
-	 */
+		/*
+		 * Initial render:
+		 *
+		 * Slide 1 masuk dari bawah sedikit.
+		 *
+		 * Perpindahan slide:
+		 *
+		 * Slide masuk dari kiri / kanan.
+		 */
+		gsap.set(currentSlide, {
+			xPercent: initial
+				? 0
+				: direction * 100,
 
-	const master =
-		gsap.timeline({
-			overwrite: true,
+			yPercent: initial
+				? 5
+				: 0,
 
-			onComplete: () => {
-				animationLock.current =
-					false;
+			scale: initial
+				? 0.97
+				: 0.94,
 
-				previousSlideRef.current =
-					slide;
-			},
+			opacity: 0,
+
+			filter: "blur(8px)",
+
+			zIndex: 2,
+
+			pointerEvents: "auto",
 		});
 
-	/*
-	 * ============================================================
-	 * SLIDE CONTAINER
-	 * ============================================================
-	 */
-
-	master.to(
-		current,
-		{
-			xPercent: 0,
-			scale: 1,
-			opacity: 1,
-			filter: "blur(0px)",
-			duration: 0.7,
-			ease: "power4.out",
-		},
-		0,
-	);
-
-	/*
-	 * ============================================================
-	 * SLIDE 1
-	 * ============================================================
-	 */
-
-	if (slide === 0) {
-		const logo =
-			current.querySelector(
-				"[data-logo]",
-			);
-
-		const title =
-			current.querySelector(
-				"[data-title]",
-			);
-
-		const description =
-			current.querySelector(
-				"[data-description]",
-			);
-
-		const indicators =
-			current.querySelector(
-				"[data-indicators]",
-			);
-
-		const buttons =
-			current.querySelector(
-				"[data-buttons]",
-			);
-
 		/*
-		 * Logo
+		 * ========================================================
+		 * PREVIOUS SLIDE
+		 * ========================================================
 		 */
-		if (logo) {
-			gsap.set(logo, {
-				opacity: 0,
-				scale: 0.5,
-				y: 20,
-				rotation: -8,
-				filter: "blur(10px)",
-			});
 
-			master.to(
-				logo,
-				{
-					opacity: 1,
-					scale: 1,
-					y: 0,
-					rotation: 0,
-					filter: "blur(0px)",
-					duration: 0.8,
-					ease: "back.out(1.7)",
-				},
-				0.2,
-			);
-		}
+		const previousSlide =
+			initial
+				? null
+				: slideRefs.current[
+						previousIndex
+					];
 
-		/*
-		 * Title
-		 */
-		if (title) {
-			gsap.set(title, {
+		if (
+			previousSlide &&
+			previousSlide !== currentSlide
+		) {
+			gsap.to(previousSlide, {
+				xPercent:
+					-direction * 100,
+				yPercent: 0,
+				scale: 0.94,
 				opacity: 0,
-				y: 35,
 				filter: "blur(8px)",
+				duration: 0.55,
+				ease: "power3.inOut",
+				overwrite: true,
 			});
-
-			master.to(
-				title,
-				{
-					opacity: 1,
-					y: 0,
-					filter: "blur(0px)",
-					duration: 0.65,
-					ease: "power4.out",
-				},
-				0.4,
-			);
 		}
 
 		/*
-		 * Description
+		 * ========================================================
+		 * CURRENT CONTENT
+		 * ========================================================
 		 */
-		if (description) {
-			gsap.set(description, {
-				opacity: 0,
-				y: 25,
-			});
 
-			master.to(
-				description,
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.55,
-					ease: "power3.out",
-				},
-				0.7,
+		const animatedElements =
+			currentSlide.querySelectorAll(
+				"[data-logo], [data-title], [data-description], [data-character], [data-feature], [data-indicators], [data-buttons], [data-start]",
 			);
-		}
+
+		gsap.set(animatedElements, {
+			opacity: 0,
+		});
 
 		/*
-		 * Indicators
+		 * ========================================================
+		 * MASTER TIMELINE
+		 * ========================================================
 		 */
-		if (indicators) {
-			gsap.set(indicators, {
-				opacity: 0,
-				y: 15,
-			});
 
-			master.to(
-				indicators,
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.45,
-					ease: "power3.out",
+		const timeline =
+			gsap.timeline({
+				overwrite: true,
+
+				onComplete: () => {
+					animationLock.current =
+						false;
+
+					previousSlideRef.current =
+						slide;
+
+					isFirstRender.current =
+						false;
 				},
-				0.95,
-			);
-		}
+			});
 
 		/*
-		 * Buttons
+		 * ========================================================
+		 * SLIDE CONTAINER
+		 * ========================================================
 		 */
-		if (buttons) {
-			gsap.set(buttons, {
-				opacity: 0,
-				y: 25,
-				scale: 0.9,
-			});
 
-			master.to(
-				buttons,
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					duration: 0.6,
-					ease: "back.out(1.6)",
-				},
-				1.05,
-			);
-		}
-	}
+		timeline.to(
+			currentSlide,
+			{
+				xPercent: 0,
+				yPercent: 0,
+				scale: 1,
+				opacity: 1,
+				filter: "blur(0px)",
 
-	/*
-	 * ============================================================
-	 * SLIDE 2
-	 * ============================================================
-	 */
+				duration: initial
+					? 0.85
+					: 0.65,
 
-	if (slide === 1) {
-		const character =
-			current.querySelector(
-				"[data-character]",
-			);
-
-		const description =
-			current.querySelector(
-				"[data-description]",
-			);
-
-		const features =
-			current.querySelectorAll(
-				"[data-feature]",
-			);
-
-		const indicators =
-			current.querySelector(
-				"[data-indicators]",
-			);
-
-		const button =
-			current.querySelector(
-				"[data-start]",
-			);
+				ease: "power4.out",
+			},
+			0,
+		);
 
 		/*
-		 * Character
+		 * ========================================================
+		 * SLIDE 1 ANIMATION
+		 * ========================================================
 		 */
-		if (character) {
-			gsap.set(character, {
-				opacity: 0,
-				y: 70,
-				scale: 0.65,
-				rotation: -5,
-				filter: "blur(10px)",
-			});
 
-			master.to(
-				character,
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					rotation: 0,
-					filter: "blur(0px)",
-					duration: 0.9,
-					ease: "elastic.out(1, 0.65)",
-				},
-				0.15,
-			);
+		if (slide === 0) {
+			const logo =
+				currentSlide.querySelector(
+					"[data-logo]",
+				);
+
+			const title =
+				currentSlide.querySelector(
+					"[data-title]",
+				);
+
+			const description =
+				currentSlide.querySelector(
+					"[data-description]",
+				);
+
+			const indicators =
+				currentSlide.querySelector(
+					"[data-indicators]",
+				);
+
+			const buttons =
+				currentSlide.querySelector(
+					"[data-buttons]",
+				);
 
 			/*
-			 * Floating animation
+			 * Logo
 			 */
-			master.call(
-				() => {
-					floatingTween.current =
-						gsap.to(
-							character,
-							{
-								y: -7,
-								duration: 2.2,
-								ease: "sine.inOut",
-								yoyo: true,
-								repeat: -1,
-							},
-						);
-				},
-				[],
-				1.2,
-			);
+
+			if (logo) {
+				gsap.set(logo, {
+					opacity: 0,
+					scale: 0.55,
+					y: 25,
+					rotation: -8,
+					filter:
+						"blur(10px)",
+				});
+
+				timeline.to(
+					logo,
+					{
+						opacity: 1,
+						scale: 1,
+						y: 0,
+						rotation: 0,
+						filter:
+							"blur(0px)",
+						duration: 0.8,
+						ease:
+							"back.out(1.7)",
+					},
+					0.2,
+				);
+			}
+
+			/*
+			 * Title
+			 */
+
+			if (title) {
+				gsap.set(title, {
+					opacity: 0,
+					x: 35,
+					y: 10,
+					filter:
+						"blur(8px)",
+				});
+
+				timeline.to(
+					title,
+					{
+						opacity: 1,
+						x: 0,
+						y: 0,
+						filter:
+							"blur(0px)",
+						duration: 0.65,
+						ease:
+							"power4.out",
+					},
+					0.35,
+				);
+			}
+
+			/*
+			 * Description
+			 */
+
+			if (description) {
+				gsap.set(description, {
+					opacity: 0,
+					y: 25,
+				});
+
+				timeline.to(
+					description,
+					{
+						opacity: 1,
+						y: 0,
+						duration: 0.55,
+						ease:
+							"power3.out",
+					},
+					0.65,
+				);
+			}
+
+			/*
+			 * Indicators
+			 */
+
+			if (indicators) {
+				gsap.set(indicators, {
+					opacity: 0,
+					y: 15,
+				});
+
+				timeline.to(
+					indicators,
+					{
+						opacity: 1,
+						y: 0,
+						duration: 0.4,
+						ease:
+							"power3.out",
+					},
+					0.95,
+				);
+			}
+
+			/*
+			 * Buttons
+			 */
+
+			if (buttons) {
+				gsap.set(buttons, {
+					opacity: 0,
+					y: 25,
+					scale: 0.9,
+				});
+
+				timeline.to(
+					buttons,
+					{
+						opacity: 1,
+						y: 0,
+						scale: 1,
+						duration: 0.55,
+						ease:
+							"back.out(1.6)",
+					},
+					1.05,
+				);
+			}
 		}
 
 		/*
-		 * Description
+		 * ========================================================
+		 * SLIDE 2 ANIMATION
+		 * ========================================================
 		 */
-		if (description) {
-			gsap.set(description, {
-				opacity: 0,
-				y: 30,
-			});
 
-			master.to(
-				description,
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.55,
-					ease: "power3.out",
-				},
-				0.65,
-			);
+		if (slide === 1) {
+			const character =
+				currentSlide.querySelector(
+					"[data-character]",
+				);
+
+			const description =
+				currentSlide.querySelector(
+					"[data-description]",
+				);
+
+			const features =
+				currentSlide.querySelectorAll(
+					"[data-feature]",
+				);
+
+			const indicators =
+				currentSlide.querySelector(
+					"[data-indicators]",
+				);
+
+			const startButton =
+				currentSlide.querySelector(
+					"[data-start]",
+				);
+
+			/*
+			 * Character
+			 */
+
+			if (character) {
+				gsap.set(character, {
+					opacity: 0,
+					y: 70,
+					scale: 0.7,
+					rotation: -5,
+					filter:
+						"blur(10px)",
+				});
+
+				timeline.to(
+					character,
+					{
+						opacity: 1,
+						y: 0,
+						scale: 1,
+						rotation: 0,
+						filter:
+							"blur(0px)",
+						duration: 0.9,
+						ease:
+							"elastic.out(1, 0.65)",
+					},
+					0.1,
+				);
+			}
+
+			/*
+			 * Description
+			 */
+
+			if (description) {
+				gsap.set(description, {
+					opacity: 0,
+					y: 25,
+				});
+
+				timeline.to(
+					description,
+					{
+						opacity: 1,
+						y: 0,
+						duration: 0.55,
+						ease:
+							"power3.out",
+					},
+					0.6,
+				);
+			}
+
+			/*
+			 * Feature buttons
+			 */
+
+			if (features.length > 0) {
+				gsap.set(features, {
+					opacity: 0,
+					y: 20,
+					scale: 0.8,
+					rotationX: 20,
+				});
+
+				timeline.to(
+					features,
+					{
+						opacity: 1,
+						y: 0,
+						scale: 1,
+						rotationX: 0,
+						duration: 0.45,
+						ease:
+							"back.out(1.7)",
+						stagger: 0.08,
+					},
+					0.85,
+				);
+			}
+
+			/*
+			 * Indicators
+			 */
+
+			if (indicators) {
+				gsap.set(indicators, {
+					opacity: 0,
+					y: 15,
+				});
+
+				timeline.to(
+					indicators,
+					{
+						opacity: 1,
+						y: 0,
+						duration: 0.4,
+						ease:
+							"power3.out",
+					},
+					1.25,
+				);
+			}
+
+			/*
+			 * Get Started
+			 */
+
+			if (startButton) {
+				gsap.set(startButton, {
+					opacity: 0,
+					y: 25,
+					scale: 0.9,
+				});
+
+				timeline.to(
+					startButton,
+					{
+						opacity: 1,
+						y: 0,
+						scale: 1,
+						duration: 0.55,
+						ease:
+							"back.out(1.7)",
+					},
+					1.3,
+				);
+			}
+
+			/*
+			 * Floating character setelah
+			 * entrance animation selesai.
+			 */
+
+			if (character) {
+				timeline.call(
+					() => {
+						floatingTween.current =
+							gsap.to(
+								character,
+								{
+									y: -7,
+									duration: 2.2,
+									ease:
+										"sine.inOut",
+									yoyo: true,
+									repeat: -1,
+								},
+							);
+					},
+					[],
+					1.8,
+				);
+			}
 		}
 
 		/*
-		 * Feature cards
+		 * ========================================================
+		 * CLEANUP
+		 * ========================================================
 		 */
-		if (features.length) {
-			gsap.set(features, {
-				opacity: 0,
-				y: 25,
-				scale: 0.8,
-				rotationX: 20,
-			});
 
-			master.to(
-				features,
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					rotationX: 0,
-					duration: 0.5,
-					ease: "back.out(1.7)",
-					stagger: 0.08,
-				},
-				0.9,
-			);
-		}
+		return () => {
+			timeline.kill();
 
-		/*
-		 * Indicators
-		 */
-		if (indicators) {
-			gsap.set(indicators, {
-				opacity: 0,
-				y: 15,
-			});
-
-			master.to(
-				indicators,
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.45,
-					ease: "power3.out",
-				},
-				1.35,
-			);
-		}
-
-		/*
-		 * Get Started
-		 */
-		if (button) {
-			gsap.set(button, {
-				opacity: 0,
-				y: 30,
-				scale: 0.9,
-			});
-
-			master.to(
-				button,
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					duration: 0.6,
-					ease: "back.out(1.7)",
-				},
-				1.42,
-			);
-		}
-	}
+			if (floatingTween.current) {
+				floatingTween.current.kill();
+				floatingTween.current =
+					null;
+			}
+		};
+	}, [slide, visible]);
 
 	/*
 	 * ============================================================
-	 * CLEANUP
-	 * ============================================================
-	 */
-
-	return () => {
-		master.kill();
-
-		if (floatingTween.current) {
-			floatingTween.current.kill();
-			floatingTween.current = null;
-		}
-	};
-}, [slide]);
-
-	/*
-	 * ============================================================
-	 * INTERACTIVE TARGET
+	 * SWIPE HELPERS
 	 * ============================================================
 	 */
 
@@ -693,6 +808,9 @@ export default function SplashScreen() {
 			return;
 		}
 
+		/*
+		 * Jangan mulai swipe dari tombol/link.
+		 */
 		if (
 			isInteractiveTarget(
 				event.target,
@@ -700,7 +818,6 @@ export default function SplashScreen() {
 		) {
 			touchStartX.current = null;
 			touchStartY.current = null;
-			isSwiping.current = false;
 
 			return;
 		}
@@ -710,47 +827,6 @@ export default function SplashScreen() {
 
 		touchStartY.current =
 			event.clientY;
-
-		isSwiping.current = false;
-	}
-
-	/*
-	 * ============================================================
-	 * POINTER MOVE
-	 * ============================================================
-	 */
-
-	function handlePointerMove(
-		event: React.PointerEvent<HTMLDivElement>,
-	) {
-		if (
-			touchStartX.current === null ||
-			touchStartY.current === null
-		) {
-			return;
-		}
-
-		const deltaX =
-			event.clientX -
-			touchStartX.current;
-
-		const deltaY =
-			event.clientY -
-			touchStartY.current;
-
-		if (
-			Math.abs(deltaY) >
-			Math.abs(deltaX)
-		) {
-			return;
-		}
-
-		if (
-			Math.abs(deltaX) >=
-			SWIPE_THRESHOLD
-		) {
-			isSwiping.current = true;
-		}
 	}
 
 	/*
@@ -777,41 +853,51 @@ export default function SplashScreen() {
 			event.clientY -
 			touchStartY.current;
 
-		const isHorizontal =
-			Math.abs(deltaX) >
-			Math.abs(deltaY);
-
-		const isLongEnough =
-			Math.abs(deltaX) >=
-			SWIPE_THRESHOLD;
-
 		touchStartX.current = null;
 		touchStartY.current = null;
 
+		/*
+		 * Harus horizontal.
+		 */
 		if (
-			!isHorizontal ||
-			!isLongEnough
+			Math.abs(deltaX) <
+			Math.abs(deltaY)
 		) {
-			isSwiping.current = false;
 			return;
 		}
 
-		isSwiping.current = true;
+		/*
+		 * Harus melewati threshold.
+		 */
+		if (
+			Math.abs(deltaX) <
+			SWIPE_THRESHOLD
+		) {
+			return;
+		}
 
+		/*
+		 * Swipe kiri.
+		 */
 		if (deltaX < 0) {
 			nextSlide();
 		}
 
+		/*
+		 * Swipe kanan.
+		 */
 		if (deltaX > 0) {
 			previousSlide();
 		}
 
+		/*
+		 * Jangan biarkan gesture menjadi click.
+		 */
 		suppressClick.current = true;
 
 		window.setTimeout(() => {
 			suppressClick.current =
 				false;
-			isSwiping.current = false;
 		}, 350);
 	}
 
@@ -824,7 +910,6 @@ export default function SplashScreen() {
 	function handlePointerCancel() {
 		touchStartX.current = null;
 		touchStartY.current = null;
-		isSwiping.current = false;
 	}
 
 	/*
@@ -861,6 +946,16 @@ export default function SplashScreen() {
 
 	/*
 	 * ============================================================
+	 * HIDE SPLASH
+	 * ============================================================
+	 */
+
+	if (!visible) {
+		return null;
+	}
+
+	/*
+	 * ============================================================
 	 * RENDER
 	 * ============================================================
 	 */
@@ -869,20 +964,9 @@ export default function SplashScreen() {
 		<div className="fixed inset-0 z-[99999] overflow-hidden bg-[#111111]">
 			<div className="mx-auto flex h-full w-full max-w-md flex-col">
 				<div
-					ref={viewportRef}
-					className="
-						relative
-						min-h-0
-						flex-1
-						overflow-hidden
-						touch-pan-y
-						select-none
-					"
+					className="relative min-h-0 flex-1 overflow-hidden touch-pan-y select-none"
 					onPointerDown={
 						handlePointerDown
-					}
-					onPointerMove={
-						handlePointerMove
 					}
 					onPointerUp={
 						handlePointerUp
@@ -907,14 +991,18 @@ export default function SplashScreen() {
 							"absolute inset-0 flex flex-col",
 							"items-center",
 							"px-5 py-6 sm:px-8 sm:py-8",
+							"opacity-0",
+							"will-change-transform",
 							slide === 0
 								? "pointer-events-auto"
 								: "pointer-events-none",
 						].join(" ")}
 					>
 						{/* Main */}
+
 						<div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
 							{/* Logo + Title */}
+
 							<div className="flex w-full items-center justify-center gap-3 sm:gap-4">
 								<div
 									data-logo
@@ -925,22 +1013,14 @@ export default function SplashScreen() {
 										alt="Special Lazyness"
 										fill
 										priority
-										sizes="
-											(max-width: 640px) 48px,
-											(max-width: 768px) 56px,
-											64px
-										"
+										sizes="64px"
 										className="rounded-full object-contain"
 									/>
 								</div>
 
 								<h1
 									data-title
-									className="
-										text-[clamp(1.5rem,6vw,2rem)]
-										leading-[0.95]
-										text-[#e5f56a]
-									"
+									className="text-[clamp(1.5rem,6vw,2rem)] leading-[0.95] text-[#e5f56a]"
 									style={{
 										fontFamily:
 											"Georgia, serif",
@@ -953,19 +1033,10 @@ export default function SplashScreen() {
 							</div>
 
 							{/* Description */}
+
 							<p
 								data-description
-								className="
-									mt-6
-									w-full
-									max-w-[280px]
-									text-center
-									text-[clamp(0.7rem,2.5vw,0.875rem)]
-									leading-relaxed
-									text-white/60
-									sm:mt-8
-									sm:max-w-[320px]
-								"
+								className="mt-6 w-full max-w-[280px] text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-relaxed text-white/60 sm:mt-8 sm:max-w-[320px]"
 							>
 								A Whiteout Survival
 								calculator and
@@ -980,8 +1051,10 @@ export default function SplashScreen() {
 						</div>
 
 						{/* Bottom */}
+
 						<div className="flex w-full shrink-0 flex-col items-center">
-							{/* Indicators */}
+							{/* Indicator */}
+
 							<div
 								data-indicators
 								className="mb-4 flex items-center gap-1"
@@ -990,22 +1063,16 @@ export default function SplashScreen() {
 									type="button"
 									aria-label="Go to slide 1"
 									onClick={() =>
-										goToSlide(
-											0,
-										)
+										goToSlide(0)
 									}
 									className="flex size-5 items-center justify-center"
 								>
 									<span
-										className={[
-											"size-1.5 rounded-full",
-											slide ===
-											0
+										className={`size-1.5 rounded-full transition-all duration-300 ${
+											slide === 0
 												? "bg-white"
-												: "bg-white/30",
-										].join(
-											" ",
-										)}
+												: "bg-white/30"
+										}`}
 									/>
 								</button>
 
@@ -1013,54 +1080,30 @@ export default function SplashScreen() {
 									type="button"
 									aria-label="Go to slide 2"
 									onClick={() =>
-										goToSlide(
-											1,
-										)
+										goToSlide(1)
 									}
 									className="flex size-5 items-center justify-center"
 								>
 									<span
-										className={[
-											"size-1.5 rounded-full",
-											slide ===
-											1
+										className={`size-1.5 rounded-full transition-all duration-300 ${
+											slide === 1
 												? "bg-white"
-												: "bg-white/30",
-										].join(
-											" ",
-										)}
+												: "bg-white/30 hover:bg-white/60"
+										}`}
 									/>
 								</button>
 							</div>
 
 							{/* Buttons */}
+
 							<div
 								data-buttons
 								className="flex w-full max-w-[280px] items-center justify-center gap-2 sm:max-w-[320px] sm:gap-3"
 							>
 								<button
 									type="button"
-									onClick={
-										nextSlide
-									}
-									className="
-										min-w-0
-										flex-1
-										rounded-full
-										border
-										border-white/40
-										px-4
-										py-2.5
-										text-[clamp(0.7rem,2.5vw,0.875rem)]
-										font-medium
-										tracking-wide
-										text-white/80
-										transition-all
-										hover:border-white
-										hover:bg-white/5
-										hover:text-white
-										active:scale-95
-									"
+									onClick={nextSlide}
+									className="min-w-0 flex-1 rounded-full border border-white/40 px-4 py-2.5 text-[clamp(0.7rem,2.5vw,0.875rem)] font-medium tracking-wide text-white/80 transition-all hover:border-white hover:bg-white/5 hover:text-white active:scale-95"
 								>
 									NEXT
 								</button>
@@ -1070,23 +1113,7 @@ export default function SplashScreen() {
 									onClick={
 										completeOnboarding
 									}
-									className="
-										min-w-0
-										flex-1
-										rounded-full
-										border
-										border-white/20
-										px-4
-										py-2.5
-										text-[clamp(0.7rem,2.5vw,0.875rem)]
-										font-medium
-										tracking-wide
-										text-white/50
-										transition-all
-										hover:border-white/40
-										hover:text-white
-										active:scale-95
-									"
+									className="min-w-0 flex-1 rounded-full border border-white/20 px-4 py-2.5 text-[clamp(0.7rem,2.5vw,0.875rem)] font-medium tracking-wide text-white/50 transition-all hover:border-white/40 hover:text-white active:scale-95"
 								>
 									SKIP
 								</button>
@@ -1107,49 +1134,37 @@ export default function SplashScreen() {
 							"absolute inset-0 flex flex-col",
 							"items-center",
 							"px-5 py-6 sm:px-8 sm:py-8",
+							"opacity-0",
+							"will-change-transform",
 							slide === 1
 								? "pointer-events-auto"
 								: "pointer-events-none",
 						].join(" ")}
 					>
 						{/* Main */}
+
 						<div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
 							{/* Character */}
+
 							<div
 								data-character
-								className="
-									relative
-									h-[clamp(180px,35vh,260px)]
-									w-[clamp(160px,55vw,230px)]
-									shrink-0
-								"
+								className="relative h-[clamp(180px,35vh,260px)] w-[clamp(160px,55vw,230px)] shrink-0"
 							>
 								<Image
 									src="/icons/splash2.png"
 									alt="Special Lazyness"
 									fill
 									priority
-									sizes="
-										(max-width: 640px) 55vw,
-										230px
-									"
+									sizes="230px"
 									className="object-contain"
 								/>
 							</div>
 
 							{/* Description */}
+
 							<p
 								data-description
-								className="
-									mt-4
-									w-full
-									max-w-[300px]
-									text-center
-									text-[clamp(0.7rem,2.5vw,0.875rem)]
-									leading-relaxed
-									text-white/60
-									sm:max-w-[340px]
-								"
+								className="mt-4 w-full max-w-[300px] text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-relaxed text-white/60 sm:max-w-[340px]"
 							>
 								Everything you need
 								to plan your Whiteout
@@ -1163,47 +1178,19 @@ export default function SplashScreen() {
 							</p>
 
 							{/* Feature Pills */}
-							<div
-								className="
-									mt-5
-									grid
-									w-full
-									max-w-[320px]
-									grid-cols-2
-									gap-2
-									sm:max-w-[340px]
-									sm:gap-2.5
-								"
-							>
+
+							<div className="mt-5 grid w-full max-w-[320px] grid-cols-2 gap-2 sm:max-w-[340px] sm:gap-2.5">
 								{featureItems.map(
 									(feature) => {
-										const isAvailable =
+										const available =
 											feature.href !==
 											"#";
 
-										const classes = `
-											flex
-											min-w-0
-											items-center
-											justify-center
-											gap-1.5
-											rounded-full
-											bg-white/10
-											px-2.5
-											py-2
-											text-[clamp(0.6rem,2vw,0.7rem)]
-											text-white/80
-											transition-all
-											sm:px-3
-											${
-												isAvailable
-													? "hover:bg-white/15 hover:text-white active:scale-95"
-													: ""
-											}
-										`;
+										const className =
+											"flex min-w-0 items-center justify-center gap-1.5 rounded-full bg-white/10 px-2.5 py-2 text-[clamp(0.6rem,2vw,0.7rem)] text-white/80 transition-all sm:px-3";
 
 										if (
-											!isAvailable
+											!available
 										) {
 											return (
 												<div
@@ -1212,7 +1199,7 @@ export default function SplashScreen() {
 													}
 													data-feature
 													className={
-														classes
+														className
 													}
 												>
 													<span className="min-w-0 truncate">
@@ -1240,9 +1227,7 @@ export default function SplashScreen() {
 												onClick={
 													handleFeatureClick
 												}
-												className={
-													classes
-												}
+												className={`${className} hover:bg-white/15 hover:text-white active:scale-95`}
 											>
 												<span className="min-w-0 truncate">
 													{
@@ -1261,8 +1246,10 @@ export default function SplashScreen() {
 						</div>
 
 						{/* Bottom */}
+
 						<div className="flex w-full shrink-0 flex-col items-center pt-5">
 							{/* Indicator */}
+
 							<div
 								data-indicators
 								className="mb-4 flex items-center gap-1"
@@ -1282,9 +1269,7 @@ export default function SplashScreen() {
 									type="button"
 									aria-label="Go to slide 2"
 									onClick={() =>
-										goToSlide(
-											1,
-										)
+										goToSlide(1)
 									}
 									className="flex size-5 items-center justify-center"
 								>
@@ -1293,27 +1278,14 @@ export default function SplashScreen() {
 							</div>
 
 							{/* Get Started */}
+
 							<button
 								data-start
 								type="button"
 								onClick={
 									completeOnboarding
 								}
-								className="
-									w-full
-									max-w-[320px]
-									rounded-full
-									bg-white
-									px-6
-									py-3
-									text-[clamp(0.7rem,2.5vw,0.875rem)]
-									font-semibold
-									tracking-wide
-									text-[#111111]
-									transition-transform
-									hover:scale-[1.02]
-									active:scale-[0.98]
-								"
+								className="w-full max-w-[320px] rounded-full bg-white px-6 py-3 text-[clamp(0.7rem,2.5vw,0.875rem)] font-semibold tracking-wide text-[#111111] transition-all hover:scale-[1.02] active:scale-[0.98]"
 							>
 								GET STARTED
 							</button>

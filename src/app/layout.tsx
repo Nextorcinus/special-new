@@ -1,10 +1,13 @@
-import type { Metadata, Viewport } from "next";
+import type {
+	Metadata,
+	Viewport,
+} from "next";
+
 import { Geist } from "next/font/google";
 
 import AppToaster from "@/components/ui/toaster";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 import SplashScreen from "@/components/onboarding/SplashScreen";
-
 import ThemeProvider from "@/providers/ThemeProvider";
 
 import "@/styles/globals.css";
@@ -55,10 +58,12 @@ export default function RootLayout({
 			suppressHydrationWarning
 			className={`${geist.variable} h-full antialiased`}
 		>
-			<body className="flex min-h-full flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
+			<body className="flex min-h-full flex-col bg-[#111111] text-[var(--sl-text)]">
 				<ThemeProvider>
+					{/* Onboarding */}
 					<SplashScreen />
 
+					{/* Application */}
 					<main className="pb-28 md:pb-0">
 						{children}
 					</main>

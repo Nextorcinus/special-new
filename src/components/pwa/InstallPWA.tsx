@@ -35,7 +35,7 @@ export default function InstallPWA() {
 	const [isIOS, setIsIOS] =
 		useState(false);
 
-	const [showIOSGuide, setShowIOSGuide] =
+	const [showGuide, setShowGuide] =
 		useState(false);
 
 	useEffect(() => {
@@ -91,7 +91,7 @@ export default function InstallPWA() {
 
 		/*
 		 * ============================================================
-		 * Android / Chrome install prompt
+		 * Android / Chrome / Edge install prompt
 		 * ============================================================
 		 */
 
@@ -110,22 +110,45 @@ export default function InstallPWA() {
 			handleBeforeInstallPrompt,
 		);
 
+		/*
+		 * ============================================================
+		 * Detect when PWA gets installed
+		 * ============================================================
+		 */
+
+		function handleAppInstalled() {
+			setIsInstalled(true);
+			setInstallPrompt(null);
+			setShowGuide(false);
+		}
+
+		window.addEventListener(
+			"appinstalled",
+			handleAppInstalled,
+		);
+
 		return () => {
 			window.removeEventListener(
 				"beforeinstallprompt",
 				handleBeforeInstallPrompt,
+			);
+
+			window.removeEventListener(
+				"appinstalled",
+				handleAppInstalled,
 			);
 		};
 	}, []);
 
 	/*
 	 * ================================================================
-	 * Android / supported browser
+	 * Install using native browser prompt
 	 * ================================================================
 	 */
 
 	async function handleInstall() {
 		if (!installPrompt) {
+			setShowGuide(true);
 			return;
 		}
 
@@ -143,7 +166,7 @@ export default function InstallPWA() {
 
 	/*
 	 * ================================================================
-	 * Don't render when already installed
+	 * Already installed
 	 * ================================================================
 	 */
 
@@ -151,154 +174,187 @@ export default function InstallPWA() {
 		return null;
 	}
 
-	/*
-	 * ================================================================
-	 * iOS
-	 * ================================================================
-	 */
+	return (
+		<>
+			{/* Install / Save button */}
 
-	if (isIOS) {
-		return (
-			<>
-				<button
-					type="button"
-					onClick={() =>
-						setShowIOSGuide(
-							true,
-						)
-					}
-					className="flex items-center gap-2 rounded-xl bg-[var(--sl-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--sl-primary-foreground)] transition-all hover:opacity-90 active:scale-[0.98]"
-				>
-					<Download className="size-4" />
+			<button
+				type="button"
+				onClick={handleInstall}
+				className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--sl-primary)] px-4 py-3 text-sm font-bold text-[var(--sl-primary-foreground)] transition-all hover:opacity-90 active:scale-[0.98]"
+			>
+				<Download className="size-4" />
 
-					<span>
-						Add to Home Screen
-					</span>
-				</button>
+				<span>
+					Save to Home Screen
+				</span>
+			</button>
 
-				{showIOSGuide && (
-					<div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-						<button
-							type="button"
-							aria-label="Close"
-							onClick={() =>
-								setShowIOSGuide(
-									false,
-								)
-							}
-							className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-						/>
+			{/* ========================================================
+			    Installation Guide
+			    ======================================================== */}
 
-						<div className="relative z-10 w-full max-w-sm rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 shadow-2xl">
-							<div className="flex items-start justify-between gap-4">
-								<div>
-									<h2 className="text-base font-semibold text-[var(--sl-text)]">
-										Add Special Lazyness
-									</h2>
+			{showGuide && (
+				<div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+					{/* Backdrop */}
 
-									<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
-										Add this website to your
-										Home Screen for quick
-										access.
-									</p>
-								</div>
+					<button
+						type="button"
+						aria-label="Close"
+						onClick={() =>
+							setShowGuide(false)
+						}
+						className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+					/>
 
-								<button
-									type="button"
-									onClick={() =>
-										setShowIOSGuide(
-											false,
-										)
-									}
-									className="flex size-8 shrink-0 items-center justify-center rounded-lg text-[var(--sl-text-muted)] transition-colors hover:bg-white/10"
-								>
-									<X className="size-4" />
-								</button>
-							</div>
+					{/* Modal */}
 
-							<div className="mt-5 space-y-4">
-								<div className="flex items-start gap-3">
-									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-										1
-									</div>
+					<div className="relative z-10 w-full max-w-sm rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 shadow-2xl">
+						{/* Header */}
 
-									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-										Tap the{" "}
-										<Share className="mx-1 inline size-4 align-text-bottom" />{" "}
-										Share button in
-										Safari.
-									</p>
-								</div>
+						<div className="flex items-start justify-between gap-4">
+							<div>
+								<h2 className="text-base font-semibold text-[var(--sl-text)]">
+									Save Special Lazyness
+								</h2>
 
-								<div className="flex items-start gap-3">
-									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-										2
-									</div>
-
-									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-										Scroll down and
-										select{" "}
-										<span className="font-semibold text-[var(--sl-text)]">
-											Add to Home Screen
-										</span>
-										.
-									</p>
-								</div>
-
-								<div className="flex items-start gap-3">
-									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-										3
-									</div>
-
-									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-										Tap{" "}
-										<span className="font-semibold text-[var(--sl-text)]">
-											Add
-										</span>{" "}
-										to finish.
-									</p>
-								</div>
+								<p className="mt-1 text-xs leading-relaxed text-[var(--sl-text-muted)]">
+									Add Special Lazyness
+									to your Home Screen
+									for quick access.
+								</p>
 							</div>
 
 							<button
 								type="button"
 								onClick={() =>
-									setShowIOSGuide(
+									setShowGuide(
 										false,
 									)
 								}
-								className="mt-6 h-11 w-full rounded-xl bg-[var(--sl-primary)] text-sm font-semibold text-[var(--sl-primary-foreground)] transition-opacity hover:opacity-90"
+								aria-label="Close"
+								className="flex size-8 shrink-0 items-center justify-center rounded-lg text-[var(--sl-text-muted)] transition-colors hover:bg-white/10 hover:text-[var(--sl-text)]"
 							>
-								Got it
+								<X className="size-4" />
 							</button>
 						</div>
+
+						{/* Steps */}
+
+						<div className="mt-5 space-y-4">
+							{/* iOS */}
+
+							{isIOS ? (
+								<>
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											1
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Tap the{" "}
+											<Share className="mx-1 inline size-4 align-text-bottom" />{" "}
+											Share button
+											in Safari.
+										</p>
+									</div>
+
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											2
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Select{" "}
+											<span className="font-semibold text-[var(--sl-text)]">
+												Add to Home
+												Screen
+											</span>
+											.
+										</p>
+									</div>
+
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											3
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Tap{" "}
+											<span className="font-semibold text-[var(--sl-text)]">
+												Add
+											</span>{" "}
+											to finish.
+										</p>
+									</div>
+								</>
+							) : (
+								<>
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											1
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Open your
+											browser menu
+											using the{" "}
+											<span className="font-semibold text-[var(--sl-text)]">
+												⋮
+											</span>{" "}
+											button.
+										</p>
+									</div>
+
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											2
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Select{" "}
+											<span className="font-semibold text-[var(--sl-text)]">
+												Add to Home
+												Screen
+											</span>{" "}
+											or{" "}
+											<span className="font-semibold text-[var(--sl-text)]">
+												Install App
+											</span>
+											.
+										</p>
+									</div>
+
+									<div className="flex items-start gap-3">
+										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+											3
+										</div>
+
+										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+											Confirm the
+											installation.
+										</p>
+									</div>
+								</>
+							)}
+						</div>
+
+						{/* Close */}
+
+						<button
+							type="button"
+							onClick={() =>
+								setShowGuide(
+									false,
+								)
+							}
+							className="mt-6 h-11 w-full rounded-xl bg-[var(--sl-primary)] text-sm font-semibold text-[var(--sl-primary-foreground)] transition-opacity hover:opacity-90"
+						>
+							Got it
+						</button>
 					</div>
-				)}
-			</>
-		);
-	}
-
-	/*
-	 * ================================================================
-	 * Android / Chrome
-	 * ================================================================
-	 */
-
-	if (!installPrompt) {
-		return null;
-	}
-
-	return (
-		<button
-			type="button"
-			onClick={handleInstall}
-			className="flex items-center gap-2 rounded-xl bg-[var(--sl-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--sl-primary-foreground)] transition-all hover:opacity-90 active:scale-[0.98]"
-		>
-			<Download className="size-4" />
-
-			<span>
-				Install Special Lazyness
-			</span>
-		</button>
+				</div>
+			)}
+		</>
 	);
 }
