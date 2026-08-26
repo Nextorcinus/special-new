@@ -59,7 +59,7 @@ export default function RootLayout({
 			suppressHydrationWarning
 			className={`${geist.variable} h-full antialiased`}
 		>
-			<body className="flex min-h-full flex-col bg-[#111111] text-[var(--sl-text)]">
+			<body className="flex min-h-full flex-col bg-[var(--sl-background)] text-[var(--sl-text)]">
 				<ThemeProvider>
 					{/* PWA */}
 					<PWARegister />

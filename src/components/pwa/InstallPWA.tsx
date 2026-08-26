@@ -25,27 +25,41 @@ export default function InstallPWA() {
 	const [
 		installPrompt,
 		setInstallPrompt,
-	] = useState<BeforeInstallPromptEvent | null>(
-		null,
-	);
+	] =
+		useState<BeforeInstallPromptEvent | null>(
+			null,
+		);
 
-	const [isInstalled, setIsInstalled] =
-		useState(false);
+	const [
+		isInstalled,
+		setIsInstalled,
+	] = useState(false);
 
-	const [isIOS, setIsIOS] =
-		useState(false);
+	const [
+		isIOS,
+		setIsIOS,
+	] = useState(false);
 
-	const [showGuide, setShowGuide] =
-		useState(false);
+	const [
+		showGuide,
+		setShowGuide,
+	] = useState(false);
 
-	const [promptAvailable, setPromptAvailable] =
-		useState(false);
+	/*
+	 * ============================================================
+	 * Detect PWA state
+	 * ============================================================
+	 */
 
 	useEffect(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+
 		/*
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 * Detect installed PWA
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 */
 
 		const standalone =
@@ -72,15 +86,15 @@ export default function InstallPWA() {
 		}
 
 		/*
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 * Detect iOS
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 */
 
 		const userAgent =
 			window.navigator.userAgent;
 
-		const iOS =
+		const detectedIOS =
 			/iPad|iPhone|iPod/.test(
 				userAgent,
 			) ||
@@ -91,32 +105,33 @@ export default function InstallPWA() {
 					1
 			);
 
-		setIsIOS(iOS);
+		setIsIOS(detectedIOS);
 
 		/*
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 * beforeinstallprompt
-		 * ============================================================
+		 *
+		 * Chrome / Edge may fire this event.
+		 *
+		 * We DO NOT assume it will always fire.
+		 * ------------------------------------------------------------
 		 */
 
-		function handleBeforeInstallPrompt(
-			event: Event,
-		) {
-			console.log(
-				"[PWA] beforeinstallprompt fired",
-			);
+		const handleBeforeInstallPrompt =
+			(event: Event) => {
+				event.preventDefault();
 
-			event.preventDefault();
+				const promptEvent =
+					event as BeforeInstallPromptEvent;
 
-			const promptEvent =
-				event as BeforeInstallPromptEvent;
+				setInstallPrompt(
+					promptEvent,
+				);
 
-			setInstallPrompt(
-				promptEvent,
-			);
-
-			setPromptAvailable(true);
-		}
+				console.log(
+					"[PWA] Native install prompt available.",
+				);
+			};
 
 		window.addEventListener(
 			"beforeinstallprompt",
@@ -124,21 +139,21 @@ export default function InstallPWA() {
 		);
 
 		/*
-		 * ============================================================
-		 * appinstalled
-		 * ============================================================
+		 * ------------------------------------------------------------
+		 * Detect successful installation
+		 * ------------------------------------------------------------
 		 */
 
-		function handleAppInstalled() {
-			console.log(
-				"[PWA] Application installed",
-			);
+		const handleAppInstalled =
+			() => {
+				console.log(
+					"[PWA] Application installed.",
+				);
 
-			setIsInstalled(true);
-			setInstallPrompt(null);
-			setPromptAvailable(false);
-			setShowGuide(false);
-		}
+				setIsInstalled(true);
+				setInstallPrompt(null);
+				setShowGuide(false);
+			};
 
 		window.addEventListener(
 			"appinstalled",
@@ -146,9 +161,9 @@ export default function InstallPWA() {
 		);
 
 		/*
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 * Cleanup
-		 * ============================================================
+		 * ------------------------------------------------------------
 		 */
 
 		return () => {
@@ -165,95 +180,128 @@ export default function InstallPWA() {
 	}, []);
 
 	/*
-	 * ================================================================
-	 * Native installation
-	 * ================================================================
+	 * ============================================================
+	 * Native install
+	 * ============================================================
+	 */
+
+	async function handleNativeInstall() {
+		if (!installPrompt) {
+			return false;
+		}
+
+		try {
+			console.log(
+				"[PWA] Opening native install prompt.",
+			);
+
+			await installPrompt.prompt();
+
+			const result =
+				await installPrompt.userChoice;
+
+			console.log(
+				"[PWA] Install result:",
+				result.outcome,
+			);
+
+			/*
+			 * beforeinstallprompt can normally
+			 * only be used once.
+			 */
+
+			setInstallPrompt(null);
+
+			if (
+				result.outcome ===
+				"accepted"
+			) {
+				setShowGuide(false);
+				setIsInstalled(true);
+
+				return true;
+			}
+
+			return false;
+		} catch (error) {
+			console.error(
+				"[PWA] Native install failed:",
+				error,
+			);
+
+			setInstallPrompt(null);
+
+			return false;
+		}
+	}
+
+	/*
+	 * ============================================================
+	 * Main button
+	 * ============================================================
 	 */
 
 	async function handleInstall() {
-		console.log(
-			"[PWA] Install clicked",
-		);
-
-		console.log(
-			"[PWA] Prompt available:",
-			Boolean(installPrompt),
-		);
-
 		/*
-		 * ------------------------------------------------------------
-		 * iOS
-		 * ------------------------------------------------------------
+		 * iOS does not support beforeinstallprompt.
 		 */
 
 		if (isIOS) {
 			setShowGuide(true);
+			return;
+		}
+
+		/*
+		 * Native browser prompt available.
+		 */
+
+		if (installPrompt) {
+			const installed =
+				await handleNativeInstall();
+
+			if (installed) {
+				return;
+			}
+
+			/*
+			 * If the native prompt failed
+			 * or was dismissed, don't force
+			 * the user into another dialog.
+			 */
 
 			return;
 		}
 
 		/*
-		 * ------------------------------------------------------------
-		 * Native Chrome / Edge install prompt
-		 * ------------------------------------------------------------
+		 * Native prompt unavailable.
+		 *
+		 * This is normal on some Chrome
+		 * sessions/devices.
+		 *
+		 * Show browser installation guide.
 		 */
-
-		if (installPrompt) {
-			try {
-				console.log(
-					"[PWA] Opening native install prompt",
-				);
-
-				setShowGuide(false);
-
-				await installPrompt.prompt();
-
-				const result =
-					await installPrompt.userChoice;
-
-				console.log(
-					"[PWA] User choice:",
-					result.outcome,
-				);
-
-				if (
-					result.outcome ===
-					"accepted"
-				) {
-					setInstallPrompt(null);
-					setPromptAvailable(false);
-				}
-
-				return;
-			} catch (error) {
-				console.error(
-					"[PWA] Failed to open install prompt:",
-					error,
-				);
-
-				setShowGuide(true);
-
-				return;
-			}
-		}
-
-		/*
-		 * ------------------------------------------------------------
-		 * Native prompt unavailable
-		 * ------------------------------------------------------------
-		 */
-
-		console.warn(
-			"[PWA] beforeinstallprompt is not available.",
-		);
 
 		setShowGuide(true);
 	}
 
 	/*
-	 * ================================================================
+	 * ============================================================
+	 * Install App inside guide
+	 * ============================================================
+	 */
+
+	async function handleInstallFromGuide() {
+		if (!installPrompt) {
+			return;
+		}
+
+		await handleNativeInstall();
+	}
+
+	/*
+	 * ============================================================
 	 * Already installed
-	 * ================================================================
+	 * ============================================================
 	 */
 
 	if (isInstalled) {
@@ -263,7 +311,7 @@ export default function InstallPWA() {
 	return (
 		<>
 			{/* ========================================================
-			    Save / Install Button
+			    Save to Home Screen
 			    ======================================================== */}
 
 			<button
@@ -290,9 +338,7 @@ export default function InstallPWA() {
 						type="button"
 						aria-label="Close"
 						onClick={() =>
-							setShowGuide(
-								false,
-							)
+							setShowGuide(false)
 						}
 						className="absolute inset-0 bg-black/60 backdrop-blur-sm"
 					/>
@@ -331,138 +377,130 @@ export default function InstallPWA() {
 							</button>
 						</div>
 
-						{/* Steps */}
+						{/* ==================================================
+						    iOS
+						    ================================================== */}
 
-						<div className="mt-5 space-y-4">
-							{isIOS ? (
-								<>
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											1
-										</div>
-
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Tap the{" "}
-											<Share className="mx-1 inline size-4 align-text-bottom" />{" "}
-											Share
-											button
-											in
-											Safari.
-										</p>
+						{isIOS ? (
+							<div className="mt-5 space-y-4">
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										1
 									</div>
 
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											2
-										</div>
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Tap the{" "}
+										<Share className="mx-1 inline size-4 align-text-bottom" />{" "}
+										Share button
+										in Safari.
+									</p>
+								</div>
 
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Select{" "}
-											<span className="font-semibold text-[var(--sl-text)]">
-												Add to
-												Home
-												Screen
-											</span>
-											.
-										</p>
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										2
 									</div>
 
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											3
-										</div>
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Select{" "}
+										<span className="font-semibold text-[var(--sl-text)]">
+											Add to
+											Home
+											Screen
+										</span>
+										.
+									</p>
+								</div>
 
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Tap{" "}
-											<span className="font-semibold text-[var(--sl-text)]">
-												Add
-											</span>{" "}
-											to
-											finish.
-										</p>
-									</div>
-								</>
-							) : (
-								<>
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											1
-										</div>
-
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Open your
-											browser
-											menu
-											using
-											the{" "}
-											<span className="font-semibold text-[var(--sl-text)]">
-												⋮
-											</span>{" "}
-											button.
-										</p>
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										3
 									</div>
 
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											2
-										</div>
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Tap{" "}
+										<span className="font-semibold text-[var(--sl-text)]">
+											Add
+										</span>{" "}
+										to finish.
+									</p>
+								</div>
+							</div>
+						) : (
+							<div className="mt-5 space-y-4">
+								{/* Step 1 */}
 
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Select{" "}
-											<span className="font-semibold text-[var(--sl-text)]">
-												Add to
-												Home
-												Screen
-											</span>{" "}
-											or{" "}
-											<button
-												type="button"
-												onClick={
-													handleInstall
-												}
-												className="cursor-pointer font-semibold text-[var(--sl-primary)] underline decoration-[var(--sl-primary)]/40 underline-offset-2 transition-opacity hover:opacity-80"
-											>
-												Install App
-											</button>
-											.
-										</p>
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										1
 									</div>
 
-									<div className="flex items-start gap-3">
-										<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
-											3
-										</div>
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Open your
+										browser menu
+										using the{" "}
+										<span className="font-semibold text-[var(--sl-text)]">
+											⋮
+										</span>{" "}
+										button.
+									</p>
+								</div>
 
-										<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
-											Confirm the
-											installation.
-										</p>
+								{/* Step 2 */}
+
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										2
 									</div>
 
-									{!promptAvailable && (
-										<div className="rounded-xl bg-white/5 px-3 py-2.5">
-											<p className="text-xs leading-relaxed text-[var(--sl-text-muted)]">
-												The direct
-												install
-												dialog is
-												not
-												available
-												in this
-												browser
-												right now.
-												Use the
-												browser
-												menu to
-												install
-												the app.
-											</p>
-										</div>
-									)}
-								</>
-							)}
-						</div>
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Select{" "}
+										<span className="font-semibold text-[var(--sl-text)]">
+											Install
+											Special
+											Lazyness
+										</span>{" "}
+										from the
+										browser menu.
+									</p>
+								</div>
 
-						{/* Close */}
+								{/* Step 3 */}
+
+								<div className="flex items-start gap-3">
+									<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-primary)]/10 text-sm font-bold text-[var(--sl-primary)]">
+										3
+									</div>
+
+									<p className="text-sm leading-relaxed text-[var(--sl-text-secondary)]">
+										Confirm the
+										installation.
+									</p>
+								</div>
+
+								{/* ==================================================
+								    Native install available
+								    ================================================== */}
+
+								{installPrompt && (
+									<div className="pt-1">
+										<button
+											type="button"
+											onClick={
+												handleInstallFromGuide
+											}
+											className="w-full text-center text-sm font-semibold text-[var(--sl-primary)] underline decoration-[var(--sl-primary)]/40 underline-offset-2 transition-opacity hover:opacity-80"
+										>
+											Install App
+										</button>
+									</div>
+								)}
+							</div>
+						)}
+
+						{/* ==================================================
+						    Close
+						    ================================================== */}
 
 						<button
 							type="button"
