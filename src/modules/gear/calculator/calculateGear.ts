@@ -7,10 +7,12 @@ import type {
 	GearResourceMap,
 	GearStatResult,
 } from "../type";
+
 import {
 	EMPTY_GEAR_RESOURCES,
 	EMPTY_GEAR_STATS,
 } from "../type";
+
 import {
 	getGearUpgradeRows,
 	getGearLevelRow,
@@ -120,7 +122,8 @@ function calculateStats(
 
 		powerFrom,
 		powerTo,
-		powerIncrease: powerTo - powerFrom,
+		powerIncrease:
+			powerTo - powerFrom,
 	};
 }
 
@@ -225,6 +228,19 @@ export function calculateGear(
 		);
 	}
 
+	const resources = calculateResources(
+		upgradeRows,
+	);
+
+	const svsPoints = calculateSvsPoints(
+		upgradeRows,
+	);
+
+	const stats = calculateStats(
+		fromRow,
+		toRow,
+	);
+
 	return {
 		gear: values.gear,
 
@@ -236,18 +252,18 @@ export function calculateGear(
 			...values,
 		},
 
-		resources: calculateResources(
-			upgradeRows,
-		),
+		resources,
 
-		svsPoints: calculateSvsPoints(
-			upgradeRows,
-		),
+		svsPoints,
 
-		stats: calculateStats(
-			fromRow,
-			toRow,
-		),
+		stats,
+
+		statAdd:
+			stats.attackIncrease +
+			stats.defenseIncrease,
+
+		deploymentAdd:
+			stats.deploymentIncrease,
 	};
 }
 
