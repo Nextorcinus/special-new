@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+	useLayoutEffect,
 	useMemo,
 	useRef,
 	useState,
 } from "react";
+import gsap from "gsap";
 
 import { NAVIGATION } from "@/config/navigation";
 import {
@@ -21,43 +23,78 @@ export default function SplashScreen() {
 	const [slide, setSlide] = useState(0);
 
 	/*
-	 * Swipe state
+	 * ============================================================
+	 * REFS
+	 * ============================================================
 	 */
-	const touchStartX = useRef<number | null>(null);
-	const touchStartY = useRef<number | null>(null);
+
+	const viewportRef =
+		useRef<HTMLDivElement | null>(null);
+
+	const slideRefs =
+		useRef<(HTMLDivElement | null)[]>([]);
+
+	const previousSlideRef =
+		useRef(0);
+
+	const animationLock =
+		useRef(false);
 
 	/*
-	 * True only when the current gesture
-	 * has actually become a swipe.
+	 * Swipe
 	 */
-	const isSwiping = useRef(false);
+	const touchStartX =
+		useRef<number | null>(null);
+
+	const touchStartY =
+		useRef<number | null>(null);
+
+	const isSwiping =
+		useRef(false);
+
+	const suppressClick =
+		useRef(false);
 
 	/*
-	 * Used to prevent the synthetic click
-	 * that browsers may fire after a swipe.
+	 * Character floating animation
 	 */
-	const suppressClick = useRef(false);
+	const floatingTween =
+		useRef<gsap.core.Tween | null>(
+			null,
+		);
 
 	/*
-	 * Convert onboarding features into
-	 * navigation links.
+	 * ============================================================
+	 * FEATURE ITEMS
+	 * ============================================================
 	 */
+
 	const featureItems = useMemo(() => {
-		return ONBOARDING_FEATURES.map((feature) => {
-			const navigationItem = NAVIGATION.find(
-				(item) => item.id === feature.id,
-			);
+		return ONBOARDING_FEATURES.map(
+			(feature) => {
+				const navigationItem =
+					NAVIGATION.find(
+						(item) =>
+							item.id ===
+							feature.id,
+					);
 
-			return {
-				...feature,
-				href: navigationItem?.href ?? "#",
-			};
-		});
+				return {
+					...feature,
+					href:
+						navigationItem?.href ??
+						"#",
+				};
+			},
+		);
 	}, []);
 
 	/*
-	 * Complete onboarding.
+	 * ============================================================
+	 * COMPLETE
+	 * ============================================================
 	 */
+
 	function completeOnboarding() {
 		localStorage.setItem(
 			ONBOARDING_STORAGE_KEY,
@@ -68,31 +105,43 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Next slide.
+	 * ============================================================
+	 * SLIDE NAVIGATION
+	 * ============================================================
 	 */
+
+	function changeSlide(
+		nextIndex: number,
+	) {
+		if (
+			animationLock.current ||
+			nextIndex === slide ||
+			nextIndex < 0 ||
+			nextIndex >= TOTAL_SLIDES
+		) {
+			return;
+		}
+
+		setSlide(nextIndex);
+	}
+
 	function nextSlide() {
-		setSlide((current) =>
+		changeSlide(
 			Math.min(
-				current + 1,
+				slide + 1,
 				TOTAL_SLIDES - 1,
 			),
 		);
 	}
 
-	/*
-	 * Previous slide.
-	 */
 	function previousSlide() {
-		setSlide((current) =>
-			Math.max(current - 1, 0),
+		changeSlide(
+			Math.max(slide - 1, 0),
 		);
 	}
 
-	/*
-	 * Go to specific slide.
-	 */
 	function goToSlide(index: number) {
-		setSlide(
+		changeSlide(
 			Math.max(
 				0,
 				Math.min(
@@ -104,16 +153,523 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Check whether the pointer started
-	 * from an interactive element.
-	 *
-	 * Buttons and links must remain completely
-	 * independent from the swipe system.
+	 * ============================================================
+	 * GSAP
+	 * ============================================================
 	 */
+
+	useLayoutEffect(() => {
+	const current =
+		slideRefs.current[slide];
+
+	if (!current) {
+		return;
+	}
+
+	const previousIndex =
+		previousSlideRef.current;
+
+	const direction =
+		slide > previousIndex ? 1 : -1;
+
+	const previous =
+		slideRefs.current[previousIndex];
+
+	animationLock.current = true;
+
+	/*
+	 * ============================================================
+	 * CLEANUP ALL SLIDES
+	 * ============================================================
+	 */
+
+	slideRefs.current.forEach(
+		(element, index) => {
+			if (!element) {
+				return;
+			}
+
+			gsap.killTweensOf(element);
+
+			gsap.killTweensOf(
+				element.querySelectorAll(
+					"[data-gsap], [data-logo], [data-title], [data-description], [data-character], [data-feature], [data-indicators], [data-buttons], [data-start]",
+				),
+			);
+
+			/*
+			 * IMPORTANT
+			 *
+			 * Semua slide selain slide aktif
+			 * harus benar-benar invisible.
+			 *
+			 * Ini yang mencegah slide 1 dan 2
+			 * tampil bersamaan ketika pertama
+			 * kali halaman dibuka.
+			 */
+			if (index !== slide) {
+				gsap.set(element, {
+					xPercent:
+						index < slide
+							? -100
+							: 100,
+					scale: 0.92,
+					opacity: 0,
+					filter: "blur(8px)",
+					zIndex: 1,
+				});
+			}
+		},
+	);
+
+	/*
+	 * Kill floating character animation.
+	 */
+	if (floatingTween.current) {
+		floatingTween.current.kill();
+		floatingTween.current = null;
+	}
+
+	/*
+	 * ============================================================
+	 * CURRENT SLIDE INITIAL STATE
+	 * ============================================================
+	 */
+
+	gsap.set(current, {
+		xPercent: direction * 100,
+		scale: 0.92,
+		opacity: 0,
+		filter: "blur(8px)",
+		zIndex: 2,
+	});
+
+	/*
+	 * ============================================================
+	 * PREVIOUS SLIDE
+	 * ============================================================
+	 */
+
+	if (
+		previous &&
+		previous !== current
+	) {
+		gsap.to(previous, {
+			xPercent:
+				-direction * 100,
+			scale: 0.92,
+			opacity: 0,
+			filter: "blur(8px)",
+			duration: 0.55,
+			ease: "power3.inOut",
+			overwrite: true,
+		});
+	}
+
+	/*
+	 * ============================================================
+	 * HIDE CURRENT CONTENT
+	 * ============================================================
+	 */
+
+	const content =
+		current.querySelectorAll(
+			"[data-logo], [data-title], [data-description], [data-character], [data-feature], [data-indicators], [data-buttons], [data-start]",
+		);
+
+	gsap.set(content, {
+		opacity: 0,
+	});
+
+	/*
+	 * ============================================================
+	 * MASTER TIMELINE
+	 * ============================================================
+	 */
+
+	const master =
+		gsap.timeline({
+			overwrite: true,
+
+			onComplete: () => {
+				animationLock.current =
+					false;
+
+				previousSlideRef.current =
+					slide;
+			},
+		});
+
+	/*
+	 * ============================================================
+	 * SLIDE CONTAINER
+	 * ============================================================
+	 */
+
+	master.to(
+		current,
+		{
+			xPercent: 0,
+			scale: 1,
+			opacity: 1,
+			filter: "blur(0px)",
+			duration: 0.7,
+			ease: "power4.out",
+		},
+		0,
+	);
+
+	/*
+	 * ============================================================
+	 * SLIDE 1
+	 * ============================================================
+	 */
+
+	if (slide === 0) {
+		const logo =
+			current.querySelector(
+				"[data-logo]",
+			);
+
+		const title =
+			current.querySelector(
+				"[data-title]",
+			);
+
+		const description =
+			current.querySelector(
+				"[data-description]",
+			);
+
+		const indicators =
+			current.querySelector(
+				"[data-indicators]",
+			);
+
+		const buttons =
+			current.querySelector(
+				"[data-buttons]",
+			);
+
+		/*
+		 * Logo
+		 */
+		if (logo) {
+			gsap.set(logo, {
+				opacity: 0,
+				scale: 0.5,
+				y: 20,
+				rotation: -8,
+				filter: "blur(10px)",
+			});
+
+			master.to(
+				logo,
+				{
+					opacity: 1,
+					scale: 1,
+					y: 0,
+					rotation: 0,
+					filter: "blur(0px)",
+					duration: 0.8,
+					ease: "back.out(1.7)",
+				},
+				0.2,
+			);
+		}
+
+		/*
+		 * Title
+		 */
+		if (title) {
+			gsap.set(title, {
+				opacity: 0,
+				y: 35,
+				filter: "blur(8px)",
+			});
+
+			master.to(
+				title,
+				{
+					opacity: 1,
+					y: 0,
+					filter: "blur(0px)",
+					duration: 0.65,
+					ease: "power4.out",
+				},
+				0.4,
+			);
+		}
+
+		/*
+		 * Description
+		 */
+		if (description) {
+			gsap.set(description, {
+				opacity: 0,
+				y: 25,
+			});
+
+			master.to(
+				description,
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.55,
+					ease: "power3.out",
+				},
+				0.7,
+			);
+		}
+
+		/*
+		 * Indicators
+		 */
+		if (indicators) {
+			gsap.set(indicators, {
+				opacity: 0,
+				y: 15,
+			});
+
+			master.to(
+				indicators,
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.45,
+					ease: "power3.out",
+				},
+				0.95,
+			);
+		}
+
+		/*
+		 * Buttons
+		 */
+		if (buttons) {
+			gsap.set(buttons, {
+				opacity: 0,
+				y: 25,
+				scale: 0.9,
+			});
+
+			master.to(
+				buttons,
+				{
+					opacity: 1,
+					y: 0,
+					scale: 1,
+					duration: 0.6,
+					ease: "back.out(1.6)",
+				},
+				1.05,
+			);
+		}
+	}
+
+	/*
+	 * ============================================================
+	 * SLIDE 2
+	 * ============================================================
+	 */
+
+	if (slide === 1) {
+		const character =
+			current.querySelector(
+				"[data-character]",
+			);
+
+		const description =
+			current.querySelector(
+				"[data-description]",
+			);
+
+		const features =
+			current.querySelectorAll(
+				"[data-feature]",
+			);
+
+		const indicators =
+			current.querySelector(
+				"[data-indicators]",
+			);
+
+		const button =
+			current.querySelector(
+				"[data-start]",
+			);
+
+		/*
+		 * Character
+		 */
+		if (character) {
+			gsap.set(character, {
+				opacity: 0,
+				y: 70,
+				scale: 0.65,
+				rotation: -5,
+				filter: "blur(10px)",
+			});
+
+			master.to(
+				character,
+				{
+					opacity: 1,
+					y: 0,
+					scale: 1,
+					rotation: 0,
+					filter: "blur(0px)",
+					duration: 0.9,
+					ease: "elastic.out(1, 0.65)",
+				},
+				0.15,
+			);
+
+			/*
+			 * Floating animation
+			 */
+			master.call(
+				() => {
+					floatingTween.current =
+						gsap.to(
+							character,
+							{
+								y: -7,
+								duration: 2.2,
+								ease: "sine.inOut",
+								yoyo: true,
+								repeat: -1,
+							},
+						);
+				},
+				[],
+				1.2,
+			);
+		}
+
+		/*
+		 * Description
+		 */
+		if (description) {
+			gsap.set(description, {
+				opacity: 0,
+				y: 30,
+			});
+
+			master.to(
+				description,
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.55,
+					ease: "power3.out",
+				},
+				0.65,
+			);
+		}
+
+		/*
+		 * Feature cards
+		 */
+		if (features.length) {
+			gsap.set(features, {
+				opacity: 0,
+				y: 25,
+				scale: 0.8,
+				rotationX: 20,
+			});
+
+			master.to(
+				features,
+				{
+					opacity: 1,
+					y: 0,
+					scale: 1,
+					rotationX: 0,
+					duration: 0.5,
+					ease: "back.out(1.7)",
+					stagger: 0.08,
+				},
+				0.9,
+			);
+		}
+
+		/*
+		 * Indicators
+		 */
+		if (indicators) {
+			gsap.set(indicators, {
+				opacity: 0,
+				y: 15,
+			});
+
+			master.to(
+				indicators,
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.45,
+					ease: "power3.out",
+				},
+				1.35,
+			);
+		}
+
+		/*
+		 * Get Started
+		 */
+		if (button) {
+			gsap.set(button, {
+				opacity: 0,
+				y: 30,
+				scale: 0.9,
+			});
+
+			master.to(
+				button,
+				{
+					opacity: 1,
+					y: 0,
+					scale: 1,
+					duration: 0.6,
+					ease: "back.out(1.7)",
+				},
+				1.42,
+			);
+		}
+	}
+
+	/*
+	 * ============================================================
+	 * CLEANUP
+	 * ============================================================
+	 */
+
+	return () => {
+		master.kill();
+
+		if (floatingTween.current) {
+			floatingTween.current.kill();
+			floatingTween.current = null;
+		}
+	};
+}, [slide]);
+
+	/*
+	 * ============================================================
+	 * INTERACTIVE TARGET
+	 * ============================================================
+	 */
+
 	function isInteractiveTarget(
 		target: EventTarget | null,
 	) {
-		if (!(target instanceof HTMLElement)) {
+		if (
+			!(
+				target instanceof
+				HTMLElement
+			)
+		) {
 			return false;
 		}
 
@@ -125,8 +681,11 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Start pointer gesture.
+	 * ============================================================
+	 * POINTER DOWN
+	 * ============================================================
 	 */
+
 	function handlePointerDown(
 		event: React.PointerEvent<HTMLDivElement>,
 	) {
@@ -134,23 +693,11 @@ export default function SplashScreen() {
 			return;
 		}
 
-		/*
-		 * IMPORTANT:
-		 *
-		 * If the user starts touching a button
-		 * or link, don't activate swipe tracking.
-		 *
-		 * This guarantees that:
-		 *
-		 * NEXT
-		 * SKIP
-		 * GET STARTED
-		 * indicators
-		 * feature links
-		 *
-		 * remain clickable.
-		 */
-		if (isInteractiveTarget(event.target)) {
+		if (
+			isInteractiveTarget(
+				event.target,
+			)
+		) {
 			touchStartX.current = null;
 			touchStartY.current = null;
 			isSwiping.current = false;
@@ -165,18 +712,14 @@ export default function SplashScreen() {
 			event.clientY;
 
 		isSwiping.current = false;
-
-		/*
-		 * Don't capture the pointer.
-		 *
-		 * Pointer capture can interfere with
-		 * normal interaction on mobile browsers.
-		 */
 	}
 
 	/*
-	 * Track horizontal movement.
+	 * ============================================================
+	 * POINTER MOVE
+	 * ============================================================
 	 */
+
 	function handlePointerMove(
 		event: React.PointerEvent<HTMLDivElement>,
 	) {
@@ -195,9 +738,6 @@ export default function SplashScreen() {
 			event.clientY -
 			touchStartY.current;
 
-		/*
-		 * Vertical movement is not a swipe.
-		 */
 		if (
 			Math.abs(deltaY) >
 			Math.abs(deltaX)
@@ -205,10 +745,6 @@ export default function SplashScreen() {
 			return;
 		}
 
-		/*
-		 * Mark gesture as swipe once
-		 * horizontal threshold is reached.
-		 */
 		if (
 			Math.abs(deltaX) >=
 			SWIPE_THRESHOLD
@@ -218,8 +754,11 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Finish pointer gesture.
+	 * ============================================================
+	 * POINTER UP
+	 * ============================================================
 	 */
+
 	function handlePointerUp(
 		event: React.PointerEvent<HTMLDivElement>,
 	) {
@@ -246,15 +785,9 @@ export default function SplashScreen() {
 			Math.abs(deltaX) >=
 			SWIPE_THRESHOLD;
 
-		/*
-		 * Reset gesture state.
-		 */
 		touchStartX.current = null;
 		touchStartY.current = null;
 
-		/*
-		 * Not a horizontal swipe.
-		 */
 		if (
 			!isHorizontal ||
 			!isLongEnough
@@ -265,39 +798,29 @@ export default function SplashScreen() {
 
 		isSwiping.current = true;
 
-		/*
-		 * Swipe left.
-		 *
-		 * Slide 1 -> Slide 2
-		 */
 		if (deltaX < 0) {
 			nextSlide();
 		}
 
-		/*
-		 * Swipe right.
-		 *
-		 * Slide 2 -> Slide 1
-		 */
 		if (deltaX > 0) {
 			previousSlide();
 		}
 
-		/*
-		 * Suppress only the synthetic click
-		 * generated after a swipe.
-		 */
 		suppressClick.current = true;
 
 		window.setTimeout(() => {
-			suppressClick.current = false;
+			suppressClick.current =
+				false;
 			isSwiping.current = false;
 		}, 350);
 	}
 
 	/*
-	 * Cancel pointer gesture.
+	 * ============================================================
+	 * POINTER CANCEL
+	 * ============================================================
 	 */
+
 	function handlePointerCancel() {
 		touchStartX.current = null;
 		touchStartY.current = null;
@@ -305,11 +828,11 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Prevent synthetic click after swipe.
-	 *
-	 * Normal button clicks are NOT affected because
-	 * interactive elements never start swipe tracking.
+	 * ============================================================
+	 * CLICK CAPTURE
+	 * ============================================================
 	 */
+
 	function handleClickCapture(
 		event: React.MouseEvent<HTMLDivElement>,
 	) {
@@ -324,11 +847,11 @@ export default function SplashScreen() {
 	}
 
 	/*
-	 * Feature links.
-	 *
-	 * When user chooses a feature from slide 2,
-	 * onboarding is considered completed.
+	 * ============================================================
+	 * FEATURE CLICK
+	 * ============================================================
 	 */
+
 	function handleFeatureClick() {
 		localStorage.setItem(
 			ONBOARDING_STORAGE_KEY,
@@ -336,13 +859,17 @@ export default function SplashScreen() {
 		);
 	}
 
+	/*
+	 * ============================================================
+	 * RENDER
+	 * ============================================================
+	 */
+
 	return (
 		<div className="fixed inset-0 z-[99999] overflow-hidden bg-[#111111]">
 			<div className="mx-auto flex h-full w-full max-w-md flex-col">
-				{/* ==================================================
-				    SLIDE VIEWPORT
-				================================================== */}
 				<div
+					ref={viewportRef}
 					className="
 						relative
 						min-h-0
@@ -370,48 +897,28 @@ export default function SplashScreen() {
 					{/* ==================================================
 					    SLIDE 1
 					================================================== */}
+
 					<div
+						ref={(element) => {
+							slideRefs.current[0] =
+								element;
+						}}
 						className={[
 							"absolute inset-0 flex flex-col",
 							"items-center",
 							"px-5 py-6 sm:px-8 sm:py-8",
-							"transition-all duration-500 ease-out",
 							slide === 0
-								? "pointer-events-auto translate-x-0 opacity-100"
-								: "pointer-events-none -translate-x-full opacity-0",
+								? "pointer-events-auto"
+								: "pointer-events-none",
 						].join(" ")}
 					>
-						{/* Main Content */}
-						<div
-							className="
-								flex
-								min-h-0
-								w-full
-								flex-1
-								flex-col
-								items-center
-								justify-center
-							"
-						>
+						{/* Main */}
+						<div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
 							{/* Logo + Title */}
-							<div
-								className="
-									flex
-									w-full
-									items-center
-									justify-center
-									gap-3
-									sm:gap-4
-								"
-							>
+							<div className="flex w-full items-center justify-center gap-3 sm:gap-4">
 								<div
-									className="
-										relative
-										size-12
-										shrink-0
-										sm:size-14
-										md:size-16
-									"
+									data-logo
+									className="relative size-12 shrink-0 sm:size-14 md:size-16"
 								>
 									<Image
 										src="/icons/logo.png"
@@ -428,6 +935,7 @@ export default function SplashScreen() {
 								</div>
 
 								<h1
+									data-title
 									className="
 										text-[clamp(1.5rem,6vw,2rem)]
 										leading-[0.95]
@@ -446,6 +954,7 @@ export default function SplashScreen() {
 
 							{/* Description */}
 							<p
+								data-description
 								className="
 									mt-6
 									w-full
@@ -471,17 +980,12 @@ export default function SplashScreen() {
 						</div>
 
 						{/* Bottom */}
-						<div
-							className="
-								flex
-								w-full
-								shrink-0
-								flex-col
-								items-center
-							"
-						>
-							{/* Indicator */}
-							<div className="mb-4 flex items-center gap-1">
+						<div className="flex w-full shrink-0 flex-col items-center">
+							{/* Indicators */}
+							<div
+								data-indicators
+								className="mb-4 flex items-center gap-1"
+							>
 								<button
 									type="button"
 									aria-label="Go to slide 1"
@@ -490,17 +994,11 @@ export default function SplashScreen() {
 											0,
 										)
 									}
-									className="
-										flex
-										size-5
-										items-center
-										justify-center
-									"
+									className="flex size-5 items-center justify-center"
 								>
 									<span
 										className={[
 											"size-1.5 rounded-full",
-											"transition-all duration-300",
 											slide ===
 											0
 												? "bg-white"
@@ -519,21 +1017,15 @@ export default function SplashScreen() {
 											1,
 										)
 									}
-									className="
-										flex
-										size-5
-										items-center
-										justify-center
-									"
+									className="flex size-5 items-center justify-center"
 								>
 									<span
 										className={[
 											"size-1.5 rounded-full",
-											"transition-all duration-300",
 											slide ===
 											1
 												? "bg-white"
-												: "bg-white/30 hover:bg-white/60",
+												: "bg-white/30",
 										].join(
 											" ",
 										)}
@@ -543,16 +1035,8 @@ export default function SplashScreen() {
 
 							{/* Buttons */}
 							<div
-								className="
-									flex
-									w-full
-									max-w-[280px]
-									items-center
-									justify-center
-									gap-2
-									sm:max-w-[320px]
-									sm:gap-3
-								"
+								data-buttons
+								className="flex w-full max-w-[280px] items-center justify-center gap-2 sm:max-w-[320px] sm:gap-3"
 							>
 								<button
 									type="button"
@@ -613,31 +1097,26 @@ export default function SplashScreen() {
 					{/* ==================================================
 					    SLIDE 2
 					================================================== */}
+
 					<div
+						ref={(element) => {
+							slideRefs.current[1] =
+								element;
+						}}
 						className={[
 							"absolute inset-0 flex flex-col",
 							"items-center",
 							"px-5 py-6 sm:px-8 sm:py-8",
-							"transition-all duration-500 ease-out",
 							slide === 1
-								? "pointer-events-auto translate-x-0 opacity-100"
-								: "pointer-events-none translate-x-full opacity-0",
+								? "pointer-events-auto"
+								: "pointer-events-none",
 						].join(" ")}
 					>
-						{/* Main Content */}
-						<div
-							className="
-								flex
-								min-h-0
-								w-full
-								flex-1
-								flex-col
-								items-center
-								justify-center
-							"
-						>
+						{/* Main */}
+						<div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
 							{/* Character */}
 							<div
+								data-character
 								className="
 									relative
 									h-[clamp(180px,35vh,260px)]
@@ -660,6 +1139,7 @@ export default function SplashScreen() {
 
 							{/* Description */}
 							<p
+								data-description
 								className="
 									mt-4
 									w-full
@@ -701,7 +1181,7 @@ export default function SplashScreen() {
 											feature.href !==
 											"#";
 
-										const className = `
+										const classes = `
 											flex
 											min-w-0
 											items-center
@@ -730,8 +1210,9 @@ export default function SplashScreen() {
 													key={
 														feature.id
 													}
+													data-feature
 													className={
-														className
+														classes
 													}
 												>
 													<span className="min-w-0 truncate">
@@ -752,6 +1233,7 @@ export default function SplashScreen() {
 												key={
 													feature.id
 												}
+												data-feature
 												href={
 													feature.href
 												}
@@ -759,7 +1241,7 @@ export default function SplashScreen() {
 													handleFeatureClick
 												}
 												className={
-													className
+													classes
 												}
 											>
 												<span className="min-w-0 truncate">
@@ -779,30 +1261,19 @@ export default function SplashScreen() {
 						</div>
 
 						{/* Bottom */}
-						<div
-							className="
-								flex
-								w-full
-								shrink-0
-								flex-col
-								items-center
-								pt-5
-							"
-						>
+						<div className="flex w-full shrink-0 flex-col items-center pt-5">
 							{/* Indicator */}
-							<div className="mb-4 flex items-center gap-1">
+							<div
+								data-indicators
+								className="mb-4 flex items-center gap-1"
+							>
 								<button
 									type="button"
 									aria-label="Go to slide 1"
 									onClick={
 										previousSlide
 									}
-									className="
-										flex
-										size-5
-										items-center
-										justify-center
-									"
+									className="flex size-5 items-center justify-center"
 								>
 									<span className="size-1.5 rounded-full bg-white/30 transition-colors hover:bg-white/60" />
 								</button>
@@ -815,12 +1286,7 @@ export default function SplashScreen() {
 											1,
 										)
 									}
-									className="
-										flex
-										size-5
-										items-center
-										justify-center
-									"
+									className="flex size-5 items-center justify-center"
 								>
 									<span className="size-1.5 rounded-full bg-white" />
 								</button>
@@ -828,6 +1294,7 @@ export default function SplashScreen() {
 
 							{/* Get Started */}
 							<button
+								data-start
 								type="button"
 								onClick={
 									completeOnboarding
@@ -843,7 +1310,7 @@ export default function SplashScreen() {
 									font-semibold
 									tracking-wide
 									text-[#111111]
-									transition-all
+									transition-transform
 									hover:scale-[1.02]
 									active:scale-[0.98]
 								"
