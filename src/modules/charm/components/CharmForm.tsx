@@ -293,7 +293,7 @@ function handleReset() {
 						<SLButton
 							type="submit"
 							disabled={!isValid}
-							className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
+							className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-text-muted)]"
 						>
 							{submitLabel}
 						</SLButton>
@@ -304,7 +304,7 @@ function handleReset() {
 							onClick={
 								handleReset
 							}
-							className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+							className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-active)] hover:text-[var(--muted-foreground)] hover:border-[var(--sl-border)]"
 						>
 							Reset
 						</SLButton>

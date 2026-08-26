@@ -178,7 +178,7 @@ export default function GearResult({
 	<button
 		type="button"
 		onClick={onAddItem}
-					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-active)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
+					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input-hover)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
 				>
 					<Plus className="size-5" />
 					<span className="text-base font-medium">Add more items</span>

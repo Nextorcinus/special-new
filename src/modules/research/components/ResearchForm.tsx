@@ -377,11 +377,11 @@ export default function ResearchForm({
 						disabled={
 							!isSelectionComplete
 						}
-						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+						className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-text-muted) disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						{mode === "update"
 							? "Update"
-							: "Submit"}
+							: "Calculate"}
 					</button>
 
 					<SLButton

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+
+import MobileBottomBar from "@/components/mobile/MobileBottomBar";
+import OnboardingGate from "@/components/onboarding/OnboardngGate";
+import AppToaster from "@/components/ui/toaster";
 import ThemeProvider from "@/providers/ThemeProvider";
+
 import "@/styles/globals.css";
 import "@/styles/theme.css";
-import MobileBottomBar from "@/components/mobile/MobileBottomBar";
-import AppToaster from "@/components/ui/toaster";
 
 const geist = Geist({
 	variable: "--font-sans",
@@ -31,11 +34,17 @@ export default function RootLayout({
 			suppressHydrationWarning
 			className={`${geist.variable} h-full antialiased`}
 		>
-			<body className="min-h-full flex flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
+			<body className="flex min-h-full flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
 				<ThemeProvider>
-					<main className="pb-28 md:pb-0">{children}</main>
-					<MobileBottomBar />
-					<AppToaster />
+					<OnboardingGate>
+						<main className="pb-28 md:pb-0">
+							{children}
+						</main>
+
+						<MobileBottomBar />
+
+						<AppToaster />
+					</OnboardingGate>
 				</ThemeProvider>
 			</body>
 		</html>

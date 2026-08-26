@@ -508,17 +508,17 @@ export default function BuildingForm({
 			<div className="grid grid-cols-2 gap-4 pt-1">
 				<button
 					type="submit"
-					className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-hover)]"
+					className="h-10 rounded-full bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-text-muted)]"
 				>
 					{mode === "update"
 						? "Update"
-						: "Submit"}
+						: "Calculate"}
 				</button>
 
 				<SLButton
 					type="button"
 					onClick={handleReset}
-					className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+					className="h-10 rounded-full bg-[var(--sl-input)] text-xs font-bold text-[var(--sl-text)] hover:bg-[var(--sl-active)] hover:text-[var(--muted-foreground)] hover:border-[var(--sl-border)]"
 				>
 					Reset
 				</SLButton>

@@ -216,7 +216,7 @@ export default function WidgetForm({
 				</div>
 
 				{selectedHero && (
-					<div className="rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface-2)] p-4">
+					<div className="rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface-3)] p-4">
 						<div className="flex items-start justify-between gap-4">
 							<div className="min-w-0">
 								<p className="text-sm font-bold text-[var(--sl-text)]">

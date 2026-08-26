@@ -37,7 +37,7 @@ export default function ResourceBagModal({
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="resource-bag-title"
-				className="relative z-10 max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 text-[var(--sl-text)]"
+				className="relative z-10 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-5 text-[var(--sl-text)]"
 			>
 				<ResourceBagContent onClose={onClose} />
 			</div>

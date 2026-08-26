@@ -198,7 +198,7 @@ export default function BuildingCalculatorPage({
 					<button
 						type="button"
 						onClick={handleNewCalculation}
-						className="rounded-full bg-[var(--sl-input)] px-4 py-2 text-sm font-semibold text-[var(--sl-text)] hover:bg-[var(--sl-input-hover)]"
+						className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 					>
 						New Calculation
 					</button>

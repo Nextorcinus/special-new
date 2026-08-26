@@ -16,7 +16,7 @@ export default async function StateDetailPage({ params }: Props) {
 		<MobileContainer>
 			<HeaderOther title={`State ${id}`} />
 
-			<div className="mt-8 rounded-3xl bg-[var(--sl-active)] p-1">
+			<div className="mt-8 rounded-3xl bg-[var(--sl-active)] p-4">
 				<StateDetail stateId={Number(id)} />
 			</div>
 		</MobileContainer>
