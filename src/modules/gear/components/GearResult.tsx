@@ -10,10 +10,7 @@ import {
 import { NAVIGATION } from "@/config/navigation";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 
-import type {
-	GearCalculationResult,
-	GearFormValues,
-} from "../type";
+import type { GearCalculationResult, GearFormValues } from "../type";
 
 type GearHistoryItem = CalculationHistoryItem<
 	GearFormValues,
@@ -73,6 +70,67 @@ function formatDeployment(value: unknown): string {
 	return `+${formatNumber(number)}`;
 }
 
+/**
+ * Format final stat + increase.
+ *
+ * Example:
+ *
+ * finalStat = 255
+ * increase = 8.5
+ *
+ * Result:
+ *
+ * +255.00%  +8.50%
+ */
+function formatStatResult(finalValue: unknown, increaseValue: unknown): string {
+	const finalStat = Number(finalValue ?? 0);
+
+	const increase = Number(increaseValue ?? 0);
+
+	if (!Number.isFinite(finalStat) || !Number.isFinite(increase)) {
+		return "+0%";
+	}
+
+	const formattedFinal = `+${finalStat.toLocaleString("en-US", {
+		minimumFractionDigits: Number.isInteger(finalStat) ? 0 : 2,
+		maximumFractionDigits: 2,
+	})}%`;
+
+	const formattedIncrease = `+${increase.toLocaleString("en-US", {
+		minimumFractionDigits: Number.isInteger(increase) ? 0 : 2,
+		maximumFractionDigits: 2,
+	})}%`;
+
+	return `${formattedFinal}  ${formattedIncrease}`;
+}
+
+/**
+ * Format final deployment + increase.
+ *
+ * Example:
+ *
+ * final = 1780
+ * increase = 50
+ *
+ * Result:
+ *
+ * +1,780  +50
+ */
+function formatDeploymentResult(
+	finalValue: unknown,
+	increaseValue: unknown,
+): string {
+	const finalDeployment = Number(finalValue ?? 0);
+
+	const increase = Number(increaseValue ?? 0);
+
+	if (!Number.isFinite(finalDeployment) || !Number.isFinite(increase)) {
+		return "+0";
+	}
+
+	return `${formatDeployment(finalDeployment)}  ${formatDeployment(increase)}`;
+}
+
 export default function GearResult({
 	result,
 	history,
@@ -80,9 +138,7 @@ export default function GearResult({
 	showAddButton = false,
 	onAddItem,
 }: GearResultProps) {
-	const category = NAVIGATION.find(
-		(item) => item.id === "gear",
-	);
+	const category = NAVIGATION.find((item) => item.id === "gear");
 
 	const resources = result.resources ?? {
 		Plans: 0,
@@ -103,19 +159,20 @@ export default function GearResult({
 		deploymentFrom: 0,
 		deploymentTo: 0,
 		deploymentIncrease: 0,
+
+		powerFrom: 0,
+		powerTo: 0,
+		powerIncrease: 0,
 	};
 
-	const { createResourceItem } =
-		useCompareResources(resources);
+	const { createResourceItem } = useCompareResources(resources);
 
 	return (
 		<div className="space-y-3">
 			<CalculatorResult
 				title={title}
 				categoryTitle={category?.title ?? "Chief Gear"}
-				categoryIcon={
-					category?.icon ?? "/category/chief-gear.png"
-				}
+				categoryIcon={category?.icon ?? "/category/chief-gear.png"}
 				name={result.gear}
 				subtitle={
 					<span className="inline-flex flex-wrap items-center gap-2">
@@ -145,42 +202,46 @@ export default function GearResult({
 						],
 					},
 					{
-	id: "stats",
-	title: "Stats Increase",
-	items: [
-		{
-			id: "attack",
-			label: "Attack",
-			icon: "/icons/attack.png",
-			value: formatStat(stats.attackIncrease),
-		},
-		{
-			id: "defense",
-			label: "Defense",
-			icon: "/icons/defense.png",
-			value: formatStat(stats.defenseIncrease),
-		},
-		{
-			id: "deployment-capacity",
-			label: "Deployment Capacity",
-			icon: "/icons/deployment.png",
-			value: formatDeployment(
-				stats.deploymentIncrease,
-			),
-		},
+						id: "stats",
+						title: "Stats Increase",
+						items: [
+							{
+								id: "attack",
+								label: "Attack",
+								icon: "/icons/attack.png",
 
-	],
-},
+								value: formatStatResult(stats.attackTo, stats.attackIncrease),
+							},
+							{
+								id: "defense",
+								label: "Defense",
+								icon: "/icons/defense.png",
+
+								value: formatStatResult(stats.defenseTo, stats.defenseIncrease),
+							},
+							{
+								id: "deployment-capacity",
+								label: "Deployment Capacity",
+								icon: "/icons/deployment.png",
+
+								value: formatDeploymentResult(
+									stats.deploymentTo,
+									stats.deploymentIncrease,
+								),
+							},
+						],
+					},
 				]}
 			/>
 
-		{showAddButton && onAddItem && (
-	<button
-		type="button"
-		onClick={onAddItem}
+			{showAddButton && onAddItem && (
+				<button
+					type="button"
+					onClick={onAddItem}
 					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input-hover)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
 				>
 					<Plus className="size-5" />
+
 					<span className="text-base font-medium">Add more items</span>
 				</button>
 			)}

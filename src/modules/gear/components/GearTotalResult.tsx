@@ -92,8 +92,7 @@ function createGearSummary(items: GearHistoryEntry[]): string {
 			items
 				.map((item) => item.result?.gear)
 				.filter(
-					(gear): gear is ChiefGearType =>
-						gear !== undefined && gear !== null,
+					(gear): gear is ChiefGearType => gear !== undefined && gear !== null,
 				),
 		),
 	);
@@ -106,18 +105,12 @@ function createGearSummary(items: GearHistoryEntry[]): string {
 		return uniqueGear.join(", ");
 	}
 
-	return `${uniqueGear.slice(0, 3).join(", ")} +${
-		uniqueGear.length - 3
-	}`;
+	return `${uniqueGear.slice(0, 3).join(", ")} +${uniqueGear.length - 3}`;
 }
 
-function createUpgradeSubtitle(
-	items: GearHistoryEntry[],
-): string {
+function createUpgradeSubtitle(items: GearHistoryEntry[]): string {
 	const validItems = items.filter(
-		(item) =>
-			Boolean(item.result?.fromLevel) &&
-			Boolean(item.result?.toLevel),
+		(item) => Boolean(item.result?.fromLevel) && Boolean(item.result?.toLevel),
 	);
 
 	if (validItems.length === 0) {
@@ -127,7 +120,7 @@ function createUpgradeSubtitle(
 	if (validItems.length === 1) {
 		const result = validItems[0].result;
 
-		return `${result.fromLevel} → ${result.toLevel}`;
+		return `${result?.fromLevel} → ${result?.toLevel}`;
 	}
 
 	return `${validItems.length} upgrade items`;
@@ -137,9 +130,7 @@ export default function GearTotalResult({
 	items,
 	title = "Total Result",
 }: GearTotalResultProps) {
-	const category = NAVIGATION.find(
-		(item) => item.id === "gear",
-	);
+	const category = NAVIGATION.find((item) => item.id === "gear");
 
 	const resources = sumResourceMap(
 		items,
@@ -147,10 +138,7 @@ export default function GearTotalResult({
 		(item) => item.result?.resources,
 	);
 
-	const totalSvsPoints = sumField(
-		items,
-		(item) => item.result?.svsPoints,
-	);
+	const totalSvsPoints = sumField(items, (item) => item.result?.svsPoints);
 
 	const totalAttackIncrease = sumField(
 		items,
@@ -167,20 +155,17 @@ export default function GearTotalResult({
 		(item) => item.result?.stats?.deploymentIncrease,
 	);
 
-
-	const { createResourceItem } =
-		useCompareResources(resources);
+	const { createResourceItem } = useCompareResources(resources);
 
 	const firstItem = items[0];
+
 	const lastItem = items.at(-1);
 
 	return (
 		<CalculatorResult
 			title={title}
 			categoryTitle={category?.title ?? "Chief Gear"}
-			categoryIcon={
-				category?.icon ?? "/category/chief-gear.png"
-			}
+			categoryIcon={category?.icon ?? "/category/chief-gear.png"}
 			name={createGearSummary(items)}
 			subtitle={createUpgradeSubtitle(items)}
 			highlightLabel="Total SvS Points"
@@ -206,29 +191,23 @@ export default function GearTotalResult({
 							id: "attack",
 							label: "Attack",
 							icon: "/icons/attack.png",
-							value: formatStat(
-								totalAttackIncrease,
-							),
+							value: formatStat(totalAttackIncrease),
 						},
 						{
 							id: "defense",
 							label: "Defense",
 							icon: "/icons/defense.png",
-							value: formatStat(
-								totalDefenseIncrease,
-							),
+							value: formatStat(totalDefenseIncrease),
 						},
 						{
 							id: "deployment-capacity",
 							label: "Deployment Capacity",
 							icon: "/icons/deployment.png",
-							value: formatDeployment(
-								totalDeploymentIncrease,
-							),
+							value: formatDeployment(totalDeploymentIncrease),
 						},
 					],
 				},
-							]}
+			]}
 		/>
 	);
 }
