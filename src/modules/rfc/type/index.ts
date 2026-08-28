@@ -7,14 +7,13 @@ export type RfcProbability = {
 
 export type RfcTier = {
 	tier: RfcTierNumber;
-	startAt: number;
-	endAt: number;
+	conversionRange: [number, number];
 	cost: number;
+	fcCost?: number;
 	probabilities: RfcProbability[];
 };
 
 export type RfcHistoryItem = {
-	id: number;
 	tier: RfcTierNumber;
 	rfc: number;
 	fc: number;
@@ -46,14 +45,12 @@ export type RfcStatistics = {
 	conversions: number;
 	averageRfc: number;
 	expectedRfc: number;
-	luck: RfcLuckResult;
+	luck: RfcLuck;
 };
 
 export type RfcSimulatorState = {
 	startingCount: number;
-	sessionConversions: number;
 	fcInventory: number;
-	rfcGained: number;
 	fcUsed: number;
 	history: RfcHistoryItem[];
 };

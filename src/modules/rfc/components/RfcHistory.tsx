@@ -15,7 +15,9 @@ function formatNumber(value: unknown): string {
 		return "0";
 	}
 
-	return new Intl.NumberFormat("en-US").format(Math.max(0, Math.floor(number)));
+	return new Intl.NumberFormat("en-US").format(
+		Math.max(0, Math.floor(number)),
+	);
 }
 
 export default function RfcHistory({ history }: RfcHistoryProps) {
@@ -61,8 +63,8 @@ export default function RfcHistory({ history }: RfcHistoryProps) {
 						</p>
 
 						<p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-[var(--sl-text-muted)]">
-							Your conversion results will appear here after you perform an RFC
-							conversion.
+							Your conversion results will appear here after you perform an
+							RFC conversion.
 						</p>
 					</div>
 				</div>
@@ -75,7 +77,9 @@ export default function RfcHistory({ history }: RfcHistoryProps) {
 							<div className="min-w-0">
 								<p className="truncate text-xs font-bold text-[var(--sl-text)]">
 									{safeHistory.length}{" "}
-									{safeHistory.length === 1 ? "Conversion" : "Conversions"}
+									{safeHistory.length === 1
+										? "Conversion"
+										: "Conversions"}
 								</p>
 
 								<p className="truncate text-[10px] text-[var(--sl-text-muted)]">
@@ -111,11 +115,12 @@ export default function RfcHistory({ history }: RfcHistoryProps) {
 								{reversedHistory.map((item, index) => {
 									const isDiscounted = Boolean(item.discounted);
 
-									const displayNumber = safeHistory.length - index;
+									const displayNumber =
+										safeHistory.length - index;
 
 									return (
 										<div
-											key={item.id}
+											key={`${item.tier}-${item.fc}-${item.rfc}-${item.discounted}-${index}`}
 											className="w-full min-w-0 px-4 py-3 transition-colors hover:bg-[var(--sl-active)]"
 										>
 											<div className="flex min-w-0 items-center gap-3">
@@ -139,8 +144,8 @@ export default function RfcHistory({ history }: RfcHistoryProps) {
 
 													<div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
 														<span className="inline-flex items-center gap-1 text-[10px] text-[var(--sl-text-muted)]">
-															<Flame className="size-3 shrink-0" />-
-															{formatNumber(item.fc)} FC
+															<Flame className="size-3 shrink-0" />
+															-{formatNumber(item.fc)} FC
 														</span>
 
 														<span className="text-[10px] text-[var(--sl-text-muted)]">
@@ -148,8 +153,8 @@ export default function RfcHistory({ history }: RfcHistoryProps) {
 														</span>
 
 														<span className="inline-flex items-center gap-1 text-[10px] text-[var(--sl-text-muted)]">
-															<Zap className="size-3 shrink-0" />+
-															{formatNumber(item.rfc)} RFC
+															<Zap className="size-3 shrink-0" />
+															+{formatNumber(item.rfc)} RFC
 														</span>
 													</div>
 												</div>

@@ -1,6 +1,10 @@
 "use client";
 
-import { Calculator } from "lucide-react";
+import {
+	Check,
+	Calculator,
+	LockKeyhole,
+} from "lucide-react";
 
 import SLInput from "@/components/ui/sl-ui/SLInput";
 import SLLabel from "@/components/ui/sl-ui/SLLabel";
@@ -12,17 +16,20 @@ type RfcSetupProps = {
 	onChange: (values: RfcSetupValues) => void;
 };
 
-function parseInteger(value: string, fallback = 0): number {
-	const parsed = Number.parseInt(value, 10);
-
-	if (!Number.isFinite(parsed)) {
-		return fallback;
+function formatNumber(value: number): string {
+	if (!Number.isFinite(value)) {
+		return "0";
 	}
 
-	return parsed;
+	return new Intl.NumberFormat("en-US").format(
+		Math.max(0, Math.floor(value)),
+	);
 }
 
-export default function RfcSetup({ values, onChange }: RfcSetupProps) {
+export default function RfcSetup({
+	values,
+	onChange,
+}: RfcSetupProps) {
 	function handleStartingCountChange(
 		event: React.ChangeEvent<HTMLInputElement>,
 	) {
@@ -37,70 +44,62 @@ export default function RfcSetup({ values, onChange }: RfcSetupProps) {
 			return;
 		}
 
-		const parsedValue = parseInteger(rawValue, values.startingCount);
+		const parsedValue = Number.parseInt(
+			rawValue,
+			10,
+		);
 
-		onChange({
-			...values,
-			startingCount: Math.min(Math.max(parsedValue, 0), 100),
-		});
-	}
-
-	function handleFcInventoryChange(event: React.ChangeEvent<HTMLInputElement>) {
-		const rawValue = event.target.value;
-
-		if (rawValue === "") {
-			onChange({
-				...values,
-				fcInventory: 0,
-			});
-
+		if (!Number.isFinite(parsedValue)) {
 			return;
 		}
 
-		const parsedValue = parseInteger(rawValue, values.fcInventory);
-
 		onChange({
 			...values,
-			fcInventory: Math.max(parsedValue, 0),
+			startingCount: Math.min(
+				Math.max(parsedValue, 0),
+				100,
+			),
 		});
 	}
 
-	const startingCount = Math.min(
-		Math.max(Number(values.startingCount ?? 0), 0),
-		100,
-	);
-
-	const fcInventory = Math.max(Number(values.fcInventory ?? 0), 0);
-
 	return (
-		<div className="w-full min-w-0">
-			<div className="flex min-w-0 items-start gap-3">
-				<div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--sl-input)]">
-					<Calculator className="size-5 text-[var(--sl-text)]" />
+		<div className="rounded-2xl bg-[var(--sl-surface)] ">
+			<div className="flex items-start gap-3">
+				<div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--primary)]/10">
+					<Calculator className="size-5 text-[var(--primary)]" />
 				</div>
 
 				<div className="min-w-0">
-					<h2 className="text-sm font-bold text-[var(--sl-text)]">
+					<p className="text-sm font-bold text-[var(--sl-text)]">
 						Simulator Setup
-					</h2>
+					</p>
 
-					<p className="mt-1 max-w-md text-xs leading-5 text-[var(--sl-text-muted)]">
-						Set your current weekly conversion count and available FC.
+					<p className="mt-1 text-xs leading-5 text-[var(--sl-text-muted)]">
+						Set your current weekly conversion count. FC is
+						automatically synchronized from your Resource Bag.
 					</p>
 				</div>
 			</div>
 
-			<div className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-				<div className="min-w-0 space-y-2">
-					<SLLabel>Starting Count</SLLabel>
+			<div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+				<div className="space-y-2">
+					<SLLabel>
+						Starting Count
+					</SLLabel>
 
 					<SLInput
 						type="number"
 						min={0}
 						max={100}
 						step={1}
-						value={startingCount === 0 ? "" : startingCount}
-						onChange={handleStartingCountChange}
+						value={
+							values.startingCount === 0
+								? ""
+								: values.startingCount
+						}
+						onChange={
+							handleStartingCountChange
+						}
 						placeholder="0"
 					/>
 
@@ -109,31 +108,52 @@ export default function RfcSetup({ values, onChange }: RfcSetupProps) {
 					</p>
 				</div>
 
-				<div className="min-w-0 space-y-2">
-					<SLLabel>FC Inventory</SLLabel>
+				<div className="space-y-2">
+					<div className="flex items-center justify-between gap-2">
+						<SLLabel>
+							FC Inventory
+						</SLLabel>
 
-					<SLInput
-						type="number"
-						min={0}
-						step={1}
-						value={fcInventory === 0 ? "" : fcInventory}
-						onChange={handleFcInventoryChange}
-						placeholder="0"
-					/>
+						<span className="inline-flex items-center gap-1 rounded-md bg-[var(--primary)]/10 px-1.5 py-0.5 text-[9px] font-bold text-[var(--primary)]">
+							<Check className="size-2.5" />
+							Synced
+						</span>
+					</div>
 
-					<p className="text-[11px] leading-4 text-[var(--sl-text-muted)]">
-						Available FC you want to use for RFC conversion.
-					</p>
+					<div className="relative">
+						<SLInput
+							type="number"
+							value={values.fcInventory}
+							readOnly
+							aria-readonly="true"
+							className="pr-10"
+						/>
+
+						<div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+							<LockKeyhole className="size-4 text-[var(--sl-text-muted)]" />
+						</div>
+					</div>
+
+					<div className="flex items-start gap-1.5">
+						<Check className="mt-0.5 size-3 shrink-0 text-[var(--primary)]" />
+
+						<p className="text-[11px] leading-4 text-[var(--sl-text-muted)]">
+							{formatNumber(values.fcInventory)} FC available
+							from your Resource Bag.
+						</p>
+					</div>
 				</div>
 			</div>
 
-			<div className="mt-4 rounded-2xl bg-[var(--sl-input)] px-4 py-3">
+			<div className="mt-4 rounded-xl border border-[var(--sl-border)] bg-[var(--sl-input)] px-3 py-3">
 				<div className="flex items-center justify-between gap-3">
 					<span className="text-xs font-medium text-[var(--sl-text-muted)]">
 						Weekly Conversion Limit
 					</span>
 
-					<span className="text-xs font-bold text-[var(--sl-text)]">100</span>
+					<span className="text-xs font-bold text-[var(--sl-text)]">
+						100
+					</span>
 				</div>
 
 				<div className="mt-2 flex items-center justify-between gap-3">
@@ -142,7 +162,18 @@ export default function RfcSetup({ values, onChange }: RfcSetupProps) {
 					</span>
 
 					<span className="text-xs font-bold text-[var(--sl-text)]">
-						{startingCount}/100
+						{values.startingCount}
+						/100
+					</span>
+				</div>
+
+				<div className="mt-2 flex items-center justify-between gap-3">
+					<span className="text-xs font-medium text-[var(--sl-text-muted)]">
+						Available FC
+					</span>
+
+					<span className="text-xs font-bold text-[var(--sl-text)]">
+						{formatNumber(values.fcInventory)}
 					</span>
 				</div>
 			</div>

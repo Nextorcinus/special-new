@@ -1,6 +1,5 @@
 export {
 	calculateProgress,
-	calculateSession,
 	calculateStatistics,
 	createConversion,
 	createHistoryItem,
@@ -16,7 +15,7 @@ export {
 	performConversion,
 	resetSession,
 	runConversion,
-} from "./rfcCalculator";
+} from "@/modules/rfc/calculator/rfcCalculator";
 
 export {
 	calculateExpectedRfc,
@@ -24,4 +23,4 @@ export {
 	getProbabilityPercent,
 	normalizeProbabilities,
 	rollRfc,
-} from "./rfcProbability";
+} from "@/modules/rfc/calculator/rfcProbability";

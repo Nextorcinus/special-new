@@ -80,7 +80,7 @@ export const NAVIGATION: NavigationItem[] = [
 	{
 		id: "rfc",
 		title: "RFC",
-		icon: "/category/rfc.png",
+		icon: "/icons/crystal-laboratory.png",
 		href: "/rfc",
 	},
 	{

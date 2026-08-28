@@ -122,7 +122,7 @@ function StatCard({
 			</div>
 
 			<p
-				className={`mt-4 truncate text-2xl font-bold leading-none ${
+				className={`mt-4 truncate text-md font-bold leading-none ${
 					valueClassName ?? "text-[var(--sl-text)]"
 				}`}
 			>
@@ -200,7 +200,7 @@ export default function RfcStatistics({
 				</div>
 			</div>
 
-			<div className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+			<div className="mt-5 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2">
 				<StatCard
 					label="RFC Gained"
 					value={formatNumber(rfcGained)}
@@ -226,7 +226,7 @@ export default function RfcStatistics({
 				/>
 			</div>
 
-			<div className="mt-3 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+			<div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2">
 				<StatCard
 					label="Expected RFC"
 					value={formatDecimal(expectedRfc)}
@@ -246,9 +246,9 @@ export default function RfcStatistics({
 					</div>
 
 					<div className="mt-4 flex min-w-0 items-center gap-2">
-						<span className={`text-xl font-bold ${luckColor}`}>{luckIcon}</span>
+						<span className={`text-md font-bold ${luckColor}`}>{luckIcon}</span>
 
-						<p className={`truncate text-xl font-bold ${luckColor}`}>
+						<p className={`truncate text-md font-bold ${luckColor}`}>
 							{luckLabel}
 						</p>
 					</div>
@@ -259,7 +259,7 @@ export default function RfcStatistics({
 				</div>
 			</div>
 
-			<div className="mt-3 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+			<div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2">
 				<StatCard
 					label="Difference"
 					value={differenceText}
