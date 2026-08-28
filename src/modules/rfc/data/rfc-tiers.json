@@ -1,0 +1,146 @@
+[
+	{
+		"tier": 1,
+		"startAt": 0,
+		"endAt": 19,
+		"cost": 20,
+		"probabilities": [
+			{
+				"rfc": 1,
+				"chance": 0.65
+			},
+			{
+				"rfc": 2,
+				"chance": 0.25
+			},
+			{
+				"rfc": 3,
+				"chance": 0.1
+			}
+		]
+	},
+	{
+		"tier": 2,
+		"startAt": 20,
+		"endAt": 39,
+		"cost": 50,
+		"probabilities": [
+			{
+				"rfc": 2,
+				"chance": 0.85
+			},
+			{
+				"rfc": 3,
+				"chance": 0.15
+			}
+		]
+	},
+	{
+		"tier": 3,
+		"startAt": 40,
+		"endAt": 59,
+		"cost": 100,
+		"probabilities": [
+			{
+				"rfc": 3,
+				"chance": 0.85
+			},
+			{
+				"rfc": 4,
+				"chance": 0.125
+			},
+			{
+				"rfc": 5,
+				"chance": 0.02
+			},
+			{
+				"rfc": 6,
+				"chance": 0.005
+			}
+		]
+	},
+	{
+		"tier": 4,
+		"startAt": 60,
+		"endAt": 79,
+		"cost": 130,
+		"probabilities": [
+			{
+				"rfc": 3,
+				"chance": 0.75
+			},
+			{
+				"rfc": 4,
+				"chance": 0.15
+			},
+			{
+				"rfc": 5,
+				"chance": 0.05
+			},
+			{
+				"rfc": 6,
+				"chance": 0.03
+			},
+			{
+				"rfc": 7,
+				"chance": 0.01
+			},
+			{
+				"rfc": 8,
+				"chance": 0.005
+			},
+			{
+				"rfc": 9,
+				"chance": 0.005
+			}
+		]
+	},
+	{
+		"tier": 5,
+		"startAt": 80,
+		"endAt": 99,
+		"cost": 160,
+		"probabilities": [
+			{
+				"rfc": 3,
+				"chance": 0.7
+			},
+			{
+				"rfc": 4,
+				"chance": 0.12
+			},
+			{
+				"rfc": 5,
+				"chance": 0.09
+			},
+			{
+				"rfc": 6,
+				"chance": 0.04
+			},
+			{
+				"rfc": 7,
+				"chance": 0.015
+			},
+			{
+				"rfc": 8,
+				"chance": 0.01
+			},
+			{
+				"rfc": 9,
+				"chance": 0.01
+			},
+			{
+				"rfc": 10,
+				"chance": 0.005
+			},
+			{
+				"rfc": 11,
+				"chance": 0.005
+			},
+			{
+				"rfc": 12,
+				"chance": 0.005
+			}
+		]
+	}
+]

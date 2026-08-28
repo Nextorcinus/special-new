@@ -1,7 +1,4 @@
-export type NavigationGroup =
-	| "chief"
-	| "heroes"
-	| "development";
+export type NavigationGroup = "chief" | "heroes" | "development";
 
 export type NavigationItem = {
 	id: string;
@@ -79,6 +76,12 @@ export const NAVIGATION: NavigationItem[] = [
 		title: "War Academy",
 		icon: "/category/war-academy.png",
 		href: "/war-academy",
+	},
+	{
+		id: "rfc",
+		title: "RFC",
+		icon: "/category/rfc.png",
+		href: "/rfc",
 	},
 	{
 		id: "widget",
