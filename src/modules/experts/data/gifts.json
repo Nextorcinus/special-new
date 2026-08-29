@@ -1,0 +1,19 @@
+{
+	"gifts": [
+		{
+			"id": "compass",
+			"name": "Compass",
+			"affinityPerGift": 10
+		},
+		{
+			"id": "fieryHeart",
+			"name": "Fiery Heart",
+			"affinityPerGift": 100
+		},
+		{
+			"id": "sailConquest",
+			"name": "Sail of Conquest",
+			"affinityPerGift": 1000
+		}
+	]
+}
