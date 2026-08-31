@@ -1,21 +1,45 @@
 "use client";
 
-import { calculateSkillCap, getSkillRequirement } from "../calculator";
+import {
+	calculateSkillCap,
+	getSkillRequirement,
+} from "../calculator";
 
-import type { Expert, ExpertSkill, ExpertSkillState } from "../types";
+import type {
+	Expert,
+	ExpertSkill,
+	ExpertSkillState,
+} from "../types";
 
 interface ExpertSkillCardProps {
 	expert: Expert;
 	skill: ExpertSkill;
 	relationshipLevel: number;
 	state: ExpertSkillState;
-	onCurrentLevelChange: (level: number) => void;
-	onTargetLevelChange: (level: number) => void;
+
+	onCurrentLevelChange: (
+		level: number | null,
+	) => void;
+
+	onTargetLevelChange: (
+		level: number | null,
+	) => void;
+
 	onXpChange: (xp: number) => void;
 }
 
-function clampLevel(value: number, min: number, max: number) {
-	return Math.max(min, Math.min(max, value));
+function clampLevel(
+	value: number,
+	max: number,
+): number {
+	if (!Number.isFinite(value)) {
+		return 0;
+	}
+
+	return Math.max(
+		0,
+		Math.min(max, Math.floor(value)),
+	);
 }
 
 export function ExpertSkillCard({
@@ -27,88 +51,209 @@ export function ExpertSkillCard({
 	onTargetLevelChange,
 	onXpChange,
 }: ExpertSkillCardProps) {
-	/*
-	 * Skill cap berdasarkan relationship.
-	 *
-	 * Contoh:
-	 * Relationship Lv.10
-	 * Entrapment Max Lv.10
-	 *
-	 * Relationship Lv.20
-	 * Scavenging Max Lv.5
-	 */
-	const calculatedSkillCap = calculateSkillCap(
-		expert,
-		skill,
-		relationshipLevel,
+	/* =====================================================
+	 * SKILL CAP
+	 * ===================================================== */
+
+	const skillCap = Math.max(
+		0,
+		Math.min(
+			skill.maxLevel,
+			calculateSkillCap(
+				expert,
+				skill,
+				relationshipLevel,
+			),
+		),
 	);
 
-	const skillCap = clampLevel(calculatedSkillCap, 0, skill.maxLevel);
+	const requiredRelationship =
+		getSkillRequirement(
+			expert,
+			skill.id,
+		);
 
-	const requiredRelationship = getSkillRequirement(expert, skill.id);
+	const isLocked =
+		relationshipLevel <
+		requiredRelationship;
 
-	const isLocked = relationshipLevel < requiredRelationship;
-
-	/*
-	 * Current level tidak boleh melebihi
-	 * skill cap yang sedang terbuka.
-	 */
-	const currentLevel = clampLevel(state.currentLevel, 0, skillCap);
-
-	/*
-	 * Target harus:
+	/* =====================================================
+	 * CURRENT LEVEL
 	 *
-	 * 1. Lebih tinggi dari Current Level
-	 * 2. Tidak boleh melebihi Skill Cap
+	 * null means not selected yet.
+	 * ===================================================== */
+
+	const currentLevel =
+		state.currentLevel !== null
+			? clampLevel(
+					state.currentLevel,
+					skill.maxLevel,
+				)
+			: null;
+
+	/* =====================================================
+	 * TARGET LEVEL
 	 *
-	 * Jika Current = 6
-	 * Target minimal = 7
-	 */
-	const minimumTargetLevel = currentLevel + 1;
+	 * null means not selected yet.
+	 *
+	 * Target MUST be greater than Current.
+	 * ===================================================== */
 
-	const hasUpgradeAvailable = minimumTargetLevel <= skillCap;
+	let targetLevel: number | null =
+		null;
 
-	const targetLevel = hasUpgradeAvailable
-		? clampLevel(state.targetLevel, minimumTargetLevel, skillCap)
-		: currentLevel;
+	if (
+		state.targetLevel !== null
+	) {
+		targetLevel = clampLevel(
+			state.targetLevel,
+			skillCap,
+		);
 
-	/*
-	 * Current Level options.
-	 */
+		/*
+		 * Never allow target <= current.
+		 */
+		if (
+			currentLevel !== null &&
+			targetLevel <= currentLevel
+		) {
+			targetLevel = null;
+		}
+	}
+
+	/* =====================================================
+	 * CURRENT LEVEL OPTIONS
+	 * ===================================================== */
+
 	const currentLevels = Array.from(
 		{
-			length: skillCap + 1,
+			length:
+				skill.maxLevel + 1,
 		},
-		(_, index) => index,
+		(_, level) => level,
 	);
 
-	/*
-	 * Target Level options.
+	/* =====================================================
+	 * TARGET LEVEL OPTIONS
 	 *
-	 * Sengaja dimulai dari Current + 1.
-	 *
-	 * Contoh:
-	 *
-	 * Current Lv.6
-	 * Skill Cap Lv.10
-	 *
-	 * Target:
-	 * Lv.7
-	 * Lv.8
-	 * Lv.9
-	 * Lv.10
-	 */
-	const targetLevels = hasUpgradeAvailable
-		? Array.from(
-				{
-					length: skillCap - currentLevel,
-				},
-				(_, index) => currentLevel + 1 + index,
-			)
-		: [];
+	 * Only levels ABOVE current.
+	 * ===================================================== */
+
+	const targetLevels =
+		currentLevel !== null
+			? Array.from(
+					{
+						length:
+							Math.max(
+								0,
+								skillCap -
+									currentLevel,
+							),
+					},
+					(_, index) =>
+						currentLevel +
+						index +
+						1,
+				)
+			: [];
+
+	const hasCurrentLevel =
+		currentLevel !== null;
+
+	const hasTargetOptions =
+		targetLevels.length > 0;
+
+	const targetDisabled =
+		!hasCurrentLevel ||
+		!hasTargetOptions;
+
+	/* =====================================================
+	 * CURRENT LEVEL CHANGE
+	 * ===================================================== */
+
+	const handleCurrentLevelChange = (
+		value: string,
+	) => {
+		if (value === "") {
+			onCurrentLevelChange(null);
+			onTargetLevelChange(null);
+
+			return;
+		}
+
+		const nextLevel = clampLevel(
+			Number(value),
+			skill.maxLevel,
+		);
+
+		onCurrentLevelChange(
+			nextLevel,
+		);
+
+		/*
+		 * Existing target is only valid if
+		 * it remains higher than the new current.
+		 */
+		if (
+			state.targetLevel !== null &&
+			state.targetLevel <= nextLevel
+		) {
+			onTargetLevelChange(
+				null,
+			);
+		}
+	};
+
+	/* =====================================================
+	 * TARGET LEVEL CHANGE
+	 * ===================================================== */
+
+	const handleTargetLevelChange = (
+		value: string,
+	) => {
+		if (value === "") {
+			onTargetLevelChange(null);
+
+			return;
+		}
+
+		if (currentLevel === null) {
+			onTargetLevelChange(null);
+
+			return;
+		}
+
+		const nextLevel = clampLevel(
+			Number(value),
+			skillCap,
+		);
+
+		/*
+		 * Target must be greater than Current.
+		 */
+		if (
+			nextLevel <= currentLevel
+		) {
+			onTargetLevelChange(null);
+
+			return;
+		}
+
+		onTargetLevelChange(
+			nextLevel,
+		);
+	};
+
+	/* =====================================================
+	 * LOCKED STATE
+	 * ===================================================== */
 
 	return (
 		<div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+			{/* =================================================
+			    HEADER
+			    ================================================= */}
+
 			<div className="flex items-start justify-between gap-3">
 				<div className="min-w-0">
 					<p className="truncate text-sm font-medium text-white">
@@ -116,152 +261,230 @@ export function ExpertSkillCard({
 					</p>
 
 					<p className="mt-1 text-xs text-white/40">
-						Required Relationship Lv. {requiredRelationship}
+						Required Relationship
+						Lv.{" "}
+						{requiredRelationship}
 					</p>
 				</div>
 
 				<div className="shrink-0 rounded-lg bg-white/5 px-2 py-1 text-xs text-white/50">
-					Max Lv. {skill.maxLevel}
+					Max Lv.{" "}
+					{skill.maxLevel}
 				</div>
 			</div>
 
+			{/* =================================================
+			    LOCKED
+			    ================================================= */}
+
 			{isLocked ? (
 				<div className="mt-3 rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2 text-xs text-white/40">
-					Unlocks at Relationship Lv. {requiredRelationship}
+					Unlocks at Relationship
+					Lv.{" "}
+					{requiredRelationship}
 				</div>
 			) : (
-				<div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-					{/* CURRENT LEVEL */}
-					<div className="space-y-1.5">
-						<label
-							htmlFor={`${expert.id}-${skill.id}-current`}
-							className="text-xs font-medium text-white/50"
-						>
-							Current Level
-						</label>
+				<>
+					{/* =========================================
+					    LEVEL SELECTORS
+					    ========================================= */}
 
-						<select
-							id={`${expert.id}-${skill.id}-current`}
-							value={currentLevel}
-							onChange={(event) => {
-								const nextLevel = clampLevel(
-									Number(event.target.value),
-									0,
-									skillCap,
-								);
+					<div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+						{/* =====================================
+						    CURRENT LEVEL
+						    ===================================== */}
 
-								onCurrentLevelChange(nextLevel);
+						<div className="space-y-1.5">
+							<label
+								htmlFor={`${expert.id}-${skill.id}-current`}
+								className="text-xs font-medium text-white/50"
+							>
+								Current Level
+							</label>
 
-								/*
-								 * Target harus selalu lebih tinggi
-								 * dari Current.
-								 *
-								 * Jika Current naik melewati
-								 * Target sebelumnya, otomatis
-								 * pindahkan Target ke Current + 1.
-								 */
-								const nextMinimumTarget = nextLevel + 1;
-
-								if (nextMinimumTarget <= skillCap) {
-									const nextTarget = Math.max(nextMinimumTarget, targetLevel);
-
-									onTargetLevelChange(Math.min(nextTarget, skillCap));
-								} else {
-									/*
-									 * Current sudah mencapai
-									 * skill cap.
-									 *
-									 * Tidak ada target upgrade
-									 * lagi.
-									 */
-									onTargetLevelChange(nextLevel);
-								}
-							}}
-							className="h-11 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-white/20 focus:bg-white/10"
-						>
-							{currentLevels.map((level) => (
-								<option
-									key={level}
-									value={level}
-									className="bg-zinc-900 text-white"
-								>
-									Level {level}
-								</option>
-							))}
-						</select>
-					</div>
-
-					{/* TARGET LEVEL */}
-					<div className="space-y-1.5">
-						<label
-							htmlFor={`${expert.id}-${skill.id}-target`}
-							className="text-xs font-medium text-white/50"
-						>
-							Target Level
-						</label>
-
-						{hasUpgradeAvailable ? (
 							<select
-								id={`${expert.id}-${skill.id}-target`}
-								value={targetLevel}
-								onChange={(event) => {
-									const nextLevel = clampLevel(
-										Number(event.target.value),
-										minimumTargetLevel,
-										skillCap,
-									);
-
-									onTargetLevelChange(nextLevel);
-								}}
+								id={`${expert.id}-${skill.id}-current`}
+								value={
+									currentLevel ===
+									null
+										? ""
+										: currentLevel
+								}
+								onChange={(
+									event,
+								) =>
+									handleCurrentLevelChange(
+										event
+											.target
+											.value,
+									)
+								}
 								className="h-11 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-white/20 focus:bg-white/10"
 							>
-								{targetLevels.map((level) => (
-									<option
-										key={level}
-										value={level}
-										className="bg-zinc-900 text-white"
-									>
-										Level {level}
-									</option>
-								))}
+								<option
+									value=""
+									className="bg-zinc-900 text-white"
+								>
+									Select
+									Current
+									Level
+								</option>
+
+								{currentLevels.map(
+									(
+										level,
+									) => (
+										<option
+											key={
+												level
+											}
+											value={
+												level
+											}
+											className="bg-zinc-900 text-white"
+										>
+											Level{" "}
+											{
+												level
+											}
+										</option>
+									),
+								)}
 							</select>
-						) : (
-							<div className="flex h-11 w-full items-center rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white/50">
-								Level {currentLevel}{" "}
-								<span className="ml-2 text-xs text-white/30">Max</span>
-							</div>
-						)}
+						</div>
+
+						{/* =====================================
+						    TARGET LEVEL
+						    ===================================== */}
+
+						<div className="space-y-1.5">
+							<label
+								htmlFor={`${expert.id}-${skill.id}-target`}
+								className="text-xs font-medium text-white/50"
+							>
+								Target Level
+							</label>
+
+							<select
+								id={`${expert.id}-${skill.id}-target`}
+								value={
+									targetLevel ===
+									null
+										? ""
+										: targetLevel
+								}
+								disabled={
+									targetDisabled
+								}
+								onChange={(
+									event,
+								) =>
+									handleTargetLevelChange(
+										event
+											.target
+											.value,
+									)
+								}
+								className={[
+									"h-11 w-full rounded-xl border px-3 text-sm outline-none transition",
+
+									targetDisabled
+										? "cursor-not-allowed border-white/5 bg-white/[0.02] text-white/20"
+										: "border-white/10 bg-white/5 text-white focus:border-white/20 focus:bg-white/10",
+								].join(
+									" ",
+								)}
+							>
+								<option
+									value=""
+									className="bg-zinc-900 text-white"
+								>
+									{!hasCurrentLevel
+										? "Select Current Level First"
+										: !hasTargetOptions
+											? "No Higher Level Available"
+											: "Select Target Level"}
+								</option>
+
+								{targetLevels.map(
+									(
+										level,
+									) => (
+										<option
+											key={
+												level
+											}
+											value={
+												level
+											}
+											className="bg-zinc-900 text-white"
+										>
+											Level{" "}
+											{
+												level
+											}
+										</option>
+									),
+								)}
+							</select>
+						</div>
 					</div>
-				</div>
-			)}
 
-			{!isLocked && (
-				<div className="mt-3">
-					<label
-						htmlFor={`${expert.id}-${skill.id}-xp`}
-						className="text-xs font-medium text-white/50"
-					>
-						Current Learning XP
-					</label>
+					{/* =========================================
+					    CURRENT LEARNING XP
+					    ========================================= */}
 
-					<input
-						id={`${expert.id}-${skill.id}-xp`}
-						type="number"
-						min={0}
-						value={state.currentXp}
-						onChange={(event) =>
-							onXpChange(Math.max(0, Number(event.target.value) || 0))
-						}
-						className="mt-1.5 h-11 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-white/20 focus:bg-white/10"
-					/>
-				</div>
-			)}
+					<div className="mt-3">
+						<label
+							htmlFor={`${expert.id}-${skill.id}-xp`}
+							className="text-xs font-medium text-white/50"
+						>
+							Current Learning XP
+						</label>
 
-			{!isLocked && !hasUpgradeAvailable && (
-				<div className="mt-3 rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2 text-xs text-white/40">
-					Skill is already at the current maximum level unlocked by this
-					relationship.
-				</div>
+						<input
+							id={`${expert.id}-${skill.id}-xp`}
+							type="number"
+							min={0}
+							value={
+								state.currentXp
+							}
+							disabled={
+								!hasCurrentLevel
+							}
+							onChange={(
+								event,
+							) => {
+								const value =
+									Number(
+										event
+											.target
+											.value,
+									);
+
+								onXpChange(
+									Number.isFinite(
+										value,
+									)
+										? Math.max(
+												0,
+												value,
+											)
+										: 0,
+								);
+							}}
+							className={[
+								"h-11 w-full rounded-xl border px-3 text-sm outline-none transition",
+
+								!hasCurrentLevel
+									? "cursor-not-allowed border-white/5 bg-white/[0.02] text-white/20"
+									: "border-white/10 bg-white/5 text-white focus:border-white/20 focus:bg-white/10",
+							].join(
+								" ",
+							)}
+						/>
+					</div>
+				</>
 			)}
 		</div>
 	);
