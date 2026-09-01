@@ -12,7 +12,7 @@ import type {
 	CalculationModule,
 } from "@/features/inventory/store/history/types";
 
-import HistoryFilterTabs from "./components/HistoryFilterTabs";
+import { HistoryFilterTabs } from "./components/HistoryFilterTabs";
 
 type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
@@ -40,11 +40,13 @@ function matchesModule(
 export default function HistoryPage() {
 	const router = useRouter();
 
-	const [activeModule, setActiveModule] = useState<CalculationModule | "all">(
-		"all",
-	);
+	const [activeModule, setActiveModule] = useState<
+		CalculationModule | "all"
+	>("all");
 
-	const items = useHistoryStore((state: HistoryStoreState) => state.items);
+	const items = useHistoryStore(
+		(state: HistoryStoreState) => state.items,
+	);
 
 	const loadHistory = useHistoryStore(
 		(state: HistoryStoreState) => state.loadHistory,
@@ -63,10 +65,14 @@ export default function HistoryPage() {
 	}, [loadHistory]);
 
 	const filteredItems = useMemo(() => {
-		return items.filter((item) => matchesModule(item, activeModule));
+		return items.filter((item) =>
+			matchesModule(item, activeModule),
+		);
 	}, [items, activeModule]);
 
-	function handleSelectHistory(item: CalculationHistoryItem) {
+	function handleSelectHistory(
+		item: CalculationHistoryItem,
+	) {
 		router.push(getHistoryRoute(item));
 	}
 
@@ -83,10 +89,15 @@ export default function HistoryPage() {
 						<ArrowLeft className="h-4 w-4" />
 					</button>
 
-					<h1 className="text-base font-bold text-[var(--sl-text)]">History</h1>
+					<h1 className="text-base font-bold text-[var(--sl-text)]">
+						History
+					</h1>
 				</div>
 
-				<HistoryFilterTabs value={activeModule} onChange={setActiveModule} />
+				<HistoryFilterTabs
+					value={activeModule}
+					onChange={setActiveModule}
+				/>
 
 				<HistoryPanel
 					items={filteredItems}

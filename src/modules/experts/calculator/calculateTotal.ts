@@ -5,6 +5,7 @@ import type {
 	ExpertSkillState,
 	ExpertsState,
 } from "../types";
+
 import { calculateBooks } from "./calculateBooks";
 import { calculateLearningTime } from "./calculateLearningTime";
 import { calculateSigils } from "./calculateSigils";
@@ -83,26 +84,63 @@ export function calculateExpertTotal(
 	relationship: ExpertRelationshipState,
 	skillStates: Record<string, ExpertSkillState>,
 ): ExpertResult {
-	const currentRelationship = Math.max(0, relationship.currentLevel);
+	const rawCurrentRelationship =
+		relationship.currentLevel;
 
-	const targetRelationship = Math.max(
-		currentRelationship,
-		relationship.targetLevel,
-	);
+	const rawTargetRelationship =
+		relationship.targetLevel;
 
-	const affinity = calculateAffinityCost(
-		expert,
-		currentRelationship,
-		targetRelationship,
-	);
+	const hasRelationshipSelection =
+		rawCurrentRelationship !== null &&
+		rawTargetRelationship !== null;
 
-	const sigils = calculateSigils(
-		expert,
-		currentRelationship,
-		targetRelationship,
-		relationship.currentSigils,
-		0,
-	);
+	const currentRelationship =
+		rawCurrentRelationship === null
+			? 0
+			: Math.max(
+					0,
+					rawCurrentRelationship,
+				);
+
+	const targetRelationship =
+		rawTargetRelationship === null
+			? 0
+			: Math.max(
+					currentRelationship,
+					rawTargetRelationship,
+				);
+
+	const affinity =
+		hasRelationshipSelection
+			? calculateAffinityCost(
+					expert,
+					currentRelationship,
+					targetRelationship,
+				)
+			: 0;
+
+	const currentSigils =
+		Number.isFinite(
+			relationship.currentSigils,
+		)
+			? Math.max(
+					0,
+					relationship.currentSigils,
+				)
+			: 0;
+
+	const sigils =
+		hasRelationshipSelection
+			? calculateSigils(
+					expert,
+					currentRelationship,
+					targetRelationship,
+					currentSigils,
+					0,
+				)
+			: {
+					required: 0,
+				};
 
 	const skills: ExpertSkillResult[] = [];
 
@@ -114,41 +152,94 @@ export function calculateExpertTotal(
 			continue;
 		}
 
-		const skillState = skillStates[skill.id] ?? {
-			currentLevel: 0,
-			targetLevel: 0,
-			currentXp: 0,
-		};
+		const skillState =
+			skillStates[skill.id] ?? {
+				currentLevel: null,
+				targetLevel: null,
+				currentXp: 0,
+			};
 
-		const currentLevel = Math.max(
-			0,
-			Math.min(skill.maxLevel, skillState.currentLevel),
-		);
+		const rawCurrentSkillLevel =
+			skillState.currentLevel;
 
-		const targetLevel = Math.max(
-			currentLevel,
-			Math.min(skill.maxLevel, skillState.targetLevel),
-		);
+		const rawTargetSkillLevel =
+			skillState.targetLevel;
 
-		const maxLevel = calculateSkillCap(expert, skill, targetRelationship);
+		const hasSkillSelection =
+			rawCurrentSkillLevel !== null &&
+			rawTargetSkillLevel !== null;
 
-		const validTargetLevel = Math.min(targetLevel, maxLevel);
+		if (!hasSkillSelection) {
+			continue;
+		}
 
-		const books = calculateBooks(skill, currentLevel, validTargetLevel);
+		const currentSkillLevel =
+			Math.max(
+				0,
+				Math.min(
+					skill.maxLevel,
+					rawCurrentSkillLevel,
+				),
+			);
 
-		const learningMinutes = calculateLearningTime(
-			skill,
-			currentLevel,
-			validTargetLevel,
-			skillState.currentXp,
-		);
+		const targetSkillLevel =
+			Math.max(
+				currentSkillLevel,
+				Math.min(
+					skill.maxLevel,
+					rawTargetSkillLevel,
+				),
+			);
 
-		if (books > 0 || learningMinutes > 0) {
+		const maxLevel =
+			calculateSkillCap(
+				expert,
+				skill,
+				targetRelationship,
+			);
+
+		const validTargetLevel =
+			Math.min(
+				targetSkillLevel,
+				maxLevel,
+			);
+
+		const books =
+			calculateBooks(
+				skill,
+				currentSkillLevel,
+				validTargetLevel,
+			);
+
+		const currentXp =
+			Number.isFinite(
+				skillState.currentXp,
+			)
+				? Math.max(
+						0,
+						skillState.currentXp,
+					)
+				: 0;
+
+		const learningMinutes =
+			calculateLearningTime(
+				skill,
+				currentSkillLevel,
+				validTargetLevel,
+				currentXp,
+			);
+
+		if (
+			books > 0 ||
+			learningMinutes > 0
+		) {
 			skills.push({
 				skillId: skill.id,
 				skillName: skill.name,
-				currentLevel,
-				targetLevel: validTargetLevel,
+				currentLevel:
+					currentSkillLevel,
+				targetLevel:
+					validTargetLevel,
 				maxLevel,
 				books,
 				learningMinutes,
@@ -156,7 +247,8 @@ export function calculateExpertTotal(
 		}
 
 		totalBooks += books;
-		totalLearningMinutes += learningMinutes;
+		totalLearningMinutes +=
+			learningMinutes;
 	}
 
 	return {
@@ -164,13 +256,18 @@ export function calculateExpertTotal(
 		name: expert.name,
 		generation: expert.generation,
 		focus: expert.focus,
+
 		relationship: {
-			currentLevel: currentRelationship,
-			targetLevel: targetRelationship,
+			currentLevel:
+				currentRelationship,
+			targetLevel:
+				targetRelationship,
 			affinity,
 			sigils: sigils.required,
 		},
+
 		skills,
+
 		totalBooks,
 		totalLearningMinutes,
 	};
@@ -188,24 +285,35 @@ export function calculateExpertsTotal(
 	const expertResults: ExpertResult[] = [];
 
 	for (const expert of experts) {
-		const relationship = state.relationships[expert.id] ?? {
-			currentLevel: 0,
-			targetLevel: 0,
-			currentAffinity: 0,
-			currentSigils: 0,
-		};
+		const relationship =
+			state.relationships[expert.id] ?? {
+				currentLevel: null,
+				targetLevel: null,
+				currentAffinity: 0,
+				currentSigils: 0,
+			};
 
-		const skillStates = state.skills[expert.id] ?? {};
+		const skillStates =
+			state.skills[expert.id] ?? {};
 
-		const result = calculateExpertTotal(expert, relationship, skillStates);
+		const result =
+			calculateExpertTotal(
+				expert,
+				relationship,
+				skillStates,
+			);
 
-		totalAffinity += result.relationship.affinity;
+		totalAffinity +=
+			result.relationship.affinity;
 
-		totalSigils += result.relationship.sigils;
+		totalSigils +=
+			result.relationship.sigils;
 
-		totalBooks += result.totalBooks;
+		totalBooks +=
+			result.totalBooks;
 
-		totalLearningMinutes += result.totalLearningMinutes;
+		totalLearningMinutes +=
+			result.totalLearningMinutes;
 
 		if (
 			result.relationship.affinity > 0 ||
@@ -217,63 +325,92 @@ export function calculateExpertsTotal(
 		}
 	}
 
-	const safeValeriaLevel = clampLevel(state.valeriaLevel);
+	const safeValeriaLevel =
+		clampLevel(
+			state.valeriaLevel,
+		);
 
-	const safeBaldurLevel = clampLevel(state.baldurLevel);
+	const safeBaldurLevel =
+		clampLevel(
+			state.baldurLevel,
+		);
 
-	const baseEventPoints = calculateBaseEventPoints(
-		totalSigils,
-		totalBooks,
-		totalLearningMinutes,
-	);
+	const baseEventPoints =
+		calculateBaseEventPoints(
+			totalSigils,
+			totalBooks,
+			totalLearningMinutes,
+		);
 
-	const valeriaBonus = Math.min(
-		safeValeriaLevel * VALERIA_SVS_BONUS_PER_LEVEL,
-		MAX_VALERIA_SVS_BONUS,
-	);
+	const valeriaBonus =
+		Math.min(
+			safeValeriaLevel *
+				VALERIA_SVS_BONUS_PER_LEVEL,
+			MAX_VALERIA_SVS_BONUS,
+		);
 
-	const valeriaBonusPoints = baseEventPoints * (valeriaBonus / 100);
+	const valeriaBonusPoints =
+		baseEventPoints *
+		(valeriaBonus / 100);
 
-	const svsPoints = baseEventPoints + valeriaBonusPoints;
+	const svsPoints =
+		baseEventPoints +
+		valeriaBonusPoints;
 
-	const baldurBonus = Math.min(
-		safeBaldurLevel * BALDUR_SHOWDOWN_BONUS_PER_LEVEL,
-		MAX_BALDUR_SHOWDOWN_BONUS,
-	);
+	const baldurBonus =
+		Math.min(
+			safeBaldurLevel *
+				BALDUR_SHOWDOWN_BONUS_PER_LEVEL,
+			MAX_BALDUR_SHOWDOWN_BONUS,
+		);
 
-	const baldurBonusPoints = baseEventPoints * (baldurBonus / 100);
+	const baldurBonusPoints =
+		baseEventPoints *
+		(baldurBonus / 100);
 
-	const showdownPoints = baseEventPoints + baldurBonusPoints;
+	const showdownPoints =
+		baseEventPoints +
+		baldurBonusPoints;
 
 	return {
-		affinity: createResourceResult(totalAffinity, state.inventory, "affinity"),
+		affinity:
+			createResourceResult(
+				totalAffinity,
+				state.inventory,
+				"affinity",
+			),
 
-		generalSigils: createResourceResult(
-			totalSigils,
-			state.inventory,
-			"generalSigils",
-		),
+		generalSigils:
+			createResourceResult(
+				totalSigils,
+				state.inventory,
+				"generalSigils",
+			),
 
-		booksOfKnowledge: createResourceResult(
-			totalBooks,
-			state.inventory,
-			"booksOfKnowledge",
-		),
+		booksOfKnowledge:
+			createResourceResult(
+				totalBooks,
+				state.inventory,
+				"booksOfKnowledge",
+			),
 
-		learningSpeedup: createResourceResult(
-			totalLearningMinutes,
-			state.inventory,
-			"learningSpeedupMinutes",
-		),
+		learningSpeedup:
+			createResourceResult(
+				totalLearningMinutes,
+				state.inventory,
+				"learningSpeedupMinutes",
+			),
 
 		totalAffinity,
 		totalSigils,
 		totalBooks,
 		totalLearningMinutes,
 
-		baseSvsPoints: baseEventPoints,
+		baseSvsPoints:
+			baseEventPoints,
 
-		valeriaLevel: safeValeriaLevel,
+		valeriaLevel:
+			safeValeriaLevel,
 
 		valeriaBonus,
 
@@ -281,9 +418,11 @@ export function calculateExpertsTotal(
 
 		svsPoints,
 
-		baseShowdownPoints: baseEventPoints,
+		baseShowdownPoints:
+			baseEventPoints,
 
-		baldurLevel: safeBaldurLevel,
+		baldurLevel:
+			safeBaldurLevel,
 
 		baldurBonus,
 
@@ -300,21 +439,39 @@ function calculateBaseEventPoints(
 	totalBooks: number,
 	totalLearningMinutes: number,
 ): number {
-	const sigilPoints = totalSigils * EXPERT_SIGIL_SVS_POINTS;
+	const sigilPoints =
+		totalSigils *
+		EXPERT_SIGIL_SVS_POINTS;
 
-	const bookPoints = totalBooks * BOOK_SVS_POINTS;
+	const bookPoints =
+		totalBooks *
+		BOOK_SVS_POINTS;
 
-	const learningPoints = totalLearningMinutes * LEARNING_MINUTE_SVS_POINTS;
+	const learningPoints =
+		totalLearningMinutes *
+		LEARNING_MINUTE_SVS_POINTS;
 
-	return sigilPoints + bookPoints + learningPoints;
+	return (
+		sigilPoints +
+		bookPoints +
+		learningPoints
+	);
 }
 
-function clampLevel(value: number) {
+function clampLevel(
+	value: number,
+): number {
 	if (!Number.isFinite(value)) {
 		return 0;
 	}
 
-	return Math.max(0, Math.min(10, Math.round(value)));
+	return Math.max(
+		0,
+		Math.min(
+			10,
+			Math.round(value),
+		),
+	);
 }
 
 function createResourceResult(
@@ -326,12 +483,19 @@ function createResourceResult(
 		| "booksOfKnowledge"
 		| "learningSpeedupMinutes",
 ): ExpertsResourceResult {
-	const have = getInventoryValue(inventory, resource);
+	const have =
+		getInventoryValue(
+			inventory,
+			resource,
+		);
 
 	return {
 		need,
 		have,
-		short: Math.max(0, need - have),
+		short: Math.max(
+			0,
+			need - have,
+		),
 	};
 }
 
@@ -346,9 +510,12 @@ function getInventoryValue(
 	switch (resource) {
 		case "affinity":
 			return (
-				inventory.compassGifts * 10 +
-				inventory.fieryHeartGifts * 100 +
-				inventory.sailConquestGifts * 1000
+				inventory.compassGifts *
+					10 +
+				inventory.fieryHeartGifts *
+					100 +
+				inventory.sailConquestGifts *
+					1000
 			);
 
 		case "generalSigils":
@@ -373,8 +540,18 @@ function calculateAffinityCost(
 
 	return expert.affinityCosts
 		.slice(
-			Math.max(0, fromLevel),
-			Math.min(expert.affinityCosts.length, toLevel),
+			Math.max(
+				0,
+				fromLevel,
+			),
+			Math.min(
+				expert.affinityCosts.length,
+				toLevel,
+			),
 		)
-		.reduce((total, cost) => total + cost, 0);
+		.reduce(
+			(total, cost) =>
+				total + cost,
+			0,
+		);
 }

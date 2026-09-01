@@ -23,11 +23,11 @@ interface ExpertGenerationProps {
 	>;
 	onCurrentRelationshipChange: (
 		expertId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onTargetRelationshipChange: (
 		expertId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onCurrentAffinityChange: (
 		expertId: string,
@@ -40,12 +40,12 @@ interface ExpertGenerationProps {
 	onCurrentSkillLevelChange: (
 		expertId: string,
 		skillId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onTargetSkillLevelChange: (
 		expertId: string,
 		skillId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onSkillXpChange: (
 		expertId: string,
@@ -178,8 +178,8 @@ export function ExpertGeneration({
 				{experts.map((expert) => {
 					const relationship =
 						relationships[expert.id] ?? {
-							currentLevel: 0,
-							targetLevel: 0,
+							currentLevel: null,
+							targetLevel: null,
 							currentAffinity: 0,
 							currentSigils: 0,
 						};
@@ -191,14 +191,18 @@ export function ExpertGeneration({
 						openExpertId === expert.id;
 
 					const currentRelationship =
-						relationship.currentLevel ?? 0;
+						relationship.currentLevel;
 
 					const targetRelationship =
-						Math.max(
-							relationship.targetLevel ??
-								0,
-							currentRelationship,
-						);
+						relationship.targetLevel;
+
+					const displayCurrentRelationship =
+						currentRelationship ?? 0;
+
+					const displayTargetRelationship =
+						targetRelationship ??
+						currentRelationship ??
+						0;
 
 					return (
 						<div
@@ -259,11 +263,11 @@ export function ExpertGeneration({
 										<span className="shrink-0">
 											Rel.{" "}
 											{
-												currentRelationship
+												displayCurrentRelationship
 											}{" "}
 											→{" "}
 											{
-												targetRelationship
+												displayTargetRelationship
 											}
 										</span>
 									</div>
@@ -304,14 +308,12 @@ export function ExpertGeneration({
 								>
 									<ExpertCard
 										expert={expert}
-										relationship={{
-											...relationship,
-											currentLevel:
-												currentRelationship,
-											targetLevel:
-												targetRelationship,
-										}}
-										skills={expertSkills}
+										relationship={
+											relationship
+										}
+										skills={
+											expertSkills
+										}
 										onCurrentRelationshipChange={(
 											level,
 										) =>

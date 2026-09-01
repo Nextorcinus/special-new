@@ -25,46 +25,18 @@ export interface Expert {
 	estimated?: boolean;
 }
 
-/* =========================================================
- * RELATIONSHIP STATE
- * ========================================================= */
-
 export interface ExpertRelationshipState {
-	/**
-	 * null = user has not selected a current level yet.
-	 */
 	currentLevel: number | null;
-
-	/**
-	 * null = user has not selected a target level yet.
-	 */
 	targetLevel: number | null;
-
 	currentAffinity: number;
 	currentSigils: number;
 }
 
-/* =========================================================
- * SKILL STATE
- * ========================================================= */
-
 export interface ExpertSkillState {
-	/**
-	 * null = user has not selected a current skill level yet.
-	 */
 	currentLevel: number | null;
-
-	/**
-	 * null = user has not selected a target skill level yet.
-	 */
 	targetLevel: number | null;
-
 	currentXp: number;
 }
-
-/* =========================================================
- * INVENTORY
- * ========================================================= */
 
 export interface ExpertInventoryState {
 	compassGifts: number;
@@ -75,24 +47,13 @@ export interface ExpertInventoryState {
 	learningSpeedupMinutes: number;
 }
 
-/* =========================================================
- * MAIN STATE
- * ========================================================= */
-
 export interface ExpertsState {
 	relationships: Record<string, ExpertRelationshipState>;
-
 	skills: Record<string, Record<string, ExpertSkillState>>;
-
 	inventory: ExpertInventoryState;
-
 	valeriaLevel: number;
 	baldurLevel: number;
 }
-
-/* =========================================================
- * CALCULATION RESULT
- * ========================================================= */
 
 export interface ExpertSkillResult {
 	skillId: string;
@@ -142,15 +103,15 @@ export interface ExpertsCalculationResult {
 
 	experts: ExpertResult[];
 
-	valeriaLevel: number;
-	baldurLevel: number;
-
 	baseSvsPoints: number;
+	valeriaLevel: number;
+	valeriaBonus: number;
+	valeriaBonusPoints: number;
 	svsPoints: number;
 
 	baseShowdownPoints: number;
-	showdownPoints: number;
-
-	valeriaBonus: number;
+	baldurLevel: number;
 	baldurBonus: number;
+	baldurBonusPoints: number;
+	showdownPoints: number;
 }

@@ -15,10 +15,10 @@ interface ExpertCardProps {
 	relationship: ExpertRelationshipState;
 	skills: Record<string, ExpertSkillState>;
 	onCurrentRelationshipChange: (
-		level: number,
+		level: number | null,
 	) => void;
 	onTargetRelationshipChange: (
-		level: number,
+		level: number | null,
 	) => void;
 	onCurrentAffinityChange: (
 		value: number,
@@ -28,11 +28,11 @@ interface ExpertCardProps {
 	) => void;
 	onCurrentSkillLevelChange: (
 		skillId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onTargetSkillLevelChange: (
 		skillId: string,
-		level: number,
+		level: number | null,
 	) => void;
 	onSkillXpChange: (
 		skillId: string,
@@ -53,6 +53,9 @@ export function ExpertCard({
 	onSkillXpChange,
 }: ExpertCardProps) {
 	const imagePath = `/experts/${expert.id}.png`;
+
+	const relationshipLevel =
+		relationship.targetLevel ?? 0;
 
 	return (
 		<article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -100,14 +103,14 @@ export function ExpertCard({
 				<ExpertTalent
 					expert={expert}
 					relationshipLevel={
-						relationship.targetLevel
+						relationshipLevel
 					}
 				/>
 
 				<ExpertSkills
 					expert={expert}
 					relationshipLevel={
-						relationship.targetLevel
+						relationshipLevel
 					}
 					skills={skills}
 					onCurrentLevelChange={
