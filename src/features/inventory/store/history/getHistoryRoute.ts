@@ -12,17 +12,22 @@ function normalizeCategory(value: unknown): string {
 		.replace(/\s+/g, " ");
 }
 
+function toRouteSegment(value: string): string {
+	return value.replace(/\s+/g, "-");
+}
+
 function getHistoryCategory(item: CalculationHistoryItem): string {
 	const form = item.form as HistoryCategorySource | undefined;
+
 	const result = item.result as HistoryCategorySource | undefined;
 
 	const candidates = [item.category, form?.category, result?.category];
 
 	for (const candidate of candidates) {
-		const normalizedCategory = normalizeCategory(candidate);
+		const normalized = normalizeCategory(candidate);
 
-		if (normalizedCategory) {
-			return normalizedCategory;
+		if (normalized) {
+			return normalized;
 		}
 	}
 
@@ -46,14 +51,14 @@ function isSkillT12Category(category: string): boolean {
 	].includes(category);
 }
 
-/**
- * Mendukung history lama yang pernah disimpan
- * menggunakan module "war-academy".
- */
 function resolveHistoryModule(
 	item: CalculationHistoryItem,
 	category: string,
 ): CalculationModule {
+	if (item.module === "experts") {
+		return "experts";
+	}
+
 	if (item.module !== "war-academy") {
 		return item.module;
 	}
@@ -66,7 +71,7 @@ function resolveHistoryModule(
 		return "skill-t12";
 	}
 
-	return item.module;
+	return "war-academy";
 }
 
 function getResearchCategoryPath(category: string): string {
@@ -146,10 +151,7 @@ function getSkillT12CategoryPath(category: string): string {
 	return route ? `/${route}` : "";
 }
 
-function normalizeCategoryPath(
-	module: CalculationModule,
-	category: string,
-): string {
+function getCategoryPath(module: CalculationModule, category: string): string {
 	if (!category) {
 		return "";
 	}
@@ -174,9 +176,12 @@ function normalizeCategoryPath(
 		case "charm":
 		case "widget":
 		case "troops":
-			return `/${category.replace(/\s+/g, "-")}`;
+			return `/${toRouteSegment(category)}`;
 
 		case "pet":
+			return "";
+
+		case "experts":
 			return "";
 
 		default:
@@ -197,15 +202,15 @@ function getPetId(item: CalculationHistoryItem): string | null {
 		  }
 		| undefined;
 
-	const petId = result?.petId ?? form?.petId;
+	const petId = result?.petId ?? form?.petId ?? item.category;
 
 	if (typeof petId !== "string") {
 		return null;
 	}
 
-	const normalizedPetId = petId.trim();
+	const normalizedPetId = normalizeCategory(petId);
 
-	return normalizedPetId || null;
+	return normalizedPetId ? toRouteSegment(normalizedPetId) : null;
 }
 
 function getBaseRoute(module: CalculationModule, categoryPath: string): string {
@@ -240,6 +245,9 @@ function getBaseRoute(module: CalculationModule, categoryPath: string): string {
 		case "troops":
 			return `/troops${categoryPath}`;
 
+		case "experts":
+			return "/experts";
+
 		default:
 			return "";
 	}
@@ -258,6 +266,10 @@ function appendHistoryId(route: string, historyId: string): string {
 export function getHistoryRoute(item: CalculationHistoryItem): string {
 	const historyId = encodeURIComponent(String(item.id));
 
+	if (item.module === "experts") {
+		return appendHistoryId("/experts", historyId);
+	}
+
 	if (item.module === "pet") {
 		const petId = getPetId(item);
 
@@ -274,7 +286,7 @@ export function getHistoryRoute(item: CalculationHistoryItem): string {
 
 	const resolvedModule = resolveHistoryModule(item, category);
 
-	const categoryPath = normalizeCategoryPath(resolvedModule, category);
+	const categoryPath = getCategoryPath(resolvedModule, category);
 
 	const baseRoute = getBaseRoute(resolvedModule, categoryPath);
 

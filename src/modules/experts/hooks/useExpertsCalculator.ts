@@ -1,14 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-
 import { calculateExpertsTotal } from "../calculator";
-
 import {
 	DEFAULT_EXPERT_RELATIONSHIP,
 	DEFAULT_EXPERT_SKILL,
 } from "../constants";
-
 import { EXPERTS } from "../data";
 
 import type {
@@ -25,23 +22,12 @@ import type {
 function createRelationshipState(): ExpertRelationshipState {
 	return {
 		...DEFAULT_EXPERT_RELATIONSHIP,
-
-		currentLevel: null,
-		targetLevel: null,
-
-		currentAffinity: 0,
-		currentSigils: 0,
 	};
 }
 
 function createSkillState(): ExpertSkillState {
 	return {
 		...DEFAULT_EXPERT_SKILL,
-
-		currentLevel: null,
-		targetLevel: null,
-
-		currentXp: 0,
 	};
 }
 
@@ -79,7 +65,6 @@ function createInitialState(): ExpertsState {
 		relationships,
 		skills,
 		inventory: createInventoryState(),
-
 		valeriaLevel: 0,
 		baldurLevel: 0,
 	};
@@ -89,36 +74,98 @@ function createInitialState(): ExpertsState {
  * HELPERS
  * ========================================================= */
 
-function clampRelationshipLevel(value: number): number {
-	if (!Number.isFinite(value)) {
-		return 0;
+function clampRelationshipLevel(value: number | null | undefined) {
+	if (value === null || value === undefined || !Number.isFinite(value)) {
+		return null;
 	}
 
 	return Math.max(0, Math.min(100, Math.floor(value)));
 }
 
-function clampSkillLevel(value: number): number {
-	if (!Number.isFinite(value)) {
-		return 0;
+function clampSkillLevel(value: number | null | undefined) {
+	if (value === null || value === undefined || !Number.isFinite(value)) {
+		return null;
 	}
 
 	return Math.max(0, Math.floor(value));
 }
 
-function clampResource(value: number): number {
-	if (!Number.isFinite(value)) {
+function clampResource(value: number | null | undefined) {
+	if (value === null || value === undefined || !Number.isFinite(value)) {
 		return 0;
 	}
 
 	return Math.max(0, value);
 }
 
-function clampEventLevel(value: number): number {
-	if (!Number.isFinite(value)) {
+function clampEventLevel(value: number | null | undefined) {
+	if (value === null || value === undefined || !Number.isFinite(value)) {
 		return 0;
 	}
 
 	return Math.max(0, Math.min(10, Math.floor(value)));
+}
+
+/* =========================================================
+ * NORMALIZE HISTORY STATE
+ * ========================================================= */
+
+function normalizeState(input: ExpertsState): ExpertsState {
+	const initial = createInitialState();
+
+	const relationships: ExpertsState["relationships"] = {};
+
+	const skills: ExpertsState["skills"] = {};
+
+	for (const expert of EXPERTS) {
+		const savedRelationship = input.relationships?.[expert.id];
+
+		relationships[expert.id] = {
+			...initial.relationships[expert.id],
+			currentLevel: clampRelationshipLevel(savedRelationship?.currentLevel),
+			targetLevel: clampRelationshipLevel(savedRelationship?.targetLevel),
+			currentAffinity: clampResource(savedRelationship?.currentAffinity),
+			currentSigils: clampResource(savedRelationship?.currentSigils),
+		};
+
+		skills[expert.id] = {};
+
+		for (const skill of expert.skills) {
+			const savedSkill = input.skills?.[expert.id]?.[skill.id];
+
+			skills[expert.id][skill.id] = {
+				...initial.skills[expert.id][skill.id],
+				currentLevel: clampSkillLevel(savedSkill?.currentLevel),
+				targetLevel: clampSkillLevel(savedSkill?.targetLevel),
+				currentXp: clampResource(savedSkill?.currentXp),
+			};
+		}
+	}
+
+	return {
+		relationships,
+		skills,
+
+		inventory: {
+			compassGifts: clampResource(input.inventory?.compassGifts),
+
+			fieryHeartGifts: clampResource(input.inventory?.fieryHeartGifts),
+
+			sailConquestGifts: clampResource(input.inventory?.sailConquestGifts),
+
+			generalSigils: clampResource(input.inventory?.generalSigils),
+
+			booksOfKnowledge: clampResource(input.inventory?.booksOfKnowledge),
+
+			learningSpeedupMinutes: clampResource(
+				input.inventory?.learningSpeedupMinutes,
+			),
+		},
+
+		valeriaLevel: clampEventLevel(input.valeriaLevel),
+
+		baldurLevel: clampEventLevel(input.baldurLevel),
+	};
 }
 
 /* =========================================================
@@ -128,9 +175,17 @@ function clampEventLevel(value: number): number {
 export function useExpertsCalculator() {
 	const [state, setState] = useState<ExpertsState>(createInitialState);
 
-	/* =====================================================
+	/* =======================================================
+	 * LOAD STATE
+	 * ======================================================= */
+
+	const loadState = useCallback((savedState: ExpertsState) => {
+		setState(normalizeState(savedState));
+	}, []);
+
+	/* =======================================================
 	 * INVENTORY
-	 * ===================================================== */
+	 * ======================================================= */
 
 	const setInventory = useCallback(
 		(key: keyof ExpertInventoryState, value: number) => {
@@ -147,9 +202,9 @@ export function useExpertsCalculator() {
 		[],
 	);
 
-	/* =====================================================
-	 * VALERIA
-	 * ===================================================== */
+	/* =======================================================
+	 * EVENT BONUS
+	 * ======================================================= */
 
 	const setValeriaLevel = useCallback((level: number) => {
 		setState((current) => ({
@@ -159,10 +214,6 @@ export function useExpertsCalculator() {
 		}));
 	}, []);
 
-	/* =====================================================
-	 * BALDUR
-	 * ===================================================== */
-
 	const setBaldurLevel = useCallback((level: number) => {
 		setState((current) => ({
 			...current,
@@ -171,72 +222,32 @@ export function useExpertsCalculator() {
 		}));
 	}, []);
 
-	/* =====================================================
+	/* =======================================================
 	 * RELATIONSHIP
-	 * ===================================================== */
+	 * ======================================================= */
 
 	const setRelationship = useCallback(
 		(expertId: string, value: Partial<ExpertRelationshipState>) => {
-			setState((current) => {
-				const previous =
-					current.relationships[expertId] ?? createRelationshipState();
+			setState((current) => ({
+				...current,
 
-				return {
-					...current,
+				relationships: {
+					...current.relationships,
 
-					relationships: {
-						...current.relationships,
-
-						[expertId]: {
-							...previous,
-							...value,
-						},
+					[expertId]: {
+						...current.relationships[expertId],
+						...value,
 					},
-				};
-			});
+				},
+			}));
 		},
 		[],
 	);
 
 	const setRelationshipCurrentLevel = useCallback(
 		(expertId: string, level: number | null) => {
-			if (level === null) {
-				setRelationship(expertId, {
-					currentLevel: null,
-					targetLevel: null,
-				});
-
-				return;
-			}
-
-			const nextLevel = clampRelationshipLevel(level);
-
-			setState((current) => {
-				const previous =
-					current.relationships[expertId] ?? createRelationshipState();
-
-				const currentTarget = previous.targetLevel;
-
-				const validTarget =
-					currentTarget !== null && currentTarget > nextLevel
-						? currentTarget
-						: null;
-
-				return {
-					...current,
-
-					relationships: {
-						...current.relationships,
-
-						[expertId]: {
-							...previous,
-
-							currentLevel: nextLevel,
-
-							targetLevel: validTarget,
-						},
-					},
-				};
+			setRelationship(expertId, {
+				currentLevel: clampRelationshipLevel(level),
 			});
 		},
 		[setRelationship],
@@ -244,50 +255,11 @@ export function useExpertsCalculator() {
 
 	const setRelationshipTargetLevel = useCallback(
 		(expertId: string, level: number | null) => {
-			if (level === null) {
-				setRelationship(expertId, {
-					targetLevel: null,
-				});
-
-				return;
-			}
-
-			setState((current) => {
-				const relationship =
-					current.relationships[expertId] ?? createRelationshipState();
-
-				const currentLevel = relationship.currentLevel;
-
-				if (currentLevel === null) {
-					return current;
-				}
-
-				const nextLevel = clampRelationshipLevel(level);
-
-				/*
-				 * Target harus selalu lebih
-				 * tinggi daripada Current.
-				 */
-				if (nextLevel <= currentLevel) {
-					return current;
-				}
-
-				return {
-					...current,
-
-					relationships: {
-						...current.relationships,
-
-						[expertId]: {
-							...relationship,
-
-							targetLevel: nextLevel,
-						},
-					},
-				};
+			setRelationship(expertId, {
+				targetLevel: clampRelationshipLevel(level),
 			});
 		},
-		[],
+		[setRelationship],
 	);
 
 	const setCurrentAffinity = useCallback(
@@ -308,80 +280,37 @@ export function useExpertsCalculator() {
 		[setRelationship],
 	);
 
-	/* =====================================================
+	/* =======================================================
 	 * SKILLS
-	 * ===================================================== */
+	 * ======================================================= */
 
 	const setSkill = useCallback(
 		(expertId: string, skillId: string, value: Partial<ExpertSkillState>) => {
-			setState((current) => {
-				const previous =
-					current.skills[expertId]?.[skillId] ?? createSkillState();
+			setState((current) => ({
+				...current,
 
-				return {
-					...current,
+				skills: {
+					...current.skills,
 
-					skills: {
-						...current.skills,
+					[expertId]: {
+						...current.skills[expertId],
 
-						[expertId]: {
-							...current.skills[expertId],
+						[skillId]: {
+							...current.skills[expertId]?.[skillId],
 
-							[skillId]: {
-								...previous,
-								...value,
-							},
+							...value,
 						},
 					},
-				};
-			});
+				},
+			}));
 		},
 		[],
 	);
 
 	const setSkillCurrentLevel = useCallback(
 		(expertId: string, skillId: string, level: number | null) => {
-			if (level === null) {
-				setSkill(expertId, skillId, {
-					currentLevel: null,
-					targetLevel: null,
-				});
-
-				return;
-			}
-
-			const nextLevel = clampSkillLevel(level);
-
-			setState((current) => {
-				const previous =
-					current.skills[expertId]?.[skillId] ?? createSkillState();
-
-				const currentTarget = previous.targetLevel;
-
-				const validTarget =
-					currentTarget !== null && currentTarget > nextLevel
-						? currentTarget
-						: null;
-
-				return {
-					...current,
-
-					skills: {
-						...current.skills,
-
-						[expertId]: {
-							...current.skills[expertId],
-
-							[skillId]: {
-								...previous,
-
-								currentLevel: nextLevel,
-
-								targetLevel: validTarget,
-							},
-						},
-					},
-				};
+			setSkill(expertId, skillId, {
+				currentLevel: clampSkillLevel(level),
 			});
 		},
 		[setSkill],
@@ -389,53 +318,11 @@ export function useExpertsCalculator() {
 
 	const setSkillTargetLevel = useCallback(
 		(expertId: string, skillId: string, level: number | null) => {
-			if (level === null) {
-				setSkill(expertId, skillId, {
-					targetLevel: null,
-				});
-
-				return;
-			}
-
-			setState((current) => {
-				const skill = current.skills[expertId]?.[skillId] ?? createSkillState();
-
-				const currentLevel = skill.currentLevel;
-
-				if (currentLevel === null) {
-					return current;
-				}
-
-				const nextLevel = clampSkillLevel(level);
-
-				/*
-				 * Target skill harus lebih
-				 * tinggi daripada Current.
-				 */
-				if (nextLevel <= currentLevel) {
-					return current;
-				}
-
-				return {
-					...current,
-
-					skills: {
-						...current.skills,
-
-						[expertId]: {
-							...current.skills[expertId],
-
-							[skillId]: {
-								...skill,
-
-								targetLevel: nextLevel,
-							},
-						},
-					},
-				};
+			setSkill(expertId, skillId, {
+				targetLevel: clampSkillLevel(level),
 			});
 		},
-		[],
+		[setSkill],
 	);
 
 	const setSkillCurrentXp = useCallback(
@@ -447,30 +334,26 @@ export function useExpertsCalculator() {
 		[setSkill],
 	);
 
-	/* =====================================================
+	/* =======================================================
 	 * RESET
-	 * ===================================================== */
+	 * ======================================================= */
 
 	const reset = useCallback(() => {
 		setState(createInitialState());
 	}, []);
 
-	/* =====================================================
-	 * CALCULATION
-	 * ===================================================== */
+	/* =======================================================
+	 * RESULT
+	 * ======================================================= */
 
 	const result = useMemo(() => calculateExpertsTotal(EXPERTS, state), [state]);
 
-	/* =====================================================
-	 * RETURN
-	 * ===================================================== */
-
 	return {
 		state,
-
 		result,
-
 		experts: EXPERTS,
+
+		loadState,
 
 		setInventory,
 

@@ -1,45 +1,80 @@
-"use client";
+import type { CalculationModule } from "../types";
 
-import type { CalculationModule } from "@/features/inventory/store/history/types";
+type HistoryFilterValue = CalculationModule | "all";
 
-type FilterValue = CalculationModule | "all";
+interface HistoryFilterTabsProps {
+	value: HistoryFilterValue;
+	onChange: (value: HistoryFilterValue) => void;
+}
 
-type HistoryFilterTabsProps = {
-	value: FilterValue;
-	onChange: (value: FilterValue) => void;
-};
-
-const tabs: { label: string; value: FilterValue }[] = [
-	{ label: "All", value: "all" },
-	{ label: "Buildings", value: "buildings" },
-	{ label: "Research", value: "research" },
-	{ label: "Gear", value: "gear" },
-	{ label: "Charm", value: "charm" },
-	{ label: "War Academy", value: "war-academy" },
-	{ label: "Widget", value: "widget" },
-	{ label: "Pet", value: "pet" },
-	{ label: "Troops", value: "troops" },
+const FILTERS: {
+	value: HistoryFilterValue;
+	label: string;
+}[] = [
+	{
+		value: "all",
+		label: "All",
+	},
+	{
+		value: "buildings",
+		label: "Buildings",
+	},
+	{
+		value: "gear",
+		label: "Gear",
+	},
+	{
+		value: "charm",
+		label: "Charm",
+	},
+	{
+		value: "research",
+		label: "Research",
+	},
+	{
+		value: "war-academy",
+		label: "War Academy",
+	},
+	{
+		value: "widget",
+		label: "Widget",
+	},
+	{
+		value: "pet",
+		label: "Pet",
+	},
+	{
+		value: "troops",
+		label: "Troops",
+	},
+	{
+		value: "experts",
+		label: "Experts",
+	},
 ];
 
-export default function HistoryFilterTabs({
-	value,
-	onChange,
-}: HistoryFilterTabsProps) {
+export function HistoryFilterTabs({ value, onChange }: HistoryFilterTabsProps) {
 	return (
 		<div className="flex gap-2 overflow-x-auto pb-1">
-			{tabs.map((tab) => {
-				const isActive = value === tab.value;
+			{FILTERS.map((filter) => {
+				const active = value === filter.value;
 
 				return (
 					<button
-						key={tab.value}
+						key={filter.value}
 						type="button"
-						onClick={() => onChange(tab.value)}
-						className={`shrink-0 rounded-full px-3 py-3 text-xs font-semibold transition ${
-							isActive ? "bg-teal-500/80 text-white" : "bg-white text-black"
-						}`}
+						onClick={() => onChange(filter.value)}
+						className={[
+							"shrink-0 rounded-lg px-3 py-2",
+							"text-xs font-medium",
+							"transition-colors",
+							active
+								? "bg-white/10 text-white"
+								: "bg-white/[0.03] text-white/50",
+							"hover:bg-white/[0.08]",
+						].join(" ")}
 					>
-						{tab.label}
+						{filter.label}
 					</button>
 				);
 			})}

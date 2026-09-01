@@ -12,13 +12,30 @@ interface ExpertsResultProps {
 	result: ExpertsCalculationResult;
 }
 
+/* =========================================================
+ * ICONS
+ * ========================================================= */
+
+const ICONS = {
+	affinity: "/icons/compass.png",
+	sigils: "/icons/sigils.png",
+	books: "/icons/books.png",
+	learning: "/icons/learning_speedup.png",
+} as const;
+
+/* =========================================================
+ * FORMATTERS
+ * ========================================================= */
+
 function formatMinutes(minutes: number) {
 	if (minutes <= 0) {
 		return "0m";
 	}
 
 	const totalMinutes = Math.round(minutes);
+
 	const hours = Math.floor(totalMinutes / 60);
+
 	const remainingMinutes = totalMinutes % 60;
 
 	if (hours === 0) {
@@ -36,18 +53,52 @@ function formatPoints(points: number) {
 	return formatCompactNumber(Math.round(points));
 }
 
+/* =========================================================
+ * RESOURCE ICON
+ * ========================================================= */
+
+function ResourceIcon({
+	src,
+	alt,
+	className = "h-5 w-5",
+}: {
+	src: string;
+	alt: string;
+	className?: string;
+}) {
+	return (
+		<img
+			src={src}
+			alt={alt}
+			className={`${className} shrink-0 object-contain`}
+		/>
+	);
+}
+
+/* =========================================================
+ * RESOURCE CARD
+ * ========================================================= */
+
 function ResourceCard({
 	label,
 	resource,
+	icon,
 }: {
 	label: string;
 	resource: ExpertsResourceResult;
+	icon: string;
 }) {
 	return (
 		<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-			<p className="text-xs font-medium uppercase tracking-wide text-white/40">
-				{label}
-			</p>
+			<div className="flex items-center gap-2">
+				<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.05]">
+					<ResourceIcon src={icon} alt="" className="h-6 w-6" />
+				</div>
+
+				<p className="text-xs font-medium uppercase tracking-wide text-white/40">
+					{label}
+				</p>
+			</div>
 
 			<div className="mt-3 grid grid-cols-3 gap-3">
 				<div>
@@ -78,9 +129,17 @@ function ResourceCard({
 	);
 }
 
+/* =========================================================
+ * EXPERT RESULT CARD
+ * ========================================================= */
+
 function ExpertResultCard({ expert }: { expert: ExpertResult }) {
 	return (
 		<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+			{/* =================================================
+			    EXPERT HEADER
+			    ================================================= */}
+
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 				<div>
 					<h3 className="text-sm font-semibold text-white">{expert.name}</h3>
@@ -102,39 +161,71 @@ function ExpertResultCard({ expert }: { expert: ExpertResult }) {
 				</div>
 			</div>
 
-			<div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-				<div className="rounded-lg bg-white/[0.02] p-3">
-					<p className="text-xs text-white/40">Affinity</p>
+			{/* =================================================
+			    EXPERT RESOURCES
+			    ================================================= */}
 
-					<p className="mt-1 text-sm font-semibold text-white">
+			<div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+				{/* AFFINITY */}
+
+				<div className="rounded-lg bg-white/[0.02] p-3">
+					<div className="flex items-center gap-2">
+						<ResourceIcon src={ICONS.affinity} alt="" className="h-5 w-5" />
+
+						<p className="text-xs text-white/40">Affinity</p>
+					</div>
+
+					<p className="mt-2 text-sm font-semibold text-white">
 						{formatCompactNumber(expert.relationship.affinity)}
 					</p>
 				</div>
 
-				<div className="rounded-lg bg-white/[0.02] p-3">
-					<p className="text-xs text-white/40">Sigils</p>
+				{/* SIGILS */}
 
-					<p className="mt-1 text-sm font-semibold text-white">
+				<div className="rounded-lg bg-white/[0.02] p-3">
+					<div className="flex items-center gap-2">
+						<ResourceIcon src={ICONS.sigils} alt="" className="h-5 w-5" />
+
+						<p className="text-xs text-white/40">Sigils</p>
+					</div>
+
+					<p className="mt-2 text-sm font-semibold text-white">
 						{formatCompactNumber(expert.relationship.sigils)}
 					</p>
 				</div>
 
-				<div className="rounded-lg bg-white/[0.02] p-3">
-					<p className="text-xs text-white/40">Books</p>
+				{/* BOOKS */}
 
-					<p className="mt-1 text-sm font-semibold text-white">
+				<div className="rounded-lg bg-white/[0.02] p-3">
+					<div className="flex items-center gap-2">
+						<ResourceIcon src={ICONS.books} alt="" className="h-5 w-5" />
+
+						<p className="text-xs text-white/40">Books</p>
+					</div>
+
+					<p className="mt-2 text-sm font-semibold text-white">
 						{formatCompactNumber(expert.totalBooks)}
 					</p>
 				</div>
 
-				<div className="rounded-lg bg-white/[0.02] p-3">
-					<p className="text-xs text-white/40">Learning</p>
+				{/* LEARNING */}
 
-					<p className="mt-1 text-sm font-semibold text-white">
+				<div className="rounded-lg bg-white/[0.02] p-3">
+					<div className="flex items-center gap-2">
+						<ResourceIcon src={ICONS.learning} alt="" className="h-5 w-5" />
+
+						<p className="text-xs text-white/40">Learning</p>
+					</div>
+
+					<p className="mt-2 text-sm font-semibold text-white">
 						{formatMinutes(expert.totalLearningMinutes)}
 					</p>
 				</div>
 			</div>
+
+			{/* =================================================
+			    SKILLS
+			    ================================================= */}
 
 			{expert.skills.length > 0 && (
 				<div className="mt-4 border-t border-white/10 pt-4">
@@ -146,27 +237,55 @@ function ExpertResultCard({ expert }: { expert: ExpertResult }) {
 						{expert.skills.map((skill) => (
 							<div
 								key={skill.skillId}
-								className="flex items-center justify-between gap-3 rounded-lg bg-white/[0.02] px-3 py-2"
+								className="rounded-lg bg-white/[0.02] px-3 py-2"
 							>
-								<div className="min-w-0">
-									<p className="truncate text-xs font-medium text-white">
-										{skill.skillId}
-									</p>
+								<div className="flex items-center justify-between gap-3">
+									<div className="flex min-w-0 items-center gap-2">
+										<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white/[0.04]">
+											<ResourceIcon
+												src={ICONS.books}
+												alt=""
+												className="h-5 w-5"
+											/>
+										</div>
 
-									<p className="mt-0.5 text-xs text-white/40">
-										Lv. {skill.currentLevel} → {skill.targetLevel} /{" "}
-										{skill.maxLevel}
-									</p>
-								</div>
+										<div className="min-w-0">
+											<p className="truncate text-xs font-medium text-white">
+												{skill.skillId}
+											</p>
 
-								<div className="shrink-0 text-right">
-									<p className="text-xs font-medium text-white">
-										{skill.books} Books
-									</p>
+											<p className="mt-0.5 text-xs text-white/40">
+												Lv. {skill.currentLevel} → {skill.targetLevel} /{" "}
+												{skill.maxLevel}
+											</p>
+										</div>
+									</div>
 
-									<p className="mt-0.5 text-xs text-white/40">
-										{formatMinutes(skill.learningMinutes)}
-									</p>
+									<div className="shrink-0 text-right">
+										<div className="flex items-center justify-end gap-1.5">
+											<ResourceIcon
+												src={ICONS.books}
+												alt=""
+												className="h-4 w-4"
+											/>
+
+											<p className="text-xs font-medium text-white">
+												{skill.books} Books
+											</p>
+										</div>
+
+										<div className="mt-0.5 flex items-center justify-end gap-1.5">
+											<ResourceIcon
+												src={ICONS.learning}
+												alt=""
+												className="h-4 w-4"
+											/>
+
+											<p className="text-xs text-white/40">
+												{formatMinutes(skill.learningMinutes)}
+											</p>
+										</div>
+									</div>
 								</div>
 							</div>
 						))}
@@ -176,6 +295,10 @@ function ExpertResultCard({ expert }: { expert: ExpertResult }) {
 		</div>
 	);
 }
+
+/* =========================================================
+ * EVENT POINTS CARD
+ * ========================================================= */
 
 function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 	const hasEventPoints =
@@ -189,23 +312,49 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 
 	const showdownMultiplier = 1 + result.baldurBonus / 100;
 
+	const sigilPoints = result.totalSigils * 6000;
+
+	const bookPoints = result.totalBooks * 60;
+
+	const learningPoints = result.totalLearningMinutes * 30;
+
 	return (
 		<section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
-			<div className="flex flex-col gap-1">
-				<h3 className="text-sm font-semibold text-white">
-					SvS & Alliance Showdown
-				</h3>
+			{/* =================================================
+			    HEADER
+			    ================================================= */}
 
-				<p className="text-xs text-white/40">
-					Estimated event points from the resources required by this
-					calculation.
-				</p>
+			<div className="flex items-center gap-2">
+				<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05] text-base">
+					🏆
+				</div>
+
+				<div>
+					<h3 className="text-sm font-semibold text-white">
+						SvS & Alliance Showdown
+					</h3>
+
+					<p className="mt-0.5 text-xs text-white/40">
+						Estimated event points from the resources required by this
+						calculation.
+					</p>
+				</div>
 			</div>
 
+			{/* =================================================
+			    POINT SOURCES
+			    ================================================= */}
+
 			<div className="mt-4 grid grid-cols-1 gap-3">
+				{/* EXPERT SIGILS */}
+
 				<div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
 					<div className="flex items-center justify-between gap-3">
-						<span className="text-xs text-white/40">Expert Sigils</span>
+						<div className="flex min-w-0 items-center gap-2">
+							<ResourceIcon src={ICONS.sigils} alt="" className="h-6 w-6" />
+
+							<span className="text-xs text-white/40">Expert Sigils</span>
+						</div>
 
 						<span className="text-xs font-medium text-white">
 							{formatCompactNumber(result.totalSigils)}
@@ -217,13 +366,19 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 					</p>
 
 					<p className="mt-1 text-sm font-semibold text-white">
-						{formatPoints(result.totalSigils * 6000)} pts
+						{formatPoints(sigilPoints)} pts
 					</p>
 				</div>
 
+				{/* BOOKS */}
+
 				<div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
 					<div className="flex items-center justify-between gap-3">
-						<span className="text-xs text-white/40">Books of Knowledge</span>
+						<div className="flex min-w-0 items-center gap-2">
+							<ResourceIcon src={ICONS.books} alt="" className="h-6 w-6" />
+
+							<span className="text-xs text-white/40">Books of Knowledge</span>
+						</div>
 
 						<span className="text-xs font-medium text-white">
 							{formatCompactNumber(result.totalBooks)}
@@ -235,13 +390,19 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 					</p>
 
 					<p className="mt-1 text-sm font-semibold text-white">
-						{formatPoints(result.totalBooks * 60)} pts
+						{formatPoints(bookPoints)} pts
 					</p>
 				</div>
 
+				{/* LEARNING */}
+
 				<div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
 					<div className="flex items-center justify-between gap-3">
-						<span className="text-xs text-white/40">Learning Speedup</span>
+						<div className="flex min-w-0 items-center gap-2">
+							<ResourceIcon src={ICONS.learning} alt="" className="h-6 w-6" />
+
+							<span className="text-xs text-white/40">Learning Speedup</span>
+						</div>
 
 						<span className="text-xs font-medium text-white">
 							{formatMinutes(result.totalLearningMinutes)}
@@ -253,18 +414,28 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 					</p>
 
 					<p className="mt-1 text-sm font-semibold text-white">
-						{formatPoints(result.totalLearningMinutes * 30)} pts
+						{formatPoints(learningPoints)} pts
 					</p>
 				</div>
 			</div>
 
+			{/* =================================================
+			    EVENT TOTALS
+			    ================================================= */}
+
 			<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+				{/* =============================================
+				    SVS
+				    ============================================= */}
+
 				<div className="rounded-xl border border-sky-400/20 bg-sky-400/[0.06] p-4">
 					<div className="flex items-start justify-between gap-3">
 						<div>
-							<p className="text-xs font-medium uppercase tracking-wide text-sky-300/70">
-								SvS Points
-							</p>
+							<div className="flex items-center gap-2">
+								<p className="text-xs font-medium uppercase tracking-wide text-sky-300/70">
+									SvS Points
+								</p>
+							</div>
 
 							<p className="mt-2 text-xl font-bold text-white">
 								{formatPoints(result.svsPoints)}
@@ -282,21 +453,31 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 							)}
 						</div>
 
-						<div className="rounded-lg bg-white/5 px-2.5 py-1.5 text-right">
-							<p className="text-[10px] uppercase tracking-wide text-white/30">
-								Valeria
-							</p>
+						<div className="flex flex-col items-center gap-1">
+							<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5">
+								<span className="text-xl">🏆</span>
+							</div>
 
-							<p className="mt-0.5 text-xs font-semibold text-white">
-								Lv. {result.valeriaLevel}
-							</p>
+							<div className="rounded-lg bg-white/5 px-2.5 py-1.5 text-center">
+								<p className="text-[10px] uppercase tracking-wide text-white/30">
+									Valeria
+								</p>
 
-							<p className="text-[10px] text-sky-300">
-								+{result.valeriaBonus}%
-							</p>
+								<p className="mt-0.5 text-xs font-semibold text-white">
+									Lv. {result.valeriaLevel}
+								</p>
+
+								<p className="text-[10px] text-sky-300">
+									+{result.valeriaBonus}%
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
+
+				{/* =============================================
+				    ALLIANCE SHOWDOWN
+				    ============================================= */}
 
 				<div className="rounded-xl border border-orange-400/20 bg-orange-400/[0.06] p-4">
 					<div className="flex items-start justify-between gap-3">
@@ -321,27 +502,43 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 							)}
 						</div>
 
-						<div className="rounded-lg bg-white/5 px-2.5 py-1.5 text-right">
-							<p className="text-[10px] uppercase tracking-wide text-white/30">
-								Baldur
-							</p>
+						<div className="flex flex-col items-center gap-1">
+							<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5">
+								<span className="text-xl">🏆</span>
+							</div>
 
-							<p className="mt-0.5 text-xs font-semibold text-white">
-								Lv. {result.baldurLevel}
-							</p>
+							<div className="rounded-lg bg-white/5 px-2.5 py-1.5 text-center">
+								<p className="text-[10px] uppercase tracking-wide text-white/30">
+									Baldur
+								</p>
 
-							<p className="text-[10px] text-orange-300">
-								+{result.baldurBonus}%
-							</p>
+								<p className="mt-0.5 text-xs font-semibold text-white">
+									Lv. {result.baldurLevel}
+								</p>
+
+								<p className="text-[10px] text-orange-300">
+									+{result.baldurBonus}%
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className="mt-4 rounded-xl border border-white/10 bg-black/10 px-3 py-3">
-				<p className="text-xs text-white/40">Base Event Points</p>
+			{/* =================================================
+			    BASE EVENT POINTS
+			    ================================================= */}
 
-				<p className="mt-1 text-base font-semibold text-white">
+			<div className="mt-4 rounded-xl border border-white/10 bg-black/10 px-3 py-3">
+				<div className="flex items-center gap-2">
+					<div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/[0.05]">
+						<span className="text-sm">📊</span>
+					</div>
+
+					<p className="text-xs text-white/40">Base Event Points</p>
+				</div>
+
+				<p className="mt-2 text-base font-semibold text-white">
 					{formatPoints(result.baseSvsPoints)} pts
 				</p>
 
@@ -353,6 +550,10 @@ function EventPointsCard({ result }: { result: ExpertsCalculationResult }) {
 	);
 }
 
+/* =========================================================
+ * MAIN RESULT
+ * ========================================================= */
+
 export function ExpertsResult({ result }: ExpertsResultProps) {
 	const hasResult =
 		result.totalAffinity > 0 ||
@@ -363,11 +564,17 @@ export function ExpertsResult({ result }: ExpertsResultProps) {
 	if (!hasResult) {
 		return (
 			<section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-				<h2 className="text-base font-semibold text-white">
-					Calculation Result
-				</h2>
+				<div className="flex items-center gap-2">
+					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05]">
+						<span className="text-base">📊</span>
+					</div>
 
-				<p className="mt-1 text-sm text-white/40">
+					<h2 className="text-base font-semibold text-white">
+						Calculation Result
+					</h2>
+				</div>
+
+				<p className="mt-2 text-sm text-white/40">
 					Set a target level to see the required resources.
 				</p>
 			</section>
@@ -376,31 +583,59 @@ export function ExpertsResult({ result }: ExpertsResultProps) {
 
 	return (
 		<section className="space-y-4">
+			{/* =================================================
+			    RESULT HEADER
+			    ================================================= */}
+
 			<div>
-				<h2 className="text-base font-semibold text-white">
-					Calculation Result
-				</h2>
+				<div className="flex items-center gap-2">
+					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.05]">
+						<span className="text-base">📊</span>
+					</div>
+
+					<h2 className="text-base font-semibold text-white">
+						Calculation Result
+					</h2>
+				</div>
 
 				<p className="mt-1 text-sm text-white/40">
 					Required resources compared with your current inventory.
 				</p>
 			</div>
 
-			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-				<ResourceCard label="Affinity" resource={result.affinity} />
+			{/* =================================================
+			    RESOURCE TOTALS
+			    ================================================= */}
 
-				<ResourceCard label="General Sigils" resource={result.generalSigils} />
+			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+				<ResourceCard
+					label="Affinity"
+					resource={result.affinity}
+					icon={ICONS.affinity}
+				/>
+
+				<ResourceCard
+					label="General Sigils"
+					resource={result.generalSigils}
+					icon={ICONS.sigils}
+				/>
 
 				<ResourceCard
 					label="Books of Knowledge"
 					resource={result.booksOfKnowledge}
+					icon={ICONS.books}
 				/>
 
 				<ResourceCard
 					label="Learning Speedup"
 					resource={result.learningSpeedup}
+					icon={ICONS.learning}
 				/>
 			</div>
+
+			{/* =================================================
+			    EXPERT BREAKDOWN
+			    ================================================= */}
 
 			{result.experts.length > 0 && (
 				<div className="space-y-3">
@@ -421,6 +656,10 @@ export function ExpertsResult({ result }: ExpertsResultProps) {
 					</div>
 				</div>
 			)}
+
+			{/* =================================================
+			    SVS / SHOWDOWN
+			    ================================================= */}
 
 			<EventPointsCard result={result} />
 		</section>

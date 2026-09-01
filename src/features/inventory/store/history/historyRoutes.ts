@@ -18,6 +18,7 @@ function toRouteSegment(value: string): string {
 
 function getHistoryCategory(item: CalculationHistoryItem): string {
 	const form = item.form as HistoryCategorySource | undefined;
+
 	const result = item.result as HistoryCategorySource | undefined;
 
 	const candidates = [item.category, form?.category, result?.category];
@@ -54,14 +55,14 @@ function resolveHistoryModule(
 	item: CalculationHistoryItem,
 	category: string,
 ): CalculationModule {
+	if (item.module === "experts") {
+		return "experts";
+	}
+
 	if (item.module !== "war-academy") {
 		return item.module;
 	}
 
-	/*
-	 * Mendukung history lama yang sebelumnya disimpan
-	 * sebagai module "war-academy".
-	 */
 	if (isUnlockT12Category(category)) {
 		return "unlock-t12";
 	}
@@ -70,34 +71,34 @@ function resolveHistoryModule(
 		return "skill-t12";
 	}
 
-	return item.module;
+	return "war-academy";
 }
 
 function getResearchCategoryPath(category: string): string {
-	const validRoutes: Record<string, string> = {
+	const routes: Record<string, string> = {
 		growth: "growth",
 		economy: "economy",
 		battle: "battle",
 	};
 
-	const route = validRoutes[category];
+	const route = routes[category];
 
 	return route ? `/${route}` : "/categories";
 }
 
 function getBuildingCategoryPath(category: string): string {
-	const validRoutes: Record<string, string> = {
+	const routes: Record<string, string> = {
 		regular: "regular",
 		fc: "fc",
 	};
 
-	const route = validRoutes[category];
+	const route = routes[category];
 
 	return route ? `/${route}` : "";
 }
 
 function getWarAcademyCategoryPath(category: string): string {
-	const validRoutes: Record<string, string> = {
+	const routes: Record<string, string> = {
 		infantry: "infantry",
 		lancer: "lancer",
 		marksman: "marksman",
@@ -105,47 +106,43 @@ function getWarAcademyCategoryPath(category: string): string {
 		support: "support",
 	};
 
-	const route = validRoutes[category];
+	const route = routes[category];
 
 	return route ? `/${route}` : "";
 }
 
 function getUnlockT12CategoryPath(category: string): string {
-	const validRoutes: Record<string, string> = {
+	const routes: Record<string, string> = {
 		"exalted infantry": "exalted-infantry",
 		"exalted lancer": "exalted-lancer",
 		"exalted marksman": "exalted-marksman",
-
 		infantry: "exalted-infantry",
 		lancer: "exalted-lancer",
 		marksman: "exalted-marksman",
 	};
 
-	const route = validRoutes[category];
+	const route = routes[category];
 
 	return route ? `/${route}` : "";
 }
 
 function getSkillT12CategoryPath(category: string): string {
-	const validRoutes: Record<string, string> = {
+	const routes: Record<string, string> = {
 		"exalted infantry": "exalted-infantry",
 		"exalted lancer": "exalted-lancer",
 		"exalted marksman": "exalted-marksman",
-
 		"exalted infantry skill": "exalted-infantry",
 		"exalted lancer skill": "exalted-lancer",
 		"exalted marksman skill": "exalted-marksman",
-
 		"infantry skill": "exalted-infantry",
 		"lancer skill": "exalted-lancer",
 		"marksman skill": "exalted-marksman",
-
 		infantry: "exalted-infantry",
 		lancer: "exalted-lancer",
 		marksman: "exalted-marksman",
 	};
 
-	const route = validRoutes[category];
+	const route = routes[category];
 
 	return route ? `/${route}` : "";
 }
@@ -178,6 +175,7 @@ function getCategoryPath(module: CalculationModule, category: string): string {
 			return `/${toRouteSegment(category)}`;
 
 		case "pet":
+		case "experts":
 			return "";
 
 		default:
@@ -186,13 +184,13 @@ function getCategoryPath(module: CalculationModule, category: string): string {
 }
 
 function getPetId(item: CalculationHistoryItem): string | null {
-	const result = item.result as
+	const form = item.form as
 		| {
 				petId?: unknown;
 		  }
 		| undefined;
 
-	const form = item.form as
+	const result = item.result as
 		| {
 				petId?: unknown;
 		  }
@@ -241,6 +239,9 @@ function getBaseRoute(module: CalculationModule, categoryPath: string): string {
 		case "troops":
 			return `/troops${categoryPath}`;
 
+		case "experts":
+			return "/experts";
+
 		default:
 			return "";
 	}
@@ -259,6 +260,10 @@ function appendHistoryId(route: string, historyId: string): string {
 export function getHistoryRoute(item: CalculationHistoryItem): string {
 	const historyId = encodeURIComponent(String(item.id));
 
+	if (item.module === "experts") {
+		return appendHistoryId("/experts", historyId);
+	}
+
 	if (item.module === "pet") {
 		const petId = getPetId(item);
 
@@ -266,9 +271,7 @@ export function getHistoryRoute(item: CalculationHistoryItem): string {
 			return "/pets";
 		}
 
-		const petRoute = `/pets/${encodeURIComponent(petId)}`;
-
-		return appendHistoryId(petRoute, historyId);
+		return appendHistoryId(`/pets/${encodeURIComponent(petId)}`, historyId);
 	}
 
 	const category = getHistoryCategory(item);

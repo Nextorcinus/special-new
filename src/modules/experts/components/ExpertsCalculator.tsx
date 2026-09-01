@@ -1,17 +1,76 @@
 "use client";
 
-import { useMemo } from "react";
+import { ArrowRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import HistoryPanel from "@/features/inventory/components/HistoryPanel";
+import { useHistoryStore } from "@/features/inventory/store/history/history.store";
+import type {
+	CalculationHistoryEntry,
+	CalculationHistoryItem,
+} from "@/features/inventory/store/history/types";
 
 import { EXPERT_GENERATIONS, getExpertsByGeneration } from "../data";
-import { useExpertsCalculator } from "../hooks/useExpertsCalculator";
 
+import { useExpertsCalculator } from "../hooks/useExpertsCalculator";
+import type { ExpertsCalculationResult, ExpertsState } from "../types";
 import { ExpertGeneration } from "./ExpertGeneration";
 import { ExpertInventory } from "./ExpertInventory";
 import { ExpertsResult } from "./ExpertsResult";
 
+/* =========================================================
+ * HISTORY TYPES
+ * ========================================================= */
+
+type ExpertsHistoryItem = CalculationHistoryItem<
+	ExpertsState,
+	ExpertsCalculationResult
+>;
+
+type ExpertsHistoryEntry = CalculationHistoryEntry<
+	ExpertsState,
+	ExpertsCalculationResult
+>;
+
+type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
+
+/* =========================================================
+ * EVENT LEVELS
+ * ========================================================= */
+
 const EVENT_LEVELS = Array.from({ length: 11 }, (_, level) => level);
 
+/* =========================================================
+ * MAIN COMPONENT
+ * ========================================================= */
+
 export function ExpertsCalculator() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex min-h-[200px] items-center justify-center p-5">
+					<p className="text-sm text-white/40">Loading Experts Calculator...</p>
+				</div>
+			}
+		>
+			<ExpertsCalculatorContent />
+		</Suspense>
+	);
+}
+
+/* =========================================================
+ * CONTENT
+ * ========================================================= */
+
+function ExpertsCalculatorContent() {
+	const searchParams = useSearchParams();
+
+	const historyId = searchParams.get("historyId");
+
+	/* =======================================================
+	 * CALCULATOR
+	 * ======================================================= */
+
 	const {
 		state,
 		result,
@@ -25,8 +84,61 @@ export function ExpertsCalculator() {
 		setSkillCurrentLevel,
 		setSkillTargetLevel,
 		setSkillCurrentXp,
+		loadState,
 		reset,
 	} = useExpertsCalculator();
+
+	/* =======================================================
+	 * LOCAL HISTORY STATE
+	 * ======================================================= */
+
+	const [activeHistory, setActiveHistory] = useState<ExpertsHistoryItem | null>(
+		null,
+	);
+
+	const [isAddingItem, setIsAddingItem] = useState(false);
+
+	const [isEditingHistory, setIsEditingHistory] = useState(false);
+
+	const [formKey, setFormKey] = useState("experts-new");
+
+	const formRef = useRef<HTMLDivElement>(null);
+
+	/* =======================================================
+	 * HISTORY STORE
+	 * ======================================================= */
+
+	const historyItems = useHistoryStore(
+		(state: HistoryStoreState) => state.items,
+	);
+
+	const loadHistory = useHistoryStore(
+		(state: HistoryStoreState) => state.loadHistory,
+	);
+
+	const saveCalculation = useHistoryStore(
+		(state: HistoryStoreState) => state.saveCalculation,
+	);
+
+	const updateCalculation = useHistoryStore(
+		(state: HistoryStoreState) => state.updateCalculation,
+	);
+
+	const addCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) => state.addCalculationItem,
+	);
+
+	const togglePinHistory = useHistoryStore(
+		(state: HistoryStoreState) => state.togglePinHistory,
+	);
+
+	const deleteHistory = useHistoryStore(
+		(state: HistoryStoreState) => state.deleteHistory,
+	);
+
+	/* =======================================================
+	 * GENERATIONS
+	 * ======================================================= */
 
 	const generations = useMemo(
 		() =>
@@ -37,8 +149,363 @@ export function ExpertsCalculator() {
 		[],
 	);
 
+	/* =======================================================
+	 * LOAD HISTORY
+	 * ======================================================= */
+
+	useEffect(() => {
+		loadHistory();
+	}, [loadHistory]);
+
+	/* =======================================================
+	 * FIND SELECTED HISTORY
+	 * ======================================================= */
+
+	useEffect(() => {
+		if (!historyId) {
+			return;
+		}
+
+		const selected = historyItems.find(
+			(item) => String(item.id) === historyId && item.module === "experts",
+		) as ExpertsHistoryItem | undefined;
+
+		if (!selected) {
+			return;
+		}
+
+		setActiveHistory(selected);
+		setIsAddingItem(false);
+		setIsEditingHistory(true);
+
+		/*
+		 * Restore calculator state
+		 * from saved history.
+		 */
+		if (selected.form) {
+			loadState(selected.form);
+		}
+
+		setFormKey(`experts-${selected.id}`);
+	}, [historyId, historyItems, loadState]);
+
+	/* =======================================================
+	 * SYNC ACTIVE HISTORY
+	 * ======================================================= */
+
+	useEffect(() => {
+		if (!activeHistory) {
+			return;
+		}
+
+		const latest = historyItems.find((item) => item.id === activeHistory.id) as
+			| ExpertsHistoryItem
+			| undefined;
+
+		if (!latest) {
+			return;
+		}
+
+		setActiveHistory(latest);
+	}, [activeHistory?.id, historyItems]);
+
+	/* =======================================================
+	 * HISTORY ENTRIES
+	 * ======================================================= */
+
+	const historyEntries = useMemo<ExpertsHistoryEntry[]>(() => {
+		if (!activeHistory) {
+			return [];
+		}
+
+		if (Array.isArray(activeHistory.items) && activeHistory.items.length > 0) {
+			return activeHistory.items as ExpertsHistoryEntry[];
+		}
+
+		if (!activeHistory.form || !activeHistory.result) {
+			return [];
+		}
+
+		return [
+			{
+				id: activeHistory.id,
+				title: activeHistory.title,
+				subtitle: activeHistory.subtitle,
+				form: activeHistory.form,
+				result: activeHistory.result,
+				createdAt: activeHistory.createdAt,
+			},
+		];
+	}, [activeHistory]);
+
+	/* =======================================================
+	 * HISTORY PAYLOAD
+	 * ======================================================= */
+
+	function buildHistoryPayload(calculationResult: ExpertsCalculationResult) {
+		const selectedExperts = calculationResult.experts;
+
+		const title =
+			selectedExperts.length === 1
+				? selectedExperts[0].name
+				: selectedExperts.length > 1
+					? `${selectedExperts.length} Experts`
+					: "Experts Calculator";
+
+		const subtitle =
+			selectedExperts.length === 1
+				? `Generation ${selectedExperts[0].generation} · ${selectedExperts[0].focus}`
+				: `SvS ${formatPoints(
+						calculationResult.svsPoints,
+					)} · Showdown ${formatPoints(calculationResult.showdownPoints)}`;
+
+		return {
+			module: "experts" as const,
+			title,
+			subtitle,
+			form: state,
+			result: calculationResult,
+		};
+	}
+
+	/* =======================================================
+	 * SAVE / UPDATE
+	 * ======================================================= */
+
+	function handleSaveCalculation() {
+		const calculationResult = result;
+
+		const hasResult =
+			calculationResult.totalAffinity > 0 ||
+			calculationResult.totalSigils > 0 ||
+			calculationResult.totalBooks > 0 ||
+			calculationResult.totalLearningMinutes > 0;
+
+		if (!hasResult) {
+			return;
+		}
+
+		const payload = buildHistoryPayload(calculationResult);
+
+		/* ===================================================
+		 * ADD ITEM
+		 * =================================================== */
+
+		if (activeHistory && isAddingItem) {
+			const updated = addCalculationItem(activeHistory.id, payload) as
+				| ExpertsHistoryItem
+				| undefined;
+
+			if (!updated) {
+				return;
+			}
+
+			setActiveHistory(updated);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+
+			setFormKey(`experts-${updated.id}`);
+
+			return;
+		}
+
+		/* ===================================================
+		 * UPDATE
+		 * =================================================== */
+
+		if (activeHistory && isEditingHistory) {
+			const updated = updateCalculation(activeHistory.id, payload) as
+				| ExpertsHistoryItem
+				| undefined;
+
+			if (!updated) {
+				return;
+			}
+
+			setActiveHistory(updated);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+
+			setFormKey(`experts-${updated.id}`);
+
+			return;
+		}
+
+		/* ===================================================
+		 * CREATE NEW HISTORY
+		 * =================================================== */
+
+		const saved = saveCalculation(payload) as ExpertsHistoryItem;
+
+		setActiveHistory(saved);
+
+		setIsAddingItem(false);
+		setIsEditingHistory(true);
+
+		setFormKey(`experts-${saved.id}`);
+
+		window.history.replaceState(
+			null,
+			"",
+			`${window.location.pathname}?historyId=${saved.id}`,
+		);
+	}
+
+	/* =======================================================
+	 * ADD ITEM
+	 * ======================================================= */
+
+	function handleAddItem() {
+		if (!activeHistory) {
+			return;
+		}
+
+		setIsAddingItem(true);
+		setIsEditingHistory(false);
+
+		reset();
+
+		setFormKey(`experts-add-${Date.now()}`);
+
+		requestAnimationFrame(() => {
+			formRef.current?.scrollIntoView({
+				behavior: "smooth",
+				block: "start",
+			});
+		});
+	}
+
+	/* =======================================================
+	 * NEW CALCULATION
+	 * ======================================================= */
+
+	function handleNewCalculation() {
+		setActiveHistory(null);
+		setIsAddingItem(false);
+		setIsEditingHistory(false);
+
+		reset();
+
+		setFormKey(`experts-new-${Date.now()}`);
+
+		window.history.replaceState(null, "", window.location.pathname);
+
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	}
+
+	/* =======================================================
+	 * HISTORY SELECT
+	 * ======================================================= */
+
+	function handleHistorySelect(item: CalculationHistoryItem) {
+		if (item.module !== "experts") {
+			return;
+		}
+
+		const selected = item as ExpertsHistoryItem;
+
+		setActiveHistory(selected);
+
+		setIsAddingItem(false);
+		setIsEditingHistory(true);
+
+		if (selected.form) {
+			loadState(selected.form);
+		}
+
+		setFormKey(`experts-${selected.id}`);
+
+		window.history.replaceState(
+			null,
+			"",
+			`${window.location.pathname}?historyId=${selected.id}`,
+		);
+
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	}
+
+	/* =======================================================
+	 * PIN
+	 * ======================================================= */
+
+	function handlePinHistory(id: string) {
+		togglePinHistory(id);
+	}
+
+	/* =======================================================
+	 * DELETE
+	 * ======================================================= */
+
+	function handleDeleteHistory(id: string) {
+		deleteHistory(id);
+
+		if (activeHistory?.id !== id) {
+			return;
+		}
+
+		setActiveHistory(null);
+		setIsAddingItem(false);
+		setIsEditingHistory(false);
+
+		reset();
+
+		setFormKey(`experts-new-${Date.now()}`);
+
+		window.history.replaceState(null, "", window.location.pathname);
+	}
+
+	/* =======================================================
+	 * RESET
+	 * ======================================================= */
+
+	function handleReset() {
+		if (isAddingItem) {
+			setIsAddingItem(false);
+
+			if (activeHistory) {
+				setIsEditingHistory(true);
+
+				loadState(activeHistory.form);
+
+				setFormKey(`experts-${activeHistory.id}`);
+			} else {
+				reset();
+			}
+
+			return;
+		}
+
+		if (activeHistory) {
+			loadState(activeHistory.form);
+
+			setFormKey(`experts-${activeHistory.id}`);
+
+			return;
+		}
+
+		reset();
+
+		setFormKey(`experts-reset-${Date.now()}`);
+	}
+
+	/* =======================================================
+	 * RENDER
+	 * ======================================================= */
+
 	return (
-		<div className="w-full space-y-6 p-4 sm:p-5">
+		<div key={formKey} className="w-full space-y-6 p-4 sm:p-5">
+			{/* ===================================================
+			    HEADER
+			    =================================================== */}
+
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h1 className="text-xl font-semibold text-white">
@@ -50,16 +517,37 @@ export function ExpertsCalculator() {
 					</p>
 				</div>
 
-				<button
-					type="button"
-					onClick={reset}
-					className="h-10 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10"
-				>
-					Reset
-				</button>
+				<div className="flex gap-2">
+					{activeHistory && (
+						<button
+							type="button"
+							onClick={handleNewCalculation}
+							className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10"
+						>
+							New
+							<ArrowRight className="size-4" />
+						</button>
+					)}
+
+					<button
+						type="button"
+						onClick={handleReset}
+						className="h-10 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10"
+					>
+						Reset
+					</button>
+				</div>
 			</div>
 
+			{/* ===================================================
+			    INVENTORY
+			    =================================================== */}
+
 			<ExpertInventory inventory={state.inventory} onChange={setInventory} />
+
+			{/* ===================================================
+			    EVENT BONUS
+			    =================================================== */}
 
 			<section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
 				<div>
@@ -72,6 +560,8 @@ export function ExpertsCalculator() {
 				</div>
 
 				<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+					{/* VALERIA */}
+
 					<div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
 						<div className="flex items-center justify-between gap-3">
 							<div>
@@ -121,6 +611,8 @@ export function ExpertsCalculator() {
 							</select>
 						</div>
 					</div>
+
+					{/* BALDUR */}
 
 					<div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
 						<div className="flex items-center justify-between gap-3">
@@ -174,6 +666,10 @@ export function ExpertsCalculator() {
 				</div>
 			</section>
 
+			{/* ===================================================
+			    EXPERT GENERATIONS
+			    =================================================== */}
+
 			<div className="space-y-6">
 				{generations.map(({ generation, experts }) => (
 					<ExpertGeneration
@@ -193,7 +689,73 @@ export function ExpertsCalculator() {
 				))}
 			</div>
 
+			{/* ===================================================
+			    CURRENT RESULT
+			    =================================================== */}
+
 			<ExpertsResult result={result} />
+
+			{/* ===================================================
+			    SAVE
+			    =================================================== */}
+
+			<div className="space-y-3">
+				<button
+					type="button"
+					onClick={handleSaveCalculation}
+					className="h-10 w-full rounded-xl bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)] transition-colors hover:bg-[var(--sl-text-muted)]"
+				>
+					{activeHistory
+						? isAddingItem
+							? "Add Calculation"
+							: "Update Calculation"
+						: "Save Calculation"}
+				</button>
+
+				{activeHistory && (
+					<button
+						type="button"
+						onClick={handleAddItem}
+						className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+					>
+						Add Another Calculation
+					</button>
+				)}
+			</div>
+
+			{/* ===================================================
+			    HISTORY
+			    =================================================== */}
+
+			<HistoryPanel
+				items={historyItems.filter((item) => item.module === "experts")}
+				activeId={activeHistory?.id ?? null}
+				module="experts"
+				title="Experts History"
+				onSelect={handleHistorySelect}
+				onPin={handlePinHistory}
+				onDelete={handleDeleteHistory}
+			/>
 		</div>
 	);
+}
+
+/* =========================================================
+ * HELPERS
+ * ========================================================= */
+
+function formatPoints(value: number): string {
+	if (!Number.isFinite(value)) {
+		return "0";
+	}
+
+	if (Math.abs(value) >= 1_000_000) {
+		return `${(value / 1_000_000).toFixed(2)}M`;
+	}
+
+	if (Math.abs(value) >= 1_000) {
+		return `${(value / 1_000).toFixed(2)}K`;
+	}
+
+	return Math.round(value).toLocaleString();
 }
