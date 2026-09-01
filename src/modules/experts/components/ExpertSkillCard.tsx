@@ -136,7 +136,7 @@ export function ExpertSkillCard({
 	/* =====================================================
 	 * TARGET LEVEL OPTIONS
 	 *
-	 * Only levels ABOVE current.
+	 * Only levels ABOVE Selected
 	 * ===================================================== */
 
 	const targetLevels =
