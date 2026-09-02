@@ -71,12 +71,24 @@ function clampRelationshipLevel(value: number): number {
 	return Math.max(0, Math.min(100, Math.floor(value)));
 }
 
-function clampSkillLevel(value: number, max = 10): number {
+function clampSkillLevel(value: number, max: number): number {
 	if (!Number.isFinite(value)) {
 		return 0;
 	}
 
 	return Math.max(0, Math.min(max, Math.floor(value)));
+}
+
+function getSkillMaxLevel(expertId: string, skillId: string): number {
+	const expert = EXPERTS.find((item) => item.id === expertId);
+
+	const skill = expert?.skills.find((item) => item.id === skillId);
+
+	if (!skill) {
+		return 0;
+	}
+
+	return Math.max(0, Math.floor(skill.maxLevel));
 }
 
 function normalizeRelationship(value: unknown): ExpertRelationshipState {
@@ -118,7 +130,7 @@ function normalizeRelationship(value: unknown): ExpertRelationshipState {
 	};
 }
 
-function normalizeSkill(value: unknown): ExpertSkillState {
+function normalizeSkill(value: unknown, maxLevel: number): ExpertSkillState {
 	const source =
 		value && typeof value === "object"
 			? (value as Partial<ExpertSkillState>)
@@ -127,12 +139,12 @@ function normalizeSkill(value: unknown): ExpertSkillState {
 	const currentLevel =
 		source.currentLevel === null || source.currentLevel === undefined
 			? null
-			: clampSkillLevel(Number(source.currentLevel));
+			: clampSkillLevel(Number(source.currentLevel), maxLevel);
 
 	const rawTarget =
 		source.targetLevel === null || source.targetLevel === undefined
 			? null
-			: clampSkillLevel(Number(source.targetLevel));
+			: clampSkillLevel(Number(source.targetLevel), maxLevel);
 
 	const targetLevel =
 		currentLevel === null
@@ -210,7 +222,10 @@ function normalizeState(value: unknown): ExpertsState {
 		skills[expert.id] = {};
 
 		for (const skill of expert.skills) {
-			skills[expert.id][skill.id] = normalizeSkill(savedSkills?.[skill.id]);
+			skills[expert.id][skill.id] = normalizeSkill(
+				savedSkills?.[skill.id],
+				skill.maxLevel,
+			);
 		}
 	}
 
@@ -387,13 +402,15 @@ export function useExpertsCalculator() {
 					...value,
 				};
 
+				const maxLevel = getSkillMaxLevel(expertId, skillId);
+
 				return {
 					...current,
 					skills: {
 						...current.skills,
 						[expertId]: {
 							...current.skills[expertId],
-							[skillId]: normalizeSkill(next),
+							[skillId]: normalizeSkill(next, maxLevel),
 						},
 					},
 				};
@@ -413,7 +430,9 @@ export function useExpertsCalculator() {
 				return;
 			}
 
-			const nextLevel = clampSkillLevel(level);
+			const maxLevel = getSkillMaxLevel(expertId, skillId);
+
+			const nextLevel = clampSkillLevel(level, maxLevel);
 
 			setState((current) => {
 				const previous =
@@ -460,7 +479,12 @@ export function useExpertsCalculator() {
 					return current;
 				}
 
-				const nextLevel = Math.max(skill.currentLevel, clampSkillLevel(level));
+				const maxLevel = getSkillMaxLevel(expertId, skillId);
+
+				const nextLevel = Math.max(
+					skill.currentLevel,
+					clampSkillLevel(level, maxLevel),
+				);
 
 				return {
 					...current,

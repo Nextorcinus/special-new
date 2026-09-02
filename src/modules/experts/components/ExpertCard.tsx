@@ -36,7 +36,8 @@ export function ExpertCard({
 }: ExpertCardProps) {
 	const imagePath = expert.image ?? `/experts/${expert.id}.png`;
 
-	const relationshipLevel = relationship.targetLevel ?? 0;
+	const relationshipLevel =
+		relationship.targetLevel ?? relationship.currentLevel ?? 0;
 
 	return (
 		<article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
