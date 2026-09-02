@@ -82,32 +82,59 @@ export const RESOURCES = {
 		icon: "/icons/charm-secret.png",
 	},
 
+	// Pets
+	PetFood: {
+		id: "pet-food",
+		label: "Pet Food",
+		icon: "/icons/pet-food.png",
+	},
+	TamingManual: {
+		id: "taming-manual",
+		label: "Taming Manual",
+		icon: "/icons/taming-manual.png",
+	},
+	EnergizingPotion: {
+		id: "energizing-potion",
+		label: "Energizing Potion",
+		icon: "/icons/energizing-potion.png",
+	},
+	StrengtheningSerum: {
+		id: "strengthening-serum",
+		label: "Strengthening Serum",
+		icon: "/icons/strengthening-serum.png",
+	},
 
-// Pets
-PetFood: {
-	id: "pet-food",
-	label: "Pet Food",
-	icon: "/icons/pet-food.png",
-},
-
-TamingManual: {
-	id: "taming-manual",
-	label: "Taming Manual",
-	icon: "/icons/taming-manual.png",
-},
-
-EnergizingPotion: {
-	id: "energizing-potion",
-	label: "Energizing Potion",
-	icon: "/icons/energizing-potion.png",
-},
-
-StrengtheningSerum: {
-	id: "strengthening-serum",
-	label: "Strengthening Serum",
-	icon: "/icons/strengthening-serum.png",
-},
-
+	// Experts
+	Compass: {
+		id: "expert-compass",
+		label: "Compass",
+		icon: "/icons/compass.png",
+	},
+	FieryHeart: {
+		id: "expert-fiery-heart",
+		label: "Fiery Heart",
+		icon: "/icons/fiery-heart.png",
+	},
+	SailOfConquest: {
+		id: "expert-sail-of-conquest",
+		label: "Sail of Conquest",
+		icon: "/icons/sail-of-conquest.png",
+	},
+	GeneralSigils: {
+		id: "expert-general-sigils",
+		label: "General Sigils",
+		icon: "/icons/sigils.png",
+	},
+	BooksOfKnowledge: {
+		id: "expert-books-of-knowledge",
+		label: "Books of Knowledge",
+		icon: "/icons/books.png",
+	},
+	LearningSpeedup: {
+		id: "expert-learning-speedup",
+		label: "Learning Speedup",
+		icon: "/icons/learning_speedup.png",
+	},
 } as const;
 
 export type ResourceKey = keyof typeof RESOURCES;

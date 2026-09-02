@@ -32,7 +32,6 @@ export const RESOURCE_GROUPS = [
 		title: "Chief Charm",
 		items: [RESOURCES.Guide, RESOURCES.Design, RESOURCES.Jewel],
 	},
-
 	{
 		id: "pets",
 		title: "Pets",
@@ -41,6 +40,18 @@ export const RESOURCE_GROUPS = [
 			RESOURCES.TamingManual,
 			RESOURCES.EnergizingPotion,
 			RESOURCES.StrengtheningSerum,
+		],
+	},
+	{
+		id: "experts",
+		title: "Experts",
+		items: [
+			RESOURCES.Compass,
+			RESOURCES.FieryHeart,
+			RESOURCES.SailOfConquest,
+			RESOURCES.GeneralSigils,
+			RESOURCES.BooksOfKnowledge,
+			RESOURCES.LearningSpeedup,
 		],
 	},
 ];

@@ -7,9 +7,7 @@ type ExpertsPageProps = {
 	title: string;
 };
 
-export default function ExpertsPage({
-	title,
-}: ExpertsPageProps) {
+export default function ExpertsPage({ title }: ExpertsPageProps) {
 	return (
 		<MobileContainer>
 			<HeaderOther title={title} />

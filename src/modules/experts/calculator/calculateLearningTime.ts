@@ -20,31 +20,19 @@ export function calculateLearningTime(
 		return 0;
 	}
 
-	let totalMinutes = 0;
+	const currentIndex = Math.max(0, current - 1);
 
-	/**
-	 * learningTimeMinutes uses the same
-	 * level indexing as bookCosts.
-	 *
-	 * Example:
-	 *
-	 * current = 2
-	 * target = 3
-	 *
-	 * use index 2
-	 */
-	for (let level = current; level < target; level++) {
-		totalMinutes += Number(skill.learningTimeMinutes[level]) || 0;
-	}
+	const targetIndex = Math.max(0, target - 1);
 
-	/**
-	 * currentXp is stored as XP.
-	 *
-	 * 60 XP = 1 learning minute.
-	 */
+	const currentMinutes = Number(skill.learningTimeMinutes[currentIndex]) || 0;
+
+	const targetMinutes = Number(skill.learningTimeMinutes[targetIndex]) || 0;
+
+	const requiredMinutes = Math.max(0, targetMinutes - currentMinutes);
+
 	const learnedMinutes = Math.max(0, Number(currentXp) || 0) / 60;
 
-	return Math.max(0, Math.round(totalMinutes - learnedMinutes));
+	return Math.max(0, Math.round(requiredMinutes - learnedMinutes));
 }
 
 export default calculateLearningTime;

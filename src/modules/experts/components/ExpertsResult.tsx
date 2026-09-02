@@ -82,48 +82,34 @@ function ResourceIcon({
 function ResourceCard({
 	label,
 	resource,
-	icon,
 }: {
 	label: string;
 	resource: ExpertsResourceResult;
-	icon: string;
 }) {
+	const isEnough = resource.have >= resource.need;
+
 	return (
 		<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-			<div className="flex items-center gap-2">
-				<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.05]">
-					<ResourceIcon src={icon} alt="" className="h-6 w-6" />
-				</div>
+			<p className="text-xs font-medium uppercase tracking-wide text-white/40">
+				{label}
+			</p>
 
-				<p className="text-xs font-medium uppercase tracking-wide text-white/40">
-					{label}
+			<p className="mt-3 text-lg font-semibold text-white">
+				{formatCompactNumber(resource.need)}
+			</p>
+
+			<div className="mt-1 flex items-center justify-between gap-2">
+				<p className="text-xs text-white/40">Need</p>
+
+				<p
+					className={
+						isEnough
+							? "text-xs font-medium text-emerald-400"
+							: "text-xs font-medium text-red-400"
+					}
+				>
+					{isEnough ? "Enough" : `${formatCompactNumber(resource.short)} short`}
 				</p>
-			</div>
-
-			<div className="mt-3 grid grid-cols-3 gap-3">
-				<div>
-					<p className="text-xs text-white/40">Have</p>
-
-					<p className="mt-1 text-sm font-semibold text-white">
-						{formatCompactNumber(resource.have)}
-					</p>
-				</div>
-
-				<div>
-					<p className="text-xs text-white/40">Need</p>
-
-					<p className="mt-1 text-sm font-semibold text-white">
-						{formatCompactNumber(resource.need)}
-					</p>
-				</div>
-
-				<div>
-					<p className="text-xs text-white/40">Short</p>
-
-					<p className="mt-1 text-sm font-semibold text-white">
-						{formatCompactNumber(resource.short)}
-					</p>
-				</div>
 			</div>
 		</div>
 	);
@@ -606,32 +592,27 @@ export function ExpertsResult({ result }: ExpertsResultProps) {
 			{/* =================================================
 			    RESOURCE TOTALS
 			    ================================================= */}
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+					<ResourceCard
+						label="Affinity"
+						resource={result.affinity}
+					/>
 
-			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-				<ResourceCard
-					label="Affinity"
-					resource={result.affinity}
-					icon={ICONS.affinity}
-				/>
+					<ResourceCard
+						label="General Sigils"
+						resource={result.generalSigils}
+					/>
 
-				<ResourceCard
-					label="General Sigils"
-					resource={result.generalSigils}
-					icon={ICONS.sigils}
-				/>
+					<ResourceCard
+						label="Books of Knowledge"
+						resource={result.booksOfKnowledge}
+					/>
 
-				<ResourceCard
-					label="Books of Knowledge"
-					resource={result.booksOfKnowledge}
-					icon={ICONS.books}
-				/>
-
-				<ResourceCard
-					label="Learning Speedup"
-					resource={result.learningSpeedup}
-					icon={ICONS.learning}
-				/>
-			</div>
+					<ResourceCard
+						label="Learning Speedup"
+						resource={result.learningSpeedup}
+					/>
+				</div>
 
 			{/* =================================================
 			    EXPERT BREAKDOWN

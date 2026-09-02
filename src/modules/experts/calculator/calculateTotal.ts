@@ -3,9 +3,9 @@ import type {
 	ExpertInventoryState,
 	ExpertRelationshipState,
 	ExpertSkillState,
-	ExpertsState,
 } from "../types";
 
+import { calculateAffinity } from "./calculateAffinity";
 import { calculateBooks } from "./calculateBooks";
 import { calculateLearningTime } from "./calculateLearningTime";
 import { calculateSigils } from "./calculateSigils";
@@ -54,6 +54,8 @@ export interface ExpertsCalculationResult {
 	totalBooks: number;
 	totalLearningMinutes: number;
 
+	experts: ExpertResult[];
+
 	baseSvsPoints: number;
 	valeriaLevel: number;
 	valeriaBonus: number;
@@ -65,83 +67,108 @@ export interface ExpertsCalculationResult {
 	baldurBonus: number;
 	baldurBonusPoints: number;
 	showdownPoints: number;
-
-	experts: ExpertResult[];
 }
 
 const EXPERT_SIGIL_SVS_POINTS = 6000;
 const BOOK_SVS_POINTS = 60;
 const LEARNING_MINUTE_SVS_POINTS = 30;
 
-const VALERIA_SVS_BONUS_PER_LEVEL = 2;
-const MAX_VALERIA_SVS_BONUS = 20;
+const VALERIA_BONUS_PER_LEVEL = 2;
+const VALERIA_MAX_BONUS = 20;
 
-const BALDUR_SHOWDOWN_BONUS_PER_LEVEL = 5;
-const MAX_BALDUR_SHOWDOWN_BONUS = 50;
+const BALDUR_BONUS_PER_LEVEL = 5;
+const BALDUR_MAX_BONUS = 50;
 
-export function calculateExpertTotal(
+function toNumber(value: unknown, fallback = 0): number {
+	const number = typeof value === "number" ? value : Number(value);
+
+	return Number.isFinite(number) ? number : fallback;
+}
+
+function normalizeLevel(value: number | null, maxLevel: number): number | null {
+	if (value === null) {
+		return null;
+	}
+
+	const normalized = toNumber(value, NaN);
+
+	if (!Number.isFinite(normalized)) {
+		return null;
+	}
+
+	return Math.max(0, Math.min(maxLevel, Math.floor(normalized)));
+}
+
+function createResourceResult(
+	need: number,
+	have: number,
+): ExpertsResourceResult {
+	const normalizedNeed = Math.max(0, toNumber(need));
+
+	const normalizedHave = Math.max(0, toNumber(have));
+
+	return {
+		need: normalizedNeed,
+		have: normalizedHave,
+		short: Math.max(0, normalizedNeed - normalizedHave),
+	};
+}
+
+function calculateExpertRelationship(
 	expert: Expert,
 	relationship: ExpertRelationshipState,
+): {
+	currentLevel: number;
+	targetLevel: number;
+	affinity: number;
+	sigils: number;
+} {
+	const currentLevel = normalizeLevel(relationship.currentLevel, 100);
+
+	const targetLevel = normalizeLevel(relationship.targetLevel, 100);
+
+	if (
+		currentLevel === null ||
+		targetLevel === null ||
+		targetLevel <= currentLevel
+	) {
+		return {
+			currentLevel: currentLevel ?? 0,
+			targetLevel: targetLevel ?? 0,
+			affinity: 0,
+			sigils: 0,
+		};
+	}
+
+	const requiredAffinity = toNumber(
+		calculateAffinity(expert, currentLevel, targetLevel),
+	);
+
+	const requiredSigils = toNumber(
+		calculateSigils(expert, currentLevel, targetLevel),
+	);
+
+	const currentAffinity = Math.max(0, toNumber(relationship.currentAffinity));
+
+	const currentSigils = Math.max(0, toNumber(relationship.currentSigils));
+
+	return {
+		currentLevel,
+		targetLevel,
+		affinity: Math.max(0, requiredAffinity - currentAffinity),
+		sigils: Math.max(0, requiredSigils - currentSigils),
+	};
+}
+
+function calculateExpertSkills(
+	expert: Expert,
+	relationshipTargetLevel: number,
 	skillStates: Record<string, ExpertSkillState>,
-): ExpertResult {
-	const rawCurrentRelationship =
-		relationship.currentLevel;
-
-	const rawTargetRelationship =
-		relationship.targetLevel;
-
-	const hasRelationshipSelection =
-		rawCurrentRelationship !== null &&
-		rawTargetRelationship !== null;
-
-	const currentRelationship =
-		rawCurrentRelationship === null
-			? 0
-			: Math.max(
-					0,
-					rawCurrentRelationship,
-				);
-
-	const targetRelationship =
-		rawTargetRelationship === null
-			? 0
-			: Math.max(
-					currentRelationship,
-					rawTargetRelationship,
-				);
-
-	const affinity =
-		hasRelationshipSelection
-			? calculateAffinityCost(
-					expert,
-					currentRelationship,
-					targetRelationship,
-				)
-			: 0;
-
-	const currentSigils =
-		Number.isFinite(
-			relationship.currentSigils,
-		)
-			? Math.max(
-					0,
-					relationship.currentSigils,
-				)
-			: 0;
-
-	const sigils =
-		hasRelationshipSelection
-			? calculateSigils(
-					expert,
-					currentRelationship,
-					targetRelationship,
-					currentSigils,
-					0,
-				)
-			: {
-					required: 0,
-				};
-
+): {
+	skills: ExpertSkillResult[];
+	totalBooks: number;
+	totalLearningMinutes: number;
+} {
 	const skills: ExpertSkillResult[] = [];
 
 	let totalBooks = 0;
@@ -152,406 +179,259 @@ export function calculateExpertTotal(
 			continue;
 		}
 
-		const skillState =
-			skillStates[skill.id] ?? {
-				currentLevel: null,
-				targetLevel: null,
-				currentXp: 0,
-			};
+		const state = skillStates[skill.id];
 
-		const rawCurrentSkillLevel =
-			skillState.currentLevel;
-
-		const rawTargetSkillLevel =
-			skillState.targetLevel;
-
-		const hasSkillSelection =
-			rawCurrentSkillLevel !== null &&
-			rawTargetSkillLevel !== null;
-
-		if (!hasSkillSelection) {
+		if (!state) {
 			continue;
 		}
 
-		const currentSkillLevel =
-			Math.max(
-				0,
-				Math.min(
-					skill.maxLevel,
-					rawCurrentSkillLevel,
-				),
-			);
+		const calculatedSkillCap = toNumber(
+			calculateSkillCap(expert, skill, relationshipTargetLevel),
+		);
 
-		const targetSkillLevel =
-			Math.max(
-				currentSkillLevel,
-				Math.min(
-					skill.maxLevel,
-					rawTargetSkillLevel,
-				),
-			);
+		const skillCap = Math.max(
+			0,
+			Math.min(skill.maxLevel, Math.floor(calculatedSkillCap)),
+		);
 
-		const maxLevel =
-			calculateSkillCap(
-				expert,
-				skill,
-				targetRelationship,
-			);
+		const currentLevel = normalizeLevel(state.currentLevel, skillCap);
 
-		const validTargetLevel =
-			Math.min(
-				targetSkillLevel,
-				maxLevel,
-			);
-
-		const books =
-			calculateBooks(
-				skill,
-				currentSkillLevel,
-				validTargetLevel,
-			);
-
-		const currentXp =
-			Number.isFinite(
-				skillState.currentXp,
-			)
-				? Math.max(
-						0,
-						skillState.currentXp,
-					)
-				: 0;
-
-		const learningMinutes =
-			calculateLearningTime(
-				skill,
-				currentSkillLevel,
-				validTargetLevel,
-				currentXp,
-			);
+		const targetLevel = normalizeLevel(state.targetLevel, skillCap);
 
 		if (
-			books > 0 ||
-			learningMinutes > 0
+			currentLevel === null ||
+			targetLevel === null ||
+			targetLevel <= currentLevel
 		) {
-			skills.push({
-				skillId: skill.id,
-				skillName: skill.name,
-				currentLevel:
-					currentSkillLevel,
-				targetLevel:
-					validTargetLevel,
-				maxLevel,
-				books,
-				learningMinutes,
-			});
+			continue;
 		}
 
+		const books = Math.max(
+			0,
+			toNumber(calculateBooks(skill, currentLevel, targetLevel)),
+		);
+
+		const currentXp = Math.max(0, toNumber(state.currentXp));
+
+		const learningMinutes = Math.max(
+			0,
+			toNumber(
+				calculateLearningTime(skill, currentLevel, targetLevel, currentXp),
+			),
+		);
+
+		if (books <= 0 && learningMinutes <= 0) {
+			continue;
+		}
+
+		skills.push({
+			skillId: skill.id,
+			skillName: skill.name,
+			currentLevel,
+			targetLevel,
+			maxLevel: skillCap,
+			books,
+			learningMinutes,
+		});
+
 		totalBooks += books;
-		totalLearningMinutes +=
-			learningMinutes;
+		totalLearningMinutes += learningMinutes;
 	}
+
+	return {
+		skills,
+		totalBooks,
+		totalLearningMinutes,
+	};
+}
+
+export function calculateExpertTotal(
+	expert: Expert,
+	relationship: ExpertRelationshipState,
+	skillStates: Record<string, ExpertSkillState>,
+): ExpertResult {
+	const relationshipResult = calculateExpertRelationship(expert, relationship);
+
+	const skillResult = calculateExpertSkills(
+		expert,
+		relationshipResult.targetLevel,
+		skillStates,
+	);
 
 	return {
 		expertId: expert.id,
 		name: expert.name,
 		generation: expert.generation,
 		focus: expert.focus,
-
 		relationship: {
-			currentLevel:
-				currentRelationship,
-			targetLevel:
-				targetRelationship,
-			affinity,
-			sigils: sigils.required,
+			currentLevel: relationshipResult.currentLevel,
+			targetLevel: relationshipResult.targetLevel,
+			affinity: relationshipResult.affinity,
+			sigils: relationshipResult.sigils,
 		},
-
-		skills,
-
-		totalBooks,
-		totalLearningMinutes,
+		skills: skillResult.skills,
+		totalBooks: skillResult.totalBooks,
+		totalLearningMinutes: skillResult.totalLearningMinutes,
 	};
 }
 
 export function calculateExpertsTotal(
 	experts: Expert[],
-	state: ExpertsState,
+	state: {
+		relationships: Record<string, ExpertRelationshipState>;
+		skills: Record<string, Record<string, ExpertSkillState>>;
+		inventory: ExpertInventoryState;
+		valeriaLevel: number;
+		baldurLevel: number;
+	},
 ): ExpertsCalculationResult {
-	let totalAffinity = 0;
-	let totalSigils = 0;
-	let totalBooks = 0;
-	let totalLearningMinutes = 0;
-
 	const expertResults: ExpertResult[] = [];
 
 	for (const expert of experts) {
-		const relationship =
-			state.relationships[expert.id] ?? {
-				currentLevel: null,
-				targetLevel: null,
-				currentAffinity: 0,
-				currentSigils: 0,
-			};
+		const relationship = state.relationships[expert.id];
 
-		const skillStates =
-			state.skills[expert.id] ?? {};
-
-		const result =
-			calculateExpertTotal(
-				expert,
-				relationship,
-				skillStates,
-			);
-
-		totalAffinity +=
-			result.relationship.affinity;
-
-		totalSigils +=
-			result.relationship.sigils;
-
-		totalBooks +=
-			result.totalBooks;
-
-		totalLearningMinutes +=
-			result.totalLearningMinutes;
-
-		if (
-			result.relationship.affinity > 0 ||
-			result.relationship.sigils > 0 ||
-			result.totalBooks > 0 ||
-			result.totalLearningMinutes > 0
-		) {
-			expertResults.push(result);
+		if (!relationship) {
+			continue;
 		}
+
+		const expertSkills = state.skills[expert.id] ?? {};
+
+		const hasRelationshipSelection =
+			relationship.currentLevel !== null &&
+			relationship.targetLevel !== null &&
+			toNumber(relationship.targetLevel) > toNumber(relationship.currentLevel);
+
+		const hasSkillSelection = expert.skills.some((skill) => {
+			if (skill.isTalent) {
+				return false;
+			}
+
+			const skillState = expertSkills[skill.id];
+
+			if (!skillState) {
+				return false;
+			}
+
+			if (skillState.currentLevel === null || skillState.targetLevel === null) {
+				return false;
+			}
+
+			return (
+				toNumber(skillState.targetLevel) > toNumber(skillState.currentLevel)
+			);
+		});
+
+		if (!hasRelationshipSelection && !hasSkillSelection) {
+			continue;
+		}
+
+		expertResults.push(
+			calculateExpertTotal(expert, relationship, expertSkills),
+		);
 	}
 
-	const safeValeriaLevel =
-		clampLevel(
-			state.valeriaLevel,
-		);
+	const totalAffinity = expertResults.reduce(
+		(total, expert) => total + expert.relationship.affinity,
+		0,
+	);
 
-	const safeBaldurLevel =
-		clampLevel(
-			state.baldurLevel,
-		);
+	const totalSigils = expertResults.reduce(
+		(total, expert) => total + expert.relationship.sigils,
+		0,
+	);
 
-	const baseEventPoints =
-		calculateBaseEventPoints(
-			totalSigils,
-			totalBooks,
-			totalLearningMinutes,
-		);
+	const totalBooks = expertResults.reduce(
+		(total, expert) => total + expert.totalBooks,
+		0,
+	);
 
-	const valeriaBonus =
-		Math.min(
-			safeValeriaLevel *
-				VALERIA_SVS_BONUS_PER_LEVEL,
-			MAX_VALERIA_SVS_BONUS,
-		);
+	const totalLearningMinutes = expertResults.reduce(
+		(total, expert) => total + expert.totalLearningMinutes,
+		0,
+	);
 
-	const valeriaBonusPoints =
-		baseEventPoints *
-		(valeriaBonus / 100);
+	const inventory = state.inventory;
 
-	const svsPoints =
-		baseEventPoints +
-		valeriaBonusPoints;
+	const compassGifts = Math.max(0, toNumber(inventory.compassGifts));
 
-	const baldurBonus =
-		Math.min(
-			safeBaldurLevel *
-				BALDUR_SHOWDOWN_BONUS_PER_LEVEL,
-			MAX_BALDUR_SHOWDOWN_BONUS,
-		);
+	const fieryHeartGifts = Math.max(0, toNumber(inventory.fieryHeartGifts));
 
-	const baldurBonusPoints =
-		baseEventPoints *
-		(baldurBonus / 100);
+	const sailConquestGifts = Math.max(0, toNumber(inventory.sailConquestGifts));
 
-	const showdownPoints =
-		baseEventPoints +
-		baldurBonusPoints;
+	const affinityHave =
+		compassGifts * 10 + fieryHeartGifts * 100 + sailConquestGifts * 1000;
+
+	const generalSigilsHave = Math.max(0, toNumber(inventory.generalSigils));
+
+	const booksHave = Math.max(0, toNumber(inventory.booksOfKnowledge));
+
+	const learningSpeedupHave = Math.max(
+		0,
+		toNumber(inventory.learningSpeedupMinutes),
+	);
+
+	const baseSvsPoints =
+		totalSigils * EXPERT_SIGIL_SVS_POINTS +
+		totalBooks * BOOK_SVS_POINTS +
+		totalLearningMinutes * LEARNING_MINUTE_SVS_POINTS;
+
+	const valeriaLevel = Math.max(
+		0,
+		Math.min(10, Math.floor(toNumber(state.valeriaLevel))),
+	);
+
+	const valeriaBonus = Math.min(
+		VALERIA_MAX_BONUS,
+		valeriaLevel * VALERIA_BONUS_PER_LEVEL,
+	);
+
+	const valeriaBonusPoints = Math.floor(baseSvsPoints * (valeriaBonus / 100));
+
+	const svsPoints = baseSvsPoints + valeriaBonusPoints;
+
+	const baldurLevel = Math.max(
+		0,
+		Math.min(10, Math.floor(toNumber(state.baldurLevel))),
+	);
+
+	const baldurBonus = Math.min(
+		BALDUR_MAX_BONUS,
+		baldurLevel * BALDUR_BONUS_PER_LEVEL,
+	);
+
+	const baldurBonusPoints = Math.floor(baseSvsPoints * (baldurBonus / 100));
+
+	const showdownPoints = baseSvsPoints + baldurBonusPoints;
 
 	return {
-		affinity:
-			createResourceResult(
-				totalAffinity,
-				state.inventory,
-				"affinity",
-			),
+		affinity: createResourceResult(totalAffinity, affinityHave),
 
-		generalSigils:
-			createResourceResult(
-				totalSigils,
-				state.inventory,
-				"generalSigils",
-			),
+		generalSigils: createResourceResult(totalSigils, generalSigilsHave),
 
-		booksOfKnowledge:
-			createResourceResult(
-				totalBooks,
-				state.inventory,
-				"booksOfKnowledge",
-			),
+		booksOfKnowledge: createResourceResult(totalBooks, booksHave),
 
-		learningSpeedup:
-			createResourceResult(
-				totalLearningMinutes,
-				state.inventory,
-				"learningSpeedupMinutes",
-			),
+		learningSpeedup: createResourceResult(
+			totalLearningMinutes,
+			learningSpeedupHave,
+		),
 
 		totalAffinity,
 		totalSigils,
 		totalBooks,
 		totalLearningMinutes,
 
-		baseSvsPoints:
-			baseEventPoints,
+		experts: expertResults,
 
-		valeriaLevel:
-			safeValeriaLevel,
-
+		baseSvsPoints,
+		valeriaLevel,
 		valeriaBonus,
-
 		valeriaBonusPoints,
-
 		svsPoints,
 
-		baseShowdownPoints:
-			baseEventPoints,
-
-		baldurLevel:
-			safeBaldurLevel,
-
+		baseShowdownPoints: baseSvsPoints,
+		baldurLevel,
 		baldurBonus,
-
 		baldurBonusPoints,
-
 		showdownPoints,
-
-		experts: expertResults,
 	};
-}
-
-function calculateBaseEventPoints(
-	totalSigils: number,
-	totalBooks: number,
-	totalLearningMinutes: number,
-): number {
-	const sigilPoints =
-		totalSigils *
-		EXPERT_SIGIL_SVS_POINTS;
-
-	const bookPoints =
-		totalBooks *
-		BOOK_SVS_POINTS;
-
-	const learningPoints =
-		totalLearningMinutes *
-		LEARNING_MINUTE_SVS_POINTS;
-
-	return (
-		sigilPoints +
-		bookPoints +
-		learningPoints
-	);
-}
-
-function clampLevel(
-	value: number,
-): number {
-	if (!Number.isFinite(value)) {
-		return 0;
-	}
-
-	return Math.max(
-		0,
-		Math.min(
-			10,
-			Math.round(value),
-		),
-	);
-}
-
-function createResourceResult(
-	need: number,
-	inventory: ExpertInventoryState,
-	resource:
-		| "affinity"
-		| "generalSigils"
-		| "booksOfKnowledge"
-		| "learningSpeedupMinutes",
-): ExpertsResourceResult {
-	const have =
-		getInventoryValue(
-			inventory,
-			resource,
-		);
-
-	return {
-		need,
-		have,
-		short: Math.max(
-			0,
-			need - have,
-		),
-	};
-}
-
-function getInventoryValue(
-	inventory: ExpertInventoryState,
-	resource:
-		| "affinity"
-		| "generalSigils"
-		| "booksOfKnowledge"
-		| "learningSpeedupMinutes",
-): number {
-	switch (resource) {
-		case "affinity":
-			return (
-				inventory.compassGifts *
-					10 +
-				inventory.fieryHeartGifts *
-					100 +
-				inventory.sailConquestGifts *
-					1000
-			);
-
-		case "generalSigils":
-			return inventory.generalSigils;
-
-		case "booksOfKnowledge":
-			return inventory.booksOfKnowledge;
-
-		case "learningSpeedupMinutes":
-			return inventory.learningSpeedupMinutes;
-	}
-}
-
-function calculateAffinityCost(
-	expert: Expert,
-	fromLevel: number,
-	toLevel: number,
-): number {
-	if (toLevel <= fromLevel) {
-		return 0;
-	}
-
-	return expert.affinityCosts
-		.slice(
-			Math.max(
-				0,
-				fromLevel,
-			),
-			Math.min(
-				expert.affinityCosts.length,
-				toLevel,
-			),
-		)
-		.reduce(
-			(total, cost) =>
-				total + cost,
-			0,
-		);
 }
