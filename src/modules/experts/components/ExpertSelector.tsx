@@ -58,13 +58,7 @@ export function ExpertSelector({ generations }: ExpertSelectorProps) {
 
 	return (
 		<div className="space-y-5">
-			<div>
-				<h1 className="text-xl font-semibold text-white">Select Expert</h1>
-
-				<p className="mt-1 text-sm text-white/50">
-					Choose an Expert to open its calculator.
-				</p>
-			</div>
+			
 
 			<div className="space-y-5">
 				{generations.map(({ generation, experts }) => {
