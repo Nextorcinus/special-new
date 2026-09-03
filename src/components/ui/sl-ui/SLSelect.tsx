@@ -1,12 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import {
-	useEffect,
-	useId,
-	useRef,
-	useState,
-} from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 type Option = {
@@ -33,141 +28,86 @@ export default function SLSelect({
 }: SLSelectProps) {
 	const id = useId();
 
-	const triggerRef =
-		useRef<HTMLButtonElement>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
-	const contentRef =
-		useRef<HTMLDivElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
-	const selectingRef =
-		useRef(false);
+	const selectingRef = useRef(false);
 
-	const [open, setOpen] =
-		useState(false);
+	const [open, setOpen] = useState(false);
 
-	const [mounted, setMounted] =
-		useState(false);
+	const [mounted, setMounted] = useState(false);
 
-	const [position, setPosition] =
-		useState({
-			top: 0,
-			left: 0,
-			width: 0,
-		});
+	const [position, setPosition] = useState({
+		top: 0,
+		left: 0,
+		width: 0,
+	});
 
 	const selectedLabel =
-		options.find(
-			(item) =>
-				item.value === value,
-		)?.label || placeholder;
+		options.find((item) => item.value === value)?.label || placeholder;
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	function updatePosition() {
-		const trigger =
-			triggerRef.current;
+	const updatePosition = useCallback(() => {
+		const trigger = triggerRef.current;
 
 		if (!trigger) {
 			return;
 		}
 
-		const rect =
-			trigger.getBoundingClientRect();
+		const rect = trigger.getBoundingClientRect();
 
 		setPosition({
 			top: rect.bottom + 8,
 			left: rect.left,
 			width: rect.width,
 		});
-	}
+	}, []);
 
 	useEffect(() => {
-		function closeOtherSelect(
-			event: Event,
-		) {
-			const customEvent =
-				event as CustomEvent<string>;
+		function closeOtherSelect(event: Event) {
+			const customEvent = event as CustomEvent<string>;
 
-			if (
-				customEvent.detail !== id
-			) {
+			if (customEvent.detail !== id) {
 				setOpen(false);
 			}
 		}
 
-		function closeOnOutsideClick(
-			event: MouseEvent,
-		) {
-			const target =
-				event.target as Node;
+		function closeOnOutsideClick(event: MouseEvent) {
+			const target = event.target as Node;
 
-			if (
-				triggerRef.current?.contains(
-					target,
-				)
-			) {
+			if (triggerRef.current?.contains(target)) {
 				return;
 			}
 
-			if (
-				contentRef.current?.contains(
-					target,
-				)
-			) {
+			if (contentRef.current?.contains(target)) {
 				return;
 			}
 
 			setOpen(false);
 		}
 
-		window.addEventListener(
-			"sl-select-open",
-			closeOtherSelect,
-		);
+		window.addEventListener("sl-select-open", closeOtherSelect);
 
-		document.addEventListener(
-			"mousedown",
-			closeOnOutsideClick,
-			true,
-		);
+		document.addEventListener("mousedown", closeOnOutsideClick, true);
 
-		window.addEventListener(
-			"scroll",
-			updatePosition,
-			true,
-		);
+		window.addEventListener("scroll", updatePosition, true);
 
-		window.addEventListener(
-			"resize",
-			updatePosition,
-		);
+		window.addEventListener("resize", updatePosition);
 
 		return () => {
-			window.removeEventListener(
-				"sl-select-open",
-				closeOtherSelect,
-			);
+			window.removeEventListener("sl-select-open", closeOtherSelect);
 
-			document.removeEventListener(
-				"mousedown",
-				closeOnOutsideClick,
-				true,
-			);
+			document.removeEventListener("mousedown", closeOnOutsideClick, true);
 
-			window.removeEventListener(
-				"scroll",
-				updatePosition,
-				true,
-			);
+			window.removeEventListener("scroll", updatePosition, true);
 
-			window.removeEventListener(
-				"resize",
-				updatePosition,
-			);
+			window.removeEventListener("resize", updatePosition);
 		};
-	}, [id]);
+	}, [id, updatePosition]);
 
 	useEffect(() => {
 		if (!open) {
@@ -176,17 +116,12 @@ export default function SLSelect({
 
 		updatePosition();
 
-		const frame =
-			requestAnimationFrame(
-				updatePosition,
-			);
+		const frame = requestAnimationFrame(updatePosition);
 
 		return () => {
-			cancelAnimationFrame(
-				frame,
-			);
+			cancelAnimationFrame(frame);
 		};
-	}, [open]);
+	}, [open, updatePosition]);
 
 	function handleToggle() {
 		if (disabled) {
@@ -201,20 +136,15 @@ export default function SLSelect({
 		updatePosition();
 
 		window.dispatchEvent(
-			new CustomEvent(
-				"sl-select-open",
-				{
-					detail: id,
-				},
-			),
+			new CustomEvent("sl-select-open", {
+				detail: id,
+			}),
 		);
 
 		setOpen(true);
 	}
 
-	function handleSelect(
-		nextValue: string,
-	) {
+	function handleSelect(nextValue: string) {
 		if (selectingRef.current) {
 			return;
 		}
@@ -229,42 +159,8 @@ export default function SLSelect({
 		}, 0);
 	}
 
-	function handleOptionMouseDown(
-		event: React.MouseEvent<HTMLButtonElement>,
-		nextValue: string,
-	) {
-		event.preventDefault();
-		event.stopPropagation();
-
+	function handleOptionClick(nextValue: string) {
 		handleSelect(nextValue);
-	}
-
-	function handleOptionClick(
-		event: React.MouseEvent<HTMLButtonElement>,
-		nextValue: string,
-	) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		handleSelect(nextValue);
-	}
-
-	function handleOptionPointerDown(
-		event: React.PointerEvent<HTMLButtonElement>,
-	) {
-		event.stopPropagation();
-	}
-
-	function handleContentMouseDown(
-		event: React.MouseEvent<HTMLDivElement>,
-	) {
-		event.stopPropagation();
-	}
-
-	function handleContentClick(
-		event: React.MouseEvent<HTMLDivElement>,
-	) {
-		event.stopPropagation();
 	}
 
 	return (
@@ -276,16 +172,12 @@ export default function SLSelect({
 				onClick={handleToggle}
 				className={`flex h-11 min-h-11 w-full items-center justify-between rounded-sm border border-[var(--sl-border)] bg-[var(--sl-input)] px-4 text-sm text-[var(--secondary-foreground)] outline-none transition-colors hover:bg-[var(--sl-input-hover)] disabled:cursor-not-allowed disabled:opacity-50 md:h-10 md:min-h-10 md:text-xs ${className}`}
 			>
-				<span className="truncate">
-					{selectedLabel}
-				</span>
+				<span className="truncate">{selectedLabel}</span>
 
 				<ChevronDown
 					size={14}
 					className={`shrink-0 text-[var(--sl-text-muted)] transition-transform ${
-						open
-							? "rotate-180"
-							: ""
+						open ? "rotate-180" : ""
 					}`}
 				/>
 			</button>
@@ -298,72 +190,31 @@ export default function SLSelect({
 						ref={contentRef}
 						className="sl-select-portal fixed max-h-64 overflow-y-auto rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-1 shadow-[var(--sl-shadow)]"
 						style={{
-							top:
-								position.top,
-							left:
-								position.left,
-							width:
-								position.width,
+							top: position.top,
+							left: position.left,
+							width: position.width,
 							zIndex: 2147483647,
-							pointerEvents:
-								"auto",
-							touchAction:
-								"manipulation",
-							isolation:
-								"isolate",
+							pointerEvents: "auto",
+							touchAction: "manipulation",
+							isolation: "isolate",
 						}}
-						onPointerDown={
-							handleOptionPointerDown
-						}
-						onMouseDown={
-							handleContentMouseDown
-						}
-						onClick={
-							handleContentClick
-						}
 					>
-						{options.map(
-							(item) => {
-								const isSelected =
-									item.value ===
-									value;
+						{options.map((item) => {
+							const isSelected = item.value === value;
 
-								return (
-									<button
-										key={
-											item.value
-										}
-										type="button"
-										tabIndex={0}
-										className={`block min-h-11 w-full cursor-pointer select-none rounded-lg px-4 py-3 text-left text-sm text-[var(--sl-text)] outline-none transition-colors hover:bg-[var(--sl-hover)] focus:bg-[var(--sl-hover)] active:bg-[var(--sl-active)] md:min-h-9 md:px-3 md:py-2 md:text-xs ${
-											isSelected
-												? "bg-[var(--sl-active)]"
-												: ""
-										}`}
-										onMouseDown={(
-											event,
-										) =>
-											handleOptionMouseDown(
-												event,
-												item.value,
-											)
-										}
-										onClick={(
-											event,
-										) =>
-											handleOptionClick(
-												event,
-												item.value,
-											)
-										}
-									>
-										{
-											item.label
-										}
-									</button>
-								);
-							},
-						)}
+							return (
+								<button
+									key={item.value}
+									type="button"
+									className={`block min-h-11 w-full cursor-pointer select-none rounded-lg px-4 py-3 text-left text-sm text-[var(--sl-text)] outline-none transition-colors hover:bg-[var(--sl-hover)] focus:bg-[var(--sl-hover)] active:bg-[var(--sl-active)] md:min-h-9 md:px-3 md:py-2 md:text-xs ${
+										isSelected ? "bg-[var(--sl-active)]" : ""
+									}`}
+									onClick={() => handleOptionClick(item.value)}
+								>
+									{item.label}
+								</button>
+							);
+						})}
 					</div>,
 					document.body,
 				)}
