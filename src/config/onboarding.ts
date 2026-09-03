@@ -27,4 +27,4 @@ export const ONBOARDING_FEATURES = [
 		label: "Buildings Upgrade",
 		href: "/buildings",
 	},
-];
+] as const;

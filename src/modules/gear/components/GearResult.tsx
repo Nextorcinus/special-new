@@ -1,6 +1,9 @@
 "use client";
 
-import { ArrowRight, Plus } from "lucide-react";
+import {
+	ArrowRight,
+	Plus,
+} from "lucide-react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
 import {
@@ -10,12 +13,16 @@ import {
 import { NAVIGATION } from "@/config/navigation";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 
-import type { GearCalculationResult, GearFormValues } from "../type";
-
-type GearHistoryItem = CalculationHistoryItem<
+import type {
+	GearCalculationResult,
 	GearFormValues,
-	GearCalculationResult
->;
+} from "../type";
+
+type GearHistoryItem =
+	CalculationHistoryItem<
+		GearFormValues,
+		GearCalculationResult
+	>;
 
 type GearResultProps = {
 	result: GearCalculationResult;
@@ -25,49 +32,81 @@ type GearResultProps = {
 	onAddItem?: () => void;
 };
 
-function formatSvs(value: unknown): string {
-	const number = Number(value ?? 0);
+function formatSvs(
+	value: unknown,
+): string {
+	const number = Number(
+		value ?? 0,
+	);
 
 	if (!Number.isFinite(number)) {
 		return "+0";
 	}
 
-	if (number >= 1_000_000_000) {
-		return `+${(number / 1_000_000_000).toFixed(2)}B`;
+	if (
+		number >= 1_000_000_000
+	) {
+		return `+${(
+			number / 1_000_000_000
+		).toFixed(2)}B`;
 	}
 
 	if (number >= 1_000_000) {
-		return `+${(number / 1_000_000).toFixed(2)}M`;
+		return `+${(
+			number / 1_000_000
+		).toFixed(2)}M`;
 	}
 
 	if (number >= 1_000) {
-		return `+${(number / 1_000).toFixed(1)}K`;
+		return `+${(
+			number / 1_000
+		).toFixed(1)}K`;
 	}
 
-	return `+${formatNumber(number)}`;
+	return `+${formatNumber(
+		number,
+	)}`;
 }
 
-function formatStat(value: unknown): string {
-	const number = Number(value ?? 0);
+function formatStat(
+	value: unknown,
+): string {
+	const number = Number(
+		value ?? 0,
+	);
 
 	if (!Number.isFinite(number)) {
 		return "+0%";
 	}
 
-	return `+${number.toLocaleString("en-US", {
-		minimumFractionDigits: Number.isInteger(number) ? 0 : 2,
-		maximumFractionDigits: 2,
-	})}%`;
+	return `+${number.toLocaleString(
+		"en-US",
+		{
+			minimumFractionDigits:
+				Number.isInteger(
+					number,
+				)
+					? 0
+					: 2,
+			maximumFractionDigits: 2,
+		},
+	)}%`;
 }
 
-function formatDeployment(value: unknown): string {
-	const number = Number(value ?? 0);
+function formatDeployment(
+	value: unknown,
+): string {
+	const number = Number(
+		value ?? 0,
+	);
 
 	if (!Number.isFinite(number)) {
 		return "+0";
 	}
 
-	return `+${formatNumber(number)}`;
+	return `+${formatNumber(
+		number,
+	)}`;
 }
 
 /**
@@ -82,24 +121,54 @@ function formatDeployment(value: unknown): string {
  *
  * +255.00%  +8.50%
  */
-function formatStatResult(finalValue: unknown, increaseValue: unknown): string {
-	const finalStat = Number(finalValue ?? 0);
+function formatStatResult(
+	finalValue: unknown,
+	increaseValue: unknown,
+): string {
+	const finalStat = Number(
+		finalValue ?? 0,
+	);
 
-	const increase = Number(increaseValue ?? 0);
+	const increase = Number(
+		increaseValue ?? 0,
+	);
 
-	if (!Number.isFinite(finalStat) || !Number.isFinite(increase)) {
+	if (
+		!Number.isFinite(
+			finalStat,
+		) ||
+		!Number.isFinite(increase)
+	) {
 		return "+0%";
 	}
 
-	const formattedFinal = `+${finalStat.toLocaleString("en-US", {
-		minimumFractionDigits: Number.isInteger(finalStat) ? 0 : 2,
-		maximumFractionDigits: 2,
-	})}%`;
+	const formattedFinal =
+		`+${finalStat.toLocaleString(
+			"en-US",
+			{
+				minimumFractionDigits:
+					Number.isInteger(
+						finalStat,
+					)
+						? 0
+						: 2,
+				maximumFractionDigits: 2,
+			},
+		)}%`;
 
-	const formattedIncrease = `+${increase.toLocaleString("en-US", {
-		minimumFractionDigits: Number.isInteger(increase) ? 0 : 2,
-		maximumFractionDigits: 2,
-	})}%`;
+	const formattedIncrease =
+		`+${increase.toLocaleString(
+			"en-US",
+			{
+				minimumFractionDigits:
+					Number.isInteger(
+						increase,
+					)
+						? 0
+						: 2,
+				maximumFractionDigits: 2,
+			},
+		)}%`;
 
 	return `${formattedFinal}  ${formattedIncrease}`;
 }
@@ -120,15 +189,27 @@ function formatDeploymentResult(
 	finalValue: unknown,
 	increaseValue: unknown,
 ): string {
-	const finalDeployment = Number(finalValue ?? 0);
+	const finalDeployment =
+		Number(finalValue ?? 0);
 
-	const increase = Number(increaseValue ?? 0);
+	const increase = Number(
+		increaseValue ?? 0,
+	);
 
-	if (!Number.isFinite(finalDeployment) || !Number.isFinite(increase)) {
+	if (
+		!Number.isFinite(
+			finalDeployment,
+		) ||
+		!Number.isFinite(increase)
+	) {
 		return "+0";
 	}
 
-	return `${formatDeployment(finalDeployment)}  ${formatDeployment(increase)}`;
+	return `${formatDeployment(
+		finalDeployment,
+	)}  ${formatDeployment(
+		increase,
+	)}`;
 }
 
 export default function GearResult({
@@ -138,113 +219,164 @@ export default function GearResult({
 	showAddButton = false,
 	onAddItem,
 }: GearResultProps) {
-	const category = NAVIGATION.find((item) => item.id === "gear");
+	const category =
+		NAVIGATION.find(
+			(item) => item.id === "gear",
+		);
 
-	const resources = result.resources ?? {
-		Plans: 0,
-		Alloy: 0,
-		Polish: 0,
-		Amber: 0,
-	};
+	const resources =
+		result.resources ?? {
+			Plans: 0,
+			Alloy: 0,
+			Polish: 0,
+			Amber: 0,
+		};
 
-	const stats = result.stats ?? {
-		attackFrom: 0,
-		attackTo: 0,
-		attackIncrease: 0,
+	const stats =
+		result.stats ?? {
+			attackFrom: 0,
+			attackTo: 0,
+			attackIncrease: 0,
 
-		defenseFrom: 0,
-		defenseTo: 0,
-		defenseIncrease: 0,
+			defenseFrom: 0,
+			defenseTo: 0,
+			defenseIncrease: 0,
 
-		deploymentFrom: 0,
-		deploymentTo: 0,
-		deploymentIncrease: 0,
+			deploymentFrom: 0,
+			deploymentTo: 0,
+			deploymentIncrease: 0,
 
-		powerFrom: 0,
-		powerTo: 0,
-		powerIncrease: 0,
-	};
+			powerFrom: 0,
+			powerTo: 0,
+			powerIncrease: 0,
+		};
 
-	const { createResourceItem } = useCompareResources(resources);
+	const {
+		createResourceItem,
+	} = useCompareResources(
+		resources,
+	);
 
 	return (
 		<div className="space-y-3">
-			<CalculatorResult
-				title={title}
-				categoryTitle={category?.title ?? "Chief Gear"}
-				categoryIcon={category?.icon ?? "/category/chief-gear.png"}
-				name={result.gear}
-				subtitle={
-					<span className="inline-flex flex-wrap items-center gap-2">
-						<span>{result.fromLevel}</span>
+			<div>
+				<CalculatorResult
+					title={title}
+					categoryTitle={
+						category?.title ??
+						"Chief Gear"
+					}
+					categoryIcon={
+						category?.icon ??
+						"/category/chief-gear.png"
+					}
+					name={result.gear}
+					subtitle={
+						<span className="inline-flex flex-wrap items-center gap-2">
+							<span>
+								{
+									result.fromLevel
+								}
+							</span>
 
-						<ArrowRight
-							className="size-3.5 text-[var(--sl-text-muted)]"
-							aria-hidden="true"
-						/>
+							<ArrowRight
+								className="size-3.5 text-[var(--sl-text-muted)]"
+								aria-hidden="true"
+							/>
 
-						<span>{result.toLevel}</span>
-					</span>
-				}
-				highlightLabel="SvS Points"
-				highlightValue={formatSvs(result.svsPoints)}
-				createdAt={history?.createdAt}
-				updatedAt={history?.updatedAt}
-				sections={[
-					{
-						id: "required-resources",
-						title: "Required Resources",
-						items: [
-							createResourceItem("Plans"),
-							createResourceItem("Alloy"),
-							createResourceItem("Polish"),
-							createResourceItem("Amber"),
-						],
-					},
-					{
-						id: "stats",
-						title: "Stats Increase",
-						items: [
-							{
-								id: "attack",
-								label: "Attack",
-								icon: "/icons/attack.png",
-
-								value: formatStatResult(stats.attackTo, stats.attackIncrease),
-							},
-							{
-								id: "defense",
-								label: "Defense",
-								icon: "/icons/defense.png",
-
-								value: formatStatResult(stats.defenseTo, stats.defenseIncrease),
-							},
-							{
-								id: "deployment-capacity",
-								label: "Deployment Capacity",
-								icon: "/icons/deployment.png",
-
-								value: formatDeploymentResult(
-									stats.deploymentTo,
-									stats.deploymentIncrease,
+							<span>
+								{
+									result.toLevel
+								}
+							</span>
+						</span>
+					}
+					highlightLabel="SvS Points"
+					highlightValue={formatSvs(
+						result.svsPoints,
+					)}
+					createdAt={
+						history?.createdAt
+					}
+					updatedAt={
+						history?.updatedAt
+					}
+					sections={[
+						{
+							id: "required-resources",
+							title: "Required Resources",
+							tutorialTarget: "bag-compare-result",
+							items: [
+								createResourceItem(
+									"Plans",
 								),
-							},
-						],
-					},
-				]}
-			/>
+								createResourceItem(
+									"Alloy",
+								),
+								createResourceItem(
+									"Polish",
+								),
+								createResourceItem(
+									"Amber",
+								),
+							],
+						},
+						{
+							id: "stats",
+							title: "Stats Increase",
+							items: [
+								{
+									id: "attack",
+									label: "Attack",
+									icon: "/icons/attack.png",
+									value:
+										formatStatResult(
+											stats.attackTo,
+											stats.attackIncrease,
+										),
+								},
+								{
+									id: "defense",
+									label: "Defense",
+									icon: "/icons/defense.png",
+									value:
+										formatStatResult(
+											stats.defenseTo,
+											stats.defenseIncrease,
+										),
+								},
+								{
+									id: "deployment-capacity",
+									label: "Deployment Capacity",
+									icon: "/icons/deployment.png",
+									value:
+										formatDeploymentResult(
+											stats.deploymentTo,
+											stats.deploymentIncrease,
+										),
+								},
+							],
+						},
+					]}
+				/>
+			</div>
 
-			{showAddButton && onAddItem && (
-				<button
-					type="button"
-					onClick={onAddItem}
-					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input-hover)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
-				>
-					<Plus className="size-5" />
+			{showAddButton &&
+				onAddItem && (
+					<button
+						type="button"
+						onClick={
+							onAddItem
+						}
+						className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input-hover)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
+					>
+						<Plus className="size-5" />
 
-					<span className="text-base font-medium">Add more items</span>
-				</button>
-			)}
+						<span className="text-base font-medium">
+							Add more items
+						</span>
+					</button>
+				)}
 		</div>
 	);
 }

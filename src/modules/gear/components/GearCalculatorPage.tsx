@@ -2,10 +2,19 @@
 
 import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import {
+	Suspense,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
+
+import { useTutorial } from "@/features/tutorial";
+
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
+
 import type {
 	CalculationHistoryEntry,
 	CalculationHistoryItem,
@@ -25,19 +34,26 @@ type GearCalculatorPageProps = {
 	data: GearData;
 };
 
-type GearHistoryItem = CalculationHistoryItem<
-	GearFormValues,
-	GearCalculationResult
->;
+type GearHistoryItem =
+	CalculationHistoryItem<
+		GearFormValues,
+		GearCalculationResult
+	>;
 
-type GearHistoryEntry = CalculationHistoryEntry<
-	GearFormValues,
-	GearCalculationResult
->;
+type GearHistoryEntry =
+	CalculationHistoryEntry<
+		GearFormValues,
+		GearCalculationResult
+	>;
 
-type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
+type HistoryStoreState =
+	ReturnType<
+		typeof useHistoryStore.getState
+	>;
 
-export default function GearCalculatorPage(props: GearCalculatorPageProps) {
+export default function GearCalculatorPage(
+	props: GearCalculatorPageProps,
+) {
 	return (
 		<Suspense
 			fallback={
@@ -52,47 +68,82 @@ export default function GearCalculatorPage(props: GearCalculatorPageProps) {
 				</div>
 			}
 		>
-			<GearCalculatorPageContent {...props} />
+			<GearCalculatorPageContent
+				{...props}
+			/>
 		</Suspense>
 	);
 }
 
-function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
-	const searchParams = useSearchParams();
+function GearCalculatorPageContent({
+	data,
+}: GearCalculatorPageProps) {
+	const searchParams =
+		useSearchParams();
 
-	const historyId = searchParams.get("historyId");
+	const historyId =
+		searchParams.get("historyId");
 
-	const [activeHistory, setActiveHistory] = useState<GearHistoryItem | null>(
-		null,
+	const tutorial = useTutorial();
+
+	const [activeHistory, setActiveHistory] =
+		useState<GearHistoryItem | null>(
+			null,
+		);
+
+	const [formKey, setFormKey] =
+		useState("gear-new");
+
+	const [isAddingItem, setIsAddingItem] =
+		useState(false);
+
+	const [
+		isEditingHistory,
+		setIsEditingHistory,
+	] = useState(false);
+
+	const formRef =
+		useRef<HTMLDivElement>(null);
+
+	const resultRef =
+		useRef<HTMLDivElement>(null);
+
+	const loadedHistoryIdRef =
+		useRef<string | null>(null);
+
+	const items = useHistoryStore(
+		(state: HistoryStoreState) =>
+			state.items,
 	);
-
-	const [formKey, setFormKey] = useState("gear-new");
-
-	const [isAddingItem, setIsAddingItem] = useState(false);
-
-	const [isEditingHistory, setIsEditingHistory] = useState(false);
-
-	const formRef = useRef<HTMLDivElement>(null);
-
-	const loadedHistoryIdRef = useRef<string | null>(null);
-
-	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
 	const loadHistory = useHistoryStore(
-		(state: HistoryStoreState) => state.loadHistory,
+		(state: HistoryStoreState) =>
+			state.loadHistory,
 	);
 
-	const saveCalculation = useHistoryStore(
-		(state: HistoryStoreState) => state.saveCalculation,
-	);
+	const saveCalculation =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.saveCalculation,
+		);
 
-	const updateCalculation = useHistoryStore(
-		(state: HistoryStoreState) => state.updateCalculation,
-	);
+	const updateCalculation =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.updateCalculation,
+		);
 
-	const addCalculationItem = useHistoryStore(
-		(state: HistoryStoreState) => state.addCalculationItem,
-	);
+	const addCalculationItem =
+		useHistoryStore(
+			(state: HistoryStoreState) =>
+				state.addCalculationItem,
+		);
+
+	/*
+	 * ============================================================
+	 * SCROLL TO FORM
+	 * ============================================================
+	 */
 
 	function scrollToForm() {
 		requestAnimationFrame(() => {
@@ -103,13 +154,111 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		});
 	}
 
+	/*
+	 * ============================================================
+	 * SCROLL TO RESULT
+	 * ============================================================
+	 *
+	 * The result must already exist in the DOM
+	 * before we scroll to it.
+	 */
+
+	function scrollToResult() {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				resultRef.current?.scrollIntoView({
+					behavior: "smooth",
+					block: "center",
+				});
+			});
+		});
+	}
+
+	/*
+	 * ============================================================
+	 * TUTORIAL RESULT TRANSITION
+	 * ============================================================
+	 *
+	 * Calculate creates the result asynchronously
+	 * through React state.
+	 *
+	 * We therefore wait until the "result" step
+	 * is active and the result element actually
+	 * exists before scrolling.
+	 */
+
+	useEffect(() => {
+		if (
+			!tutorial.active ||
+			tutorial.step !== "result"
+		) {
+			return;
+		}
+
+		let cancelled = false;
+		let frame = 0;
+
+		const waitForResult = () => {
+			if (cancelled) {
+				return;
+			}
+
+			if (!resultRef.current) {
+				frame =
+					requestAnimationFrame(
+						waitForResult,
+					);
+
+				return;
+			}
+
+			scrollToResult();
+		};
+
+		/*
+		 * Wait for the result to be committed
+		 * to the DOM before starting the scroll.
+		 */
+		frame =
+			requestAnimationFrame(() => {
+				frame =
+					requestAnimationFrame(
+						waitForResult,
+					);
+			});
+
+		return () => {
+			cancelled = true;
+
+			if (frame) {
+				cancelAnimationFrame(frame);
+			}
+		};
+	}, [
+		tutorial.active,
+		tutorial.step,
+	]);
+
+	/*
+	 * ============================================================
+	 * LOAD HISTORY
+	 * ============================================================
+	 */
+
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
 
+	/*
+	 * ============================================================
+	 * LOAD HISTORY FROM URL
+	 * ============================================================
+	 */
+
 	useEffect(() => {
 		if (!historyId) {
-			loadedHistoryIdRef.current = null;
+			loadedHistoryIdRef.current =
+				null;
 
 			return;
 		}
@@ -119,63 +268,107 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		}
 
 		const selected = items.find(
-			(item) => String(item.id) === historyId && item.module === "gear",
+			(item) =>
+				String(item.id) ===
+					historyId &&
+				item.module === "gear",
 		);
 
 		if (!selected) {
 			return;
 		}
 
-		const selectedHistory = selected as GearHistoryItem;
+		const selectedHistory =
+			selected as GearHistoryItem;
 
-		if (loadedHistoryIdRef.current !== historyId) {
-			loadedHistoryIdRef.current = historyId;
+		if (
+			loadedHistoryIdRef.current !==
+			historyId
+		) {
+			loadedHistoryIdRef.current =
+				historyId;
 
-			setActiveHistory(selectedHistory);
+			setActiveHistory(
+				selectedHistory,
+			);
 
 			setIsEditingHistory(true);
 
 			setIsAddingItem(false);
 
-			setFormKey(`gear-history-${selectedHistory.id}`);
+			setFormKey(
+				`gear-history-${selectedHistory.id}`,
+			);
 
 			return;
 		}
 
-		setActiveHistory(selectedHistory);
+		setActiveHistory(
+			selectedHistory,
+		);
 	}, [historyId, items]);
 
+	/*
+	 * ============================================================
+	 * HISTORY ITEMS
+	 * ============================================================
+	 */
+
 	const historyItems: GearHistoryEntry[] =
-		activeHistory?.items && activeHistory.items.length > 0
+		activeHistory?.items &&
+		activeHistory.items.length > 0
 			? (activeHistory.items as GearHistoryEntry[])
 			: activeHistory
 				? [
 						{
 							id: activeHistory.id,
-							title: activeHistory.title,
-							subtitle: activeHistory.subtitle,
-							form: activeHistory.form,
-							result: activeHistory.result,
-							createdAt: activeHistory.createdAt,
+							title:
+								activeHistory.title,
+							subtitle:
+								activeHistory.subtitle,
+							form:
+								activeHistory.form,
+							result:
+								activeHistory.result,
+							createdAt:
+								activeHistory.createdAt,
 						},
 					]
 				: [];
 
 	const initialValues =
-		activeHistory && !isAddingItem
+		activeHistory &&
+		!isAddingItem
 			? (activeHistory.form as GearFormValues)
 			: null;
 
-	const isUpdateMode = isEditingHistory && !isAddingItem;
+	const isUpdateMode =
+		isEditingHistory &&
+		!isAddingItem;
 
-	function buildHistoryPayload(result: GearCalculationResult) {
+	/*
+	 * ============================================================
+	 * BUILD HISTORY PAYLOAD
+	 * ============================================================
+	 */
+
+	function buildHistoryPayload(
+		result: GearCalculationResult,
+	) {
 		return {
 			module: "gear" as const,
 
-			title: result.gear ?? result.form?.gear ?? "Chief Gear",
+			title:
+				result.gear ??
+				result.form?.gear ??
+				"Chief Gear",
 
-			subtitle: `${result.fromLevel ?? result.form?.fromLevel} → ${
-				result.toLevel ?? result.form?.toLevel
+			subtitle: `${
+				result.fromLevel ??
+				result.form?.fromLevel
+			} → ${
+				result.toLevel ??
+				result.form?.toLevel
 			}`,
 
 			form: result.form,
@@ -184,13 +377,35 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		};
 	}
 
-	function handleCalculate(result: GearCalculationResult) {
-		const payload = buildHistoryPayload(result);
+	/*
+	 * ============================================================
+	 * CALCULATE
+	 * ============================================================
+	 */
 
-		if (activeHistory && isAddingItem) {
-			const updated = addCalculationItem(activeHistory.id, payload) as
-				| GearHistoryItem
-				| undefined;
+	function handleCalculate(
+		result: GearCalculationResult,
+	) {
+		const payload =
+			buildHistoryPayload(result);
+
+		/*
+		 * ========================================================
+		 * ADD ITEM
+		 * ========================================================
+		 */
+
+		if (
+			activeHistory &&
+			isAddingItem
+		) {
+			const updated =
+				addCalculationItem(
+					activeHistory.id,
+					payload,
+				) as
+					| GearHistoryItem
+					| undefined;
 
 			if (!updated) {
 				return;
@@ -202,15 +417,51 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 			setIsEditingHistory(false);
 
-			setFormKey(`gear-result-${updated.id}-${Date.now()}`);
+			setFormKey(
+				`gear-result-${updated.id}-${Date.now()}`,
+			);
+
+			/*
+			 * Tutorial:
+			 *
+			 * Calculate berhasil.
+			 *
+			 * Pindahkan ke result.
+			 *
+			 * Scrolling tidak dilakukan
+			 * langsung di sini karena result
+			 * belum tentu sudah ter-render.
+			 */
+			if (
+				tutorial.active &&
+				tutorial.step ===
+					"calculate"
+			) {
+				tutorial.goTo(
+					"result",
+				);
+			}
 
 			return;
 		}
 
-		if (activeHistory && isEditingHistory) {
-			const updated = updateCalculation(activeHistory.id, payload) as
-				| GearHistoryItem
-				| undefined;
+		/*
+		 * ========================================================
+		 * UPDATE HISTORY
+		 * ========================================================
+		 */
+
+		if (
+			activeHistory &&
+			isEditingHistory
+		) {
+			const updated =
+				updateCalculation(
+					activeHistory.id,
+					payload,
+				) as
+					| GearHistoryItem
+					| undefined;
 
 			if (!updated) {
 				return;
@@ -222,12 +473,38 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 			setIsEditingHistory(true);
 
-			setFormKey(`gear-history-${updated.id}`);
+			setFormKey(
+				`gear-history-${updated.id}`,
+			);
+
+			/*
+			 * Tutorial:
+			 *
+			 * Calculate berhasil.
+			 */
+			if (
+				tutorial.active &&
+				tutorial.step ===
+					"calculate"
+			) {
+				tutorial.goTo(
+					"result",
+				);
+			}
 
 			return;
 		}
 
-		const saved = saveCalculation(payload) as GearHistoryItem;
+		/*
+		 * ========================================================
+		 * NEW CALCULATION
+		 * ========================================================
+		 */
+
+		const saved =
+			saveCalculation(
+				payload,
+			) as GearHistoryItem;
 
 		setActiveHistory(saved);
 
@@ -235,8 +512,37 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 		setIsAddingItem(false);
 
-		setFormKey(`gear-new-${Date.now()}`);
+		setFormKey(
+			`gear-new-${Date.now()}`,
+		);
+
+		/*
+		 * Tutorial:
+		 *
+		 * Calculate berhasil.
+		 *
+		 * Pindahkan tutorial ke Result.
+		 *
+		 * useEffect di atas akan menunggu
+		 * resultRef tersedia lalu melakukan
+		 * smooth scroll.
+		 */
+		if (
+			tutorial.active &&
+			tutorial.step ===
+				"calculate"
+		) {
+			tutorial.goTo(
+				"result",
+			);
+		}
 	}
+
+	/*
+	 * ============================================================
+	 * ADD ITEM
+	 * ============================================================
+	 */
 
 	function handleAddItem() {
 		if (!activeHistory) {
@@ -247,10 +553,18 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 		setIsEditingHistory(false);
 
-		setFormKey(`gear-add-item-${Date.now()}`);
+		setFormKey(
+			`gear-add-item-${Date.now()}`,
+		);
 
 		scrollToForm();
 	}
+
+	/*
+	 * ============================================================
+	 * NEW CALCULATION
+	 * ============================================================
+	 */
 
 	function handleNewCalculation() {
 		setActiveHistory(null);
@@ -259,9 +573,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 		setIsAddingItem(false);
 
-		loadedHistoryIdRef.current = null;
+		loadedHistoryIdRef.current =
+			null;
 
-		setFormKey(`gear-new-${Date.now()}`);
+		setFormKey(
+			`gear-new-${Date.now()}`,
+		);
 
 		scrollToForm();
 	}
@@ -273,38 +590,89 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 					<GearForm
 						key={formKey}
 						data={data}
-						onCalculate={handleCalculate}
-						initialValues={initialValues}
-						mode={isUpdateMode ? "update" : "create"}
-						lockMainFields={isUpdateMode}
+						onCalculate={
+							handleCalculate
+						}
+						initialValues={
+							initialValues
+						}
+						mode={
+							isUpdateMode
+								? "update"
+								: "create"
+						}
+						lockMainFields={
+							isUpdateMode
+						}
 					/>
 				</div>
 
-				{activeHistory && historyItems.length > 0 && (
-					<CalculationGroupResult
-						items={historyItems}
-						getKey={(item) => item.id}
-						renderItem={(item, index) => (
-							<GearResult
-								result={item.result as GearCalculationResult}
-								history={activeHistory}
-								title={index === 0 ? "Result" : undefined}
-								showAddButton={index === historyItems.length - 1}
-								onAddItem={handleAddItem}
+				{activeHistory &&
+					historyItems.length >
+						0 && (
+						<div
+							ref={resultRef}
+							data-tutorial="chief-gear-result"
+						>
+							<CalculationGroupResult
+								items={
+									historyItems
+								}
+								getKey={(item) =>
+									item.id
+								}
+								renderItem={(
+									item,
+									index,
+								) => (
+									<GearResult
+										result={
+											item.result as GearCalculationResult
+										}
+										history={
+											activeHistory
+										}
+										title={
+											index ===
+											0
+												? "Result"
+												: undefined
+										}
+										showAddButton={
+											index ===
+											historyItems.length -
+												1
+										}
+										onAddItem={
+											handleAddItem
+										}
+									/>
+								)}
+								renderTotal={(
+									groupItems,
+								) => (
+									<GearTotalResult
+										items={
+											groupItems
+										}
+									/>
+								)}
 							/>
-						)}
-						renderTotal={(groupItems) => <GearTotalResult items={groupItems} />}
-					/>
-				)}
+						</div>
+					)}
 
 				{activeHistory && (
 					<div className="px-4 py-2">
 						<button
 							type="button"
-							onClick={handleNewCalculation}
+							onClick={
+								handleNewCalculation
+							}
 							className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--sl-input)] px-4 py-3 text-sm font-semibold text-[var(--sl-text)] transition-colors hover:bg-[var(--sl-input-hover)]"
 						>
-							<span>New Calculation</span>
+							<span>
+								New Calculation
+							</span>
 
 							<ArrowRight className="size-4" />
 						</button>

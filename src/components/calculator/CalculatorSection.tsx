@@ -33,7 +33,7 @@ export default function CalculatorSection({
 	const isTimeSection = section.id === "time";
 
 	return (
-		<div className="rounded-[24px] bg-[var(--sl-surface-3)] px-4 py-4">
+		<div data-tutorial={section.tutorialTarget} className="rounded-[24px] bg-[var(--sl-surface-3)] px-4 py-4">
 			<div className="mb-4 flex items-center gap-3 text-[var(--sl-text-muted)]">
 				{section.icon}
 

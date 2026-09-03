@@ -127,25 +127,34 @@ export default function SplashScreen() {
 	 * ============================================================
 	 */
 
-	function completeOnboarding() {
-		/*
-		 * Simpan status terlebih dahulu.
-		 */
-		localStorage.setItem(
-			ONBOARDING_STORAGE_KEY,
-			"true",
-		);
+function completeOnboarding() {
+	/*
+	 * Simpan status terlebih dahulu.
+	 */
+	localStorage.setItem(
+		ONBOARDING_STORAGE_KEY,
+		"true",
+	);
 
-		/*
-		 * Jangan reload.
-		 *
-		 * Reload akan membuat component dibuat ulang
-		 * dan dapat menyebabkan onboarding terlihat
-		 * kembali.
-		 */
-		setVisible(false);
-	}
+	/*
+	 * Beri tahu TutorialProvider bahwa
+	 * onboarding sudah selesai.
+	 */
+	window.dispatchEvent(
+		new Event(
+			"special-lazyness-onboarding-completed",
+		),
+	);
 
+	/*
+	 * Jangan reload.
+	 *
+	 * Reload akan membuat component dibuat ulang
+	 * dan dapat menyebabkan onboarding terlihat
+	 * kembali.
+	 */
+	setVisible(false);
+}
 	/*
 	 * ============================================================
 	 * SLIDE NAVIGATION

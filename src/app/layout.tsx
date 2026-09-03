@@ -11,6 +11,11 @@ import AppToaster from "@/components/ui/toaster";
 import PWARegister from "@/components/pwa/PWARegister";
 import ThemeProvider from "@/providers/ThemeProvider";
 
+import {
+	TutorialOverlay,
+	TutorialProvider,
+} from "@/features/tutorial";
+
 import "@/styles/globals.css";
 import "@/styles/theme.css";
 
@@ -61,22 +66,27 @@ export default function RootLayout({
 		>
 			<body className="flex min-h-full flex-col bg-[var(--sl-bg)] text-[var(--sl-text)]">
 				<ThemeProvider>
-					{/* PWA */}
-					<PWARegister />
+					<TutorialProvider>
+						{/* PWA */}
+						<PWARegister />
 
-					{/* Onboarding */}
-					<SplashScreen />
+						{/* Onboarding */}
+						<SplashScreen />
 
-					{/* Application */}
-					<main className="pb-28 md:pb-0">
-						{children}
-					</main>
+						{/* Application */}
+						<main className="pb-28 md:pb-0">
+							{children}
+						</main>
 
-					{/* Mobile Navigation */}
-					<MobileBottomBar />
+						{/* Mobile Navigation */}
+						<MobileBottomBar />
 
-					{/* Toast */}
-					<AppToaster />
+						{/* Tutorial */}
+						<TutorialOverlay />
+
+						{/* Toast */}
+						<AppToaster />
+					</TutorialProvider>
 				</ThemeProvider>
 			</body>
 		</html>

@@ -19,6 +19,7 @@ export type CalculatorResultSection = {
 	title: string;
 	icon?: ReactNode;
 	items: CalculatorResultItem[];
+	tutorialTarget?: string;
 };
 
 export type CalculatorResultProps = {

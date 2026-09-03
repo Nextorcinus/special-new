@@ -7,22 +7,62 @@ import {
 	Home,
 	Menu,
 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import {
+	usePathname,
+	useRouter,
+} from "next/navigation";
+import {
+	useRef,
+	useState,
+} from "react";
 
-import ResourceBagDrawer from "@/features/inventory/components/ResourceBagDrawer";
 import MobileMenuDrawer from "@/components/mobile/MobileMenuDrawer";
+import ResourceBagDrawer from "@/features/inventory/components/ResourceBagDrawer";
+import { useTutorial } from "@/features/tutorial";
 
 export default function MobileBottomBar() {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	const [bagOpen, setBagOpen] = useState(false);
-	const [menuOpen, setMenuOpen] = useState(false);
+	const tutorial = useTutorial();
 
-	const isHome = pathname === "/";
-	const isCategory = pathname.startsWith("/categories");
-	const isHistory = pathname.startsWith("/history");
+	const [bagOpen, setBagOpen] =
+		useState(false);
+
+	const [menuOpen, setMenuOpen] =
+		useState(false);
+
+	/*
+	 * ============================================================
+	 * TUTORIAL BAG STATE
+	 * ============================================================
+	 *
+	 * Save & Close terdiri dari dua event:
+	 *
+	 * 1. ResourceBagContent menyimpan resource
+	 * 2. Drawer ditutup
+	 *
+	 * Kita tidak langsung memindahkan tutorial
+	 * ketika Save ditekan.
+	 *
+	 * Kita menunggu drawer benar-benar tertutup.
+	 */
+
+	const tutorialSavePendingRef =
+		useRef(false);
+
+	const isHome =
+		pathname === "/";
+
+	const isCategory =
+		pathname.startsWith(
+			"/categories",
+		);
+
+	const isHistory =
+		pathname.startsWith(
+			"/history",
+		);
 
 	function activeClass(active: boolean) {
 		return active
@@ -32,44 +72,214 @@ export default function MobileBottomBar() {
 
 	function handleNavigate(path: string) {
 		setMenuOpen(false);
+
 		router.push(path);
+	}
+
+	/*
+	 * ============================================================
+	 * OPEN BAG
+	 * ============================================================
+	 */
+
+	function handleOpenBag() {
+		setBagOpen(true);
+
+		/*
+		 * Tutorial:
+		 *
+		 * Step:
+		 * bag-resources
+		 *
+		 * User melakukan action membuka Bag.
+		 *
+		 * Setelah drawer terbuka:
+		 *
+		 * bag-chief-gear
+		 */
+
+		if (
+			tutorial.active &&
+			tutorial.step ===
+				"bag-resources"
+		) {
+			tutorial.goTo(
+				"bag-chief-gear",
+			);
+		}
+	}
+
+	/*
+	 * ============================================================
+	 * SAVE BAG
+	 * ============================================================
+	 *
+	 * Dipanggil oleh ResourceBagContent ketika
+	 * user menekan Save & Close.
+	 */
+
+	function handleBagSave() {
+		if (
+			!tutorial.active ||
+			tutorial.step !==
+				"bag-chief-gear"
+		) {
+			return;
+		}
+
+		/*
+		 * Tandai bahwa drawer harus melanjutkan
+		 * ke comparison setelah ditutup.
+		 */
+
+		tutorialSavePendingRef.current =
+			true;
+	}
+
+	/*
+	 * ============================================================
+	 * BAG OPEN CHANGE
+	 * ============================================================
+	 */
+
+	function handleBagOpenChange(
+		open: boolean,
+	) {
+		/*
+		 * Update state drawer terlebih dahulu.
+		 */
+
+		setBagOpen(open);
+
+		/*
+		 * Drawer sedang dibuka.
+		 */
+
+		if (open) {
+			return;
+		}
+
+		/*
+		 * ========================================================
+		 * DRAWER CLOSED
+		 * ========================================================
+		 *
+		 * Sekarang kita cek apakah penutupan drawer
+		 * berasal dari Save & Close selama tutorial.
+		 */
+
+		if (
+			!tutorialSavePendingRef.current
+		) {
+			return;
+		}
+
+		/*
+		 * Consume pending state terlebih dahulu
+		 * agar tidak dapat diproses dua kali.
+		 */
+
+		tutorialSavePendingRef.current =
+			false;
+
+		/*
+		 * Pastikan tutorial masih berada
+		 * di step yang benar.
+		 */
+
+		if (
+			!tutorial.active ||
+			tutorial.step !==
+				"bag-chief-gear"
+		) {
+			return;
+		}
+
+		/*
+		 * ========================================================
+		 * MOVE TO COMPARISON
+		 * ========================================================
+		 *
+		 * Drawer sudah tertutup.
+		 *
+		 * Sekarang tutorial boleh pindah
+		 * ke comparison result.
+		 */
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				if (
+					tutorial.active &&
+					tutorial.step ===
+						"bag-chief-gear"
+				) {
+					tutorial.goTo(
+						"bag-compare",
+					);
+				}
+			});
+		});
 	}
 
 	return (
 		<>
-			<nav className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-32px)] max-w-[390px] -translate-x-1/2 ">
+			<nav className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-32px)] max-w-[390px] -translate-x-1/2">
 				<div className="flex items-center justify-between rounded-full bg-[#181818] p-2 shadow-2xl">
-					{/* Home */}
+					{/* ==================================================
+					 * HOME
+					 * ================================================== */}
+
 					<button
 						type="button"
-						onClick={() => handleNavigate("/")}
+						onClick={() =>
+							handleNavigate("/")
+						}
 						className={`flex h-14 items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95 ${activeClass(
 							isHome,
 						)}`}
 					>
 						<Home size={21} />
 
-						{isHome && <span>Home</span>}
+						{isHome && (
+							<span>
+								Home
+							</span>
+						)}
 					</button>
 
-					{/* Bag */}
+					{/* ==================================================
+					 * BAG
+					 * ================================================== */}
+
 					<button
 						type="button"
-						onClick={() => setBagOpen(true)}
+						onClick={
+							handleOpenBag
+						}
+						data-tutorial="bag-resources"
 						className={`flex h-14 items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95 ${activeClass(
 							bagOpen,
 						)}`}
 					>
 						<Backpack size={22} />
 
-						{bagOpen && <span>Bag</span>}
+						{bagOpen && (
+							<span>
+								Bag
+							</span>
+						)}
 					</button>
 
-					{/* Calculator */}
+					{/* ==================================================
+					 * CALCULATOR
+					 * ================================================== */}
+
 					<button
 						type="button"
 						onClick={() =>
-							handleNavigate("/categories")
+							handleNavigate(
+								"/categories",
+							)
 						}
 						className={`flex h-14 items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95 ${activeClass(
 							isCategory,
@@ -77,14 +287,23 @@ export default function MobileBottomBar() {
 					>
 						<Grid3X3 size={23} />
 
-						{isCategory && <span>Calc</span>}
+						{isCategory && (
+							<span>
+								Calc
+							</span>
+						)}
 					</button>
 
-					{/* History */}
+					{/* ==================================================
+					 * HISTORY
+					 * ================================================== */}
+
 					<button
 						type="button"
 						onClick={() =>
-							handleNavigate("/history")
+							handleNavigate(
+								"/history",
+							)
 						}
 						className={`flex h-14 items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95 ${activeClass(
 							isHistory,
@@ -92,15 +311,26 @@ export default function MobileBottomBar() {
 					>
 						<History size={22} />
 
-						{isHistory && <span>History</span>}
+						{isHistory && (
+							<span>
+								History
+							</span>
+						)}
 					</button>
 
-					{/* Menu */}
+					{/* ==================================================
+					 * MENU
+					 * ================================================== */}
+
 					<button
 						type="button"
-						onClick={() => setMenuOpen(true)}
+						onClick={() =>
+							setMenuOpen(true)
+						}
 						aria-label="Open menu"
-						aria-expanded={menuOpen}
+						aria-expanded={
+							menuOpen
+						}
 						className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2a2a2a] text-white transition-all duration-200 active:scale-95"
 					>
 						<Menu size={23} />
@@ -108,16 +338,29 @@ export default function MobileBottomBar() {
 				</div>
 			</nav>
 
-			{/* Resource Bag */}
+			{/* ======================================================
+			 * RESOURCE BAG
+			 * ====================================================== */}
+
 			<ResourceBagDrawer
 				open={bagOpen}
-				onOpenChange={setBagOpen}
+				onOpenChange={
+					handleBagOpenChange
+				}
+				onTutorialSave={
+					handleBagSave
+				}
 			/>
 
-			{/* Mobile Menu */}
+			{/* ======================================================
+			 * MOBILE MENU
+			 * ====================================================== */}
+
 			<MobileMenuDrawer
 				open={menuOpen}
-				onOpenChange={setMenuOpen}
+				onOpenChange={
+					setMenuOpen
+				}
 			/>
 		</>
 	);

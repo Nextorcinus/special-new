@@ -10,23 +10,39 @@ import ResourceBagContent from "./ResourceBagContent";
 type ResourceBagDrawerProps = {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onTutorialSave?: () => void;
 };
 
 export default function ResourceBagDrawer({
 	open,
 	onOpenChange,
+	onTutorialSave,
 }: ResourceBagDrawerProps) {
-	const loadResources = useInventoryStore((state) => state.loadResources);
+	const loadResources = useInventoryStore(
+		(state) => state.loadResources,
+	);
 
 	useEffect(() => {
-		if (open) loadResources();
+		if (open) {
+			loadResources();
+		}
 	}, [open, loadResources]);
 
 	return (
-		<Drawer open={open} onOpenChange={onOpenChange}>
+		<Drawer
+			open={open}
+			onOpenChange={onOpenChange}
+		>
 			<DrawerContent className="max-h-[90vh] border-[var(--sl-border)] bg-[var(--sl-surface)] text-[var(--sl-text)]">
 				<div className="overflow-y-auto px-5 pb-8 pt-4">
-					<ResourceBagContent onClose={() => onOpenChange(false)} />
+					<ResourceBagContent
+						onClose={() =>
+							onOpenChange(false)
+						}
+						onTutorialSave={
+							onTutorialSave
+						}
+					/>
 				</div>
 			</DrawerContent>
 		</Drawer>

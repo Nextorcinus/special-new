@@ -14,7 +14,8 @@ import QuickAccessManageModal from "@/modules/home/components/QuickAccesManageMo
 const MAX_QUICK_ACCESS = 6;
 
 export default function QuickAccessSection() {
-	const [manageOpen, setManageOpen] = useState(false);
+	const [manageOpen, setManageOpen] =
+		useState(false);
 
 	const selectedIds = useQuickAccessStore(
 		(state) => state.selectedIds,
@@ -48,16 +49,23 @@ export default function QuickAccessSection() {
 	 */
 	const quickAccessItems = quickAccessIds
 		.map((id) =>
-			NAVIGATION.find((item) => item.id === id),
+			NAVIGATION.find(
+				(item) => item.id === id,
+			),
 		)
 		.filter(
-			(item): item is (typeof NAVIGATION)[number] =>
+			(
+				item,
+			): item is (typeof NAVIGATION)[number] =>
 				item !== undefined,
 		);
 
 	return (
 		<>
-			<section className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] px-4 py-3 text-left transition-colors">
+			<section
+				data-tutorial="home-quick-access"
+				className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] px-4 py-3 text-left transition-colors"
+			>
 				{/* Header */}
 				<div className="mb-5 flex items-center justify-between">
 					<h2 className="text-[14px] text-[var(--sl-primary)] sm:text-[1rem]">
@@ -66,7 +74,9 @@ export default function QuickAccessSection() {
 
 					<button
 						type="button"
-						onClick={() => setManageOpen(true)}
+						onClick={() =>
+							setManageOpen(true)
+						}
 						className="flex items-center gap-1.5 text-xs font-semibold text-[var(--sl-text-muted)] transition-colors hover:text-[var(--sl-primary-hover)]"
 					>
 						Manage
@@ -76,33 +86,58 @@ export default function QuickAccessSection() {
 
 				{/* Quick Access Items */}
 				<div className="flex gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-					{quickAccessItems.map((item) => (
-						<Link
-							key={item.id}
-							href={item.href}
-							className="w-[64px] shrink-0 text-center sm:w-[72px] md:w-[80px]"
-						>
-							<div className="flex h-14 w-16 items-center justify-center rounded-xl border border-solid border-[color:var(--sl-border)] bg-black/20 transition-colors hover:bg-black/10 sm:h-16 sm:w-[72px] sm:rounded-2xl md:h-[72px] md:w-20">
-								<Image
-									src={item.icon}
-									alt={item.title}
-									width={44}
-									height={44}
-									className="size-9 object-contain sm:size-11 md:size-12"
-								/>
-							</div>
+					{quickAccessItems.map(
+						(item) => {
+							const isChiefGear =
+								item.id ===
+								"gear";
 
-							<span className="mt-2 block truncate text-[12px] leading-tight text-[var(--sl-text-secondary)] sm:mt-3 sm:text-xs md:text-[13px]">
-								{item.title}
-							</span>
-						</Link>
-					))}
+							return (
+								<Link
+									key={item.id}
+									href={item.href}
+									data-tutorial={
+										isChiefGear
+											? "quick-access-chief-gear"
+											: undefined
+									}
+									className="w-[64px] shrink-0 text-center sm:w-[72px] md:w-[80px]"
+								>
+									<div className="flex h-14 w-16 items-center justify-center rounded-xl border border-solid border-[color:var(--sl-border)] bg-black/20 transition-colors hover:bg-black/10 sm:h-16 sm:w-[72px] sm:rounded-2xl md:h-[72px] md:w-20">
+										<Image
+											src={
+												item.icon
+											}
+											alt={
+												item.title
+											}
+											width={
+												44
+											}
+											height={
+												44
+											}
+											className="size-9 object-contain sm:size-11 md:size-12"
+										/>
+									</div>
+
+									<span className="mt-2 block truncate text-[12px] leading-tight text-[var(--sl-text-secondary)] sm:mt-3 sm:text-xs md:text-[13px]">
+										{
+											item.title
+										}
+									</span>
+								</Link>
+							);
+						},
+					)}
 
 					{/* Empty State */}
-					{quickAccessItems.length === 0 && (
+					{quickAccessItems.length ===
+						0 && (
 						<div className="flex min-h-[88px] w-full items-center justify-center text-center">
 							<p className="text-xs text-[var(--sl-text-muted)]">
-								No quick access items selected.
+								No quick access
+								items selected.
 							</p>
 						</div>
 					)}
@@ -114,7 +149,9 @@ export default function QuickAccessSection() {
 				open={manageOpen}
 				selectedIds={quickAccessIds}
 				onSave={setSelectedIds}
-				onClose={() => setManageOpen(false)}
+				onClose={() =>
+					setManageOpen(false)
+				}
 			/>
 		</>
 	);
