@@ -1,8 +1,9 @@
 "use client";
 
-import { driver, type Driver } from "driver.js";
+import { type Driver, driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import {
+	useCallback,
 	useEffect,
 	useLayoutEffect,
 	useRef,
@@ -29,6 +30,12 @@ type TargetRect = {
 	height: number;
 };
 
+type PopoverPosition = {
+	top: number;
+	left: number;
+	above: boolean;
+};
+
 const INTERACTIVE_STEPS = new Set([
 	"chief-gear-type",
 	"chief-gear-from",
@@ -50,15 +57,38 @@ function getDriverSide(
 	return step.placement ?? "bottom";
 }
 
-function clamp(
-	value: number,
-	min: number,
-	max: number,
-) {
-	return Math.min(
-		Math.max(value, min),
-		max,
-	);
+function clamp(value: number, min: number, max: number) {
+	return Math.min(Math.max(value, min), max);
+}
+
+function getInteractiveTarget(step: TutorialStepConfig): HTMLElement | null {
+	if (typeof document === "undefined") {
+		return null;
+	}
+
+	if (!step.target) {
+		return null;
+	}
+
+	const target = document.querySelector(step.target);
+
+	if (!(target instanceof HTMLElement)) {
+		return null;
+	}
+
+	if (
+		step.id === "chief-gear-type" ||
+		step.id === "chief-gear-from" ||
+		step.id === "chief-gear-target"
+	) {
+		const selectButton = target.querySelector("button");
+
+		if (selectButton instanceof HTMLElement) {
+			return selectButton;
+		}
+	}
+
+	return target;
 }
 
 export function TutorialPopover({
@@ -70,43 +100,56 @@ export function TutorialPopover({
 	onSkip,
 	onComplete,
 }: TutorialPopoverProps) {
-	const driverRef =
-		useRef<Driver | null>(null);
+	const driverRef = useRef<Driver | null>(null);
 
-	const [mounted, setMounted] =
-		useState(false);
+	const [mounted, setMounted] = useState(false);
 
-	const [targetRect, setTargetRect] =
-		useState<TargetRect | null>(null);
+	const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
 
 	const [popoverPosition, setPopoverPosition] =
-		useState<{
-			top: number;
-			left: number;
-			above: boolean;
-		} | null>(null);
+		useState<PopoverPosition | null>(null);
 
-	const isInteractiveStep =
-		INTERACTIVE_STEPS.has(step.id);
+	const isInteractiveStep = INTERACTIVE_STEPS.has(step.id);
 
 	const showPrevious =
-		current > 1 &&
-		!isInteractiveStep &&
-		step.id !== "bag-chief-gear";
+		current > 1 && !isInteractiveStep && step.id !== "bag-chief-gear";
 
 	const showNext =
 		step.allowNext === true &&
 		!isInteractiveStep &&
 		step.id !== "bag-chief-gear";
 
-	const handleNext = () => {
+	const handleDriverNext = useCallback(() => {
+		if (driverRef.current) {
+			driverRef.current.destroy();
+			driverRef.current = null;
+		}
+
 		if (step.id === "bag-compare") {
 			onComplete();
 			return;
 		}
 
 		onNext();
-	};
+	}, [onComplete, onNext, step.id]);
+
+	const handleDriverPrevious = useCallback(() => {
+		if (driverRef.current) {
+			driverRef.current.destroy();
+			driverRef.current = null;
+		}
+
+		onPrevious();
+	}, [onPrevious]);
+
+	const handleDriverSkip = useCallback(() => {
+		if (driverRef.current) {
+			driverRef.current.destroy();
+			driverRef.current = null;
+		}
+
+		onSkip();
+	}, [onSkip]);
 
 	useEffect(() => {
 		setMounted(true);
@@ -121,18 +164,11 @@ export function TutorialPopover({
 			return;
 		}
 
-		if (
-			typeof document ===
-			"undefined"
-		) {
+		if (typeof document === "undefined") {
 			return;
 		}
 
-		const target = step.target
-			? document.querySelector(
-					step.target,
-				)
-			: null;
+		const target = step.target ? document.querySelector(step.target) : null;
 
 		const driverInstance = driver({
 			animate: true,
@@ -145,127 +181,83 @@ export function TutorialPopover({
 			allowKeyboardControl: false,
 			disableActiveInteraction: false,
 			advanceOnClick: false,
+			nextBtnText: step.nextLabel ?? "Next",
+			doneBtnText: step.nextLabel ?? "Next",
 			stagePadding: 8,
 			stageRadius: 16,
 			popoverOffset: 12,
-			popoverClass:
-				"special-lazyness-driver",
+			popoverClass: "special-lazyness-driver",
 			showProgress: false,
 			steps: [
 				{
-					element:
-						target ??
-						undefined,
+					element: target ?? undefined,
 					popover: {
 						title: step.title,
-						description:
-							step.description,
-						side: getDriverSide(
-							step,
-						),
+						description: step.description,
+						side: getDriverSide(step),
 						align: "center",
 						showButtons: [
-							...(showPrevious
-								? [
-										"previous" as const,
-									]
-								: []),
-							...(showNext
-								? [
-										"next" as const,
-									]
-								: []),
+							...(showPrevious ? ["previous" as const] : []),
+							...(showNext ? ["next" as const] : []),
 						],
 					},
 					disableActiveInteraction: false,
 					advanceOnClick: false,
 				},
 			],
-			onNextClick: () => {
-				driverInstance.destroy();
-				driverRef.current = null;
-				handleNext();
-			},
-			onPrevClick: () => {
-				driverInstance.destroy();
-				driverRef.current = null;
-				onPrevious();
-			},
-			onPopoverRender: (
-				popover,
-			) => {
-				const footer =
-					popover.footer;
+			onNextClick: handleDriverNext,
+			onDoneClick: handleDriverNext,
+			onPrevClick: handleDriverPrevious,
+			onCloseClick: handleDriverSkip,
+			onPopoverRender: (popover) => {
+				const footer = popover.footer;
 
-				if (
-					footer &&
-					step.showSkip
-				) {
-					const existingSkip =
-						footer.querySelector(
-							".special-lazyness-driver-skip",
-						);
+				if (footer && step.showSkip) {
+					const existingSkip = footer.querySelector(
+						".special-lazyness-driver-skip",
+					);
 
-					if (
-						!existingSkip
-					) {
-						const skipButton =
-							document.createElement(
-								"button",
-							);
+					if (!existingSkip) {
+						const skipButton = document.createElement("button");
 
-						skipButton.type =
-							"button";
+						skipButton.type = "button";
 
-						skipButton.className =
-							"special-lazyness-driver-skip";
+						skipButton.className = "special-lazyness-driver-skip";
 
-						skipButton.textContent =
-							"Skip";
+						skipButton.textContent = "Skip";
 
-						skipButton.addEventListener(
-							"click",
-							() => {
-								driverInstance.destroy();
-								driverRef.current =
-									null;
-								onSkip();
-							},
-						);
+						skipButton.addEventListener("click", handleDriverSkip);
 
-						footer.insertBefore(
-							skipButton,
-							footer.firstChild,
-						);
+						footer.insertBefore(skipButton, footer.firstChild);
 					}
 				}
 			},
-			onDestroyStarted:
-				() => {
-					driverRef.current =
-						null;
-				},
+			onDestroyStarted: () => {
+				if (driverRef.current === driverInstance) {
+					driverRef.current = null;
+				}
+			},
 		});
 
-		driverRef.current =
-			driverInstance;
+		driverRef.current = driverInstance;
 
 		driverInstance.drive();
 
 		return () => {
+			if (driverRef.current === driverInstance) {
+				driverRef.current = null;
+			}
+
 			driverInstance.destroy();
-			driverRef.current =
-				null;
 		};
 	}, [
+		handleDriverNext,
+		handleDriverPrevious,
+		handleDriverSkip,
 		isInteractiveStep,
-		step,
 		showNext,
 		showPrevious,
-		onNext,
-		onPrevious,
-		onSkip,
-		onComplete,
+		step,
 	]);
 
 	useLayoutEffect(() => {
@@ -275,192 +267,104 @@ export function TutorialPopover({
 			return;
 		}
 
-		if (
-			typeof document ===
-			"undefined"
-		) {
+		if (typeof document === "undefined") {
 			return;
 		}
 
 		let frame = 0;
 
 		const updatePosition = () => {
-			cancelAnimationFrame(
-				frame,
-			);
+			cancelAnimationFrame(frame);
 
-			frame =
-				requestAnimationFrame(
-					() => {
-						const target =
-							step.target
-								? document.querySelector(
-										step.target,
-									)
-								: null;
+			frame = requestAnimationFrame(() => {
+				const target = getInteractiveTarget(step);
 
-						if (
-							!(
-								target instanceof
-								HTMLElement
-							)
-						) {
-							setTargetRect(
-								null,
-							);
-							setPopoverPosition(
-								null,
-							);
-							return;
-						}
+				if (!target) {
+					setTargetRect(null);
+					setPopoverPosition(null);
+					return;
+				}
 
-						const rect =
-							target.getBoundingClientRect();
+				const rect = target.getBoundingClientRect();
 
-						setTargetRect({
-							top: rect.top,
-							left: rect.left,
-							width: rect.width,
-							height: rect.height,
-						});
+				setTargetRect({
+					top: rect.top,
+					left: rect.left,
+					width: rect.width,
+					height: rect.height,
+				});
 
-						const viewportWidth =
-							window.innerWidth;
+				const viewportWidth = window.innerWidth;
 
-						const viewportHeight =
-							window.innerHeight;
+				const viewportHeight = window.innerHeight;
 
-						const popoverWidth =
-							Math.min(
-								360,
-								viewportWidth -
-									24,
-							);
+				const popoverWidth = Math.min(360, viewportWidth - 24);
 
-						const popoverHeight =
-							step.id ===
-							"bag-chief-gear"
-								? 160
-								: 150;
+				const popoverHeight = step.id === "bag-chief-gear" ? 170 : 150;
 
-						const gap = 14;
+				const gap = 14;
 
-						const left =
-							clamp(
-								rect.left +
-									rect.width /
-										2 -
-									popoverWidth /
-										2,
-								12,
-								viewportWidth -
-									popoverWidth -
-									12,
-							);
-
-						const spaceAbove =
-							rect.top;
-
-						const spaceBelow =
-							viewportHeight -
-							rect.bottom;
-
-						let above =
-							false;
-
-						if (
-							step.id ===
-							"chief-gear-type"
-						) {
-							above = true;
-						} else if (
-							step.id ===
-							"bag-chief-gear"
-						) {
-							above =
-								spaceAbove >
-									popoverHeight +
-										gap &&
-								spaceAbove >
-									spaceBelow;
-						} else {
-							above =
-								spaceBelow <
-									popoverHeight +
-										gap &&
-								spaceAbove >
-									spaceBelow;
-						}
-
-						const top = above
-							? rect.top -
-								gap
-							: rect.bottom +
-								gap;
-
-						setPopoverPosition({
-							top,
-							left,
-							above,
-						});
-					},
+				const left = clamp(
+					rect.left + rect.width / 2 - popoverWidth / 2,
+					12,
+					viewportWidth - popoverWidth - 12,
 				);
+
+				const spaceAbove = rect.top;
+
+				const spaceBelow = viewportHeight - rect.bottom;
+
+				let above: boolean;
+
+				if (step.id === "chief-gear-type") {
+					above = spaceAbove >= popoverHeight + gap;
+				} else if (step.id === "bag-chief-gear") {
+					above = spaceAbove >= popoverHeight + gap && spaceAbove > spaceBelow;
+				} else {
+					above = spaceBelow < popoverHeight + gap && spaceAbove > spaceBelow;
+				}
+
+				const top = above ? rect.top - gap : rect.bottom + gap;
+
+				setPopoverPosition({
+					top,
+					left,
+					above,
+				});
+			});
 		};
 
 		updatePosition();
 
-		window.addEventListener(
-			"resize",
-			updatePosition,
-			{ passive: true },
-		);
+		const timeout = window.setTimeout(updatePosition, 50);
 
-		window.addEventListener(
-			"scroll",
-			updatePosition,
-			{
-				passive: true,
-				capture: true,
-			},
-		);
+		window.addEventListener("resize", updatePosition, { passive: true });
 
-		const observer =
-			new MutationObserver(
-				updatePosition,
-			);
+		window.addEventListener("scroll", updatePosition, {
+			passive: true,
+			capture: true,
+		});
 
-		observer.observe(
-			document.body,
-			{
-				childList: true,
-				subtree: true,
-				attributes: true,
-			},
-		);
+		const observer = new MutationObserver(updatePosition);
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+		});
 
 		return () => {
-			cancelAnimationFrame(
-				frame,
-			);
+			cancelAnimationFrame(frame);
 
-			window.removeEventListener(
-				"resize",
-				updatePosition,
-			);
+			window.clearTimeout(timeout);
 
-			window.removeEventListener(
-				"scroll",
-				updatePosition,
-				true,
-			);
+			window.removeEventListener("resize", updatePosition);
+
+			window.removeEventListener("scroll", updatePosition, true);
 
 			observer.disconnect();
 		};
-	}, [
-		isInteractiveStep,
-		step.target,
-		step.id,
-	]);
+	}, [isInteractiveStep, step]);
 
 	if (!mounted) {
 		return null;
@@ -558,6 +462,7 @@ export function TutorialPopover({
 						color: rgba(255, 255, 255, 0.42) !important;
 						font-size: 10px !important;
 						font-weight: 600 !important;
+						line-height: 1 !important;
 					}
 
 					.special-lazyness-driver-skip:hover {
@@ -567,21 +472,27 @@ export function TutorialPopover({
 					.special-lazyness-tutorial-highlight {
 						position: fixed;
 						z-index: 2147483640;
+						box-sizing: border-box;
 						border: 3px solid #3089c0;
-						border-radius: 14px;
+						border-radius: 12px;
 						background: transparent;
 						box-shadow:
 							0 0 0 4px rgba(48, 137, 192, 0.22),
-							0 0 24px rgba(48, 137, 192, 0.28);
+							0 0 24px rgba(48, 137, 192, 0.3),
+							0 0 0 9999px rgba(0, 0, 0, 0.68);
 						pointer-events: none;
-						box-sizing: border-box;
+						transition:
+							top 180ms ease,
+							left 180ms ease,
+							width 180ms ease,
+							height 180ms ease;
 					}
 
 					.special-lazyness-tutorial-highlight::after {
 						content: "";
 						position: absolute;
 						inset: -6px;
-						border: 1px solid rgba(48, 137, 192, 0.28);
+						border: 1px solid rgba(48, 137, 192, 0.3);
 						border-radius: 18px;
 						pointer-events: none;
 					}
@@ -603,6 +514,7 @@ export function TutorialPopover({
 						backdrop-filter: blur(18px);
 						-webkit-backdrop-filter: blur(18px);
 						pointer-events: none;
+						animation: special-lazyness-tutorial-in 180ms ease-out;
 					}
 
 					.special-lazyness-tutorial-popover.above {
@@ -690,49 +602,44 @@ export function TutorialPopover({
 					.special-lazyness-tutorial-skip:hover {
 						color: rgba(255, 255, 255, 0.72);
 					}
+
+					@keyframes special-lazyness-tutorial-in {
+						from {
+							opacity: 0;
+							transform: translateY(6px) scale(0.98);
+						}
+
+						to {
+							opacity: 1;
+							transform: translateY(0) scale(1);
+						}
+					}
 				`}
 			</style>
 
-			{isInteractiveStep &&
-				targetRect && (
-					<div
-						className="special-lazyness-tutorial-highlight"
-						style={{
-							top:
-								targetRect.top -
-								4,
-							left:
-								targetRect.left -
-								4,
-							width:
-								targetRect.width +
-								8,
-							height:
-								targetRect.height +
-								8,
-						}}
-					/>
-				)}
+			{isInteractiveStep && targetRect && (
+				<div
+					className="special-lazyness-tutorial-highlight"
+					style={{
+						top: targetRect.top - 4,
+						left: targetRect.left - 4,
+						width: targetRect.width + 8,
+						height: targetRect.height + 8,
+					}}
+				/>
+			)}
 
 			{isInteractiveStep && (
 				<div
 					className={`special-lazyness-tutorial-popover ${
-						popoverPosition?.above
-							? "above"
-							: ""
+						popoverPosition?.above ? "above" : ""
 					}`}
 					style={{
-						top:
-							popoverPosition?.top ??
-							120,
-						left:
-							popoverPosition?.left ??
-							12,
+						top: popoverPosition?.top ?? 120,
+						left: popoverPosition?.left ?? 12,
 					}}
 				>
-					<h3 className="special-lazyness-tutorial-title">
-						{step.title}
-					</h3>
+					<h3 className="special-lazyness-tutorial-title">{step.title}</h3>
 
 					<p className="special-lazyness-tutorial-description">
 						{step.description}
@@ -740,8 +647,7 @@ export function TutorialPopover({
 
 					<div className="special-lazyness-tutorial-footer">
 						<div className="special-lazyness-tutorial-progress">
-							{current} of{" "}
-							{total}
+							{current} of {total}
 						</div>
 
 						<div className="special-lazyness-tutorial-actions">
@@ -749,9 +655,7 @@ export function TutorialPopover({
 								<button
 									type="button"
 									className="special-lazyness-tutorial-skip"
-									onClick={
-										onSkip
-									}
+									onClick={onSkip}
 								>
 									Skip
 								</button>
@@ -761,9 +665,7 @@ export function TutorialPopover({
 								<button
 									type="button"
 									className="special-lazyness-tutorial-button"
-									onClick={
-										onPrevious
-									}
+									onClick={onPrevious}
 								>
 									Prev
 								</button>
@@ -773,12 +675,9 @@ export function TutorialPopover({
 								<button
 									type="button"
 									className="special-lazyness-tutorial-button"
-									onClick={
-										handleNext
-									}
+									onClick={handleDriverNext}
 								>
-									{step.nextLabel ??
-										"Next"}
+									{step.nextLabel ?? "Next"}
 								</button>
 							)}
 						</div>
