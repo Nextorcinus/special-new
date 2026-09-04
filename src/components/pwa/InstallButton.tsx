@@ -1,44 +1,43 @@
-// src/components/pwa/InstallButton.tsx
 "use client";
 
-import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface InstallButtonProps {
 	className?: string;
 	onManualTrigger?: () => void;
 }
 
-export default function InstallButton({ className, onManualTrigger }: InstallButtonProps) {
+export default function InstallButton({
+	className,
+	onManualTrigger,
+}: InstallButtonProps) {
 	const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 	const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
-		// 1. Cek apakah aplikasi sudah berjalan dalam mode terinstal (Standalone)
-		const isStandalone = window.matchMedia("(display-mode: standalone)").matches 
-			|| (window.navigator as any).standalone 
-			|| document.referrer.includes("android-app://");
-		
+		const isStandalone =
+			window.matchMedia("(display-mode: standalone)").matches ||
+			(window.navigator as any).standalone ||
+			document.referrer.includes("android-app://");
+
 		if (isStandalone) {
 			setIsInstalled(true);
 			return;
 		}
 
-		// 2. Ambil event jika sudah tersimpan di objek window global
 		if ((window as any).deferredPrompt) {
 			setDeferredPrompt((window as any).deferredPrompt);
 		}
 
-		// 3. Dengarkan custom event jika prompt masuk setelah komponen dimuat
 		const handlePwaReady = () => {
 			setDeferredPrompt((window as any).deferredPrompt);
 		};
 
 		window.addEventListener("pwa-installable", handlePwaReady);
 
-		// 4. Dengarkan jika user berhasil menginstal dari tempat lain (misal menu titik tiga Chrome)
 		const handleAppInstalled = () => {
 			console.log("[PWA] Aplikasi sukses terinstal oleh pengguna!");
 			setIsInstalled(true);
@@ -67,7 +66,7 @@ export default function InstallButton({ className, onManualTrigger }: InstallBut
 			deferredPrompt.prompt();
 			const { outcome } = await deferredPrompt.userChoice;
 			console.log(`[PWA] Respons pengguna terhadap dialog: ${outcome}`);
-			
+
 			if (outcome === "accepted") {
 				// Pengguna setuju menginstal, langsung sembunyikan tombol
 				setIsInstalled(true);
@@ -80,7 +79,6 @@ export default function InstallButton({ className, onManualTrigger }: InstallBut
 		}
 	};
 
-	// JIKA APLIKASI SUDAH TERINSTAL, KITA SEMBUNYIKAN TOMBOLNYA (RETURN NULL)
 	if (isInstalled) {
 		return null;
 	}

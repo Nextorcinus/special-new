@@ -8,7 +8,7 @@ export const TUTORIAL_STEPS: TutorialStepConfig[] = [
 		type: "info",
 		title: "Welcome to Special Lazyness",
 		description:
-			"Let's take a quick tour. You can choose a calculator from Quick Access.",
+			"Let's take a quick tour. You can choose a calculator Whiteout Survival from Quick Access.",
 		target: '[data-tutorial="home-quick-access"]',
 		nextLabel: "Next",
 		showSkip: true,
@@ -19,7 +19,7 @@ export const TUTORIAL_STEPS: TutorialStepConfig[] = [
 		id: "chief-gear",
 		type: "action",
 		title: "Start with Chief Gear",
-		description: "Start by opening Chief Gear from Quick Access.",
+		description: "Click to opening Chief Gear from Quick Access.",
 		target: '[data-tutorial="quick-access-chief-gear"]',
 		showSkip: true,
 		allowNext: false,
@@ -96,7 +96,7 @@ export const TUTORIAL_STEPS: TutorialStepConfig[] = [
 		type: "action",
 		title: "Chief Gear Resources",
 		description:
-			"The Chief Gear section is already selected. Enter the resources you currently have in your Bag, then press Save & Close when you're ready.",
+			"Enter the resources you currently have in your Bag, then press Save & Close when you're ready.",
 		target: '[data-tutorial="bag-chief-gear"]',
 		showSkip: true,
 		allowNext: false,
@@ -107,7 +107,7 @@ export const TUTORIAL_STEPS: TutorialStepConfig[] = [
 		type: "info",
 		title: "Compare Your Resources",
 		description:
-			"Your resources have been saved. Here you can see how much of the required resources you currently have available.",
+			"Great!, Your resources has automatically compare to result. All history result and bag resources will be saved, as long as your browser cache is not removed or delete. keep lazy!",
 		target: '[data-tutorial="bag-compare-result"]',
 		nextLabel: "Finish",
 		showSkip: false,
