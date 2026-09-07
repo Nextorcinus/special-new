@@ -127,29 +127,29 @@
 		}
 	},
 	"widget": {
-		"has-widget": true,
-		"widget-name": "Exobox",
-		"widget-icon": "exobox",
-		"widget-affect-on": "",
-		"widget-level": "",
-		"widget-stats": {
-			"exploration": {
-				"attack": 5206,
-				"defense": 5206,
-				"health": 52065,
-				"ability": "Dominic perfects magical skills through dedicated practice, increasing damage dealt by {v1}.",
-				"icon": "illusion_mastery.webp",
-				"name": "Illusion Mastery",
-				"increasing": [["5%", "10%", "15%", "20%", "25%"]]
-			},
-			"expedition": {
-				"lethality": "447.5%",
-				"health": "447.5%",
-				"ability": "Dominic turns the battlefield into a stage, increasing the Lethality of rallied Troop by {v1}.",
-				"icon": "grand_fantasy.webp",
-				"name": "Grand Fantasy",
-				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
-			}
+		"has-widget": true
+	},
+	"widget-name": "Exobox",
+	"widget-icon": "exobox",
+	"widget-affect-on": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": 5206,
+			"defense": 5206,
+			"health": 52065,
+			"ability": "Dominic perfects magical skills through dedicated practice, increasing damage dealt by {v1}.",
+			"icon": "illusion_mastery.webp",
+			"name": "Illusion Mastery",
+			"increasing": [["5%", "10%", "15%", "20%", "25%"]]
+		},
+		"expedition": {
+			"lethality": "447.5%",
+			"health": "447.5%",
+			"ability": "Dominic turns the battlefield into a stage, increasing the Lethality of rallied Troop by {v1}.",
+			"icon": "grand_fantasy.webp",
+			"name": "Grand Fantasy",
+			"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
 		}
 	},
 	"uniquePassive": {},
