@@ -1,0 +1,158 @@
+{
+	"id": "dominic",
+	"name": "Dominic",
+	"generation": "S14",
+	"rarity": "Legendary",
+	"class": "Combat",
+	"troop": "Lancer",
+	"source": "king",
+	"stats": {
+		"attack": 25684,
+		"defense": 25864,
+		"health": 256854
+	},
+	"expedition": {
+		"attack": 1791.43,
+		"defense": 1791.43
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Box Trick",
+				"trigger-point": "",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Area Damage + Stun",
+					"affect-on": ["enemy"],
+					"stats": ["200%", "220%", "240%", "260%", "280%"],
+					"description": "Dominic conjures three magical boxes around the target, each delivering heavy punches that deal Attack * 280% Area Damage and stun the target for 1 second.",
+					"icon": "box_trick.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Scorching Roses",
+				"trigger-point": "Deal Attack + Burn",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Dealing Attack Damage + Burn Damage",
+					"affect-on": ["enemy"],
+					"stats": [
+						"100%",
+						"110%",
+						"120%",
+						"130%",
+						"140%",
+						"4%",
+						"6%",
+						"8%",
+						"10%",
+						"12%"
+					],
+					"description": "Dominic hurls roses that transform into flames, dealing Attack * 140% damage and setting the target on fire which deals Attack * 12% damage every 0.5 seconds for 2 seconds.",
+					"icon": "scorching_roses.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Double Trouble",
+				"trigger-point": "Health reaches zero",
+				"trigger-time": "5 seconds",
+				"effects": {
+					"effect-name": "Revive",
+					"affect-on": ["Self"],
+					"stats": ["10%", "20%", "30%", "40%", "50%"],
+					"description": "Dominic uses illusions to escape. When Health drops to zero, Dominic vanishes and reappears in a magical box 5 seconds later with 50% Health. This skill can be used once per battle.",
+					"icon": "double_trouble.webp"
+				}
+			}
+		},
+		"expedition": {
+			"1": {
+				"skill-name": "Mystic Mechanism",
+				"trigger-point": "Increase Damage Dealt",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Increase Damage Dealt",
+					"affect-on": ["All Troops"],
+					"stats": ["4%", "8%", "12%", "16%", "20%"],
+					"description": "Dominic equips the troops with weapons cleverly crafted from magic props, increasing damage dealt by 20% for all troops.",
+					"icon": "mystic_mechanism.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Spiky Assault",
+				"trigger-point": "Increase Lancer Damage + Poison Damage Taken",
+				"trigger-time": "1 turn",
+				"effects": {
+					"effect-name": "Increase Lancer Damage + Damage Taken",
+					"affect-on": ["Lancer Troops"],
+					"stats": [
+						"12%",
+						"24%",
+						"36%",
+						"48%",
+						"60%",
+						"5%",
+						"10%",
+						"15%",
+						"20%",
+						"25%"
+					],
+					"description": "Dominic equips the Lancer of Dominic with secret devices that launch poisonous spikes, increasing their damage dealt per attack by 60%. Poisoned targets take 25% more damage for 1 turn.",
+					"icon": "spiky_assault.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Mirror Maze",
+				"trigger-point": "Reduce Damage Taken + Increase Damage Dealt",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Damage Taken and Damage Dealt",
+					"affect-on": ["Infantry and Marksman"],
+					"stats": [
+						"3%",
+						"6%",
+						"9%",
+						"12%",
+						"15%",
+						"3%",
+						"6%",
+						"9%",
+						"12%",
+						"15%"
+					],
+					"description": "Dominic disrupts enemy strategies by performing optical tricks with a mirror, reducing damage taken by Infantry and Marksman by 15% and increasing their damage dealt by 15%.",
+					"icon": "mirror_maze.webp"
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": true,
+		"widget-name": "Exobox",
+		"widget-icon": "exobox",
+		"widget-affect-on": "",
+		"widget-level": "",
+		"widget-stats": {
+			"exploration": {
+				"attack": 5206,
+				"defense": 5206,
+				"health": 52065,
+				"ability": "Dominic perfects magical skills through dedicated practice, increasing damage dealt by {v1}.",
+				"icon": "illusion_mastery.webp",
+				"name": "Illusion Mastery",
+				"increasing": [["5%", "10%", "15%", "20%", "25%"]]
+			},
+			"expedition": {
+				"lethality": "447.5%",
+				"health": "447.5%",
+				"ability": "Dominic turns the battlefield into a stage, increasing the Lethality of rallied Troop by {v1}.",
+				"icon": "grand_fantasy.webp",
+				"name": "Grand Fantasy",
+				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
+			}
+		}
+	},
+	"uniquePassive": {},
+	"image": "dominic.webp",
+	"thumbnail": "dominic.webp"
+}

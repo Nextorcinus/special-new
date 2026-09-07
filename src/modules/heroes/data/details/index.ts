@@ -5,10 +5,13 @@ import alonso from "./alonso.json";
 import bahiti from "./bahiti.json";
 import blanchette from "./blanchette.json";
 import bradley from "./bradley.json";
+import cara from "./cara.json";
 import charlie from "./charlie.json";
 import cloris from "./cloris.json";
+import dominic from "./dominic.json";
 import edith from "./edith.json";
 import eleonora from "./eleonora.json";
+import elif from "./elif.json";
 import eugene from "./eugene.json";
 import flint from "./flint.json";
 import flora from "./flora.json";
@@ -112,6 +115,9 @@ export const HERO_DETAILS: Record<string, HeroDetail> = {
 	"wu-ming": asHeroDetail(wuMing),
 	xura: asHeroDetail(xura),
 	zinman: asHeroDetail(zinman),
+	cara: asHeroDetail(cara),
+	elif: asHeroDetail(elif),
+	dominic: asHeroDetail(dominic),
 };
 
 export function getHeroDetailData(id: string): HeroDetail | undefined {

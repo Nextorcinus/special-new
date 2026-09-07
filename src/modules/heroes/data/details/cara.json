@@ -1,0 +1,147 @@
+{
+	"id": "cara",
+	"name": "Cara",
+	"generation": "S14",
+	"rarity": "Legendary",
+	"class": "Combat",
+	"troop": "Marksmen",
+	"source": "hall_of_heroes",
+	"stats": {
+		"attack": 31203,
+		"defense": 25684,
+		"health": 192640
+	},
+	"expedition": {
+		"attack": 1791.43,
+		"defense": 1791.43
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Arcane Blast",
+				"trigger-point": "",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Area Damage",
+					"affect-on": ["enemy"],
+					"stats": ["200%", "220%", "240%", "260%", "280%"],
+					"description": "Cara launches a powerful cannon at enemies, dealing Attack * 280% Area damage.",
+					"icon": "arcane_blast.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Gloomy Mist",
+				"trigger-point": "Reduce Accuracy + Continuous Damage",
+				"trigger-time": "2 seconds",
+				"effects": {
+					"effect-name": "Reduce Accuracy + Burn Damage",
+					"affect-on": ["enemy"],
+					"stats": [
+						"7%",
+						"9%",
+						"11%",
+						"13%",
+						"15%",
+						"7%",
+						"9%",
+						"11%",
+						"13%",
+						"15%"
+					],
+					"description": "Cara fires a Steamy Whammy, releasing a mist-like gas that obscures the vision of the enemy and reduces their accuracy by 15%. The gas burns the targets continuously, dealing Attack * 15% damage every 0.5 seconds for 2 seconds.",
+					"icon": "gloomy_mist.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Heartfelt Friendship",
+				"trigger-point": "Ally Hero knocked down",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Increase Attack",
+					"affect-on": ["Self"],
+					"stats": ["3%", "6%", "9%", "12%", "15%"],
+					"description": "Each time an ally Hero is knocked down, the rage and power of Cara are fueled, increasing Attack by 15% until the end of the battle.",
+					"icon": "heartfelt_friendship.webp"
+				}
+			}
+		},
+		"expedition": {
+			"1": {
+				"skill-name": "Smoky Encounter",
+				"trigger-point": "Reduce Enemy Lethality",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Reduce Enemy Lethality",
+					"affect-on": ["Enemy Troops"],
+					"stats": ["4%", "8%", "12%", "16%", "20%"],
+					"description": "Cara drops smoke grenades from the air, hindering enemy attacks and reducing their Lethality by 20%.",
+					"icon": "smoky_encounter.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Mech Pet",
+				"trigger-point": "Increase Normal Attack Damage",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Increase Normal Attack Damage",
+					"affect-on": ["All Troops"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "The Mech Pets crafted by Oestermore crafters join forces with the warriors, increasing normal attack damage by 30% for all troops.",
+					"icon": "mech_pet.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Witch's Wrath",
+				"trigger-point": "Extra Damage Every 2 Attacks",
+				"trigger-time": "Every 2 attacks",
+				"effects": {
+					"effect-name": "Extra Damage to Lancer and Marksman",
+					"affect-on": ["Marksman Troops"],
+					"stats": [
+						"8%",
+						"16%",
+						"24%",
+						"32%",
+						"40%",
+						"4%",
+						"8%",
+						"12%",
+						"16%",
+						"20%"
+					],
+					"description": "Thanks to the flying broom of Cara, she effortlessly bypasses the enemy Infantry on the frontline. The Marksman of Cara deal 40% extra damage to enemy Lancer and 20% extra damage to enemy Marksman every two attacks.",
+					"icon": "witchs_wrath.webp"
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": true,
+		"widget-name": "Velocomet",
+		"widget-icon": "velocomet",
+		"widget-affect-on": "",
+		"widget-level": "",
+		"widget-stats": {
+			"exploration": {
+				"attack": 6317,
+				"defense": 5206,
+				"health": 39048,
+				"ability": "The crafters from Oestermore modify the gear of Cara, increasing the duration of Gloomy Mist by {v1} and increasing normal attack damage by {v2}.",
+				"icon": "techno_power.webp",
+				"name": "Techno Power",
+				"increasing": [["1s"], ["25%"]]
+			},
+			"expedition": {
+				"lethality": "447.5%",
+				"health": "447.5%",
+				"ability": "Cara defends the city like a hometown, inspiring defending Troop and increasing their Lethality by {v1}.",
+				"icon": "shrouded_haven.webp",
+				"name": "Shrouded Haven",
+				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
+			}
+		}
+	},
+	"uniquePassive": {},
+	"image": "cara.webp",
+	"thumbnail": "cara.webp"
+}

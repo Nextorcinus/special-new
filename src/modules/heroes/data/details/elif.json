@@ -1,0 +1,150 @@
+{
+	"id": "elif",
+	"name": "Elif",
+	"generation": "S14",
+	"rarity": "Legendary",
+	"class": "Combat",
+	"troop": "Infantry",
+	"source": "lucky_wheel",
+	"stats": {
+		"attack": 19702,
+		"defense": 25684,
+		"health": 385280
+	},
+	"expedition": {
+		"attack": 1791.43,
+		"defense": 1791.43
+	},
+	"skills": {
+		"exploration": {
+			"1": {
+				"skill-name": "Spectral Glide",
+				"trigger-point": "",
+				"trigger-time": "5 seconds",
+				"effects": {
+					"effect-name": "Dodge Enemy Attacks",
+					"affect-on": ["Self"],
+					"stats": ["10%", "15%", "20%", "25%", "30%"],
+					"description": "Elif confuses enemies with dazzling moves for 1 second, gaining a 30% chance of dodging enemy attacks for 5 seconds.",
+					"icon": "spectral_glide.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Blade Dance",
+				"trigger-point": "Deal Attack + Confuse",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Dealing Attack Damage",
+					"affect-on": ["enemy"],
+					"stats": ["100%", "110%", "120%", "130%", "140%"],
+					"description": "Elif strikes unpredictably with a blade, dealing Attack * 140% damage and confusing the target for 1 second.",
+					"icon": "blade_dance.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Ethereal Steps",
+				"trigger-point": "Increase Dodge Chance + Confuse",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Dodge Enemy Attacks and Confuse",
+					"affect-on": ["Enemy and Self"],
+					"stats": [
+						"7%",
+						"10%",
+						"13%",
+						"16%",
+						"20%",
+						"7%",
+						"10%",
+						"13%",
+						"16%",
+						"20%"
+					],
+					"description": "Elif bewilders enemies with graceful combat moves, increasing the chance of dodging enemy attacks by 20%. Normal attacks have a 20% chance of confusing the target for 1 second.",
+					"icon": "ethereal_steps.webp"
+				}
+			}
+		},
+		"expedition": {
+			"1": {
+				"skill-name": "Shackling Veil",
+				"trigger-point": "Reduce Enemy Attack",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Reduce Enemy Troops Attack",
+					"affect-on": ["Enemy Troops"],
+					"stats": ["5%", "10%", "15%", "20%", "25%"],
+					"description": "Elif entangles enemy weapons with a veil, reducing the Attack of all enemy troops by 25%.",
+					"icon": "shackling_veil.webp"
+				}
+			},
+			"2": {
+				"skill-name": "Slash Formation",
+				"trigger-point": "Increase Troop Attack and Defense",
+				"trigger-time": "",
+				"effects": {
+					"effect-name": "Increase Troop Attack and Defense",
+					"affect-on": ["All Troops"],
+					"stats": [
+						"3%",
+						"6%",
+						"9%",
+						"12%",
+						"15%",
+						"2%",
+						"4%",
+						"6%",
+						"8%",
+						"10%"
+					],
+					"description": "Elif applies an exotic formation on the tundra, increasing the Attack of troops by 15% and the Defence of troops by 10%.",
+					"icon": "slash_formation.webp"
+				}
+			},
+			"3": {
+				"skill-name": "Enchanting Tapestry",
+				"trigger-point": "Grant Infantry Shield",
+				"trigger-time": "1 turn",
+				"effects": {
+					"effect-name": "Infantry Shield",
+					"affect-on": ["Infantry Troops"],
+					"stats": ["6%", "12%", "18%", "24%", "30%"],
+					"description": "When the Infantry under command of Elif attack, she weaves ribbons into a curtain, granting them a Shield with protection equal to Attack * 30% for 1 turn.",
+					"icon": "enchanting_tapestry.webp"
+				}
+			}
+		}
+	},
+	"widget": {
+		"has-widget": true,
+		"widget-name": "Moonscar",
+		"widget-icon": "moonscar",
+		"widget-affect-on": "",
+		"widget-level": "",
+		"widget-stats": {
+			"exploration": {
+				"attack": 3991,
+				"defense": 5206,
+				"health": 78097,
+				"ability": "Elif dances freestyle, increasing Attack Speed by {v1} and the Exploration confusion chance of Ethereal Steps by {v2}.",
+				"icon": "blazing_edge.webp",
+				"name": "Blazing Edge",
+				"increasing": [
+					["7%", "10%", "13%", "16%", "20%"],
+					["7%", "10%", "13%", "16%", "20%"]
+				]
+			},
+			"expedition": {
+				"lethality": "447.50%",
+				"health": "447.50%",
+				"ability": "Elif inspires defending Troop with a graceful dance, increasing their Defence by {v1}.",
+				"icon": "guardians_grace.webp",
+				"name": "Guardian's Grace",
+				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
+			}
+		}
+	},
+	"uniquePassive": {},
+	"image": "elif.webp",
+	"thumbnail": "elif.webp"
+}
