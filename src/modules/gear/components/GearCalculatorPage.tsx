@@ -5,11 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
+
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
+
 import type {
 	CalculationHistoryEntry,
 	CalculationHistoryItem,
 } from "@/features/inventory/store/history/types";
+
 import { useTutorial } from "@/features/tutorial";
 
 import GearForm from "@/modules/gear/components/GearForm";
@@ -65,6 +68,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 	const tutorial = useTutorial();
 
+	/*
+	 * ============================================================
+	 * LOCAL STATE
+	 * ============================================================
+	 */
+
 	const [activeHistory, setActiveHistory] = useState<GearHistoryItem | null>(
 		null,
 	);
@@ -75,11 +84,23 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 	const [isEditingHistory, setIsEditingHistory] = useState(false);
 
+	/*
+	 * ============================================================
+	 * REFS
+	 * ============================================================
+	 */
+
 	const formRef = useRef<HTMLDivElement>(null);
 
 	const resultRef = useRef<HTMLDivElement>(null);
 
 	const loadedHistoryIdRef = useRef<string | null>(null);
+
+	/*
+	 * ============================================================
+	 * HISTORY STORE
+	 * ============================================================
+	 */
 
 	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
@@ -99,6 +120,25 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		(state: HistoryStoreState) => state.addCalculationItem,
 	);
 
+	/*
+	 * IMPORTANT:
+	 *
+	 * This action must exist in history.store.ts.
+	 *
+	 * It changes only one entry inside the History.
+	 *
+	 * It does NOT complete the entire History.
+	 */
+	const completeCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) => state.completeCalculationItem,
+	);
+
+	/*
+	 * ============================================================
+	 * SCROLL TO FORM
+	 * ============================================================
+	 */
+
 	const scrollToForm = useCallback(() => {
 		requestAnimationFrame(() => {
 			formRef.current?.scrollIntoView({
@@ -107,6 +147,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			});
 		});
 	}, []);
+
+	/*
+	 * ============================================================
+	 * SCROLL TO RESULT
+	 * ============================================================
+	 */
 
 	const scrollToResult = useCallback(() => {
 		const result = resultRef.current;
@@ -128,6 +174,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			behavior: "smooth",
 		});
 	}, []);
+
+	/*
+	 * ============================================================
+	 * TUTORIAL RESULT SCROLL
+	 * ============================================================
+	 */
 
 	useEffect(() => {
 		if (!tutorial.active || tutorial.step !== "result") {
@@ -179,9 +231,21 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		};
 	}, [scrollToResult, tutorial.active, tutorial.step]);
 
+	/*
+	 * ============================================================
+	 * LOAD HISTORY
+	 * ============================================================
+	 */
+
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
+
+	/*
+	 * ============================================================
+	 * RESOLVE HISTORY FROM URL
+	 * ============================================================
+	 */
 
 	useEffect(() => {
 		if (!historyId) {
@@ -204,6 +268,10 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 		const selectedHistory = selected as GearHistoryItem;
 
+		/*
+		 * Prevent the URL effect from
+		 * constantly resetting form state.
+		 */
 		if (loadedHistoryIdRef.current !== historyId) {
 			loadedHistoryIdRef.current = historyId;
 
@@ -218,24 +286,79 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			return;
 		}
 
+		/*
+		 * Keep active history synchronized
+		 * with Zustand after a Completed action.
+		 */
 		setActiveHistory(selectedHistory);
 	}, [historyId, items]);
 
+	/*
+	 * ============================================================
+	 * NORMALIZE HISTORY ITEMS
+	 * ============================================================
+	 *
+	 * New History:
+	 *
+	 * activeHistory.items
+	 *
+	 * Old History:
+	 *
+	 * activeHistory itself becomes
+	 * a single entry.
+	 *
+	 * completed defaults to false.
+	 * This keeps old localStorage data
+	 * compatible.
+	 */
+
 	const historyItems: GearHistoryEntry[] =
 		activeHistory?.items && activeHistory.items.length > 0
-			? (activeHistory.items as GearHistoryEntry[])
+			? (activeHistory.items as GearHistoryEntry[]).map((item) => ({
+					...item,
+
+					completed: item.completed ?? false,
+				}))
 			: activeHistory
 				? [
 						{
 							id: activeHistory.id,
+
 							title: activeHistory.title,
+
 							subtitle: activeHistory.subtitle,
+
 							form: activeHistory.form,
+
 							result: activeHistory.result,
+
 							createdAt: activeHistory.createdAt,
+
+							completed: false,
 						},
 					]
 				: [];
+
+	/*
+	 * ============================================================
+	 * COMPLETED PROGRESS
+	 * ============================================================
+	 */
+
+	const completedCount = historyItems.filter(
+		(item) => item.completed === true,
+	).length;
+
+	const totalCount = historyItems.length;
+
+	const completedPercentage =
+		totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+	/*
+	 * ============================================================
+	 * FORM VALUES
+	 * ============================================================
+	 */
 
 	const initialValues =
 		activeHistory && !isAddingItem
@@ -243,6 +366,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			: null;
 
 	const isUpdateMode = isEditingHistory && !isAddingItem;
+
+	/*
+	 * ============================================================
+	 * BUILD HISTORY PAYLOAD
+	 * ============================================================
+	 */
 
 	function buildHistoryPayload(result: GearCalculationResult) {
 		return {
@@ -260,9 +389,19 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		};
 	}
 
+	/*
+	 * ============================================================
+	 * CALCULATE
+	 * ============================================================
+	 */
+
 	function handleCalculate(result: GearCalculationResult) {
 		const payload = buildHistoryPayload(result);
 
+		/*
+		 * Add another result into
+		 * existing History.
+		 */
 		if (activeHistory && isAddingItem) {
 			const updated = addCalculationItem(activeHistory.id, payload) as
 				| GearHistoryItem
@@ -287,6 +426,9 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			return;
 		}
 
+		/*
+		 * Update existing History.
+		 */
 		if (activeHistory && isEditingHistory) {
 			const updated = updateCalculation(activeHistory.id, payload) as
 				| GearHistoryItem
@@ -311,6 +453,9 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 			return;
 		}
 
+		/*
+		 * Create new History.
+		 */
 		const saved = saveCalculation(payload) as GearHistoryItem;
 
 		setActiveHistory(saved);
@@ -326,6 +471,46 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 		}
 	}
 
+	/*
+	 * ============================================================
+	 * COMPLETE ONE RESULT
+	 * ============================================================
+	 *
+	 * IMPORTANT:
+	 *
+	 * entryId is the individual result ID.
+	 *
+	 * Therefore:
+	 *
+	 * Pants -> entry A -> complete only Pants
+	 *
+	 * Belt -> entry B -> remains active
+	 *
+	 * They do NOT complete together.
+	 */
+	function handleCompleteItem(entryId: string) {
+		if (!activeHistory) {
+			return;
+		}
+
+		const result = completeCalculationItem(activeHistory.id, entryId);
+
+		if (!result.success || !result.history) {
+			return;
+		}
+
+		/*
+		 * Immediately update local state.
+		 */
+		setActiveHistory(result.history as GearHistoryItem);
+	}
+
+	/*
+	 * ============================================================
+	 * ADD ITEM
+	 * ============================================================
+	 */
+
 	function handleAddItem() {
 		if (!activeHistory) {
 			return;
@@ -339,6 +524,12 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 
 		scrollToForm();
 	}
+
+	/*
+	 * ============================================================
+	 * NEW CALCULATION
+	 * ============================================================
+	 */
 
 	function handleNewCalculation() {
 		setActiveHistory(null);
@@ -357,6 +548,10 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 	return (
 		<div className="grid gap-6">
 			<div className="space-y-6 p-4">
+				{/* ==================================================
+				    GEAR FORM
+				================================================== */}
+
 				<div ref={formRef}>
 					<GearForm
 						key={formKey}
@@ -368,15 +563,85 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 					/>
 				</div>
 
+				{/* ==================================================
+				    HISTORY RESULTS
+				================================================== */}
+
 				{activeHistory && historyItems.length > 0 && (
-					<div ref={resultRef} data-tutorial="chief-gear-result">
+					<div
+						ref={resultRef}
+						data-tutorial="chief-gear-result"
+						className="space-y-5"
+					>
+						{/* ==========================================
+							    PROGRESS
+							========================================== */}
+
+						{totalCount > 1 && (
+							<div className="rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input)] p-4">
+								<div className="flex items-center justify-between gap-4">
+									<div className="min-w-0">
+										<p className="text-sm font-semibold text-[var(--sl-text)]">
+											Upgrade Progress
+										</p>
+
+										<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
+											{completedCount} of {totalCount} upgrades completed
+										</p>
+									</div>
+
+									<div className="shrink-0 text-sm font-bold text-[var(--sl-text)]">
+										{completedPercentage}%
+									</div>
+								</div>
+
+								<div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/20">
+									<div
+										className="h-full rounded-full bg-[var(--sl-text)] transition-[width] duration-300"
+										style={{
+											width: `${completedPercentage}%`,
+										}}
+									/>
+								</div>
+							</div>
+						)}
+
+						{/* ==========================================
+							    RESULT GROUP
+							========================================== */}
+
 						<CalculationGroupResult
 							items={historyItems}
 							getKey={(item) => item.id}
 							renderItem={(item, index) => (
 								<GearResult
+									/*
+									 * Individual
+									 * calculation result.
+									 */
 									result={item.result as GearCalculationResult}
+									/*
+									 * Parent History.
+									 */
 									history={activeHistory}
+									/*
+									 * CRITICAL:
+									 *
+									 * This is the ID
+									 * of Pants, Belt,
+									 * Coat, etc.
+									 */
+									entryId={item.id}
+									/*
+									 * Individual
+									 * completed state.
+									 */
+									completed={item.completed ?? false}
+									/*
+									 * Complete ONLY
+									 * this result.
+									 */
+									onCompleted={() => handleCompleteItem(item.id)}
 									title={index === 0 ? "Result" : undefined}
 									showAddButton={index === historyItems.length - 1}
 									onAddItem={handleAddItem}
@@ -388,6 +653,10 @@ function GearCalculatorPageContent({ data }: GearCalculatorPageProps) {
 						/>
 					</div>
 				)}
+
+				{/* ==================================================
+				    NEW CALCULATION
+				================================================== */}
 
 				{activeHistory && (
 					<div className="px-4 py-2">

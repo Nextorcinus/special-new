@@ -16,6 +16,14 @@ type InventoryState = {
 	clearResources: () => void;
 
 	/**
+	 * Consume resources from the inventory.
+	 *
+	 * Returns false when one or more resources
+	 * are not available in sufficient quantity.
+	 */
+	consumeResources: (resources: Record<string, number>) => boolean;
+
+	/**
 	 * Convert Design Plans -> Lunar Amber
 	 * Ratio 10 : 1
 	 */
@@ -50,12 +58,26 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 		const saved = localStorage.getItem(STORAGE_KEY);
 
 		if (!saved) {
+			set({
+				resources: {},
+			});
+
 			return;
 		}
 
 		try {
+			const parsed = JSON.parse(saved);
+
+			if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+				set({
+					resources: {},
+				});
+
+				return;
+			}
+
 			set({
-				resources: JSON.parse(saved),
+				resources: parsed,
 			});
 		} catch {
 			set({
@@ -72,6 +94,102 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 		});
 	},
 
+	/**
+	 * Consume multiple resources
+	 * atomically.
+	 *
+	 * Example:
+	 *
+	 * consumeResources({
+	 *   "design-plans": 151,
+	 *   "polishing-solution": 905,
+	 *   "hardened-alloy": 78250,
+	 *   "lunar-amber": 21,
+	 * })
+	 *
+	 * If even one resource is insufficient,
+	 * NOTHING is changed.
+	 */
+	consumeResources: (required) => {
+		const current = get().resources;
+
+		/**
+		 * Ignore invalid values and
+		 * zero/negative requirements.
+		 */
+		const normalized = Object.entries(required).reduce<Record<string, number>>(
+			(acc, [key, value]) => {
+				const amount = Number(value);
+
+				if (Number.isFinite(amount) && amount > 0) {
+					acc[key] = amount;
+				}
+
+				return acc;
+			},
+			{},
+		);
+
+		/**
+		 * Nothing to consume.
+		 */
+		if (Object.keys(normalized).length === 0) {
+			return true;
+		}
+
+		/**
+		 * FIRST PASS
+		 *
+		 * Check ALL resources before
+		 * changing anything.
+		 *
+		 * This prevents partial consumption.
+		 */
+		for (const [key, requiredAmount] of Object.entries(normalized)) {
+			const currentAmount = parseShortNumber(current[key] ?? "");
+
+			if (!Number.isFinite(currentAmount) || currentAmount < requiredAmount) {
+				return false;
+			}
+		}
+
+		/**
+		 * SECOND PASS
+		 *
+		 * All resources are available,
+		 * so now calculate the new values.
+		 */
+		const next = {
+			...current,
+		};
+
+		for (const [key, requiredAmount] of Object.entries(normalized)) {
+			const currentAmount = parseShortNumber(current[key] ?? "");
+
+			const remaining = Math.max(0, currentAmount - requiredAmount);
+
+			next[key] = formatCompactNumber(remaining);
+		}
+
+		/**
+		 * Persist inventory.
+		 */
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+
+		/**
+		 * Update Zustand.
+		 */
+		set({
+			resources: next,
+		});
+
+		return true;
+	},
+
+	/**
+	 * Convert Design Plans -> Lunar Amber
+	 * Ratio 10 : 1
+	 */
 	exchangeDesignPlans: (amberAmount) => {
 		if (!Number.isFinite(amberAmount) || amberAmount <= 0) {
 			return false;
