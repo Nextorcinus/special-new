@@ -116,32 +116,32 @@
 		}
 	},
 	"widget": {
-		"has-widget": true,
-		"widget-name": "Moonscar",
-		"widget-icon": "moonscar",
-		"widget-affect-on": "",
-		"widget-level": "",
-		"widget-stats": {
-			"exploration": {
-				"attack": 3991,
-				"defense": 5206,
-				"health": 78097,
-				"ability": "Elif dances freestyle, increasing Attack Speed by {v1} and the Exploration confusion chance of Ethereal Steps by {v2}.",
-				"icon": "blazing_edge.webp",
-				"name": "Blazing Edge",
-				"increasing": [
-					["7%", "10%", "13%", "16%", "20%"],
-					["7%", "10%", "13%", "16%", "20%"]
-				]
-			},
-			"expedition": {
-				"lethality": "447.50%",
-				"health": "447.50%",
-				"ability": "Elif inspires defending Troop with a graceful dance, increasing their Defence by {v1}.",
-				"icon": "guardians_grace.webp",
-				"name": "Guardian's Grace",
-				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
-			}
+		"has-widget": true
+	},
+	"widget-name": "Moonscar",
+	"widget-icon": "moonscar",
+	"widget-affect-on": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": 3991,
+			"defense": 5206,
+			"health": 78097,
+			"ability": "Elif dances freestyle, increasing Attack Speed by {v1} and the Exploration confusion chance of Ethereal Steps by {v2}.",
+			"icon": "blazing_edge.webp",
+			"name": "Blazing Edge",
+			"increasing": [
+				["7%", "10%", "13%", "16%", "20%"],
+				["7%", "10%", "13%", "16%", "20%"]
+			]
+		},
+		"expedition": {
+			"lethality": "447.50%",
+			"health": "447.50%",
+			"ability": "Elif inspires defending Troop with a graceful dance, increasing their Defence by {v1}.",
+			"icon": "guardians_grace.webp",
+			"name": "Guardian's Grace",
+			"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
 		}
 	},
 	"uniquePassive": {},

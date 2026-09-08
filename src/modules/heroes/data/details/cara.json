@@ -116,29 +116,29 @@
 		}
 	},
 	"widget": {
-		"has-widget": true,
-		"widget-name": "Velocomet",
-		"widget-icon": "velocomet",
-		"widget-affect-on": "",
-		"widget-level": "",
-		"widget-stats": {
-			"exploration": {
-				"attack": 6317,
-				"defense": 5206,
-				"health": 39048,
-				"ability": "The crafters from Oestermore modify the gear of Cara, increasing the duration of Gloomy Mist by {v1} and increasing normal attack damage by {v2}.",
-				"icon": "techno_power.webp",
-				"name": "Techno Power",
-				"increasing": [["1s"], ["25%"]]
-			},
-			"expedition": {
-				"lethality": "447.5%",
-				"health": "447.5%",
-				"ability": "Cara defends the city like a hometown, inspiring defending Troop and increasing their Lethality by {v1}.",
-				"icon": "shrouded_haven.webp",
-				"name": "Shrouded Haven",
-				"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
-			}
+		"has-widget": true
+	},
+	"widget-name": "Velocomet",
+	"widget-icon": "velocomet",
+	"widget-affect-on": "",
+	"widget-level": "",
+	"widget-stats": {
+		"exploration": {
+			"attack": 6317,
+			"defense": 5206,
+			"health": 39048,
+			"ability": "The crafters from Oestermore modify the gear of Cara, increasing the duration of Gloomy Mist by {v1} and increasing normal attack damage by {v2}.",
+			"icon": "techno_power.webp",
+			"name": "Techno Power",
+			"increasing": [["1s"], ["25%"]]
+		},
+		"expedition": {
+			"lethality": "447.5%",
+			"health": "447.5%",
+			"ability": "Cara defends the city like a hometown, inspiring defending Troop and increasing their Lethality by {v1}.",
+			"icon": "shrouded_haven.webp",
+			"name": "Shrouded Haven",
+			"increasing": [["5%", "7.5%", "10%", "12.5%", "15%"]]
 		}
 	},
 	"uniquePassive": {},
