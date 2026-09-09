@@ -27,12 +27,11 @@ export type CalculatorResultProps = {
 	categoryTitle: string;
 	categoryIcon: string;
 	name: string;
-	subtitle?: ReactNode;
+	subtitle?: string;
 	highlightLabel?: string;
 	highlightValue?: string | number;
-
 	createdAt?: string;
 	updatedAt?: string;
-
 	sections: CalculatorResultSection[];
+	completed?: boolean;
 };

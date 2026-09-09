@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	ArrowRight,
 	BriefcaseBusiness,
 	Clock3,
 	DoorOpen,
@@ -10,15 +9,22 @@ import {
 	Trophy,
 	Zap,
 } from "lucide-react";
+import { useEffect } from "react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
+import CalculationComplete from "@/components/calculator/CalculationComplete";
 import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
-import { RESOURCES } from "@/config/resources";
+import {
+	RESOURCES,
+	type ResourceKey,
+} from "@/config/resources";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+import { useInventoryStore } from "@/features/inventory/store/inventory.store";
+
 import { createEmptyPetResources } from "../calculator/helpers";
 import type {
 	PetCalculationResult,
@@ -34,9 +40,17 @@ type PetHistoryItem = CalculationHistoryItem<
 type PetResultProps = {
 	result: PetCalculationResult;
 	history?: PetHistoryItem | null;
+	entryId?: string;
+	completed?: boolean;
 	title?: string;
 	showAddButton?: boolean;
 	onAddItem?: () => void;
+	onCompleted?: () => void;
+};
+
+type ParsedPetCompletionResource = {
+	resourceId: (typeof RESOURCES)[keyof typeof RESOURCES]["id"];
+	amount: number;
 };
 
 function formatPercentage(value: number): string {
@@ -52,6 +66,7 @@ function formatPercentage(value: number): string {
 
 function formatPercentageIncrease(value: number): string {
 	const formatted = formatPercentage(value);
+
 	return value > 0 ? `+${formatted}` : formatted;
 }
 
@@ -67,44 +82,145 @@ function getSkillText(
 	return `Skill Lv.${milestone.skillLevel} · ${milestone.skillValue}`;
 }
 
-function getLegacySafeBreakdown(result: PetCalculationResult): {
+function getLegacySafeBreakdown(
+	result: PetCalculationResult,
+): {
 	levelResources: PetResources;
 	advancementResources: PetResources;
 	levelSvsPoints: number;
 	advancementSvsPoints: number;
 } {
-	const levelResources: PetResources = result.levelResources ?? {
-		...createEmptyPetResources(),
-		PetFood: Number(result.resources?.PetFood ?? 0),
-	};
+	const levelResources: PetResources =
+		result.levelResources ?? {
+			...createEmptyPetResources(),
+			PetFood: Number(
+				result.resources?.PetFood ?? 0,
+			),
+		};
 
-	const advancementResources: PetResources = result.advancementResources ?? {
-		...createEmptyPetResources(),
-		TamingManual: Number(result.resources?.TamingManual ?? 0),
-		EnergizingPotion: Number(result.resources?.EnergizingPotion ?? 0),
-		StrengtheningSerum: Number(result.resources?.StrengtheningSerum ?? 0),
-	};
+	const advancementResources: PetResources =
+		result.advancementResources ?? {
+			...createEmptyPetResources(),
+			TamingManual: Number(
+				result.resources?.TamingManual ?? 0,
+			),
+			EnergizingPotion: Number(
+				result.resources?.EnergizingPotion ?? 0,
+			),
+			StrengtheningSerum: Number(
+				result.resources?.StrengtheningSerum ?? 0,
+			),
+		};
 
 	return {
 		levelResources,
 		advancementResources,
-		levelSvsPoints: Number(result.levelSvsPoints ?? result.baseSvsPoints ?? 0),
-		advancementSvsPoints: Number(result.advancementSvsPoints ?? 0),
+		levelSvsPoints: Number(
+			result.levelSvsPoints ??
+				result.baseSvsPoints ??
+				0,
+		),
+		advancementSvsPoints: Number(
+			result.advancementSvsPoints ?? 0,
+		),
 	};
+}
+
+function getCompletionResources(
+	resources: Partial<Record<ResourceKey, number>>,
+): ParsedPetCompletionResource[] {
+	const completionResources: ParsedPetCompletionResource[] =
+		[];
+
+	for (const [resourceKey, amount] of Object.entries(
+		resources,
+	)) {
+		const numericAmount = Number(amount ?? 0);
+
+		if (numericAmount <= 0) {
+			continue;
+		}
+
+		const resource =
+			RESOURCES[
+				resourceKey as ResourceKey
+			];
+
+		if (!resource) {
+			continue;
+		}
+
+		completionResources.push({
+			resourceId: resource.id,
+			amount: numericAmount,
+		});
+	}
+
+	return completionResources;
+}
+
+function formatReachedMilestones(
+	levels: number[],
+): string {
+	if (levels.length === 0) {
+		return "None";
+	}
+
+	if (levels.length <= 6) {
+		return levels
+			.map((level) => `Lv.${level}`)
+			.join(", ");
+	}
+
+	const firstLevels = levels.slice(0, 3);
+	const lastLevels = levels.slice(-3);
+
+	return [
+		...firstLevels.map(
+			(level) => `Lv.${level}`,
+		),
+		"...",
+		...lastLevels.map(
+			(level) => `Lv.${level}`,
+		),
+	].join(", ");
 }
 
 export default function PetResult({
 	result,
 	history,
+	entryId,
+	completed = false,
 	title = "Pet Result",
 	showAddButton = false,
 	onAddItem,
+	onCompleted,
 }: PetResultProps) {
-	const category = NAVIGATION.find(
-		(item) => item.id === "pet" || item.id === "pets",
+	const loadResources = useInventoryStore(
+		(state) => state.loadResources,
 	);
 
-	const { createResourceItem } = useCompareResources(result.resources);
+	useEffect(() => {
+		loadResources();
+	}, [loadResources]);
+
+	if (!result) {
+		return null;
+	}
+
+	const category = NAVIGATION.find(
+		(item) =>
+			item.id === "pet" ||
+			item.id === "pets",
+	);
+
+	const resources = (result.resources ?? {}) as Partial<
+		Record<ResourceKey, number>
+	>;
+
+	const { createResourceItem } =
+		useCompareResources(resources);
+
 	const {
 		levelResources,
 		advancementResources,
@@ -112,17 +228,25 @@ export default function PetResult({
 		advancementSvsPoints,
 	} = getLegacySafeBreakdown(result);
 
-	const reachedMilestones = formatReachedMilestones(
-		result.milestonesReached.map((milestone) => milestone.level),
-	);
+	const reachedMilestones =
+		formatReachedMilestones(
+			result.milestonesReached.map(
+				(milestone) =>
+					milestone.level,
+			),
+		);
 
 	const itemIcon = result.image;
 
 	const resourceItems = [
 		createResourceItem("PetFood"),
 		createResourceItem("TamingManual"),
-		createResourceItem("EnergizingPotion"),
-		createResourceItem("StrengtheningSerum"),
+		createResourceItem(
+			"EnergizingPotion",
+		),
+		createResourceItem(
+			"StrengtheningSerum",
+		),
 	];
 
 	const advancementItems = [
@@ -130,25 +254,33 @@ export default function PetResult({
 			id: "pet-level-food-cost",
 			icon: RESOURCES.PetFood.icon,
 			label: "Leveling Pet Food",
-			value: formatNumber(levelResources.PetFood),
+			value: formatNumber(
+				levelResources.PetFood,
+			),
 		},
 		{
 			id: "pet-gate-manual-cost",
 			icon: RESOURCES.TamingManual.icon,
 			label: "Gate Taming Manual",
-			value: formatNumber(advancementResources.TamingManual),
+			value: formatNumber(
+				advancementResources.TamingManual,
+			),
 		},
 		{
 			id: "pet-gate-potion-cost",
 			icon: RESOURCES.EnergizingPotion.icon,
 			label: "Gate Energizing Potion",
-			value: formatNumber(advancementResources.EnergizingPotion),
+			value: formatNumber(
+				advancementResources.EnergizingPotion,
+			),
 		},
 		{
 			id: "pet-gate-serum-cost",
 			icon: RESOURCES.StrengtheningSerum.icon,
 			label: "Gate Strengthening Serum",
-			value: formatNumber(advancementResources.StrengtheningSerum),
+			value: formatNumber(
+				advancementResources.StrengtheningSerum,
+			),
 		},
 		{
 			id: "pet-open-gates",
@@ -163,21 +295,29 @@ export default function PetResult({
 			id: "pet-current-power",
 			icon: "/icons/power.png",
 			label: "Current Power",
-			value: formatNumber(result.powerBefore),
+			value: formatNumber(
+				result.powerBefore,
+			),
 		},
 		{
 			id: "pet-target-power",
 			icon: "/icons/power.png",
 			label: "Target Power",
-			value: formatNumber(result.powerAfter),
+			value: formatNumber(
+				result.powerAfter,
+			),
 		},
 		{
 			id: "pet-power-increase",
 			icon: "/icons/power.png",
 			label: "Power Increase",
-			value: `+${formatNumber(result.powerIncrease)}`,
+			value: `+${formatNumber(
+				result.powerIncrease,
+			)}`,
 			compareType:
-				result.powerIncrease > 0 ? ("plus" as const) : ("muted" as const),
+				result.powerIncrease > 0
+					? ("plus" as const)
+					: ("muted" as const),
 		},
 	];
 
@@ -186,21 +326,29 @@ export default function PetResult({
 			id: "pet-current-passive",
 			icon: "/icons/attack.png",
 			label: "Current Troop A/D",
-			value: formatPercentage(result.passiveBeforePct),
+			value: formatPercentage(
+				result.passiveBeforePct,
+			),
 		},
 		{
 			id: "pet-target-passive",
 			icon: "/icons/attack.png",
 			label: "Target Troop A/D",
-			value: formatPercentage(result.passiveAfterPct),
+			value: formatPercentage(
+				result.passiveAfterPct,
+			),
 		},
 		{
 			id: "pet-passive-increase",
 			icon: "/icons/attack.png",
 			label: "Passive Increase",
-			value: formatPercentageIncrease(result.passiveIncreasePct),
+			value: formatPercentageIncrease(
+				result.passiveIncreasePct,
+			),
 			compareType:
-				result.passiveIncreasePct > 0 ? ("plus" as const) : ("muted" as const),
+				result.passiveIncreasePct > 0
+					? ("plus" as const)
+					: ("muted" as const),
 		},
 	];
 
@@ -209,19 +357,25 @@ export default function PetResult({
 			id: "pet-current-skill",
 			icon: itemIcon,
 			label: "Current Skill",
-			value: getSkillText(result.currentMilestone),
+			value: getSkillText(
+				result.currentMilestone,
+			),
 		},
 		{
 			id: "pet-target-skill",
 			icon: itemIcon,
 			label: "Target Skill",
-			value: getSkillText(result.targetMilestone),
+			value: getSkillText(
+				result.targetMilestone,
+			),
 		},
 		{
 			id: "pet-skill-cooldown",
 			icon: itemIcon,
 			label: "Cooldown",
-			value: result.targetMilestone?.cooldown ?? "-",
+			value:
+				result.targetMilestone
+					?.cooldown ?? "-",
 		},
 	];
 
@@ -230,19 +384,25 @@ export default function PetResult({
 			id: "pet-level-svs",
 			icon: "/icons/SVS.png",
 			label: "Leveling SvS Points",
-			value: formatNumber(levelSvsPoints),
+			value: formatNumber(
+				levelSvsPoints,
+			),
 		},
 		{
 			id: "pet-advancement-svs",
 			icon: "/icons/SVS.png",
 			label: "Open Gate SvS Points",
-			value: formatNumber(advancementSvsPoints),
+			value: formatNumber(
+				advancementSvsPoints,
+			),
 		},
 		{
 			id: "pet-base-svs",
 			icon: "/icons/SVS.png",
 			label: "Base SvS Points",
-			value: formatNumber(result.baseSvsPoints),
+			value: formatNumber(
+				result.baseSvsPoints,
+			),
 		},
 		{
 			id: "pet-valeria-bonus",
@@ -257,9 +417,13 @@ export default function PetResult({
 			id: "pet-final-svs",
 			icon: "/icons/SVS.png",
 			label: "Final SvS Points",
-			value: formatNumber(result.finalSvsPoints),
+			value: formatNumber(
+				result.finalSvsPoints,
+			),
 			compareType:
-				result.finalSvsPoints > 0 ? ("plus" as const) : ("muted" as const),
+				result.finalSvsPoints > 0
+					? ("plus" as const)
+					: ("muted" as const),
 		},
 	];
 
@@ -284,75 +448,148 @@ export default function PetResult({
 		},
 	];
 
-	function formatReachedMilestones(levels: number[]): string {
-		if (levels.length === 0) {
-			return "None";
-		}
+	const calculationEntryId =
+		entryId ??
+		history?.items?.[0]?.id ??
+		(history
+			? `${history.id}_item`
+			: "");
 
-		if (levels.length <= 6) {
-			return levels.map((level) => `Lv.${level}`).join(", ");
-		}
+	const completionResources =
+		getCompletionResources(resources);
 
-		const firstLevels = levels.slice(0, 3);
-		const lastLevels = levels.slice(-3);
-
-		return [
-			...firstLevels.map((level) => `Lv.${level}`),
-			"...",
-			...lastLevels.map((level) => `Lv.${level}`),
-		].join(", ");
-	}
 	return (
-		<div className="space-y-4">
+		<div
+			className={[
+				"space-y-4 transition-opacity duration-300",
+				completed
+					? "opacity-65"
+					: "opacity-100",
+			].join(" ")}
+		>
 			<CalculatorResult
 				title={title}
-				categoryTitle={category?.title ?? "Pet Calculator"}
-				categoryIcon={category?.icon ?? "/category/pets.png"}
+				categoryTitle={
+					category?.title ??
+					"Pet Calculator"
+				}
+				categoryIcon={
+					category?.icon ??
+					"/category/pets.png"
+				}
 				name={result.petName}
 				subtitle={`GEN ${result.generation} · ${result.rarity} · Lv.${result.fromLevel} → Lv.${result.toLevel}`}
 				highlightLabel="Final SvS Points"
-				highlightValue={formatNumber(result.finalSvsPoints)}
+				highlightValue={formatNumber(
+					result.finalSvsPoints,
+				)}
 				createdAt={history?.createdAt}
 				updatedAt={history?.updatedAt}
 				sections={[
 					{
 						id: "pet-required-resources",
 						title: "Required Resources",
-						icon: <BriefcaseBusiness size={18} />,
+						icon: (
+							<BriefcaseBusiness
+								size={18}
+							/>
+						),
 						items: resourceItems,
 					},
 					{
 						id: "pet-open-gate-breakdown",
 						title: "Leveling & Open Gate",
-						icon: <DoorOpen size={18} />,
-						items: advancementItems,
+						icon: (
+							<DoorOpen size={18} />
+						),
+						items:
+							advancementItems,
 					},
 					{
 						id: "pet-power",
 						title: "Power",
-						icon: <Zap size={18} />,
+						icon: (
+							<Zap size={18} />
+						),
 						items: powerItems,
 					},
 					{
 						id: "pet-passive-bonus",
 						title: "Passive Bonus",
-						icon: <TrendingUp size={18} />,
+						icon: (
+							<TrendingUp size={18} />
+						),
 						items: passiveItems,
 					},
 					{
 						id: "pet-skill-progression",
 						title: "Skill Progression",
-						icon: <Clock3 size={18} />,
+						icon: (
+							<Clock3 size={18} />
+						),
 						items: skillItems,
 					},
 					{
 						id: "pet-svs-points",
 						title: "SvS Points",
-						icon: <Trophy size={18} />,
+						icon: (
+							<Trophy size={18} />
+						),
 						items: svsItems,
+					},
+					{
+						id: "pet-summary",
+						title: "Summary",
+						icon: (
+							<BriefcaseBusiness
+								size={18}
+							/>
+						),
+						items: summaryItems,
 					},
 				]}
 			/>
+
+			{history &&
+				calculationEntryId &&
+				completionResources.length >
+					0 && (
+					<div className="flex justify-end">
+						<CalculationComplete
+							historyId={
+								history.id
+							}
+							entryId={
+								calculationEntryId
+							}
+							completed={
+								completed
+							}
+							resources={
+								completionResources
+							}
+							from={`Lv.${result.fromLevel ?? "-"}`}
+							target={`Lv.${result.toLevel ?? "-"}`}
+							onCompleted={
+								onCompleted
+							}
+						/>
+					</div>
+				)}
+
+			{showAddButton && (
+				<button
+					type="button"
+					onClick={onAddItem}
+					className="mt-5 flex h-28 w-full flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input-hover)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)]"
+				>
+					<Plus className="size-5" />
+
+					<span className="text-base font-medium">
+						Add more items
+					</span>
+				</button>
+			)}
 		</div>
 	);
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	ArrowRight,
 	BriefcaseBusiness,
 	Clock3,
 	Plus,
@@ -11,12 +10,16 @@ import {
 import { useEffect } from "react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
+import CalculationComplete from "@/components/calculator/CalculationComplete";
 import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
-import type { ResourceKey } from "@/config/resources";
+import {
+	RESOURCES,
+	type ResourceKey,
+} from "@/config/resources";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 import { formatDuration } from "@/lib/time";
@@ -34,9 +37,12 @@ type ResearchHistoryItem = CalculationHistoryItem<
 type ResearchResultProps = {
 	result: ResearchCalculationResult;
 	history?: ResearchHistoryItem | null;
+	entryId?: string;
+	completed?: boolean;
 	title?: string;
 	showAddButton?: boolean;
 	onAddItem?: () => void;
+	onCompleted?: () => void;
 };
 
 function formatPower(value: unknown): string {
@@ -85,12 +91,31 @@ function formatBuffs(values: string[]): string {
 	return values.join(", ");
 }
 
+function getCompletionResources(
+	resources: Partial<Record<ResourceKey, number>>,
+) {
+	return Object.entries(resources)
+		.filter(([, amount]) => Number(amount ?? 0) > 0)
+		.map(([resourceKey, amount]) => {
+			const resource =
+				RESOURCES[resourceKey as ResourceKey];
+
+			return {
+				resourceId: resource.id,
+				amount: Number(amount ?? 0),
+			};
+		});
+}
+
 export default function ResearchResult({
 	result,
 	history,
+	entryId,
+	completed = false,
 	title,
 	showAddButton = false,
 	onAddItem,
+	onCompleted,
 }: ResearchResultProps) {
 	const loadResources = useInventoryStore(
 		(state) => state.loadResources,
@@ -100,26 +125,43 @@ export default function ResearchResult({
 		loadResources();
 	}, [loadResources]);
 
-	const category = NAVIGATION.find(
-		(item) => item.id === "research",
-	);
-
-const resources = (result?.resources ?? {}) as Partial<
-	Record<ResourceKey, number>
->;
-
-	const { createResourceItem } =
-		useCompareResources(resources);
-
 	if (!result) {
 		return null;
 	}
 
+	const category = NAVIGATION.find(
+		(item) => item.id === "research",
+	);
+
+	const resources = (result.resources ?? {}) as Partial<
+		Record<ResourceKey, number>
+	>;
+
+	const { createResourceItem } =
+		useCompareResources(resources);
+
 	const hasTimeReduction =
 		result.time.total !== result.time.final;
 
+	const calculationEntryId =
+		entryId ??
+		history?.items?.[0]?.id ??
+		(history ? `${history.id}_item` : "");
+
+	const completionResources =
+		getCompletionResources(resources);
+
+	const subtitle = `Tier ${result.tier} • Lv.${result.fromLevel ?? "-"} → Lv.${result.toLevel ?? "-"}`;
+
 	return (
-		<>
+		<div
+			className={[
+				"space-y-3 transition-opacity duration-300",
+				completed
+					? "opacity-65"
+					: "opacity-100",
+			].join(" ")}
+		>
 			<CalculatorResult
 				title={title}
 				categoryTitle={
@@ -130,26 +172,10 @@ const resources = (result?.resources ?? {}) as Partial<
 					"/category/research.png"
 				}
 				name={result.research ?? "-"}
-				subtitle={
-					<>
-						<span>Tier {result.tier}</span>
-
-						<span className="text-[var(--sl-text-muted)]">
-							•
-						</span>
-
-						<span>
-							Lv.{result.fromLevel ?? "-"}
-						</span>
-
-						<ArrowRight className="size-4" />
-
-						<span className="text-yellow-500">
-							Lv.{result.toLevel ?? "-"}
-						</span>
-					</>
-				}
-				highlightValue={formatPower(result.power)}
+				subtitle={subtitle}
+				highlightValue={formatPower(
+					result.power,
+				)}
 				highlightLabel="Power Increase"
 				createdAt={history?.createdAt}
 				updatedAt={history?.updatedAt}
@@ -190,12 +216,11 @@ const resources = (result?.resources ?? {}) as Partial<
 							/>
 						),
 						items: [
-	createResourceItem("Meat"),
-	createResourceItem("Wood"),
-	createResourceItem("Coal"),
-	createResourceItem("Iron"),
-	createResourceItem("Steel"),
-							
+							createResourceItem("Meat"),
+							createResourceItem("Wood"),
+							createResourceItem("Coal"),
+							createResourceItem("Iron"),
+							createResourceItem("Steel"),
 						],
 					},
 					{
@@ -226,7 +251,9 @@ const resources = (result?.resources ?? {}) as Partial<
 					{
 						id: "configuration",
 						title: "Configuration",
-						icon: <Sparkles size={18} />,
+						icon: (
+							<Sparkles size={18} />
+						),
 						items: [
 							{
 								id: "research-speed",
@@ -262,13 +289,34 @@ const resources = (result?.resources ?? {}) as Partial<
 								label: "Agnes Skill",
 								icon: "/icons/Agnes-Skill.png",
 								value: formatAgnes(
-									result.time.agnesHours,
+									result.time
+										.agnesHours,
 								),
 							},
 						],
 					},
 				]}
 			/>
+
+			{history &&
+				calculationEntryId &&
+				completionResources.length > 0 && (
+					<div className="flex justify-end">
+						<CalculationComplete
+							historyId={history.id}
+							entryId={calculationEntryId}
+							completed={completed}
+							resources={
+								completionResources
+							}
+							from={`Lv.${result.fromLevel ?? "-"}`}
+							target={`Lv.${result.toLevel ?? "-"}`}
+							onCompleted={
+								onCompleted
+							}
+						/>
+					</div>
+				)}
 
 			{showAddButton && (
 				<button
@@ -283,6 +331,6 @@ const resources = (result?.resources ?? {}) as Partial<
 					</span>
 				</button>
 			)}
-		</>
+		</div>
 	);
 }

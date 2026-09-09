@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	ArrowRight,
 	BriefcaseBusiness,
 	Clock3,
 	Gem,
@@ -12,12 +11,16 @@ import {
 import { useEffect } from "react";
 
 import CalculatorResult from "@/components/calculator/CalculatorResult";
+import CalculationComplete from "@/components/calculator/CalculationComplete";
 import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
-import type { ResourceKey } from "@/config/resources";
+import {
+	RESOURCES,
+	type ResourceKey,
+} from "@/config/resources";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 
@@ -34,9 +37,12 @@ type WarAcademyHistoryItem = CalculationHistoryItem<
 type WarAcademyResultProps = {
 	result: WarAcademyCalculationResult;
 	history?: WarAcademyHistoryItem | null;
+	entryId?: string;
+	completed?: boolean;
 	title?: string;
 	showAddButton?: boolean;
 	onAddItem?: () => void;
+	onCompleted?: () => void;
 };
 
 type ParsedWarAcademyBuff = {
@@ -86,20 +92,28 @@ function splitWarAcademyBuffs(value: string): string[] {
 		.filter(Boolean);
 }
 
-function parseWarAcademyBuff(value: string): ParsedWarAcademyBuff | null {
+function parseWarAcademyBuff(
+	value: string,
+): ParsedWarAcademyBuff | null {
 	const normalizedValue = normalizeBuffText(value);
 
 	if (!normalizedValue) {
 		return null;
 	}
 
-	const match = normalizedValue.match(/^([+-]?\s*[\d,.]+)\s*(%)?\s*(.*)$/);
+	const match = normalizedValue.match(
+		/^([+-]?\s*[\d,.]+)\s*(%)?\s*(.*)$/,
+	);
 
 	if (!match) {
 		return null;
 	}
 
-	const numericValue = Number(match[1].replace(/\s/g, "").replace(/,/g, ""));
+	const numericValue = Number(
+		match[1]
+			.replace(/\s/g, "")
+			.replace(/,/g, ""),
+	);
 
 	if (!Number.isFinite(numericValue)) {
 		return null;
@@ -112,18 +126,26 @@ function parseWarAcademyBuff(value: string): ParsedWarAcademyBuff | null {
 	};
 }
 
-function formatWarAcademyBuffValue(value: number, isPercent: boolean): string {
-	const formattedValue = Math.abs(value).toLocaleString("en-US", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	});
+function formatWarAcademyBuffValue(
+	value: number,
+	isPercent: boolean,
+): string {
+	const formattedValue = Math.abs(value).toLocaleString(
+		"en-US",
+		{
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 2,
+		},
+	);
 
 	const sign = value < 0 ? "-" : "+";
 
 	return `${sign}${formattedValue}${isPercent ? "%" : ""}`;
 }
 
-function getResultBuffs(result: WarAcademyCalculationResult): string[] {
+function getResultBuffs(
+	result: WarAcademyCalculationResult,
+): string[] {
 	const selectedLevels = result.selectedLevels ?? [];
 
 	if (selectedLevels.length > 0) {
@@ -132,11 +154,18 @@ function getResultBuffs(result: WarAcademyCalculationResult): string[] {
 		);
 	}
 
-	return (result.buffs ?? []).flatMap((buff) => splitWarAcademyBuffs(buff));
+	return (result.buffs ?? []).flatMap((buff) =>
+		splitWarAcademyBuffs(buff),
+	);
 }
 
-function aggregateResultBuffs(result: WarAcademyCalculationResult): string[] {
-	const groupedBuffs = new Map<string, ParsedWarAcademyBuff>();
+function aggregateResultBuffs(
+	result: WarAcademyCalculationResult,
+): string[] {
+	const groupedBuffs = new Map<
+		string,
+		ParsedWarAcademyBuff
+	>();
 
 	const unmatchedBuffs = new Map<string, string>();
 
@@ -153,7 +182,10 @@ function aggregateResultBuffs(result: WarAcademyCalculationResult): string[] {
 			const unmatchedKey = buff.toLowerCase();
 
 			if (!unmatchedBuffs.has(unmatchedKey)) {
-				unmatchedBuffs.set(unmatchedKey, buff);
+				unmatchedBuffs.set(
+					unmatchedKey,
+					buff,
+				);
 			}
 
 			continue;
@@ -165,11 +197,14 @@ function aggregateResultBuffs(result: WarAcademyCalculationResult): string[] {
 			.trim();
 
 		const groupKey = [
-			parsed.isPercent ? "percent" : "flat",
+			parsed.isPercent
+				? "percent"
+				: "flat",
 			normalizedLabel,
 		].join(":");
 
-		const existingBuff = groupedBuffs.get(groupKey);
+		const existingBuff =
+			groupedBuffs.get(groupKey);
 
 		if (existingBuff) {
 			existingBuff.value += parsed.value;
@@ -178,23 +213,37 @@ function aggregateResultBuffs(result: WarAcademyCalculationResult): string[] {
 
 		groupedBuffs.set(groupKey, {
 			...parsed,
-			label: normalizeBuffText(parsed.label),
+			label: normalizeBuffText(
+				parsed.label,
+			),
 		});
 	}
 
-	const calculatedBuffs = Array.from(groupedBuffs.values()).map((buff) => {
-		const formattedValue = formatWarAcademyBuffValue(
-			buff.value,
-			buff.isPercent,
-		);
+	const calculatedBuffs = Array.from(
+		groupedBuffs.values(),
+	).map((buff) => {
+		const formattedValue =
+			formatWarAcademyBuffValue(
+				buff.value,
+				buff.isPercent,
+			);
 
-		return buff.label ? `${formattedValue} ${buff.label}` : formattedValue;
+		return buff.label
+			? `${formattedValue} ${buff.label}`
+			: formattedValue;
 	});
 
-	return [...calculatedBuffs, ...Array.from(unmatchedBuffs.values())];
+	return [
+		...calculatedBuffs,
+		...Array.from(
+			unmatchedBuffs.values(),
+		),
+	];
 }
 
-function formatBuffs(result: WarAcademyCalculationResult): string {
+function formatBuffs(
+	result: WarAcademyCalculationResult,
+): string {
 	const buffs = aggregateResultBuffs(result);
 
 	if (buffs.length === 0) {
@@ -204,55 +253,107 @@ function formatBuffs(result: WarAcademyCalculationResult): string {
 	return buffs.join("\n");
 }
 
+function getCompletionResources(
+	resources: Partial<Record<ResourceKey, number>>,
+) {
+	return Object.entries(resources)
+		.filter(
+			([, amount]) =>
+				Number(amount ?? 0) > 0,
+		)
+		.map(([resourceKey, amount]) => {
+			const resource =
+				RESOURCES[
+					resourceKey as ResourceKey
+				];
+
+			return {
+				resourceId: resource.id,
+				amount: Number(amount ?? 0),
+			};
+		});
+}
+
 export default function WarAcademyResult({
 	result,
 	history,
+	entryId,
+	completed = false,
 	title,
 	showAddButton = false,
 	onAddItem,
+	onCompleted,
 }: WarAcademyResultProps) {
-	const loadResources = useInventoryStore((state) => state.loadResources);
+	const loadResources = useInventoryStore(
+		(state) => state.loadResources,
+	);
 
 	useEffect(() => {
 		loadResources();
 	}, [loadResources]);
 
-	const category = NAVIGATION.find((item) => item.id === "war-academy");
+	if (!result) {
+		return null;
+	}
+
+	const category = NAVIGATION.find(
+		(item) => item.id === "war-academy",
+	);
 
 	const resources = (result.resources ?? {}) as Partial<
 		Record<ResourceKey, number>
 	>;
 
-	const { createResourceItem } = useCompareResources(resources);
+	const { createResourceItem } =
+		useCompareResources(resources);
 
 	const hasTimeReduction =
-		result.time.totalSeconds !== result.time.finalSeconds;
+		result.time.totalSeconds !==
+		result.time.finalSeconds;
 
-	const shardRequired = Number(result.resources?.Shard ?? 0);
+	const shardRequired = Number(
+		result.resources?.Shard ?? 0,
+	);
 
-	const aggregatedBuffs = aggregateResultBuffs(result);
+	const aggregatedBuffs =
+		aggregateResultBuffs(result);
+
+	const calculationEntryId =
+		entryId ??
+		history?.items?.[0]?.id ??
+		(history
+			? `${history.id}_item`
+			: "");
+
+	const completionResources =
+		getCompletionResources(resources);
+
+	const subtitle = `${result.category} • Lv.${result.fromLevel ?? "-"} → Lv.${result.toLevel ?? "-"}`;
 
 	return (
-		<>
+		<div
+			className={[
+				"space-y-3 transition-opacity duration-300",
+				completed
+					? "opacity-65"
+					: "opacity-100",
+			].join(" ")}
+		>
 			<CalculatorResult
 				title={title}
-				categoryTitle={category?.title ?? "War Academy"}
-				categoryIcon={category?.icon ?? "/category/war-academy.png"}
-				name={result.research ?? "-"}
-				subtitle={
-					<>
-						<span>{result.category}</span>
-
-						<span className="text-[var(--sl-text-muted)]">•</span>
-
-						<span>Lv.{result.fromLevel ?? "-"}</span>
-
-						<ArrowRight className="size-4" />
-
-						<span className="text-yellow-500">Lv.{result.toLevel ?? "-"}</span>
-					</>
+				categoryTitle={
+					category?.title ??
+					"War Academy"
 				}
-				highlightValue={formatShard(shardRequired)}
+				categoryIcon={
+					category?.icon ??
+					"/category/war-academy.png"
+				}
+				name={result.research ?? "-"}
+				subtitle={subtitle}
+				highlightValue={formatShard(
+					shardRequired,
+				)}
 				highlightLabel="FC Shards Required"
 				createdAt={history?.createdAt}
 				updatedAt={history?.updatedAt}
@@ -260,55 +361,88 @@ export default function WarAcademyResult({
 					{
 						id: "time",
 						title: "Time",
-						icon: <Clock3 size={18} />,
+						icon: (
+							<Clock3 size={18} />
+						),
 						items: [
 							{
 								id: "total-time",
 								label: "Total",
 								icon: "/icons/totalTime.png",
-								value: result.time.total,
+								value:
+									result.time
+										.total,
 							},
 							{
 								id: "reduced-time",
 								label: "Reduced",
 								icon: "/icons/reducedTime.png",
-								value: result.time.final,
-								valueClassName: hasTimeReduction
-									? "text-green-400"
-									: "text-[var(--sl-text-muted)]",
+								value:
+									result.time
+										.final,
+								valueClassName:
+									hasTimeReduction
+										? "text-green-400"
+										: "text-[var(--sl-text-muted)]",
 							},
 						],
 					},
 					{
 						id: "resources",
 						title: "Base Resources",
-						icon: <BriefcaseBusiness size={18} />,
+						icon: (
+							<BriefcaseBusiness
+								size={18}
+							/>
+						),
 						items: [
-							createResourceItem("Meat"),
-							createResourceItem("Wood"),
-							createResourceItem("Coal"),
-							createResourceItem("Iron"),
-							createResourceItem("Steel"),
+							createResourceItem(
+								"Meat",
+							),
+							createResourceItem(
+								"Wood",
+							),
+							createResourceItem(
+								"Coal",
+							),
+							createResourceItem(
+								"Iron",
+							),
+							createResourceItem(
+								"Steel",
+							),
 						],
 					},
 					{
 						id: "fire-crystals",
 						title: "Fire Crystals",
-						icon: <Gem size={18} />,
-						items: [createResourceItem("Shard")],
+						icon: (
+							<Gem size={18} />
+						),
+						items: [
+							createResourceItem(
+								"Shard",
+							),
+						],
 					},
 					{
 						id: "rewards",
 						title: "Research Bonus",
-						icon: <Zap size={18} />,
+						icon: (
+							<Zap size={18} />
+						),
 						items: [
 							{
 								id: "buff",
 								label: "Buff",
 								icon: "/icons/Buff.png",
-								value: formatBuffs(result),
+								value:
+									formatBuffs(
+										result,
+									),
 								valueClassName:
-									aggregatedBuffs.length > 0
+									aggregatedBuffs.length >
+									0
 										? "text-white"
 										: "text-[var(--sl-text-muted)]",
 							},
@@ -317,42 +451,98 @@ export default function WarAcademyResult({
 					{
 						id: "configuration",
 						title: "Configuration",
-						icon: <Sparkles size={18} />,
+						icon: (
+							<Sparkles
+								size={18}
+							/>
+						),
 						items: [
 							{
 								id: "research-speed",
 								label: "Research Speed",
 								icon: "/category/research.png",
-								value: formatBonus(result.bonuses.researchSpeed),
+								value:
+									formatBonus(
+										result
+											.bonuses
+											.researchSpeed,
+									),
 							},
 							{
 								id: "vice-president",
 								label: "Vice President",
 								icon: "/icons/Vice-President.png",
-								value: formatBonus(result.bonuses.vpResearchSpeed),
+								value:
+									formatBonus(
+										result
+											.bonuses
+											.vpResearchSpeed,
+									),
 							},
 							{
 								id: "double-time",
 								label: "Double Time",
 								icon: "/icons/President-Skill.png",
-								value: formatBonus(result.bonuses.doubleTimeSpeed),
+								value:
+									formatBonus(
+										result
+											.bonuses
+											.doubleTimeSpeed,
+									),
 							},
 							{
 								id: "agnes-skill",
 								label: "Agnes Skill",
 								icon: "/icons/Agnes-Skill.png",
-								value: formatReduction(result.bonuses.agnesTimeReduction),
+								value:
+									formatReduction(
+										result
+											.bonuses
+											.agnesTimeReduction,
+									),
 							},
 							{
 								id: "total-research-speed",
 								label: "Total Research Speed",
 								icon: "/category/war-academy.png",
-								value: formatBonus(result.bonuses.totalResearchSpeed),
+								value:
+									formatBonus(
+										result
+											.bonuses
+											.totalResearchSpeed,
+									),
 							},
 						],
 					},
 				]}
 			/>
+
+			{history &&
+				calculationEntryId &&
+				completionResources.length >
+					0 && (
+					<div className="flex justify-end">
+						<CalculationComplete
+							historyId={
+								history.id
+							}
+							entryId={
+								calculationEntryId
+							}
+							completed={
+								completed
+							}
+							resources={
+								completionResources
+							}
+							from={`Lv.${result.fromLevel ?? "-"}`}
+							target={`Lv.${result.toLevel ?? "-"}`}
+							onCompleted={
+								onCompleted
+							}
+						/>
+					</div>
+				)}
 
 			{showAddButton && (
 				<button
@@ -362,9 +552,11 @@ export default function WarAcademyResult({
 				>
 					<Plus className="size-5" />
 
-					<span className="text-base font-medium">Add more items</span>
+					<span className="text-base font-medium">
+						Add more items
+					</span>
 				</button>
 			)}
-		</>
+		</div>
 	);
 }

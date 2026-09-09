@@ -6,6 +6,7 @@ import type { CalculatorResultSection } from "./types";
 
 type Props = {
 	section: CalculatorResultSection;
+	completed?: boolean;
 };
 
 function shouldUseFullWidth(
@@ -21,6 +22,7 @@ function shouldUseFullWidth(
 
 export default function CalculatorSection({
 	section,
+	completed = false,
 }: Props) {
 	const visibleItems = section.items.filter(
 		(item) => !item.hidden,
@@ -33,7 +35,10 @@ export default function CalculatorSection({
 	const isTimeSection = section.id === "time";
 
 	return (
-		<div data-tutorial={section.tutorialTarget} className="rounded-[24px] bg-[var(--sl-surface-3)] px-4 py-4">
+		<div
+			data-tutorial={section.tutorialTarget}
+			className="rounded-[24px] bg-[var(--sl-surface-3)] px-4 py-4"
+		>
 			<div className="mb-4 flex items-center gap-3 text-[var(--sl-text-muted)]">
 				{section.icon}
 
@@ -59,11 +64,10 @@ export default function CalculatorSection({
 						);
 					}
 
-					const isFullWidth =
-						shouldUseFullWidth(
-							section.id,
-							item.id,
-						);
+					const isFullWidth = shouldUseFullWidth(
+						section.id,
+						item.id,
+					);
 
 					return (
 						<div
@@ -76,6 +80,7 @@ export default function CalculatorSection({
 						>
 							<CalculatorResourceItem
 								item={item}
+								completed={completed}
 							/>
 						</div>
 					);

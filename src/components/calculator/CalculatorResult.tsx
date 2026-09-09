@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+
 import { formatHistoryDate } from "@/lib/date";
+
 import CalculatorSection from "./CalculatorSection";
 import type { CalculatorResultProps } from "./types";
 
@@ -16,9 +18,17 @@ export default function CalculatorResult({
 	createdAt,
 	updatedAt,
 	sections,
+	completed = false,
 }: CalculatorResultProps) {
 	return (
-		<section className="space-y-5">
+		<section
+			className={[
+				"space-y-5 transition-opacity duration-300",
+				completed && "opacity-75",
+			]
+				.filter(Boolean)
+				.join(" ")}
+		>
 			{title && (
 				<h2 className="px-1 text-[20px] font-medium text-[var(--text)]">
 					{title}
@@ -35,6 +45,7 @@ export default function CalculatorResult({
 									alt={categoryTitle}
 									width={34}
 									height={34}
+									className={completed ? "opacity-70" : undefined}
 								/>
 							</div>
 						</div>
@@ -53,14 +64,14 @@ export default function CalculatorResult({
 					</div>
 
 					{highlightValue !== undefined && (
-						<div className="flex items-center justify-between space-y-2 gap-4 sm:block sm:shrink-0 sm:text-right">
+						<div className="flex items-center justify-between gap-4 space-y-2 sm:block sm:shrink-0 sm:text-right">
 							{highlightLabel && (
 								<p className="text-sm text-[var(--sl-text-muted)] sm:text-xs">
 									{highlightLabel}
 								</p>
 							)}
 
-							<p className="text-xs sm:text-[16px] font-medium leading-tight text-yellow-500">
+							<p className="text-xs font-medium leading-tight text-yellow-500 sm:text-[16px]">
 								{highlightValue}
 							</p>
 						</div>
@@ -69,7 +80,11 @@ export default function CalculatorResult({
 
 				<div className="mt-4 space-y-5">
 					{sections.map((section) => (
-						<CalculatorSection key={section.id} section={section} />
+						<CalculatorSection
+							key={section.id}
+							section={section}
+							completed={completed}
+						/>
 					))}
 				</div>
 
@@ -80,15 +95,21 @@ export default function CalculatorResult({
 								<p className="text-[var(--sl-text)]">Created</p>
 
 								<p className="mt-1 font-medium text-[var(--sl-text-muted)]">
-									{createdAt ? formatHistoryDate(createdAt) : "-"}
+									{createdAt
+										? formatHistoryDate(createdAt)
+										: "-"}
 								</p>
 							</div>
 
 							<div className="text-right">
-								<p className="text-[var(--sl-text)]">Last Updated</p>
+								<p className="text-[var(--sl-text)]">
+									Last Updated
+								</p>
 
 								<p className="mt-1 font-medium text-[var(--sl-text-muted)]">
-									{updatedAt ? formatHistoryDate(updatedAt) : "Never"}
+									{updatedAt
+										? formatHistoryDate(updatedAt)
+										: "Never"}
 								</p>
 							</div>
 						</div>

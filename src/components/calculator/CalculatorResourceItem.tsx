@@ -8,6 +8,7 @@ import type { CalculatorResultItem } from "./types";
 
 type Props = {
 	item: CalculatorResultItem;
+	completed?: boolean;
 };
 
 function getCompareClass(type?: CalculatorResultItem["compareType"]) {
@@ -22,12 +23,15 @@ function getCompareClass(type?: CalculatorResultItem["compareType"]) {
 	return "text-white/30";
 }
 
-export default function CalculatorResourceItem({ item }: Props) {
+export default function CalculatorResourceItem({
+	item,
+	completed = false,
+}: Props) {
 	if (item.hidden) {
 		return null;
 	}
 
-	const hasCompare = item.compareValue !== undefined;
+	const hasCompare = item.compareValue !== undefined && !completed;
 
 	const stringValue = typeof item.value === "string" ? item.value : null;
 
@@ -48,7 +52,8 @@ export default function CalculatorResourceItem({ item }: Props) {
 				hasCompare
 					? "grid grid-cols-[auto_minmax(0,1fr)_auto_auto]"
 					: "grid grid-cols-[auto_minmax(0,1fr)_auto]",
-				"items-start gap-x-2",
+				"items-start gap-x-2 transition-opacity duration-300",
+				completed && "opacity-65",
 				item.className,
 			)}
 		>
@@ -57,16 +62,25 @@ export default function CalculatorResourceItem({ item }: Props) {
 				alt={item.label}
 				width={20}
 				height={20}
-				className="mt-0.5 size-5 shrink-0 object-contain"
+				className={cn(
+					"mt-0.5 size-5 shrink-0 object-contain",
+					completed && "opacity-70",
+				)}
 			/>
 
-			<span className="min-w-0 truncate text-sm text-[var(--sl-text-muted)]">
+			<span
+				className={cn(
+					"min-w-0 truncate text-sm text-[var(--sl-text-muted)]",
+					completed && "opacity-70",
+				)}
+			>
 				{item.label}
 			</span>
 
 			<div
 				className={cn(
 					"min-w-0 truncate text-right text-sm font-medium text-[var(--sl-text)]",
+					completed && "opacity-80",
 					item.valueClassName,
 				)}
 			>

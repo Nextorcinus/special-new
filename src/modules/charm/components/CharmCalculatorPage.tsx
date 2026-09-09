@@ -10,8 +10,17 @@ import {
 } from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
+
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
-import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+
+import type {
+	CalculationHistoryEntry,
+	CalculationHistoryItem,
+} from "@/features/inventory/store/history/types";
+
+import CharmForm from "./CharmForm";
+import CharmResult from "./CharmResult";
+import CharmTotalResult from "./CharmTotalResult";
 
 import type {
 	CharmCalculationResult,
@@ -19,23 +28,23 @@ import type {
 	CharmFormValues,
 } from "../type";
 
-import CharmForm from "./CharmForm";
-import CharmResult from "./CharmResult";
-import CharmTotalResult from "./CharmTotalResult";
-
 type CharmCalculatorPageProps = {
 	data: CharmDataItem[];
 };
 
+type CharmHistoryItem = CalculationHistoryItem<
+	CharmFormValues,
+	CharmCalculationResult
+>;
+
+type CharmHistoryEntry = CalculationHistoryEntry<
+	CharmFormValues,
+	CharmCalculationResult
+>;
+
 type HistoryStoreState = ReturnType<
 	typeof useHistoryStore.getState
 >;
-
-/*
- * ================================================================
- * Main Page
- * ================================================================
- */
 
 export default function CharmCalculatorPage(
 	props: CharmCalculatorPageProps,
@@ -61,31 +70,18 @@ export default function CharmCalculatorPage(
 	);
 }
 
-/*
- * ================================================================
- * Page Content
- *
- * useSearchParams() is inside this component because this
- * component is rendered inside Suspense.
- * ================================================================
- */
-
 function CharmCalculatorPageContent({
 	data,
 }: CharmCalculatorPageProps) {
-	const searchParams =
-		useSearchParams();
+	const searchParams = useSearchParams();
 
-	const historyId =
-		searchParams.get("historyId");
+	const historyId = searchParams.get("historyId");
 
 	const [activeHistory, setActiveHistory] =
-		useState<CalculationHistoryItem | null>(
-			null,
-		);
+		useState<CharmHistoryItem | null>(null);
 
 	const [formKey, setFormKey] =
-		useState("new");
+		useState("charm-new");
 
 	const [isAddingItem, setIsAddingItem] =
 		useState(false);
@@ -106,29 +102,25 @@ function CharmCalculatorPageContent({
 			state.loadHistory,
 	);
 
-	const saveCalculation =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.saveCalculation,
-		);
+	const saveCalculation = useHistoryStore(
+		(state: HistoryStoreState) =>
+			state.saveCalculation,
+	);
 
-	const updateCalculation =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.updateCalculation,
-		);
+	const updateCalculation = useHistoryStore(
+		(state: HistoryStoreState) =>
+			state.updateCalculation,
+	);
 
-	const addCalculationItem =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.addCalculationItem,
-		);
+	const addCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) =>
+			state.addCalculationItem,
+	);
 
-	/*
-	 * ================================================================
-	 * Scroll to form
-	 * ================================================================
-	 */
+	const completeCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) =>
+			state.completeCalculationItem,
+	);
 
 	function scrollToForm() {
 		requestAnimationFrame(() => {
@@ -139,21 +131,9 @@ function CharmCalculatorPageContent({
 		});
 	}
 
-	/*
-	 * ================================================================
-	 * Load history
-	 * ================================================================
-	 */
-
 	useEffect(() => {
 		loadHistory();
 	}, [loadHistory]);
-
-	/*
-	 * ================================================================
-	 * Load selected history from URL
-	 * ================================================================
-	 */
 
 	useEffect(() => {
 		if (
@@ -165,7 +145,7 @@ function CharmCalculatorPageContent({
 
 		const selected = items.find(
 			(item) =>
-				item.id === historyId &&
+				String(item.id) === historyId &&
 				item.module === "charm",
 		);
 
@@ -173,22 +153,28 @@ function CharmCalculatorPageContent({
 			return;
 		}
 
-		setActiveHistory(selected);
+		setActiveHistory(
+			selected as CharmHistoryItem,
+		);
+
 		setIsEditingHistory(true);
 		setIsAddingItem(false);
-		setFormKey(selected.id);
+
+		setFormKey(
+			`charm-history-${selected.id}`,
+		);
 	}, [historyId, items]);
 
-	/*
-	 * ================================================================
-	 * History items
-	 * ================================================================
-	 */
-
-	const historyItems =
+	const historyItems: CharmHistoryEntry[] =
 		activeHistory?.items &&
 		activeHistory.items.length > 0
-			? activeHistory.items
+			? (
+					activeHistory.items as CharmHistoryEntry[]
+				).map((item) => ({
+					...item,
+					completed:
+						item.completed ?? false,
+				}))
 			: activeHistory
 				? [
 						{
@@ -203,15 +189,27 @@ function CharmCalculatorPageContent({
 								activeHistory.result,
 							createdAt:
 								activeHistory.createdAt,
+							completed: false,
 						},
 					]
 				: [];
 
-	/*
-	 * ================================================================
-	 * Initial form values
-	 * ================================================================
-	 */
+	const completedCount =
+		historyItems.filter(
+			(item) => item.completed === true,
+		).length;
+
+	const totalCount =
+		historyItems.length;
+
+	const completedPercentage =
+		totalCount > 0
+			? Math.round(
+					(completedCount /
+						totalCount) *
+						100,
+				)
+			: 0;
 
 	const initialValues =
 		activeHistory &&
@@ -222,12 +220,6 @@ function CharmCalculatorPageContent({
 	const isUpdateMode =
 		isEditingHistory &&
 		!isAddingItem;
-
-	/*
-	 * ================================================================
-	 * Build history payload
-	 * ================================================================
-	 */
 
 	function buildHistoryPayload(
 		result: CharmCalculationResult,
@@ -241,21 +233,11 @@ function CharmCalculatorPageContent({
 		};
 	}
 
-	/*
-	 * ================================================================
-	 * Calculate
-	 * ================================================================
-	 */
-
 	function handleCalculate(
 		result: CharmCalculationResult,
 	) {
 		const payload =
 			buildHistoryPayload(result);
-
-		/*
-		 * Add item to existing history
-		 */
 
 		if (
 			activeHistory &&
@@ -267,67 +249,88 @@ function CharmCalculatorPageContent({
 					payload,
 				);
 
-			if (updated) {
-				setActiveHistory(
-					updated,
-				);
-
-				setIsAddingItem(false);
-				setIsEditingHistory(false);
-
-				setFormKey(
-					updated.id,
-				);
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(
+				updated as CharmHistoryItem,
+			);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(false);
+
+			setFormKey(
+				`charm-result-${updated.id}-${Date.now()}`,
+			);
 
 			return;
 		}
 
-		/*
-		 * Update existing history
-		 */
-
-		if (activeHistory) {
+		if (
+			activeHistory &&
+			isEditingHistory
+		) {
 			const updated =
 				updateCalculation(
 					activeHistory.id,
 					payload,
 				);
 
-			if (updated) {
-				setActiveHistory(
-					updated,
-				);
-
-				setFormKey(
-					updated.id,
-				);
+			if (!updated) {
+				return;
 			}
+
+			setActiveHistory(
+				updated as CharmHistoryItem,
+			);
+
+			setIsAddingItem(false);
+			setIsEditingHistory(true);
+
+			setFormKey(
+				`charm-history-${updated.id}`,
+			);
 
 			return;
 		}
 
-		/*
-		 * Create new history
-		 */
-
 		const saved =
-			saveCalculation(
-				payload,
-			);
+			saveCalculation(payload);
 
-		setActiveHistory(saved);
+		setActiveHistory(
+			saved as CharmHistoryItem,
+		);
+
 		setIsEditingHistory(false);
 		setIsAddingItem(false);
 
-		setFormKey(saved.id);
+		setFormKey(
+			`charm-new-${Date.now()}`,
+		);
 	}
 
-	/*
-	 * ================================================================
-	 * Add calculation item
-	 * ================================================================
-	 */
+	function handleCompleteItem(
+		entryId: string,
+	) {
+		if (!activeHistory) {
+			return;
+		}
+
+		const updated =
+			completeCalculationItem(
+				activeHistory.id,
+				entryId,
+			);
+
+		if (!updated.history) {
+			return;
+		}
+
+		setActiveHistory(
+			updated.history as CharmHistoryItem,
+		);
+	}
 
 	function handleAddItem() {
 		if (!activeHistory) {
@@ -338,17 +341,11 @@ function CharmCalculatorPageContent({
 		setIsEditingHistory(false);
 
 		setFormKey(
-			`add-item-${Date.now()}`,
+			`charm-add-item-${Date.now()}`,
 		);
 
 		scrollToForm();
 	}
-
-	/*
-	 * ================================================================
-	 * New calculation
-	 * ================================================================
-	 */
 
 	function handleNewCalculation() {
 		setActiveHistory(null);
@@ -356,17 +353,11 @@ function CharmCalculatorPageContent({
 		setIsAddingItem(false);
 
 		setFormKey(
-			`new-${Date.now()}`,
+			`charm-new-${Date.now()}`,
 		);
 
 		scrollToForm();
 	}
-
-	/*
-	 * ================================================================
-	 * Render
-	 * ================================================================
-	 */
 
 	return (
 		<div className="grid gap-6">
@@ -392,47 +383,102 @@ function CharmCalculatorPageContent({
 					/>
 				</div>
 
-				{activeHistory && (
-					<CalculationGroupResult
-						items={historyItems}
-						getKey={(item) =>
-							item.id
-						}
-						renderItem={(
-							item,
-							index,
-						) => (
-							<CharmResult
-								result={
-									item.result as CharmCalculationResult
+				{activeHistory &&
+					historyItems.length > 0 && (
+						<div className="space-y-5">
+							{totalCount > 1 && (
+								<div className="rounded-3xl border border-[var(--sl-border)] bg-[var(--sl-input)] p-4">
+									<div className="flex items-center justify-between gap-4">
+										<div className="min-w-0">
+											<p className="text-sm font-semibold text-[var(--sl-text)]">
+												Charm Progress
+											</p>
+
+											<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
+												{completedCount}{" "}
+												of{" "}
+												{totalCount}{" "}
+												charms completed
+											</p>
+										</div>
+
+										<div className="shrink-0 text-sm font-bold text-[var(--sl-text)]">
+											{completedPercentage}
+											%
+										</div>
+									</div>
+
+									<div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/20">
+										<div
+											className="h-full rounded-full bg-[var(--sl-text)] transition-[width] duration-300"
+											style={{
+												width: `${completedPercentage}%`,
+											}}
+										/>
+									</div>
+								</div>
+							)}
+
+							<CalculationGroupResult
+								items={
+									historyItems
 								}
-								history={
-									activeHistory
+								getKey={(
+									item,
+								) =>
+									item.id
 								}
-								title={
-									index === 0
-										? "Result"
-										: undefined
-								}
-								showAddButton={
-									index ===
-									historyItems.length -
-										1
-								}
-								onAddItem={
-									handleAddItem
-								}
+								renderItem={(
+									item,
+									index,
+								) => (
+									<CharmResult
+										result={
+											item.result as CharmCalculationResult
+										}
+										history={
+											activeHistory
+										}
+										entryId={
+											item.id
+										}
+										completed={
+											item.completed ??
+											false
+										}
+										onCompleted={() =>
+											handleCompleteItem(
+												item.id,
+											)
+										}
+										title={
+											index ===
+											0
+												? "Result"
+												: undefined
+										}
+										showAddButton={
+											index ===
+											historyItems.length -
+												1
+										}
+										onAddItem={
+											handleAddItem
+										}
+									/>
+								)}
+								renderTotal={(
+									groupItems,
+								) => (
+									<CharmTotalResult
+										items={
+											groupItems
+										}
+									/>
+								)}
 							/>
-						)}
-						renderTotal={(
-							items,
-						) => (
-							<CharmTotalResult
-								items={items}
-							/>
-						)}
-					/>
-				)}
+						</div>
+					)}
 
 				{activeHistory && (
 					<div className="px-4 py-2">
