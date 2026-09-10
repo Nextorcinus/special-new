@@ -1,12 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import {
-	Suspense,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 import CalculationGroupResult from "@/components/calculator/CalculationGroupResult";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
@@ -42,13 +37,9 @@ type SkillT12HistoryEntry = CalculationHistoryEntry<
 	SkillT12CalculationResult
 >;
 
-type HistoryStoreState = ReturnType<
-	typeof useHistoryStore.getState
->;
+type HistoryStoreState = ReturnType<typeof useHistoryStore.getState>;
 
-function normalizeCategory(
-	value: unknown,
-): string {
+function normalizeCategory(value: unknown): string {
 	return String(value ?? "")
 		.trim()
 		.toLowerCase()
@@ -60,45 +51,48 @@ function isMatchingCategory(
 	history: SkillT12HistoryItem,
 	category: SkillT12Category,
 ): boolean {
-	const expectedCategory =
-		normalizeCategory(category);
+	const expectedCategory = normalizeCategory(category);
 
-	const historyCategory =
-		normalizeCategory(
-			history.category,
-		);
+	const historyCategory = normalizeCategory(history.category);
 
-	const formCategory =
-		normalizeCategory(
-			history.form?.category,
-		);
+	const formCategory = normalizeCategory(history.form?.category);
 
-	const resultCategory =
-		normalizeCategory(
-			history.result?.category,
-		);
+	const resultCategory = normalizeCategory(history.result?.category);
 
 	return (
-		historyCategory ===
-			expectedCategory ||
-		formCategory ===
-			expectedCategory ||
-		resultCategory ===
-			expectedCategory
+		historyCategory === expectedCategory ||
+		formCategory === expectedCategory ||
+		resultCategory === expectedCategory
 	);
 }
 
-function isSkillT12History(
-	history: SkillT12HistoryItem,
-): boolean {
+function isSkillT12History(history: SkillT12HistoryItem): boolean {
 	return history.module === "skill-t12";
 }
 
-/*
- * ================================================================
- * Main Page
- * ================================================================
- */
+function normalizeHistoryEntries(
+	history: SkillT12HistoryItem | null,
+): SkillT12HistoryEntry[] {
+	if (!history) {
+		return [];
+	}
+
+	if (Array.isArray(history.items) && history.items.length > 0) {
+		return history.items as SkillT12HistoryEntry[];
+	}
+
+	return [
+		{
+			id: `${history.id}_item`,
+			title: history.title,
+			subtitle: history.subtitle,
+			form: history.form,
+			result: history.result,
+			createdAt: history.createdAt,
+			completed: false,
+		},
+	];
+}
 
 export default function SkillT12CalculatorPage(
 	props: SkillT12CalculatorPageProps,
@@ -117,83 +111,51 @@ export default function SkillT12CalculatorPage(
 				</div>
 			}
 		>
-			<SkillT12CalculatorPageContent
-				{...props}
-			/>
+			<SkillT12CalculatorPageContent {...props} />
 		</Suspense>
 	);
 }
-
-/*
- * ================================================================
- * Page Content
- *
- * useSearchParams() is inside this component because this
- * component is rendered inside Suspense.
- * ================================================================
- */
 
 function SkillT12CalculatorPageContent({
 	category,
 	data,
 }: SkillT12CalculatorPageProps) {
-	const searchParams =
-		useSearchParams();
+	const searchParams = useSearchParams();
 
-	const historyId =
-		searchParams.get("historyId");
+	const historyId = searchParams.get("historyId");
 
-	const [
-		activeHistory,
-		setActiveHistory,
-	] =
-		useState<SkillT12HistoryItem | null>(
-			null,
-		);
+	const [activeHistory, setActiveHistory] =
+		useState<SkillT12HistoryItem | null>(null);
 
-	const [formKey, setFormKey] =
-		useState("skill-t12-new");
+	const [formKey, setFormKey] = useState("skill-t12-new");
 
-	const [
-		isAddingItem,
-		setIsAddingItem,
-	] = useState(false);
+	const [isAddingItem, setIsAddingItem] = useState(false);
 
-	const [
-		isEditingHistory,
-		setIsEditingHistory,
-	] = useState(false);
+	const [isEditingHistory, setIsEditingHistory] = useState(false);
 
-	const formRef =
-		useRef<HTMLDivElement>(null);
+	const formRef = useRef<HTMLDivElement>(null);
 
-	const items = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.items,
-	);
+	const items = useHistoryStore((state: HistoryStoreState) => state.items);
 
 	const loadHistory = useHistoryStore(
-		(state: HistoryStoreState) =>
-			state.loadHistory,
+		(state: HistoryStoreState) => state.loadHistory,
 	);
 
-	const saveCalculation =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.saveCalculation,
-		);
+	const saveCalculation = useHistoryStore(
+		(state: HistoryStoreState) => state.saveCalculation,
+	);
 
-	const updateCalculation =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.updateCalculation,
-		);
+	const updateCalculation = useHistoryStore(
+		(state: HistoryStoreState) => state.updateCalculation,
+	);
 
-	const addCalculationItem =
-		useHistoryStore(
-			(state: HistoryStoreState) =>
-				state.addCalculationItem,
-		);
+	const addCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) => state.addCalculationItem,
+	);
+
+	const completeCalculationItem = useHistoryStore(
+		(state: HistoryStoreState) => state.completeCalculationItem,
+	);
 
 	function scrollToForm() {
 		requestAnimationFrame(() => {
@@ -209,82 +171,37 @@ function SkillT12CalculatorPageContent({
 	}, [loadHistory]);
 
 	useEffect(() => {
-		if (
-			!historyId ||
-			items.length === 0
-		) {
+		if (!historyId || items.length === 0) {
 			return;
 		}
 
-		const selected = items.find(
-			(item) =>
-				String(item.id) ===
-				historyId,
-		);
+		const selected = items.find((item) => String(item.id) === historyId);
 
 		if (!selected) {
 			return;
 		}
 
-		const selectedHistory =
-			selected as SkillT12HistoryItem;
+		const selectedHistory = selected as SkillT12HistoryItem;
 
 		if (
-			!isSkillT12History(
-				selectedHistory,
-			) ||
-			!isMatchingCategory(
-				selectedHistory,
-				category,
-			)
+			!isSkillT12History(selectedHistory) ||
+			!isMatchingCategory(selectedHistory, category)
 		) {
 			return;
 		}
 
-		setActiveHistory(
-			selectedHistory,
-		);
+		setActiveHistory(selectedHistory);
 
 		setIsEditingHistory(true);
 		setIsAddingItem(false);
 
-		setFormKey(
-			`skill-t12-${selectedHistory.id}`,
-		);
-	}, [
-		category,
-		historyId,
-		items,
-	]);
+		setFormKey(`skill-t12-${selectedHistory.id}`);
+	}, [category, historyId, items]);
 
-	const historyItems:
-		SkillT12HistoryEntry[] =
-		activeHistory?.items &&
-		activeHistory.items.length > 0
-			? (activeHistory.items as SkillT12HistoryEntry[])
-			: activeHistory
-				? [
-						{
-							id:
-								activeHistory.id,
-							title:
-								activeHistory.title,
-							subtitle:
-								activeHistory.subtitle,
-							form:
-								activeHistory.form,
-							result:
-								activeHistory.result,
-							createdAt:
-								activeHistory.createdAt,
-						},
-					]
-				: [];
+	const historyItems = normalizeHistoryEntries(activeHistory);
 
-	const initialValues:
-		Partial<SkillT12FormValues> =
-		activeHistory &&
-		!isAddingItem
+	const initialValues: Partial<SkillT12FormValues> =
+		activeHistory && !isAddingItem
 			? {
 					...activeHistory.form,
 					category,
@@ -296,9 +213,7 @@ function SkillT12CalculatorPageContent({
 					toLevel: "",
 				};
 
-	const isUpdateMode =
-		isEditingHistory &&
-		!isAddingItem;
+	const isUpdateMode = isEditingHistory && !isAddingItem;
 
 	function buildHistoryPayload(
 		form: SkillT12FormValues,
@@ -307,54 +222,34 @@ function SkillT12CalculatorPageContent({
 		return {
 			module: "skill-t12" as const,
 			category,
-			title:
-				result.research ||
-				"T12 Skill",
+			title: result.research || "T12 Skill",
 			subtitle: `${category} · Lv.${result.fromLevel} → Lv.${result.toLevel}`,
 			form,
 			result,
 		};
 	}
 
-	function handleCalculate(
-		values: SkillT12FormValues,
-	) {
-		const formValues:
-			SkillT12FormValues = {
+	function handleCalculate(values: SkillT12FormValues) {
+		const formValues: SkillT12FormValues = {
 			...values,
 			category,
 		};
 
-		const result =
-			calculateSkillT12({
-				data,
-				values: formValues,
-			});
+		const result = calculateSkillT12({
+			data,
+			values: formValues,
+		});
 
-		if (
-			result.selectedLevels
-				.length === 0
-		) {
+		if (result.selectedLevels.length === 0) {
 			return;
 		}
 
-		const payload =
-			buildHistoryPayload(
-				formValues,
-				result,
-			);
+		const payload = buildHistoryPayload(formValues, result);
 
-		if (
-			activeHistory &&
-			isAddingItem
-		) {
-			const updated =
-				addCalculationItem(
-					activeHistory.id,
-					payload,
-				) as
-					| SkillT12HistoryItem
-					| undefined;
+		if (activeHistory && isAddingItem) {
+			const updated = addCalculationItem(activeHistory.id, payload) as
+				| SkillT12HistoryItem
+				| undefined;
 
 			if (!updated) {
 				return;
@@ -364,21 +259,15 @@ function SkillT12CalculatorPageContent({
 			setIsAddingItem(false);
 			setIsEditingHistory(false);
 
-			setFormKey(
-				`skill-t12-${updated.id}`,
-			);
+			setFormKey(`skill-t12-${updated.id}`);
 
 			return;
 		}
 
 		if (activeHistory) {
-			const updated =
-				updateCalculation(
-					activeHistory.id,
-					payload,
-				) as
-					| SkillT12HistoryItem
-					| undefined;
+			const updated = updateCalculation(activeHistory.id, payload) as
+				| SkillT12HistoryItem
+				| undefined;
 
 			if (!updated) {
 				return;
@@ -388,25 +277,18 @@ function SkillT12CalculatorPageContent({
 			setIsAddingItem(false);
 			setIsEditingHistory(true);
 
-			setFormKey(
-				`skill-t12-${updated.id}`,
-			);
+			setFormKey(`skill-t12-${updated.id}`);
 
 			return;
 		}
 
-		const saved =
-			saveCalculation(
-				payload,
-			) as SkillT12HistoryItem;
+		const saved = saveCalculation(payload) as SkillT12HistoryItem;
 
 		setActiveHistory(saved);
 		setIsEditingHistory(false);
 		setIsAddingItem(false);
 
-		setFormKey(
-			`skill-t12-${saved.id}`,
-		);
+		setFormKey(`skill-t12-${saved.id}`);
 	}
 
 	function handleAddItem() {
@@ -417,32 +299,38 @@ function SkillT12CalculatorPageContent({
 		setIsAddingItem(true);
 		setIsEditingHistory(false);
 
-		setFormKey(
-			`skill-t12-add-${Date.now()}`,
-		);
+		setFormKey(`skill-t12-add-${Date.now()}`);
 
 		scrollToForm();
+	}
+
+	function handleCompleted(entryId: string) {
+		if (!activeHistory) {
+			return;
+		}
+
+		const updated = completeCalculationItem(activeHistory.id, entryId);
+
+		if (!updated.history) {
+			return;
+		}
+
+		setActiveHistory(updated.history as SkillT12HistoryItem);
 	}
 
 	function handleReset() {
 		if (isAddingItem) {
 			setIsAddingItem(false);
 
-			setIsEditingHistory(
-				Boolean(activeHistory),
-			);
+			setIsEditingHistory(Boolean(activeHistory));
 
-			setFormKey(
-				`skill-t12-cancel-add-${Date.now()}`,
-			);
+			setFormKey(`skill-t12-cancel-add-${Date.now()}`);
 
 			return;
 		}
 
 		if (activeHistory) {
-			setFormKey(
-				`skill-t12-reset-${Date.now()}`,
-			);
+			setFormKey(`skill-t12-reset-${Date.now()}`);
 		}
 	}
 
@@ -454,71 +342,34 @@ function SkillT12CalculatorPageContent({
 						key={formKey}
 						category={category}
 						data={data}
-						initialValues={
-							initialValues
-						}
-						mode={
-							isUpdateMode
-								? "update"
-								: "create"
-						}
-						onSubmit={
-							handleCalculate
-						}
-						onReset={
-							handleReset
-						}
+						initialValues={initialValues}
+						mode={isUpdateMode ? "update" : "create"}
+						onSubmit={handleCalculate}
+						onReset={handleReset}
 					/>
 				</div>
 
-				{activeHistory &&
-					historyItems.length >
-						0 && (
-						<CalculationGroupResult
-							items={
-								historyItems
-							}
-							getKey={(
-								item,
-							) =>
-								item.id
-							}
-							renderItem={(
-								item,
-								index,
-							) => (
-								<SkillT12Result
-									result={
-										item.result
-									}
-									title={
-										index ===
-										0
-											? "Result"
-											: undefined
-									}
-									showAddButton={
-										index ===
-										historyItems.length -
-											1
-									}
-									onAddItem={
-										handleAddItem
-									}
-								/>
-							)}
-							renderTotal={(
-								groupItems,
-							) => (
-								<SkillT12TotalResult
-									items={
-										groupItems
-									}
-									title="Total Result"
-								/>
-							)}
-						/>
-					)}
+				{activeHistory && historyItems.length > 0 && (
+					<CalculationGroupResult
+						items={historyItems}
+						getKey={(item) => item.id}
+						renderItem={(item, index) => (
+							<SkillT12Result
+								result={item.result}
+								history={activeHistory}
+								entryId={item.id}
+								completed={item.completed ?? false}
+								title={index === 0 ? "Result" : undefined}
+								showAddButton={index === historyItems.length - 1}
+								onAddItem={handleAddItem}
+								onCompleted={() => handleCompleted(item.id)}
+							/>
+						)}
+						renderTotal={(groupItems) => (
+							<SkillT12TotalResult items={groupItems} title="Total Result" />
+						)}
+					/>
+				)}
 			</div>
 		</div>
 	);

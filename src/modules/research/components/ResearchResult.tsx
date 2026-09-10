@@ -1,33 +1,20 @@
 "use client";
 
-import {
-	BriefcaseBusiness,
-	Clock3,
-	Plus,
-	Sparkles,
-	Zap,
-} from "lucide-react";
+import { BriefcaseBusiness, Clock3, Plus, Sparkles, Zap } from "lucide-react";
 import { useEffect } from "react";
-
-import CalculatorResult from "@/components/calculator/CalculatorResult";
 import CalculationComplete from "@/components/calculator/CalculationComplete";
+import CalculatorResult from "@/components/calculator/CalculatorResult";
 import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
-import {
-	RESOURCES,
-	type ResourceKey,
-} from "@/config/resources";
+import { RESOURCES, type ResourceKey } from "@/config/resources";
 import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
 import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 import { formatDuration } from "@/lib/time";
 
-import type {
-	ResearchCalculationResult,
-	ResearchFormValues,
-} from "../type";
+import type { ResearchCalculationResult, ResearchFormValues } from "../type";
 
 type ResearchHistoryItem = CalculationHistoryItem<
 	ResearchFormValues,
@@ -45,10 +32,21 @@ type ResearchResultProps = {
 	onCompleted?: () => void;
 };
 
-function formatPower(value: unknown): string {
-	const num = Number(value ?? 0);
+type ResearchCompletionResource = {
+	resourceId: (typeof RESOURCES)[keyof typeof RESOURCES]["id"];
+	amount: number;
+};
 
-	if (!Number.isFinite(num)) {
+function toFiniteNumber(value: unknown): number {
+	const number = Number(value ?? 0);
+
+	return Number.isFinite(number) ? number : 0;
+}
+
+function formatPower(value: unknown): string {
+	const num = toFiniteNumber(value);
+
+	if (num <= 0) {
 		return "+0";
 	}
 
@@ -64,9 +62,9 @@ function formatPower(value: unknown): string {
 }
 
 function formatBonus(value: unknown): string {
-	const num = Number(value ?? 0);
+	const num = toFiniteNumber(value);
 
-	if (!Number.isFinite(num) || num <= 0) {
+	if (num <= 0) {
 		return "Off";
 	}
 
@@ -74,16 +72,16 @@ function formatBonus(value: unknown): string {
 }
 
 function formatAgnes(value: unknown): string {
-	const hours = Number(value ?? 0);
+	const hours = toFiniteNumber(value);
 
-	if (!Number.isFinite(hours) || hours <= 0) {
+	if (hours <= 0) {
 		return "Off";
 	}
 
 	return `-${formatNumber(hours)}h`;
 }
 
-function formatBuffs(values: string[]): string {
+function formatBuffs(values: string[] = []): string {
 	if (!values.length) {
 		return "No Buff";
 	}
@@ -93,18 +91,29 @@ function formatBuffs(values: string[]): string {
 
 function getCompletionResources(
 	resources: Partial<Record<ResourceKey, number>>,
-) {
-	return Object.entries(resources)
-		.filter(([, amount]) => Number(amount ?? 0) > 0)
-		.map(([resourceKey, amount]) => {
-			const resource =
-				RESOURCES[resourceKey as ResourceKey];
+): ResearchCompletionResource[] {
+	const completionResources: ResearchCompletionResource[] = [];
 
-			return {
-				resourceId: resource.id,
-				amount: Number(amount ?? 0),
-			};
+	for (const [resourceKey, amount] of Object.entries(resources)) {
+		const numericAmount = toFiniteNumber(amount);
+
+		if (numericAmount <= 0) {
+			continue;
+		}
+
+		const resource = RESOURCES[resourceKey as ResourceKey];
+
+		if (!resource) {
+			continue;
+		}
+
+		completionResources.push({
+			resourceId: resource.id,
+			amount: numericAmount,
 		});
+	}
+
+	return completionResources;
 }
 
 export default function ResearchResult({
@@ -117,39 +126,30 @@ export default function ResearchResult({
 	onAddItem,
 	onCompleted,
 }: ResearchResultProps) {
-	const loadResources = useInventoryStore(
-		(state) => state.loadResources,
-	);
+	const loadResources = useInventoryStore((state) => state.loadResources);
 
 	useEffect(() => {
 		loadResources();
 	}, [loadResources]);
 
+	const resources = (result?.resources ?? {}) as Partial<
+		Record<ResourceKey, number>
+	>;
+
+	const { createResourceItem } = useCompareResources(resources);
+
+	const calculationEntryId =
+		entryId ?? history?.items?.[0]?.id ?? (history ? `${history.id}_item` : "");
+
 	if (!result) {
 		return null;
 	}
 
-	const category = NAVIGATION.find(
-		(item) => item.id === "research",
-	);
+	const category = NAVIGATION.find((item) => item.id === "research");
 
-	const resources = (result.resources ?? {}) as Partial<
-		Record<ResourceKey, number>
-	>;
+	const hasTimeReduction = result.time.total !== result.time.final;
 
-	const { createResourceItem } =
-		useCompareResources(resources);
-
-	const hasTimeReduction =
-		result.time.total !== result.time.final;
-
-	const calculationEntryId =
-		entryId ??
-		history?.items?.[0]?.id ??
-		(history ? `${history.id}_item` : "");
-
-	const completionResources =
-		getCompletionResources(resources);
+	const completionResources = getCompletionResources(resources);
 
 	const subtitle = `Tier ${result.tier} • Lv.${result.fromLevel ?? "-"} → Lv.${result.toLevel ?? "-"}`;
 
@@ -157,25 +157,16 @@ export default function ResearchResult({
 		<div
 			className={[
 				"space-y-3 transition-opacity duration-300",
-				completed
-					? "opacity-65"
-					: "opacity-100",
+				completed ? "opacity-65" : "opacity-100",
 			].join(" ")}
 		>
 			<CalculatorResult
 				title={title}
-				categoryTitle={
-					category?.title ?? "Research"
-				}
-				categoryIcon={
-					category?.icon ??
-					"/category/research.png"
-				}
+				categoryTitle={category?.title ?? "Research"}
+				categoryIcon={category?.icon ?? "/category/research.png"}
 				name={result.research ?? "-"}
 				subtitle={subtitle}
-				highlightValue={formatPower(
-					result.power,
-				)}
+				highlightValue={formatPower(result.power)}
 				highlightLabel="Power Increase"
 				createdAt={history?.createdAt}
 				updatedAt={history?.updatedAt}
@@ -189,32 +180,23 @@ export default function ResearchResult({
 								id: "total-time",
 								label: "Total",
 								icon: "/icons/totalTime.png",
-								value: formatDuration(
-									result.time.total,
-								),
+								value: formatDuration(result.time.total),
 							},
 							{
 								id: "reduced-time",
 								label: "Reduced",
 								icon: "/icons/reducedTime.png",
-								value: formatDuration(
-									result.time.final,
-								),
-								valueClassName:
-									hasTimeReduction
-										? "text-green-400"
-										: "text-[var(--sl-text-muted)]",
+								value: formatDuration(result.time.final),
+								valueClassName: hasTimeReduction
+									? "text-green-400"
+									: "text-[var(--sl-text-muted)]",
 							},
 						],
 					},
 					{
 						id: "resources",
 						title: "Base Resources",
-						icon: (
-							<BriefcaseBusiness
-								size={18}
-							/>
-						),
+						icon: <BriefcaseBusiness size={18} />,
 						items: [
 							createResourceItem("Meat"),
 							createResourceItem("Wood"),
@@ -232,91 +214,66 @@ export default function ResearchResult({
 								id: "power",
 								label: "Power",
 								icon: "/icons/power.png",
-								value: formatPower(
-									result.power,
-								),
-								valueClassName:
-									"text-green-400",
+								value: formatPower(result.power),
+								valueClassName: "text-green-400",
 							},
 							{
 								id: "buff",
 								label: "Buff",
 								icon: "/icons/Buff.png",
-								value: formatBuffs(
-									result.buffs,
-								),
+								value: formatBuffs(result.buffs),
 							},
 						],
 					},
 					{
 						id: "configuration",
 						title: "Configuration",
-						icon: (
-							<Sparkles size={18} />
-						),
+						icon: <Sparkles size={18} />,
 						items: [
 							{
 								id: "research-speed",
 								label: "Research Speed",
 								icon: "/category/research.png",
-								value: formatBonus(
-									result.time
-										.researchSpeed,
-								),
+								value: formatBonus(result.time.researchSpeed),
 							},
 							{
 								id: "vice-president",
 								label: "Vice President",
 								icon: "/icons/Vice-President.png",
-								value: formatBonus(
-									result.time.vpBonus,
-								),
+								value: formatBonus(result.time.vpBonus),
 							},
 							{
 								id: "president-skill",
 								label: "President Skill",
 								icon: "/icons/President-Skill.png",
-								value: result.time
-									.presidentSkill
-									? formatBonus(
-											result.time
-												.presidentBonus,
-										)
+								value: result.time.presidentSkill
+									? formatBonus(result.time.presidentBonus)
 									: "Off",
 							},
 							{
 								id: "agnes-skill",
 								label: "Agnes Skill",
 								icon: "/icons/Agnes-Skill.png",
-								value: formatAgnes(
-									result.time
-										.agnesHours,
-								),
+								value: formatAgnes(result.time.agnesHours),
 							},
 						],
 					},
 				]}
 			/>
 
-			{history &&
-				calculationEntryId &&
-				completionResources.length > 0 && (
-					<div className="flex justify-end">
-						<CalculationComplete
-							historyId={history.id}
-							entryId={calculationEntryId}
-							completed={completed}
-							resources={
-								completionResources
-							}
-							from={`Lv.${result.fromLevel ?? "-"}`}
-							target={`Lv.${result.toLevel ?? "-"}`}
-							onCompleted={
-								onCompleted
-							}
-						/>
-					</div>
-				)}
+			{history && calculationEntryId && (
+				<div className="flex justify-end">
+					<CalculationComplete
+						historyId={history.id}
+						entryId={calculationEntryId}
+						completed={completed}
+						resources={completionResources}
+						from={`Lv.${result.fromLevel ?? "-"}`}
+						target={`Lv.${result.toLevel ?? "-"}`}
+						onCompleted={onCompleted}
+					/>
+				</div>
+			)}
 
 			{showAddButton && (
 				<button
@@ -326,9 +283,7 @@ export default function ResearchResult({
 				>
 					<Plus className="size-5" />
 
-					<span className="text-base font-medium">
-						Add more items
-					</span>
+					<span className="text-base font-medium">Add more items</span>
 				</button>
 			)}
 		</div>

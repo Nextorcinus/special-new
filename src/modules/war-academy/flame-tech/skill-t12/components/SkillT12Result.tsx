@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	ArrowRight,
 	BriefcaseBusiness,
 	Clock3,
 	Gem,
@@ -9,29 +8,43 @@ import {
 	Sparkles,
 	UsersRound,
 } from "lucide-react";
-
+import { useEffect } from "react";
+import CalculationComplete from "@/components/calculator/CalculationComplete";
 import CalculatorResult from "@/components/calculator/CalculatorResult";
 import {
 	formatNumber,
 	useCompareResources,
 } from "@/components/calculator/useCompareResources";
 import { NAVIGATION } from "@/config/navigation";
+import { RESOURCES, type ResourceKey } from "@/config/resources";
+import type { CalculationHistoryItem } from "@/features/inventory/store/history/types";
+import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 import { formatDuration } from "@/lib/time";
 
-import type {
-	SelectedSkillT12Level,
-	SkillT12CalculationResult,
-} from "../type";
+import type { SelectedSkillT12Level, SkillT12CalculationResult } from "../type";
+
+type SkillT12HistoryItem = CalculationHistoryItem<
+	any,
+	SkillT12CalculationResult
+>;
 
 type SkillT12ResultProps = {
 	result: SkillT12CalculationResult;
+	history?: SkillT12HistoryItem | null;
+	entryId?: string;
+	completed?: boolean;
 	title?: string;
 	showAddButton?: boolean;
 	onAddItem?: () => void;
+	onCompleted?: () => void;
 };
 
-type SkillT12ResourceKey =
-	keyof SkillT12CalculationResult["resources"];
+type SkillT12ResourceKey = keyof SkillT12CalculationResult["resources"];
+
+type SkillT12CompletionResource = {
+	resourceId: (typeof RESOURCES)[keyof typeof RESOURCES]["id"];
+	amount: number;
+};
 
 function toFiniteNumber(value: unknown): number {
 	const number = Number(value ?? 0);
@@ -39,16 +52,11 @@ function toFiniteNumber(value: unknown): number {
 	return Number.isFinite(number) ? number : 0;
 }
 
-function formatSignedValue(
-	value: unknown,
-	unit = "",
-): string {
+function formatSignedValue(value: unknown, unit = ""): string {
 	const number = toFiniteNumber(value);
 	const sign = number < 0 ? "-" : "+";
 
-	return `${sign}${formatNumber(
-		Math.abs(number),
-	)}${unit}`;
+	return `${sign}${formatNumber(Math.abs(number))}${unit}`;
 }
 
 function formatStatLabel(value: unknown): string {
@@ -56,9 +64,7 @@ function formatStatLabel(value: unknown): string {
 		.trim()
 		.replace(/[_-]+/g, " ")
 		.replace(/\s+/g, " ")
-		.replace(/\b\w/g, (character) =>
-			character.toUpperCase(),
-		);
+		.replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 function sumSelectedLevelTime(
@@ -69,46 +75,30 @@ function sumSelectedLevelTime(
 	}
 
 	return levels.reduce((total, level) => {
-		return (
-			total +
-			toFiniteNumber(
-				level.rawTimeSeconds,
-			)
-		);
+		return total + toFiniteNumber(level.rawTimeSeconds);
 	}, 0);
 }
 
-function getOriginalTimeSeconds(
-	result: SkillT12CalculationResult,
-): number {
-	const baseSeconds = toFiniteNumber(
-		result.time?.baseSeconds,
-	);
+function getOriginalTimeSeconds(result: SkillT12CalculationResult): number {
+	const baseSeconds = toFiniteNumber(result.time?.baseSeconds);
 
 	if (baseSeconds > 0) {
 		return baseSeconds;
 	}
 
-	return sumSelectedLevelTime(
-		result.selectedLevels,
-	);
+	return sumSelectedLevelTime(result.selectedLevels);
 }
 
-function getReducedTimeSeconds(
-	result: SkillT12CalculationResult,
-): number {
-	const finalSeconds = toFiniteNumber(
-		result.time?.finalSeconds,
-	);
+function getReducedTimeSeconds(result: SkillT12CalculationResult): number {
+	const finalSeconds = toFiniteNumber(result.time?.finalSeconds);
 
 	if (finalSeconds > 0) {
 		return finalSeconds;
 	}
 
-	const speedAdjustedSeconds =
-		toFiniteNumber(
-			result.time?.speedAdjustedSeconds,
-		);
+	const speedAdjustedSeconds = toFiniteNumber(
+		result.time?.speedAdjustedSeconds,
+	);
 
 	if (speedAdjustedSeconds > 0) {
 		return speedAdjustedSeconds;
@@ -117,9 +107,7 @@ function getReducedTimeSeconds(
 	return getOriginalTimeSeconds(result);
 }
 
-function formatResearchTime(
-	seconds: number,
-): string {
+function formatResearchTime(seconds: number): string {
 	if (seconds <= 0) {
 		return "-";
 	}
@@ -127,17 +115,50 @@ function formatResearchTime(
 	return formatDuration(seconds);
 }
 
+function getCompletionResources(
+	resources: SkillT12CalculationResult["resources"],
+): SkillT12CompletionResource[] {
+	const completionResources: SkillT12CompletionResource[] = [];
+
+	for (const [resourceKey, amount] of Object.entries(resources ?? {})) {
+		const numericAmount = toFiniteNumber(amount);
+
+		if (numericAmount <= 0) {
+			continue;
+		}
+
+		const resource = RESOURCES[resourceKey as ResourceKey];
+
+		if (!resource) {
+			continue;
+		}
+
+		completionResources.push({
+			resourceId: resource.id,
+			amount: numericAmount,
+		});
+	}
+
+	return completionResources;
+}
+
 export default function SkillT12Result({
 	result,
+	history,
+	entryId,
+	completed = false,
 	title,
 	showAddButton = false,
 	onAddItem,
+	onCompleted,
 }: SkillT12ResultProps) {
-	const category = NAVIGATION.find(
-		(item) => item.id === "war-academy",
-	);
+	const loadResources = useInventoryStore((state) => state.loadResources);
 
-	const resources = result.resources ?? {
+	useEffect(() => {
+		loadResources();
+	}, [loadResources]);
+
+	const resources = result?.resources ?? {
 		Meat: 0,
 		Wood: 0,
 		Coal: 0,
@@ -147,35 +168,28 @@ export default function SkillT12Result({
 		Shard: 0,
 	};
 
-	const { createResourceItem } =
-		useCompareResources(resources);
+	const { createResourceItem } = useCompareResources(resources);
 
-	const totalPower = toFiniteNumber(
-		result.power,
-	);
+	if (!result) {
+		return null;
+	}
 
-	const originalTimeSeconds =
-		getOriginalTimeSeconds(result);
+	const category = NAVIGATION.find((item) => item.id === "war-academy");
 
-	const reducedTimeSeconds =
-		getReducedTimeSeconds(result);
+	const totalPower = toFiniteNumber(result.power);
+
+	const originalTimeSeconds = getOriginalTimeSeconds(result);
+
+	const reducedTimeSeconds = getReducedTimeSeconds(result);
 
 	const hasTimeReduction =
-		originalTimeSeconds > 0 &&
-		reducedTimeSeconds <
-			originalTimeSeconds;
+		originalTimeSeconds > 0 && reducedTimeSeconds < originalTimeSeconds;
 
-	const stat = toFiniteNumber(
-		result.stat,
-	);
+	const stat = toFiniteNumber(result.stat);
 
-	const capacity = toFiniteNumber(
-		result.capacity,
-	);
+	const capacity = toFiniteNumber(result.capacity);
 
-	const resourceValue = (
-		key: SkillT12ResourceKey,
-	): number => {
+	const resourceValue = (key: SkillT12ResourceKey): number => {
 		return toFiniteNumber(resources[key]);
 	};
 
@@ -184,17 +198,13 @@ export default function SkillT12Result({
 			id: "total-time",
 			label: "Total",
 			icon: "/icons/totalTime.png",
-			value: formatResearchTime(
-				originalTimeSeconds,
-			),
+			value: formatResearchTime(originalTimeSeconds),
 		},
 		{
 			id: "reduced-time",
 			label: "Reduced",
 			icon: "/icons/reducedTime.png",
-			value: formatResearchTime(
-				reducedTimeSeconds,
-			),
+			value: formatResearchTime(reducedTimeSeconds),
 			valueClassName: hasTimeReduction
 				? "text-green-400"
 				: "text-[var(--sl-text-muted)]",
@@ -206,22 +216,13 @@ export default function SkillT12Result({
 			? [
 					{
 						id: "skill-stat",
-						label:
-							formatStatLabel(
-								result.type,
-							) ||
-							"Stat Increase",
+						label: formatStatLabel(result.type) || "Stat Increase",
 						icon: "/icons/Buff.png",
-						value:
-							formatSignedValue(
-								stat,
-								result.group ===
-									"Special Skill"
-									? ""
-									: "%",
-							),
-						valueClassName:
-							"text-white",
+						value: formatSignedValue(
+							stat,
+							result.group === "Special Skill" ? "" : "%",
+						),
+						valueClassName: "text-white",
 					},
 				]
 			: [];
@@ -231,77 +232,30 @@ export default function SkillT12Result({
 			? [
 					{
 						id: "deployment-capacity",
-						label:
-							"Deployment Capacity",
+						label: "Deployment Capacity",
 						icon: "/icons/Buff.png",
-						value:
-							formatSignedValue(
-								capacity,
-							),
-						valueClassName:
-							"text-white",
+						value: formatSignedValue(capacity),
+						valueClassName: "text-white",
 					},
 				]
 			: [];
 
 	const baseResourceItems = [
-		...(resourceValue("Meat") > 0
-			? [
-					createResourceItem(
-						"Meat",
-					),
-				]
-			: []),
+		...(resourceValue("Meat") > 0 ? [createResourceItem("Meat")] : []),
 
-		...(resourceValue("Wood") > 0
-			? [
-					createResourceItem(
-						"Wood",
-					),
-				]
-			: []),
+		...(resourceValue("Wood") > 0 ? [createResourceItem("Wood")] : []),
 
-		...(resourceValue("Coal") > 0
-			? [
-					createResourceItem(
-						"Coal",
-					),
-				]
-			: []),
+		...(resourceValue("Coal") > 0 ? [createResourceItem("Coal")] : []),
 
-		...(resourceValue("Iron") > 0
-			? [
-					createResourceItem(
-						"Iron",
-					),
-				]
-			: []),
+		...(resourceValue("Iron") > 0 ? [createResourceItem("Iron")] : []),
 
-		...(resourceValue("Steel") > 0
-			? [
-					createResourceItem(
-						"Steel",
-					),
-				]
-			: []),
+		...(resourceValue("Steel") > 0 ? [createResourceItem("Steel")] : []),
 	];
 
 	const fireCrystalItems = [
-		...(resourceValue("RFC") > 0
-			? [
-					createResourceItem(
-						"RFC",
-					),
-				]
-			: []),
+		...(resourceValue("RFC") > 0 ? [createResourceItem("RFC")] : []),
 
-		...(resourceValue("Shard") > 0
-			? [
-					createResourceItem(
-						"Shard",
-					),
-				]
-			: []),
+		...(resourceValue("Shard") > 0 ? [createResourceItem("Shard")] : []),
 	];
 
 	const sections = [
@@ -317,11 +271,7 @@ export default function SkillT12Result({
 					{
 						id: "skill-stat",
 						title: "Skill Stat",
-						icon: (
-							<Sparkles
-								size={18}
-							/>
-						),
+						icon: <Sparkles size={18} />,
 						items: statItems,
 					},
 				]
@@ -332,13 +282,8 @@ export default function SkillT12Result({
 					{
 						id: "deployment",
 						title: "Deployment",
-						icon: (
-							<UsersRound
-								size={18}
-							/>
-						),
-						items:
-							capacityItems,
+						icon: <UsersRound size={18} />,
+						items: capacityItems,
 					},
 				]
 			: []),
@@ -347,15 +292,9 @@ export default function SkillT12Result({
 			? [
 					{
 						id: "base-resources",
-						title:
-							"Base Resources",
-						icon: (
-							<BriefcaseBusiness
-								size={18}
-							/>
-						),
-						items:
-							baseResourceItems,
+						title: "Base Resources",
+						icon: <BriefcaseBusiness size={18} />,
+						items: baseResourceItems,
 					},
 				]
 			: []),
@@ -364,57 +303,53 @@ export default function SkillT12Result({
 			? [
 					{
 						id: "fire-crystals",
-						title:
-							"Fire Crystals",
-						icon: (
-							<Gem size={18} />
-						),
-						items:
-							fireCrystalItems,
+						title: "Fire Crystals",
+						icon: <Gem size={18} />,
+						items: fireCrystalItems,
 					},
 				]
 			: []),
 	];
 
+	const calculationEntryId =
+		entryId ?? history?.items?.[0]?.id ?? (history ? `${history.id}_item` : "");
+
+	const completionResources = getCompletionResources(resources);
+
+	const subtitle = `${result.category ?? "T12 Skill"} • Lv.${result.fromLevel ?? "-"} → Lv.${result.toLevel ?? "-"}`;
+
 	return (
-		<>
-<CalculatorResult
-	title={title}
-	categoryTitle={
-		category?.title ??
-		"War Academy"
-	}
-	categoryIcon={
-		category?.icon ??
-		"/category/war-academy.png"
-	}
-	name={
-		result.research ||
-		"T12 Skill"
-	}
-	subtitle={
-		<>
-			<span>{result.category}</span>
+		<div
+			className={[
+				"space-y-4 transition-opacity duration-300",
+				completed ? "opacity-65" : "opacity-100",
+			].join(" ")}
+		>
+			<CalculatorResult
+				title={title}
+				categoryTitle={category?.title ?? "War Academy"}
+				categoryIcon={category?.icon ?? "/category/war-academy.png"}
+				name={result.research || "T12 Skill"}
+				subtitle={subtitle}
+				highlightLabel="Power Increase"
+				highlightValue={formatSignedValue(totalPower)}
+				sections={sections}
+			/>
 
-			<span>·</span>
+			{history && calculationEntryId && (
+				<div className="flex justify-end">
+					<CalculationComplete
+						historyId={history.id}
+						entryId={calculationEntryId}
+						completed={completed}
+						resources={completionResources}
+						from={`Lv.${result.fromLevel ?? "-"}`}
+						target={`Lv.${result.toLevel ?? "-"}`}
+						onCompleted={onCompleted}
+					/>
+				</div>
+			)}
 
-			<span>
-				Lv.{result.fromLevel}
-			</span>
-
-			<ArrowRight className="size-4" />
-
-			<span className="text-yellow-500">
-				Lv.{result.toLevel}
-			</span>
-		</>
-	}
-	highlightLabel="Power Increase"
-	highlightValue={formatSignedValue(
-		totalPower,
-	)}
-	sections={sections}
-/>
 			{showAddButton && (
 				<button
 					type="button"
@@ -423,11 +358,9 @@ export default function SkillT12Result({
 				>
 					<Plus className="size-5" />
 
-					<span className="text-base font-medium">
-						Add more items
-					</span>
+					<span className="text-base font-medium">Add more items</span>
 				</button>
 			)}
-		</>
+		</div>
 	);
 }
