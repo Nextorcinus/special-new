@@ -1,11 +1,12 @@
-import HeaderNotification from "./HeaderNotification";
+import AuthButton from "@/components/auth/AuthButton";
 
+import HeaderNotification from "./HeaderNotification";
 
 export default function HeaderActions() {
 	return (
 		<div className="flex items-center gap-3">
-	
 			<HeaderNotification />
+			<AuthButton />
 		</div>
 	);
 }
