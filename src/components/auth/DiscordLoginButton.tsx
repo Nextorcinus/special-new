@@ -90,7 +90,7 @@ export default function DiscordLoginButton() {
 			</span>
 
 			<span className="hidden sm:inline">
-				Login with Discord
+				Login
 			</span>
 
 			<span className="sm:hidden">
