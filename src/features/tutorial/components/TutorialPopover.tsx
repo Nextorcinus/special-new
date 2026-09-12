@@ -1,3 +1,4 @@
+
 "use client";
 
 import { type Driver, driver } from "driver.js";
@@ -23,7 +24,7 @@ type TutorialPopoverProps = {
 	onComplete: () => void;
 };
 
-type TargetRect = {
+type Rect = {
 	top: number;
 	left: number;
 	width: number;
@@ -43,6 +44,17 @@ const INTERACTIVE_STEPS = new Set([
 	"bag-chief-gear",
 ]);
 
+function clamp(
+	value: number,
+	min: number,
+	max: number,
+) {
+	return Math.min(
+		Math.max(value, min),
+		max,
+	);
+}
+
 function getDriverSide(
 	step: TutorialStepConfig,
 ): "top" | "right" | "bottom" | "left" {
@@ -57,11 +69,107 @@ function getDriverSide(
 	return step.placement ?? "bottom";
 }
 
-function clamp(value: number, min: number, max: number) {
-	return Math.min(Math.max(value, min), max);
+function getElementRect(
+	element: HTMLElement,
+): Rect {
+	const rect =
+		element.getBoundingClientRect();
+
+	return {
+		top: rect.top,
+		left: rect.left,
+		width: rect.width,
+		height: rect.height,
+	};
 }
 
-function getInteractiveTarget(step: TutorialStepConfig): HTMLElement | null {
+function mergeRects(rects: Rect[]): Rect | null {
+	if (rects.length === 0) {
+		return null;
+	}
+
+	const top = Math.min(
+		...rects.map((item) => item.top),
+	);
+
+	const left = Math.min(
+		...rects.map((item) => item.left),
+	);
+
+	const right = Math.max(
+		...rects.map(
+			(item) =>
+				item.left + item.width,
+		),
+	);
+
+	const bottom = Math.max(
+		...rects.map(
+			(item) =>
+				item.top + item.height,
+		),
+	);
+
+	return {
+		top,
+		left,
+		width: right - left,
+		height: bottom - top,
+	};
+}
+
+function getInteractiveElements(
+	step: TutorialStepConfig,
+) {
+	if (typeof document === "undefined") {
+		return [];
+	}
+
+	const elements: HTMLElement[] = [];
+
+	if (step.target) {
+		const target =
+			document.querySelector(step.target);
+
+		if (target instanceof HTMLElement) {
+			if (
+				step.id === "chief-gear-type" ||
+				step.id === "chief-gear-from" ||
+				step.id === "chief-gear-target"
+			) {
+				const button =
+					target.querySelector("button");
+
+				if (
+					button instanceof HTMLElement
+				) {
+					elements.push(button);
+				}
+			} else {
+				elements.push(target);
+			}
+		}
+	}
+
+	if (step.id === "bag-chief-gear") {
+		const saveButton =
+			document.querySelector(
+				'[data-tutorial="bag-chief-gear-save"]',
+			);
+
+		if (
+			saveButton instanceof HTMLElement
+		) {
+			elements.push(saveButton);
+		}
+	}
+
+	return elements;
+}
+
+function getPrimaryElement(
+	step: TutorialStepConfig,
+) {
 	if (typeof document === "undefined") {
 		return null;
 	}
@@ -70,7 +178,8 @@ function getInteractiveTarget(step: TutorialStepConfig): HTMLElement | null {
 		return null;
 	}
 
-	const target = document.querySelector(step.target);
+	const target =
+		document.querySelector(step.target);
 
 	if (!(target instanceof HTMLElement)) {
 		return null;
@@ -81,10 +190,11 @@ function getInteractiveTarget(step: TutorialStepConfig): HTMLElement | null {
 		step.id === "chief-gear-from" ||
 		step.id === "chief-gear-target"
 	) {
-		const selectButton = target.querySelector("button");
+		const button =
+			target.querySelector("button");
 
-		if (selectButton instanceof HTMLElement) {
-			return selectButton;
+		if (button instanceof HTMLElement) {
+			return button;
 		}
 	}
 
@@ -100,30 +210,42 @@ export function TutorialPopover({
 	onSkip,
 	onComplete,
 }: TutorialPopoverProps) {
-	const driverRef = useRef<Driver | null>(null);
+	const driverRef =
+		useRef<Driver | null>(null);
 
-	const [mounted, setMounted] = useState(false);
+	const [mounted, setMounted] =
+		useState(false);
 
-	const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+	const [highlightRect, setHighlightRect] =
+		useState<Rect | null>(null);
+
+	const [popoverRect, setPopoverRect] =
+		useState<Rect | null>(null);
 
 	const [popoverPosition, setPopoverPosition] =
-		useState<PopoverPosition | null>(null);
+		useState<PopoverPosition | null>(
+			null,
+		);
 
-	const isInteractiveStep = INTERACTIVE_STEPS.has(step.id);
+	const isInteractive =
+		INTERACTIVE_STEPS.has(step.id);
 
 	const showPrevious =
-		current > 1 && !isInteractiveStep && step.id !== "bag-chief-gear";
+		current > 1 && !isInteractive;
 
 	const showNext =
 		step.allowNext === true &&
-		!isInteractiveStep &&
-		step.id !== "bag-chief-gear";
+		!isInteractive;
 
-	const handleDriverNext = useCallback(() => {
+	const destroyDriver = useCallback(() => {
 		if (driverRef.current) {
 			driverRef.current.destroy();
 			driverRef.current = null;
 		}
+	}, []);
+
+	const handleNext = useCallback(() => {
+		destroyDriver();
 
 		if (step.id === "bag-compare") {
 			onComplete();
@@ -131,25 +253,28 @@ export function TutorialPopover({
 		}
 
 		onNext();
-	}, [onComplete, onNext, step.id]);
+	}, [
+		destroyDriver,
+		onComplete,
+		onNext,
+		step.id,
+	]);
 
-	const handleDriverPrevious = useCallback(() => {
-		if (driverRef.current) {
-			driverRef.current.destroy();
-			driverRef.current = null;
-		}
-
+	const handlePrevious = useCallback(() => {
+		destroyDriver();
 		onPrevious();
-	}, [onPrevious]);
+	}, [
+		destroyDriver,
+		onPrevious,
+	]);
 
-	const handleDriverSkip = useCallback(() => {
-		if (driverRef.current) {
-			driverRef.current.destroy();
-			driverRef.current = null;
-		}
-
+	const handleSkip = useCallback(() => {
+		destroyDriver();
 		onSkip();
-	}, [onSkip]);
+	}, [
+		destroyDriver,
+		onSkip,
+	]);
 
 	useEffect(() => {
 		setMounted(true);
@@ -160,7 +285,7 @@ export function TutorialPopover({
 	}, []);
 
 	useEffect(() => {
-		if (isInteractiveStep) {
+		if (isInteractive) {
 			return;
 		}
 
@@ -168,11 +293,13 @@ export function TutorialPopover({
 			return;
 		}
 
-		const target = step.target ? document.querySelector(step.target) : null;
+		const target = step.target
+			? document.querySelector(step.target)
+			: null;
 
-		const driverInstance = driver({
+		const instance = driver({
 			animate: true,
-			duration: 300,
+			duration: 280,
 			overlayColor: "#000000",
 			overlayOpacity: 0.68,
 			smoothScroll: true,
@@ -181,150 +308,198 @@ export function TutorialPopover({
 			allowKeyboardControl: false,
 			disableActiveInteraction: false,
 			advanceOnClick: false,
-			nextBtnText: step.nextLabel ?? "Next",
-			doneBtnText: step.nextLabel ?? "Next",
+			nextBtnText:
+				step.nextLabel ?? "Next",
+			doneBtnText:
+				step.nextLabel ?? "Next",
 			stagePadding: 8,
 			stageRadius: 16,
 			popoverOffset: 12,
-			popoverClass: "special-lazyness-driver",
+			popoverClass:
+				"special-lazyness-driver",
 			showProgress: false,
 			steps: [
 				{
-					element: target ?? undefined,
+					element:
+						target ?? undefined,
 					popover: {
 						title: step.title,
-						description: step.description,
+						description:
+							step.description,
 						side: getDriverSide(step),
 						align: "center",
 						showButtons: [
-							...(showPrevious ? ["previous" as const] : []),
-							...(showNext ? ["next" as const] : []),
+							...(showPrevious
+								? [
+										"previous" as const,
+									]
+								: []),
+							...(showNext
+								? ["next" as const]
+								: []),
 						],
 					},
-					disableActiveInteraction: false,
+					disableActiveInteraction:
+						false,
 					advanceOnClick: false,
 				},
 			],
-			onNextClick: handleDriverNext,
-			onDoneClick: handleDriverNext,
-			onPrevClick: handleDriverPrevious,
-			onCloseClick: handleDriverSkip,
+			onNextClick: handleNext,
+			onDoneClick: handleNext,
+			onPrevClick: handlePrevious,
+			onCloseClick: handleSkip,
 			onPopoverRender: (popover) => {
 				const footer = popover.footer;
 
-				if (footer && step.showSkip) {
-					const existingSkip = footer.querySelector(
-						".special-lazyness-driver-skip",
+				if (
+					footer &&
+					step.showSkip
+				) {
+					const skip =
+						document.createElement(
+							"button",
+						);
+
+					skip.type = "button";
+					skip.className =
+						"special-lazyness-driver-skip";
+					skip.textContent = "Skip";
+
+					skip.addEventListener(
+						"click",
+						handleSkip,
 					);
 
-					if (!existingSkip) {
-						const skipButton = document.createElement("button");
-
-						skipButton.type = "button";
-
-						skipButton.className = "special-lazyness-driver-skip";
-
-						skipButton.textContent = "Skip";
-
-						skipButton.addEventListener("click", handleDriverSkip);
-
-						footer.insertBefore(skipButton, footer.firstChild);
-					}
+					footer.insertBefore(
+						skip,
+						footer.firstChild,
+					);
 				}
 			},
 			onDestroyStarted: () => {
-				if (driverRef.current === driverInstance) {
+				if (
+					driverRef.current === instance
+				) {
 					driverRef.current = null;
 				}
 			},
 		});
 
-		driverRef.current = driverInstance;
+		driverRef.current = instance;
 
-		driverInstance.drive();
+		instance.drive();
 
 		return () => {
-			if (driverRef.current === driverInstance) {
+			if (
+				driverRef.current === instance
+			) {
 				driverRef.current = null;
 			}
 
-			driverInstance.destroy();
+			instance.destroy();
 		};
 	}, [
-		handleDriverNext,
-		handleDriverPrevious,
-		handleDriverSkip,
-		isInteractiveStep,
+		handleNext,
+		handlePrevious,
+		handleSkip,
+		isInteractive,
 		showNext,
 		showPrevious,
 		step,
 	]);
 
 	useLayoutEffect(() => {
-		if (!isInteractiveStep) {
-			setTargetRect(null);
+		if (!isInteractive) {
+			setHighlightRect(null);
+			setPopoverRect(null);
 			setPopoverPosition(null);
-			return;
-		}
-
-		if (typeof document === "undefined") {
 			return;
 		}
 
 		let frame = 0;
 
-		const updatePosition = () => {
+		const update = () => {
 			cancelAnimationFrame(frame);
 
 			frame = requestAnimationFrame(() => {
-				const target = getInteractiveTarget(step);
+				const elements =
+					getInteractiveElements(step);
 
-				if (!target) {
-					setTargetRect(null);
+				const primary =
+					getPrimaryElement(step);
+
+				if (
+					elements.length === 0 ||
+					!primary
+				) {
+					setHighlightRect(null);
+					setPopoverRect(null);
 					setPopoverPosition(null);
 					return;
 				}
 
-				const rect = target.getBoundingClientRect();
+				const rects =
+					elements.map(getElementRect);
 
-				setTargetRect({
-					top: rect.top,
-					left: rect.left,
-					width: rect.width,
-					height: rect.height,
-				});
+				const merged =
+					mergeRects(rects);
 
-				const viewportWidth = window.innerWidth;
+				const primaryRect =
+					getElementRect(primary);
 
-				const viewportHeight = window.innerHeight;
+				if (!merged) {
+					return;
+				}
 
-				const popoverWidth = Math.min(360, viewportWidth - 24);
+				setHighlightRect(merged);
+				setPopoverRect(primaryRect);
 
-				const popoverHeight = step.id === "bag-chief-gear" ? 170 : 150;
+				const viewportWidth =
+					window.innerWidth;
+
+				const viewportHeight =
+					window.innerHeight;
+
+				const popoverWidth =
+					Math.min(
+						360,
+						viewportWidth - 24,
+					);
+
+				const popoverHeight =
+					step.id === "bag-chief-gear"
+						? 145
+						: 150;
 
 				const gap = 14;
 
 				const left = clamp(
-					rect.left + rect.width / 2 - popoverWidth / 2,
+					primaryRect.left +
+						primaryRect.width / 2 -
+						popoverWidth / 2,
 					12,
-					viewportWidth - popoverWidth - 12,
+					viewportWidth -
+						popoverWidth -
+						12,
 				);
 
-				const spaceAbove = rect.top;
+				const spaceAbove =
+					primaryRect.top;
 
-				const spaceBelow = viewportHeight - rect.bottom;
+				const spaceBelow =
+					viewportHeight -
+					primaryRect.top -
+					primaryRect.height;
 
-				let above: boolean;
+				const above =
+					spaceAbove >=
+					popoverHeight + gap;
 
-				if (step.id === "chief-gear-type") {
-					above = spaceAbove >= popoverHeight + gap;
-				} else if (step.id === "bag-chief-gear") {
-					above = spaceAbove >= popoverHeight + gap && spaceAbove > spaceBelow;
-				} else {
-					above = spaceBelow < popoverHeight + gap && spaceAbove > spaceBelow;
-				}
-
-				const top = above ? rect.top - gap : rect.bottom + gap;
+				const top = above
+					? primaryRect.top - gap
+					: primaryRect.top +
+						primaryRect.height +
+						gap;
 
 				setPopoverPosition({
 					top,
@@ -334,18 +509,25 @@ export function TutorialPopover({
 			});
 		};
 
-		updatePosition();
+		update();
 
-		const timeout = window.setTimeout(updatePosition, 50);
+		const timeout =
+			window.setTimeout(update, 60);
 
-		window.addEventListener("resize", updatePosition, { passive: true });
+		window.addEventListener(
+			"resize",
+			update,
+			{ passive: true },
+		);
 
-		window.addEventListener("scroll", updatePosition, {
-			passive: true,
-			capture: true,
-		});
+		window.addEventListener(
+			"scroll",
+			update,
+			true,
+		);
 
-		const observer = new MutationObserver(updatePosition);
+		const observer =
+			new MutationObserver(update);
 
 		observer.observe(document.body, {
 			childList: true,
@@ -355,16 +537,25 @@ export function TutorialPopover({
 
 		return () => {
 			cancelAnimationFrame(frame);
-
 			window.clearTimeout(timeout);
 
-			window.removeEventListener("resize", updatePosition);
+			window.removeEventListener(
+				"resize",
+				update,
+			);
 
-			window.removeEventListener("scroll", updatePosition, true);
+			window.removeEventListener(
+				"scroll",
+				update,
+				true,
+			);
 
 			observer.disconnect();
 		};
-	}, [isInteractiveStep, step]);
+	}, [
+		isInteractive,
+		step,
+	]);
 
 	if (!mounted) {
 		return null;
@@ -375,315 +566,258 @@ export function TutorialPopover({
 			<style>
 				{`
 					.driver-overlay {
-						pointer-events: none !important;
+						pointer-events:none !important;
 					}
 
 					.driver-stage {
-						pointer-events: none !important;
+						pointer-events:none !important;
 					}
 
 					.driver-active-element {
-						pointer-events: auto !important;
+						pointer-events:auto !important;
 					}
 
-					.special-lazyness-driver {
-						width: min(360px, calc(100vw - 24px)) !important;
-						max-width: 360px !important;
-						margin: 0 !important;
-						padding: 18px !important;
-						border: 1px solid rgba(255, 255, 255, 0.1) !important;
-						border-radius: 16px !important;
-						background: rgb(24, 24, 28) !important;
-						color: #ffffff !important;
-						box-shadow:
-							0 20px 50px rgba(0, 0, 0, 0.45),
-							0 8px 24px rgba(0, 0, 0, 0.28),
-							0 0 0 1px rgba(255, 255, 255, 0.025) !important;
-						backdrop-filter: blur(18px);
-						-webkit-backdrop-filter: blur(18px);
-						pointer-events: none !important;
+					.special-lazyness-driver{
+						width:min(360px,calc(100vw - 24px)) !important;
+						max-width:360px !important;
+						margin:0 !important;
+						padding:18px !important;
+						border:1px solid rgba(255,255,255,.10) !important;
+						border-radius:16px !important;
+						background:rgb(24,24,28) !important;
+						color:#fff !important;
+						box-shadow:0 20px 50px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.025) !important;
+						backdrop-filter:blur(18px);
+						pointer-events:none !important;
 					}
 
-					.special-lazyness-driver .driver-popover-title {
-						margin: 0 !important;
-						font-size: 15px !important;
-						font-weight: 700 !important;
-						line-height: 1.35 !important;
-						color: #ffffff !important;
+					.special-lazyness-driver .driver-popover-title{
+						color:#fff !important;
+						font-size:15px !important;
+						font-weight:700 !important;
 					}
 
-					.special-lazyness-driver .driver-popover-description {
-						margin: 7px 0 0 !important;
-						font-size: 12px !important;
-						font-weight: 400 !important;
-						line-height: 1.55 !important;
-						color: rgba(255, 255, 255, 0.68) !important;
+					.special-lazyness-driver .driver-popover-description{
+						color:rgba(255,255,255,.68) !important;
+						font-size:12px !important;
+						line-height:1.55 !important;
 					}
 
-					.special-lazyness-driver .driver-popover-footer {
-						display: flex !important;
-						align-items: center !important;
-						justify-content: flex-end !important;
-						gap: 8px !important;
-						margin-top: 15px !important;
+					.special-lazyness-driver .driver-popover-footer{
+						margin-top:15px !important;
 					}
 
-					.special-lazyness-driver .driver-popover-footer button {
-						pointer-events: auto !important;
-						border: 0 !important;
-						border-radius: 9px !important;
-						font-size: 11px !important;
-						font-weight: 700 !important;
-						cursor: pointer !important;
+					.special-lazyness-driver .driver-popover-footer button{
+						pointer-events:auto !important;
+						border-radius:9px !important;
+						font-size:11px !important;
+						font-weight:700 !important;
 					}
 
-					.special-lazyness-driver .driver-popover-prev-btn {
-						min-height: 32px !important;
-						padding: 0 13px !important;
-						background: rgba(255, 255, 255, 0.08) !important;
-						color: rgba(255, 255, 255, 0.75) !important;
+					.special-lazyness-driver .driver-popover-prev-btn{
+						background:rgba(255,255,255,.08) !important;
+						color:rgba(255,255,255,.78) !important;
 					}
 
-					.special-lazyness-driver .driver-popover-next-btn {
-						min-height: 32px !important;
-						padding: 0 13px !important;
-						background: #3089c0 !important;
-						color: #ffffff !important;
+					.special-lazyness-driver .driver-popover-next-btn{
+						background:#3089c0 !important;
+						color:#fff !important;
 					}
 
-					.special-lazyness-driver .driver-popover-next-btn:hover {
-						filter: brightness(1.08);
+					.special-lazyness-driver-skip{
+						margin-right:auto !important;
+						border:0 !important;
+						background:transparent !important;
+						color:rgba(255,255,255,.42) !important;
 					}
 
-					.special-lazyness-driver-skip {
-						margin-right: auto !important;
-						padding: 4px !important;
-						background: transparent !important;
-						color: rgba(255, 255, 255, 0.42) !important;
-						font-size: 10px !important;
-						font-weight: 600 !important;
-						line-height: 1 !important;
+					.special-lazyness-tutorial-highlight{
+						position:fixed;
+						z-index:2147483640;
+						box-sizing:border-box;
+						border:3px solid #3089c0;
+						border-radius:16px;
+						background:transparent;
+						box-shadow:0 0 0 4px rgba(48,137,192,.22),0 0 24px rgba(48,137,192,.30),0 0 0 9999px rgba(0,0,0,.68);
+						pointer-events:none;
+						transition:top .18s ease,left .18s ease,width .18s ease,height .18s ease;
 					}
 
-					.special-lazyness-driver-skip:hover {
-						color: rgba(255, 255, 255, 0.72) !important;
+					.special-lazyness-tutorial-highlight::after{
+						content:"";
+						position:absolute;
+						inset:-6px;
+						border:1px solid rgba(48,137,192,.28);
+						border-radius:20px;
 					}
 
-					.special-lazyness-tutorial-highlight {
-						position: fixed;
-						z-index: 2147483640;
-						box-sizing: border-box;
-						border: 3px solid #3089c0;
-						border-radius: 12px;
-						background: transparent;
-						box-shadow:
-							0 0 0 4px rgba(48, 137, 192, 0.22),
-							0 0 24px rgba(48, 137, 192, 0.3),
-							0 0 0 9999px rgba(0, 0, 0, 0.68);
-						pointer-events: none;
-						transition:
-							top 180ms ease,
-							left 180ms ease,
-							width 180ms ease,
-							height 180ms ease;
+					.special-lazyness-tutorial-popover{
+						position:fixed;
+						z-index:2147483647;
+						width:min(360px,calc(100vw - 24px));
+						padding:18px;
+						border:1px solid rgba(255,255,255,.10);
+						border-radius:16px;
+						background:rgb(24,24,28);
+						color:#fff;
+						box-shadow:0 20px 50px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.28);
+						backdrop-filter:blur(18px);
+						pointer-events:none;
 					}
 
-					.special-lazyness-tutorial-highlight::after {
-						content: "";
-						position: absolute;
-						inset: -6px;
-						border: 1px solid rgba(48, 137, 192, 0.3);
-						border-radius: 18px;
-						pointer-events: none;
+					.special-lazyness-tutorial-popover.above{
+						transform:translateY(-100%);
 					}
 
-					.special-lazyness-tutorial-popover {
-						position: fixed;
-						z-index: 2147483647;
-						width: min(360px, calc(100vw - 24px));
-						max-width: 360px;
-						padding: 18px;
-						border: 1px solid rgba(255, 255, 255, 0.1);
-						border-radius: 16px;
-						background: rgb(24, 24, 28);
-						color: #ffffff;
-						box-shadow:
-							0 20px 50px rgba(0, 0, 0, 0.45),
-							0 8px 24px rgba(0, 0, 0, 0.28),
-							0 0 0 1px rgba(255, 255, 255, 0.025);
-						backdrop-filter: blur(18px);
-						-webkit-backdrop-filter: blur(18px);
-						pointer-events: none;
-						animation: special-lazyness-tutorial-in 180ms ease-out;
+					.special-lazyness-tutorial-title{
+						margin:0;
+						font-size:15px;
+						font-weight:700;
+						line-height:1.35;
 					}
 
-					.special-lazyness-tutorial-popover.above {
-						transform: translateY(-100%);
+					.special-lazyness-tutorial-description{
+						margin-top:7px;
+						font-size:12px;
+						line-height:1.55;
+						color:rgba(255,255,255,.68);
 					}
 
-					.special-lazyness-tutorial-title {
-						margin: 0;
-						font-size: 15px;
-						font-weight: 700;
-						line-height: 1.35;
-						letter-spacing: -0.01em;
+					.special-lazyness-tutorial-footer{
+						display:flex;
+						align-items:center;
+						justify-content:space-between;
+						margin-top:15px;
 					}
 
-					.special-lazyness-tutorial-description {
-						margin: 7px 0 0;
-						font-size: 12px;
-						font-weight: 400;
-						line-height: 1.55;
-						color: rgba(255, 255, 255, 0.68);
+					.special-lazyness-tutorial-progress{
+						font-size:10px;
+						font-weight:700;
+						color:rgba(255,255,255,.42);
 					}
 
-					.special-lazyness-tutorial-footer {
-						display: flex;
-						align-items: center;
-						justify-content: space-between;
-						gap: 12px;
-						margin-top: 15px;
+					.special-lazyness-tutorial-actions{
+						display:flex;
+						align-items:center;
+						gap:8px;
 					}
 
-					.special-lazyness-tutorial-progress {
-						font-size: 10px;
-						font-weight: 700;
-						line-height: 1;
-						color: rgba(255, 255, 255, 0.42);
+					.special-lazyness-tutorial-button{
+						pointer-events:auto;
+						min-height:32px;
+						padding:0 13px;
+						border:0;
+						border-radius:9px;
+						background:#3089c0;
+						color:#fff;
+						font-size:11px;
+						font-weight:700;
+						cursor:pointer;
 					}
 
-					.special-lazyness-tutorial-actions {
-						display: flex;
-						align-items: center;
-						gap: 8px;
-					}
-
-					.special-lazyness-tutorial-button {
-						pointer-events: auto;
-						display: inline-flex;
-						align-items: center;
-						justify-content: center;
-						min-height: 32px;
-						padding: 0 13px;
-						border: 0;
-						border-radius: 9px;
-						background: #3089c0;
-						color: #ffffff;
-						font-size: 11px;
-						font-weight: 700;
-						line-height: 1;
-						cursor: pointer;
-						transition:
-							filter 150ms ease,
-							transform 150ms ease;
-					}
-
-					.special-lazyness-tutorial-button:hover {
-						filter: brightness(1.08);
-					}
-
-					.special-lazyness-tutorial-button:active {
-						transform: scale(0.97);
-					}
-
-					.special-lazyness-tutorial-skip {
-						pointer-events: auto;
-						border: 0;
-						padding: 4px;
-						background: transparent;
-						color: rgba(255, 255, 255, 0.42);
-						font-size: 10px;
-						font-weight: 600;
-						line-height: 1;
-						cursor: pointer;
-						transition: color 150ms ease;
-					}
-
-					.special-lazyness-tutorial-skip:hover {
-						color: rgba(255, 255, 255, 0.72);
-					}
-
-					@keyframes special-lazyness-tutorial-in {
-						from {
-							opacity: 0;
-							transform: translateY(6px) scale(0.98);
-						}
-
-						to {
-							opacity: 1;
-							transform: translateY(0) scale(1);
-						}
+					.special-lazyness-tutorial-skip{
+						pointer-events:auto;
+						border:0;
+						background:transparent;
+						color:rgba(255,255,255,.42);
+						font-size:10px;
+						font-weight:600;
+						cursor:pointer;
 					}
 				`}
 			</style>
 
-			{isInteractiveStep && targetRect && (
-				<div
-					className="special-lazyness-tutorial-highlight"
-					style={{
-						top: targetRect.top - 4,
-						left: targetRect.left - 4,
-						width: targetRect.width + 8,
-						height: targetRect.height + 8,
-					}}
-				/>
-			)}
+			{isInteractive &&
+				highlightRect && (
+					<div
+						className="special-lazyness-tutorial-highlight"
+						style={{
+							top:
+								highlightRect.top -
+								4,
+							left:
+								highlightRect.left -
+								4,
+							width:
+								highlightRect.width +
+								8,
+							height:
+								highlightRect.height +
+								8,
+						}}
+					/>
+				)}
 
-			{isInteractiveStep && (
-				<div
-					className={`special-lazyness-tutorial-popover ${
-						popoverPosition?.above ? "above" : ""
-					}`}
-					style={{
-						top: popoverPosition?.top ?? 120,
-						left: popoverPosition?.left ?? 12,
-					}}
-				>
-					<h3 className="special-lazyness-tutorial-title">{step.title}</h3>
+			{isInteractive &&
+				popoverRect &&
+				popoverPosition && (
+					<div
+						className={`special-lazyness-tutorial-popover ${
+							popoverPosition.above
+								? "above"
+								: ""
+						}`}
+						style={{
+							top:
+								popoverPosition.top,
+							left:
+								popoverPosition.left,
+						}}
+					>
+						<h3 className="special-lazyness-tutorial-title">
+							{step.title}
+						</h3>
 
-					<p className="special-lazyness-tutorial-description">
-						{step.description}
-					</p>
+						<p className="special-lazyness-tutorial-description">
+							{step.description}
+						</p>
 
-					<div className="special-lazyness-tutorial-footer">
-						<div className="special-lazyness-tutorial-progress">
-							{current} of {total}
-						</div>
+						<div className="special-lazyness-tutorial-footer">
+							<div className="special-lazyness-tutorial-progress">
+								{current} of {total}
+							</div>
 
-						<div className="special-lazyness-tutorial-actions">
-							{step.showSkip && (
-								<button
-									type="button"
-									className="special-lazyness-tutorial-skip"
-									onClick={onSkip}
-								>
-									Skip
-								</button>
-							)}
+							<div className="special-lazyness-tutorial-actions">
+								{step.showSkip && (
+									<button
+										type="button"
+										className="special-lazyness-tutorial-skip"
+										onClick={
+											handleSkip
+										}
+									>
+										Skip
+									</button>
+								)}
 
-							{showPrevious && (
-								<button
-									type="button"
-									className="special-lazyness-tutorial-button"
-									onClick={onPrevious}
-								>
-									Prev
-								</button>
-							)}
+								{showPrevious && (
+									<button
+										type="button"
+										className="special-lazyness-tutorial-button"
+										onClick={
+											handlePrevious
+										}
+									>
+										Previous
+									</button>
+								)}
 
-							{showNext && (
-								<button
-									type="button"
-									className="special-lazyness-tutorial-button"
-									onClick={handleDriverNext}
-								>
-									{step.nextLabel ?? "Next"}
-								</button>
-							)}
+								{showNext && (
+									<button
+										type="button"
+										className="special-lazyness-tutorial-button"
+										onClick={
+											handleNext
+										}
+									>
+										{step.nextLabel ??
+											"Next"}
+									</button>
+								)}
+							</div>
 						</div>
 					</div>
-				</div>
-			)}
+				)}
 		</>,
 		document.body,
 	);

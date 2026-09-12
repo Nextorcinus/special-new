@@ -1,11 +1,26 @@
 "use client";
 
-import { Backpack, ChevronDown, History, LogOut } from "lucide-react";
+import {
+	Backpack,
+	ChevronDown,
+	History,
+	LogOut,
+} from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import {
+	getSession,
+	signOut,
+} from "next-auth/react";
+import {
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 import ResourceBagDrawer from "@/features/inventory/components/ResourceBagDrawer";
+
+const DISCORD_AUTHORIZED_KEY =
+	"special-lazyness-discord-authorized";
 
 type UserAccountProps = {
 	user: {
@@ -15,34 +30,106 @@ type UserAccountProps = {
 	};
 };
 
-export default function UserAccount({ user }: UserAccountProps) {
+type UserData = {
+	id: string;
+	name?: string | null;
+	image?: string | null;
+};
+
+export default function UserAccount({
+	user,
+}: UserAccountProps) {
 	const [open, setOpen] = useState(false);
 	const [bagOpen, setBagOpen] = useState(false);
+	const [currentUser, setCurrentUser] =
+		useState<UserData>(user);
 
-	const containerRef = useRef<HTMLDivElement>(null);
+	const containerRef =
+		useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
+		setCurrentUser(user);
+	}, [user]);
+
+	useEffect(() => {
+		localStorage.setItem(
+			DISCORD_AUTHORIZED_KEY,
+			"true",
+		);
+	}, []);
+
+	useEffect(() => {
+		async function handleDiscordAuthComplete() {
+			const session = await getSession();
+
+			if (session?.user) {
+				setCurrentUser({
+					id: session.user.id ?? "",
+					name:
+						session.user.name ??
+						"Discord User",
+					image:
+						session.user.image ??
+						null,
+				});
+			}
+		}
+
+		window.addEventListener(
+			"discord-auth-complete",
+			handleDiscordAuthComplete,
+		);
+
+		return () => {
+			window.removeEventListener(
+				"discord-auth-complete",
+				handleDiscordAuthComplete,
+			);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleClickOutside = (
+			event: MouseEvent,
+		) => {
 			if (
 				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
+				!containerRef.current.contains(
+					event.target as Node,
+				)
 			) {
 				setOpen(false);
 			}
 		};
 
-		const handleKeyDown = (event: KeyboardEvent) => {
+		const handleKeyDown = (
+			event: KeyboardEvent,
+		) => {
 			if (event.key === "Escape") {
 				setOpen(false);
 			}
 		};
 
-		document.addEventListener("mousedown", handleClickOutside);
-		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener(
+			"mousedown",
+			handleClickOutside,
+		);
+
+		document.addEventListener(
+			"keydown",
+			handleKeyDown,
+		);
 
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener(
+				"mousedown",
+				handleClickOutside,
+			);
+
+			document.removeEventListener(
+				"keydown",
+				handleKeyDown,
+			);
 		};
 	}, []);
 
@@ -51,43 +138,69 @@ export default function UserAccount({ user }: UserAccountProps) {
 		setBagOpen(true);
 	}
 
+	async function handleLogout() {
+		setOpen(false);
+
+		await signOut({
+			redirectTo: window.location.origin,
+		});
+	}
+
 	return (
 		<>
-			<div ref={containerRef} className="relative">
+			<div
+				ref={containerRef}
+				className="relative"
+			>
 				<button
 					type="button"
-					onClick={() => setOpen((value) => !value)}
+					onClick={() =>
+						setOpen(
+							(value) => !value,
+						)
+					}
 					aria-expanded={open}
 					aria-haspopup="menu"
 					className={`group flex h-12 items-center gap-2 rounded-full border px-1.5 pr-2 transition-all duration-200 active:scale-[0.98] ${
 						open
-							? "border-white/20 bg-white/[0.10] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-							: "border-transparent bg-[var(--button)] hover:border-white/10 hover:bg-[var(--sl-surface-hover)]"
+							? "border-[var(--sl-border)] bg-[var(--sl-surface-hover)] shadow-[0_0_20px_rgba(0,0,0,0.08)]"
+							: "border-transparent bg-[var(--sl-surface)] hover:border-[var(--sl-border)] hover:bg-[var(--sl-surface-hover)]"
 					}`}
 				>
-					{user.image ? (
+					{currentUser.image ? (
 						<img
-							src={user.image}
-							alt={user.name ?? "Discord user"}
+							src={currentUser.image}
+							alt={
+								currentUser.name ??
+								"Discord user"
+							}
 							width={40}
 							height={40}
-							className="size-10 rounded-full object-cover ring-1 ring-white/10"
+							className="size-10 rounded-full object-cover ring-1 ring-[var(--sl-border)]"
 						/>
 					) : (
 						<div className="flex size-10 items-center justify-center rounded-full bg-[var(--sl-surface-hover)]">
 							<span className="text-sm font-semibold text-[var(--sl-text)]">
-								{user.name?.charAt(0).toUpperCase() ?? "U"}
+								{currentUser.name
+									?.charAt(
+										0,
+									)
+									.toUpperCase() ??
+									"U"}
 							</span>
 						</div>
 					)}
 
 					<span className="hidden max-w-28 truncate text-sm font-semibold text-[var(--sl-text)] sm:block">
-						{user.name ?? "Discord User"}
+						{currentUser.name ??
+							"Discord User"}
 					</span>
 
 					<ChevronDown
 						className={`size-4 text-[var(--sl-text-muted)] transition-transform duration-200 ${
-							open ? "rotate-180" : ""
+							open
+								? "rotate-180"
+								: ""
 						}`}
 					/>
 				</button>
@@ -99,28 +212,43 @@ export default function UserAccount({ user }: UserAccountProps) {
 							: "pointer-events-none -translate-y-2 scale-95 opacity-0"
 					}`}
 				>
-					<div className="overflow-hidden rounded-2xl border border-white/10 bg-[rgba(20,20,20,0.96)] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-						<div className="rounded-xl border border-white/[0.04] bg-white/[0.06] p-3">
+					<div className="overflow-hidden rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.18)] backdrop-blur-2xl">
+						<div className="rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface-hover)] p-3">
 							<div className="flex items-center gap-3">
-								{user.image ? (
+								{currentUser.image ? (
 									<img
-										src={user.image}
-										alt={user.name ?? "Discord user"}
-										width={48}
-										height={48}
-										className="size-12 rounded-full object-cover ring-1 ring-white/10"
+										src={
+											currentUser.image
+										}
+										alt={
+											currentUser.name ??
+											"Discord user"
+										}
+										width={
+											48
+										}
+										height={
+											48
+										}
+										className="size-12 rounded-full object-cover ring-1 ring-[var(--sl-border)]"
 									/>
 								) : (
-									<div className="flex size-12 items-center justify-center rounded-full bg-[var(--button)]">
+									<div className="flex size-12 items-center justify-center rounded-full bg-[var(--sl-surface)]">
 										<span className="text-base font-semibold text-[var(--sl-text)]">
-											{user.name?.charAt(0).toUpperCase() ?? "U"}
+											{currentUser.name
+												?.charAt(
+													0,
+												)
+												.toUpperCase() ??
+												"U"}
 										</span>
 									</div>
 								)}
 
 								<div className="min-w-0">
 									<p className="truncate text-sm font-semibold text-[var(--sl-text)]">
-										{user.name ?? "Discord User"}
+										{currentUser.name ??
+											"Discord User"}
 									</p>
 
 									<p className="mt-0.5 text-xs text-[var(--sl-text-muted)]">
@@ -130,56 +258,69 @@ export default function UserAccount({ user }: UserAccountProps) {
 							</div>
 						</div>
 
-						<div className="my-2 h-px bg-white/[0.08]" />
+						<div className="my-2 h-px bg-[var(--sl-border)]" />
 
 						<div className="space-y-1">
 							<Link
 								href="/history"
-								onClick={() => setOpen(false)}
-								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-150 hover:bg-white/[0.07]"
+								onClick={() =>
+									setOpen(
+										false,
+									)
+								}
+								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-150 hover:bg-[var(--sl-surface-hover)]"
 							>
-								<span className="flex size-8 items-center justify-center rounded-lg bg-white/[0.06] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:bg-white/[0.10] group-hover:text-[var(--sl-text)]">
+								<span className="flex size-8 items-center justify-center rounded-lg bg-[var(--sl-surface-hover)] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:text-[var(--sl-primary)]">
 									<History className="size-4" />
 								</span>
 
-								<span className="text-sm font-medium text-[var(--sl-text)]">
+								<span className="text-sm font-medium text-[var(--sl-text-secondary)] transition-colors duration-150 group-hover:text-[var(--sl-text)]">
 									History
 								</span>
 							</Link>
 
 							<button
 								type="button"
-								onClick={handleOpenBag}
-								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-white/[0.07]"
+								onClick={
+									handleOpenBag
+								}
+								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-[var(--sl-surface-hover)]"
 							>
-								<span className="flex size-8 items-center justify-center rounded-lg bg-white/[0.06] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:bg-white/[0.10] group-hover:text-[var(--sl-text)]">
+								<span className="flex size-8 items-center justify-center rounded-lg bg-[var(--sl-surface-hover)] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:text-[var(--sl-primary)]">
 									<Backpack className="size-4" />
 								</span>
 
-								<span className="text-sm font-medium text-[var(--sl-text)]">
+								<span className="text-sm font-medium text-[var(--sl-text-secondary)] transition-colors duration-150 group-hover:text-[var(--sl-text)]">
 									Inventory
 								</span>
 							</button>
 						</div>
 
-						<div className="my-2 h-px bg-white/[0.08]" />
+						<div className="my-2 h-px bg-[var(--sl-border)]" />
 
 						<button
 							type="button"
-							onClick={() => signOut()}
-							className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-red-500/[0.08]"
+							onClick={
+								handleLogout
+							}
+							className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-red-500/10"
 						>
-							<span className="flex size-8 items-center justify-center rounded-lg bg-red-500/[0.10] text-red-400 transition-all duration-150 group-hover:bg-red-500/[0.15]">
+							<span className="flex size-8 items-center justify-center rounded-lg bg-red-500/10 text-red-500 transition-all duration-150 group-hover:bg-red-500/15">
 								<LogOut className="size-4" />
 							</span>
 
-							<span className="text-sm font-semibold text-red-400">Logout</span>
+							<span className="text-sm font-semibold text-red-500">
+								Logout
+							</span>
 						</button>
 					</div>
 				</div>
 			</div>
 
-			<ResourceBagDrawer open={bagOpen} onOpenChange={setBagOpen} />
+			<ResourceBagDrawer
+				open={bagOpen}
+				onOpenChange={setBagOpen}
+			/>
 		</>
 	);
 }

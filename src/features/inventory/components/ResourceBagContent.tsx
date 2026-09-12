@@ -21,10 +21,14 @@ export default function ResourceBagContent({
 }: ResourceBagContentProps) {
 	const tutorial = useTutorial();
 
-	const chiefGearRef = useRef<HTMLDivElement>(null);
+	const chiefGearRef =
+		useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (!tutorial.active || tutorial.step !== "bag-chief-gear") {
+		if (
+			!tutorial.active ||
+			tutorial.step !== "bag-chief-gear"
+		) {
 			return;
 		}
 
@@ -46,23 +50,28 @@ export default function ResourceBagContent({
 		};
 
 		firstFrame = requestAnimationFrame(() => {
-			secondFrame = requestAnimationFrame(scrollToChiefGear);
+			secondFrame = requestAnimationFrame(
+				scrollToChiefGear,
+			);
 		});
 
-		const timeout = window.setTimeout(scrollToChiefGear, 250);
+		const timeout = window.setTimeout(
+			scrollToChiefGear,
+			250,
+		);
 
 		return () => {
 			cancelAnimationFrame(firstFrame);
-
 			cancelAnimationFrame(secondFrame);
-
 			window.clearTimeout(timeout);
 		};
-	}, [tutorial.active, tutorial.step]);
+	}, [
+		tutorial.active,
+		tutorial.step,
+	]);
 
 	function handleSaveAndClose() {
 		onTutorialSave?.();
-
 		onClose();
 	}
 
@@ -78,15 +87,29 @@ export default function ResourceBagContent({
 
 			<div className="space-y-5">
 				{RESOURCE_GROUPS.map((group) => {
-					const isChiefGear = group.id === "chief-gear";
+					const isChiefGear =
+						group.id === "chief-gear";
 
 					return (
-						<div key={group.id} className="space-y-3">
+						<div
+							key={group.id}
+							className="space-y-3"
+						>
 							<div
-								ref={isChiefGear ? chiefGearRef : undefined}
-								data-tutorial={isChiefGear ? "bag-chief-gear" : undefined}
+								ref={
+									isChiefGear
+										? chiefGearRef
+										: undefined
+								}
+								data-tutorial={
+									isChiefGear
+										? "bag-chief-gear"
+										: undefined
+								}
 							>
-								<ResourceGroup group={group} />
+								<ResourceGroup
+									group={group}
+								/>
 							</div>
 
 							{isChiefGear && (
@@ -106,6 +129,7 @@ export default function ResourceBagContent({
 			<div className="sticky bottom-0 mt-4 flex gap-3 bg-[var(--sl-surface)] py-4">
 				<button
 					type="button"
+					data-tutorial="bag-chief-gear-save"
 					onClick={handleSaveAndClose}
 					className="h-11 flex-1 rounded-full bg-[var(--sl-primary)] text-sm font-semibold text-[var(--sl-primary-foreground)]"
 				>
