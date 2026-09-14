@@ -22,7 +22,10 @@ function saveToStorage(resources: InventoryResources) {
 		return;
 	}
 
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(resources));
+	localStorage.setItem(
+		STORAGE_KEY,
+		JSON.stringify(resources),
+	);
 }
 
 async function getSession() {
@@ -31,10 +34,13 @@ async function getSession() {
 	}
 
 	try {
-		const response = await fetch("/api/auth/session", {
-			method: "GET",
-			cache: "no-store",
-		});
+		const response = await fetch(
+			"/api/auth/session",
+			{
+				method: "GET",
+				cache: "no-store",
+			},
+		);
 
 		if (!response.ok) {
 			return null;
@@ -53,13 +59,18 @@ async function getSession() {
 }
 
 async function getRemoteInventory(): Promise<InventoryResources> {
-	const response = await fetch("/api/inventory", {
-		method: "GET",
-		cache: "no-store",
-	});
+	const response = await fetch(
+		"/api/inventory",
+		{
+			method: "GET",
+			cache: "no-store",
+		},
+	);
 
 	if (!response.ok) {
-		throw new Error("Failed to load remote inventory");
+		throw new Error(
+			"Failed to load remote inventory",
+		);
 	}
 
 	const data = await response.json();
@@ -75,38 +86,53 @@ async function getRemoteInventory(): Promise<InventoryResources> {
 	return data.resources as InventoryResources;
 }
 
-async function saveRemoteInventory(resources: InventoryResources) {
-	const response = await fetch("/api/inventory", {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
+async function saveRemoteInventory(
+	resources: InventoryResources,
+) {
+	const response = await fetch(
+		"/api/inventory",
+		{
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				resources,
+			}),
 		},
-		body: JSON.stringify({
-			resources,
-		}),
-	});
+	);
 
 	if (!response.ok) {
-		throw new Error("Failed to save remote inventory");
+		throw new Error(
+			"Failed to save remote inventory",
+		);
 	}
 }
 
 async function deleteRemoteInventory() {
-	const response = await fetch("/api/inventory", {
-		method: "DELETE",
-	});
+	const response = await fetch(
+		"/api/inventory",
+		{
+			method: "DELETE",
+		},
+	);
 
 	if (!response.ok) {
-		throw new Error("Failed to delete remote inventory");
+		throw new Error(
+			"Failed to delete remote inventory",
+		);
 	}
 }
 
-function readLocalInventory() {
+function readLocalInventory():
+	| InventoryResources
+	| null {
 	if (typeof window === "undefined") {
 		return null;
 	}
 
-	const saved = localStorage.getItem(STORAGE_KEY);
+	const saved =
+		localStorage.getItem(STORAGE_KEY);
 
 	if (!saved) {
 		return null;
@@ -115,7 +141,11 @@ function readLocalInventory() {
 	try {
 		const parsed = JSON.parse(saved);
 
-		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+		if (
+			!parsed ||
+			typeof parsed !== "object" ||
+			Array.isArray(parsed)
+		) {
 			return null;
 		}
 
@@ -126,10 +156,13 @@ function readLocalInventory() {
 }
 
 async function syncAuthenticatedInventory() {
-	const localResources = readLocalInventory();
+	const localResources =
+		readLocalInventory();
 
 	if (localResources) {
-		await saveRemoteInventory(localResources);
+		await saveRemoteInventory(
+			localResources,
+		);
 
 		localStorage.removeItem(STORAGE_KEY);
 
@@ -139,224 +172,335 @@ async function syncAuthenticatedInventory() {
 	return await getRemoteInventory();
 }
 
-export const useInventoryStore = create<InventoryState>((set, get) => ({
-	resources: {},
+export const useInventoryStore =
+	create<InventoryState>((set, get) => ({
+		resources: {},
 
-	setResource: (id, value) => {
-		const next = {
-			...get().resources,
-			[id]: value,
-		};
-
-		set({
-			resources: next,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(next);
-				return;
-			}
-
-			try {
-				await saveRemoteInventory(next);
-				localStorage.removeItem(STORAGE_KEY);
-			} catch {
-				saveToStorage(next);
-			}
-		});
-	},
-
-	setResources: (resources) => {
-		set({
-			resources,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(resources);
-				return;
-			}
-
-			try {
-				await saveRemoteInventory(resources);
-				localStorage.removeItem(STORAGE_KEY);
-			} catch {
-				saveToStorage(resources);
-			}
-		});
-	},
-
-	loadResources: async () => {
-		if (typeof window === "undefined") {
-			return;
-		}
-
-		const session = await getSession();
-
-		if (!session) {
-			const saved = readLocalInventory();
+		setResource: (id, value) => {
+			const next = {
+				...get().resources,
+				[id]: value,
+			};
 
 			set({
-				resources: saved ?? {},
+				resources: next,
 			});
 
-			return;
-		}
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(next);
+						return;
+					}
 
-		try {
-			const resources = await syncAuthenticatedInventory();
+					try {
+						await saveRemoteInventory(
+							next,
+						);
 
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+					} catch {
+						saveToStorage(next);
+					}
+				},
+			);
+		},
+
+		setResources: (resources) => {
 			set({
 				resources,
 			});
-		} catch {
-			const saved = readLocalInventory();
 
-			set({
-				resources: saved ?? {},
-			});
-		}
-	},
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(resources);
+						return;
+					}
 
-	syncAfterLogin: async () => {
-		try {
+					try {
+						await saveRemoteInventory(
+							resources,
+						);
+
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+					} catch {
+						saveToStorage(resources);
+					}
+				},
+			);
+		},
+
+		loadResources: async () => {
+			if (typeof window === "undefined") {
+				return;
+			}
+
 			const session = await getSession();
 
 			if (!session) {
+				const saved =
+					readLocalInventory();
+
+				set({
+					resources: saved ?? {},
+				});
+
 				return;
 			}
 
-			const resources = await syncAuthenticatedInventory();
+			try {
+				const resources =
+					await syncAuthenticatedInventory();
+
+				set({
+					resources,
+				});
+			} catch {
+				const saved =
+					readLocalInventory();
+
+				set({
+					resources: saved ?? {},
+				});
+			}
+		},
+
+		syncAfterLogin: async () => {
+			const session =
+				await getSession();
+
+			if (!session) {
+				return;
+			}
+
+			const resources =
+				await syncAuthenticatedInventory();
 
 			set({
 				resources,
 			});
-		} catch {}
-	},
+		},
 
-	clearResources: () => {
-		set({
-			resources: {},
-		});
+		clearResources: () => {
+			set({
+				resources: {},
+			});
 
-		void getSession().then(async (session) => {
-			if (!session) {
-				localStorage.removeItem(STORAGE_KEY);
-				return;
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+
+						return;
+					}
+
+					try {
+						await deleteRemoteInventory();
+
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+					} catch {
+						saveToStorage({});
+					}
+				},
+			);
+		},
+
+		consumeResources: (required) => {
+			const current =
+				get().resources;
+
+			const normalized =
+				Object.entries(required).reduce<
+					Record<string, number>
+				>(
+					(acc, [key, value]) => {
+						const amount =
+							Number(value);
+
+						if (
+							Number.isFinite(
+								amount,
+							) &&
+							amount > 0
+						) {
+							acc[key] = amount;
+						}
+
+						return acc;
+					},
+					{},
+				);
+
+			if (
+				Object.keys(normalized)
+					.length === 0
+			) {
+				return true;
 			}
 
-			try {
-				await deleteRemoteInventory();
-				localStorage.removeItem(STORAGE_KEY);
-			} catch {
-				saveToStorage({});
-			}
-		});
-	},
+			for (const [
+				key,
+				requiredAmount,
+			] of Object.entries(
+				normalized,
+			)) {
+				const currentAmount =
+					parseShortNumber(
+						current[key] ?? "",
+					);
 
-	consumeResources: (required) => {
-		const current = get().resources;
-
-		const normalized = Object.entries(required).reduce<Record<string, number>>(
-			(acc, [key, value]) => {
-				const amount = Number(value);
-
-				if (Number.isFinite(amount) && amount > 0) {
-					acc[key] = amount;
+				if (
+					!Number.isFinite(
+						currentAmount,
+					) ||
+					currentAmount <
+						requiredAmount
+				) {
+					return false;
 				}
+			}
 
-				return acc;
-			},
-			{},
-		);
+			const next = {
+				...current,
+			};
 
-		if (Object.keys(normalized).length === 0) {
+			for (const [
+				key,
+				requiredAmount,
+			] of Object.entries(
+				normalized,
+			)) {
+				const currentAmount =
+					parseShortNumber(
+						current[key] ?? "",
+					);
+
+				const remaining = Math.max(
+					0,
+					currentAmount -
+						requiredAmount,
+				);
+
+				next[key] =
+					formatCompactNumber(
+						remaining,
+					);
+			}
+
+			set({
+				resources: next,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(next);
+						return;
+					}
+
+					try {
+						await saveRemoteInventory(
+							next,
+						);
+
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+					} catch {
+						saveToStorage(next);
+					}
+				},
+			);
+
 			return true;
-		}
+		},
 
-		for (const [key, requiredAmount] of Object.entries(normalized)) {
-			const currentAmount = parseShortNumber(current[key] ?? "");
-
-			if (!Number.isFinite(currentAmount) || currentAmount < requiredAmount) {
+		exchangeDesignPlans: (
+			amberAmount,
+		) => {
+			if (
+				!Number.isFinite(
+					amberAmount,
+				) ||
+				amberAmount <= 0
+			) {
 				return false;
 			}
-		}
 
-		const next = {
-			...current,
-		};
+			const resources =
+				get().resources;
 
-		for (const [key, requiredAmount] of Object.entries(normalized)) {
-			const currentAmount = parseShortNumber(current[key] ?? "");
+			const plans =
+				parseShortNumber(
+					resources[
+						"design-plans"
+					] ?? "",
+				);
 
-			const remaining = Math.max(0, currentAmount - requiredAmount);
+			const amber =
+				parseShortNumber(
+					resources[
+						"lunar-amber"
+					] ?? "",
+				);
 
-			next[key] = formatCompactNumber(remaining);
-		}
+			const requiredPlans =
+				amberAmount * 10;
 
-		set({
-			resources: next,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(next);
-				return;
+			if (
+				plans < requiredPlans
+			) {
+				return false;
 			}
 
-			try {
-				await saveRemoteInventory(next);
-				localStorage.removeItem(STORAGE_KEY);
-			} catch {
-				saveToStorage(next);
-			}
-		});
+			const next = {
+				...resources,
+				"design-plans":
+					formatCompactNumber(
+						plans -
+							requiredPlans,
+					),
+				"lunar-amber":
+					formatCompactNumber(
+						amber +
+							amberAmount,
+					),
+			};
 
-		return true;
-	},
+			set({
+				resources: next,
+			});
 
-	exchangeDesignPlans: (amberAmount) => {
-		if (!Number.isFinite(amberAmount) || amberAmount <= 0) {
-			return false;
-		}
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(next);
+						return;
+					}
 
-		const resources = get().resources;
+					try {
+						await saveRemoteInventory(
+							next,
+						);
 
-		const plans = parseShortNumber(resources["design-plans"] ?? "");
+						localStorage.removeItem(
+							STORAGE_KEY,
+						);
+					} catch {
+						saveToStorage(next);
+					}
+				},
+			);
 
-		const amber = parseShortNumber(resources["lunar-amber"] ?? "");
-
-		const requiredPlans = amberAmount * 10;
-
-		if (plans < requiredPlans) {
-			return false;
-		}
-
-		const next = {
-			...resources,
-			"design-plans": formatCompactNumber(plans - requiredPlans),
-			"lunar-amber": formatCompactNumber(amber + amberAmount),
-		};
-
-		set({
-			resources: next,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(next);
-				return;
-			}
-
-			try {
-				await saveRemoteInventory(next);
-				localStorage.removeItem(STORAGE_KEY);
-			} catch {
-				saveToStorage(next);
-			}
-		});
-
-		return true;
-	},
-}));
+			return true;
+		},
+	}));

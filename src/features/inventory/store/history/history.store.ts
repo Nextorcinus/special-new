@@ -306,9 +306,11 @@ function readLocalHistory() {
 }
 
 async function syncAuthenticatedHistory() {
-	const remoteItems = await getRemoteHistory();
+	const remoteItems =
+		await getRemoteHistory();
 
-	const localItems = readLocalHistory();
+	const localItems =
+		readLocalHistory();
 
 	const uploadedItems =
 		await syncLocalHistoryToRemote(
@@ -316,24 +318,16 @@ async function syncAuthenticatedHistory() {
 			remoteItems,
 		);
 
-	const remoteIds = new Set(
-		remoteItems.map((item) => item.id),
-	);
-
-	const mergedItems = [
-		...uploadedItems,
-		...remoteItems.filter(
-			(item) => !remoteIds.has(item.id),
+	const uploadedIds = new Set(
+		uploadedItems.map(
+			(item) => item.id,
 		),
-	];
+	);
 
 	const existingRemoteItems =
 		remoteItems.filter(
 			(item) =>
-				!uploadedItems.some(
-					(localItem) =>
-						localItem.id === item.id,
-				),
+				!uploadedIds.has(item.id),
 		);
 
 	const finalItems = [
@@ -341,9 +335,15 @@ async function syncAuthenticatedHistory() {
 		...existingRemoteItems,
 	];
 
-	localStorage.removeItem(STORAGE_KEY);
+	if (localItems.length > 0) {
+		localStorage.removeItem(
+			STORAGE_KEY,
+		);
+	}
 
-	return finalItems.map(normalizeHistoryItem);
+	return finalItems.map(
+		normalizeHistoryItem,
+	);
 }
 
 export const useHistoryStore =

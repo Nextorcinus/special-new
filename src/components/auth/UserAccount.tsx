@@ -50,8 +50,12 @@ type SyncStatus =
 export default function UserAccount({
 	user,
 }: UserAccountProps) {
-	const [open, setOpen] = useState(false);
-	const [bagOpen, setBagOpen] = useState(false);
+	const [open, setOpen] =
+		useState(false);
+
+	const [bagOpen, setBagOpen] =
+		useState(false);
+
 	const [currentUser, setCurrentUser] =
 		useState<UserData>(user);
 
@@ -68,6 +72,9 @@ export default function UserAccount({
 
 	const containerRef =
 		useRef<HTMLDivElement>(null);
+
+	const syncRunningRef =
+		useRef(false);
 
 	const syncHistory =
 		useHistoryStore(
@@ -91,67 +98,79 @@ export default function UserAccount({
 	}, []);
 
 	async function runDataSync() {
-		setSyncOpen(true);
+		if (syncRunningRef.current) {
+			return;
+		}
 
+		syncRunningRef.current = true;
+
+		setSyncOpen(true);
 		setHistoryStatus("syncing");
 		setInventoryStatus("syncing");
 
-		const historyPromise =
-			syncHistory().then(
-				() => {
-					setHistoryStatus(
-						"complete",
-					);
-				},
-				() => {
-					setHistoryStatus(
-						"complete",
-					);
-				},
+		try {
+			const historyPromise =
+				syncHistory()
+					.then(() => {
+						setHistoryStatus(
+							"complete",
+						);
+					})
+					.catch(() => {
+						setHistoryStatus(
+							"complete",
+						);
+					});
+
+			const inventoryPromise =
+				syncInventory()
+					.then(() => {
+						setInventoryStatus(
+							"complete",
+						);
+					})
+					.catch(() => {
+						setInventoryStatus(
+							"complete",
+						);
+					});
+
+			await Promise.all([
+				historyPromise,
+				inventoryPromise,
+			]);
+
+			await new Promise(
+				(resolve) =>
+					setTimeout(
+						resolve,
+						500,
+					),
 			);
-
-		const inventoryPromise =
-			syncInventory().then(
-				() => {
-					setInventoryStatus(
-						"complete",
-					);
-				},
-				() => {
-					setInventoryStatus(
-						"complete",
-					);
-				},
-			);
-
-		await Promise.all([
-			historyPromise,
-			inventoryPromise,
-		]);
-
-		await new Promise((resolve) =>
-			setTimeout(resolve, 500),
-		);
-
-		setSyncOpen(false);
+		} finally {
+			setSyncOpen(false);
+			syncRunningRef.current = false;
+		}
 	}
 
 	useEffect(() => {
 		let active = true;
 
 		async function handleDiscordAuthComplete() {
-			const session = await getSession();
+			const session =
+				await getSession();
 
-			if (!session?.user) {
-				return;
-			}
-
-			if (!active) {
+			if (
+				!session?.user ||
+				!active
+			) {
 				return;
 			}
 
 			setCurrentUser({
-				id: session.user.id ?? "",
+				id:
+					session.user.id ??
+					"",
 				name:
 					session.user.name ??
 					"Discord User",
@@ -176,24 +195,29 @@ export default function UserAccount({
 				handleDiscordAuthComplete,
 			);
 		};
-	}, [syncHistory, syncInventory]);
+	}, [
+		syncHistory,
+		syncInventory,
+	]);
 
 	useEffect(() => {
 		let active = true;
 
 		async function handleInitialSession() {
-			const session = await getSession();
+			const session =
+				await getSession();
 
-			if (!session?.user) {
-				return;
-			}
-
-			if (!active) {
+			if (
+				!session?.user ||
+				!active
+			) {
 				return;
 			}
 
 			setCurrentUser({
-				id: session.user.id ?? "",
+				id:
+					session.user.id ??
+					"",
 				name:
 					session.user.name ??
 					"Discord User",
@@ -211,9 +235,9 @@ export default function UserAccount({
 				sessionStorage.removeItem(
 					DISCORD_SYNC_PENDING_KEY,
 				);
-
-				await runDataSync();
 			}
+
+			await runDataSync();
 		}
 
 		void handleInitialSession();
@@ -221,7 +245,10 @@ export default function UserAccount({
 		return () => {
 			active = false;
 		};
-	}, [syncHistory, syncInventory]);
+	}, [
+		syncHistory,
+		syncInventory,
+	]);
 
 	useEffect(() => {
 		const handleClickOutside = (
@@ -292,7 +319,8 @@ export default function UserAccount({
 					type="button"
 					onClick={() =>
 						setOpen(
-							(value) => !value,
+							(value) =>
+								!value,
 						)
 					}
 					aria-expanded={open}
