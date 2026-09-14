@@ -28,6 +28,9 @@ const DISCORD_AUTHORIZED_KEY =
 const DISCORD_SYNC_PENDING_KEY =
 	"special-lazyness-discord-sync-pending";
 
+const DATA_SYNCED_KEY =
+	"special-lazyness-data-synced";
+
 type UserAccountProps = {
 	user: {
 		id: string;
@@ -140,6 +143,11 @@ export default function UserAccount({
 				inventoryPromise,
 			]);
 
+			sessionStorage.setItem(
+				DATA_SYNCED_KEY,
+				"true",
+			);
+
 			await new Promise(
 				(resolve) =>
 					setTimeout(
@@ -178,6 +186,10 @@ export default function UserAccount({
 					session.user.image ??
 					null,
 			});
+
+			sessionStorage.removeItem(
+				DATA_SYNCED_KEY,
+			);
 
 			await runDataSync();
 		}
@@ -231,13 +243,28 @@ export default function UserAccount({
 					DISCORD_SYNC_PENDING_KEY,
 				);
 
+			const alreadySynced =
+				sessionStorage.getItem(
+					DATA_SYNCED_KEY,
+				) === "true";
+
 			if (pending === "true") {
 				sessionStorage.removeItem(
 					DISCORD_SYNC_PENDING_KEY,
 				);
+
+				sessionStorage.removeItem(
+					DATA_SYNCED_KEY,
+				);
+
+				await runDataSync();
+
+				return;
 			}
 
-			await runDataSync();
+			if (!alreadySynced) {
+				await runDataSync();
+			}
 		}
 
 		void handleInitialSession();
@@ -302,6 +329,14 @@ export default function UserAccount({
 
 	async function handleLogout() {
 		setOpen(false);
+
+		sessionStorage.removeItem(
+			DATA_SYNCED_KEY,
+		);
+
+		sessionStorage.removeItem(
+			DISCORD_SYNC_PENDING_KEY,
+		);
 
 		await signOut({
 			redirectTo:
