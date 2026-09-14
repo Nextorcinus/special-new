@@ -20,7 +20,10 @@ type CompleteCalculationResult = {
 type HistoryState = {
 	items: CalculationHistoryItem[];
 	loadHistory: () => Promise<void>;
-	saveCalculation: (item: SaveCalculationPayload) => CalculationHistoryItem;
+	syncAfterLogin: () => Promise<void>;
+	saveCalculation: (
+		item: SaveCalculationPayload,
+	) => CalculationHistoryItem;
 	updateCalculation: (
 		id: string,
 		item: SaveCalculationPayload,
@@ -42,15 +45,22 @@ type HistoryState = {
 const STORAGE_KEY = "special-lazyness-history";
 
 function createId(module: string) {
-	return `${module}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+	return `${module}_${Date.now()}_${Math.random()
+		.toString(36)
+		.slice(2, 8)}`;
 }
 
-function saveToStorage(items: CalculationHistoryItem[]) {
+function saveToStorage(
+	items: CalculationHistoryItem[],
+) {
 	if (typeof window === "undefined") {
 		return;
 	}
 
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+	localStorage.setItem(
+		STORAGE_KEY,
+		JSON.stringify(items),
+	);
 }
 
 function createHistoryEntry(
@@ -68,17 +78,25 @@ function createHistoryEntry(
 	};
 }
 
-function normalizeHistoryEntry<TForm = any, TResult = any>(
+function normalizeHistoryEntry<
+	TForm = any,
+	TResult = any,
+>(
 	entry: CalculationHistoryEntry<TForm, TResult>,
 ): CalculationHistoryEntry<TForm, TResult> {
 	return {
 		...entry,
 		completed: entry.completed ?? false,
-		completedAt: entry.completed ? entry.completedAt : undefined,
+		completedAt: entry.completed
+			? entry.completedAt
+			: undefined,
 	};
 }
 
-function createLegacyHistoryEntry<TForm = any, TResult = any>(
+function createLegacyHistoryEntry<
+	TForm = any,
+	TResult = any,
+>(
 	item: CalculationHistoryItem<TForm, TResult>,
 ): CalculationHistoryEntry<TForm, TResult> {
 	return {
@@ -114,10 +132,13 @@ async function getSession() {
 	}
 
 	try {
-		const response = await fetch("/api/auth/session", {
-			method: "GET",
-			cache: "no-store",
-		});
+		const response = await fetch(
+			"/api/auth/session",
+			{
+				method: "GET",
+				cache: "no-store",
+			},
+		);
 
 		if (!response.ok) {
 			return null;
@@ -142,7 +163,9 @@ async function getRemoteHistory() {
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to load remote history");
+		throw new Error(
+			"Failed to load remote history",
+		);
 	}
 
 	const data = await response.json();
@@ -154,7 +177,9 @@ async function getRemoteHistory() {
 	return data.items as CalculationHistoryItem[];
 }
 
-async function createRemoteHistory(item: CalculationHistoryItem) {
+async function createRemoteHistory(
+	item: CalculationHistoryItem,
+) {
 	const response = await fetch("/api/history", {
 		method: "POST",
 		headers: {
@@ -163,85 +188,182 @@ async function createRemoteHistory(item: CalculationHistoryItem) {
 		body: JSON.stringify(item),
 	});
 
-	if (!response.ok && response.status !== 409) {
-		throw new Error("Failed to create remote history");
+	if (
+		!response.ok &&
+		response.status !== 409
+	) {
+		throw new Error(
+			"Failed to create remote history",
+		);
 	}
 }
 
-async function updateRemoteHistory(id: string, item: CalculationHistoryItem) {
-	const response = await fetch(`/api/history/${encodeURIComponent(id)}`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
+async function updateRemoteHistory(
+	id: string,
+	item: CalculationHistoryItem,
+) {
+	const response = await fetch(
+		`/api/history/${encodeURIComponent(id)}`,
+		{
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(item),
 		},
-		body: JSON.stringify(item),
-	});
+	);
 
 	if (!response.ok) {
-		throw new Error("Failed to update remote history");
+		throw new Error(
+			"Failed to update remote history",
+		);
 	}
 }
 
 async function deleteRemoteHistory(id: string) {
-	const response = await fetch(`/api/history/${encodeURIComponent(id)}`, {
-		method: "DELETE",
-	});
+	const response = await fetch(
+		`/api/history/${encodeURIComponent(id)}`,
+		{
+			method: "DELETE",
+		},
+	);
 
-	if (!response.ok && response.status !== 404) {
-		throw new Error("Failed to delete remote history");
+	if (
+		!response.ok &&
+		response.status !== 404
+	) {
+		throw new Error(
+			"Failed to delete remote history",
+		);
 	}
 }
 
-async function clearRemoteHistory(module?: CalculationModule) {
+async function clearRemoteHistory(
+	module?: CalculationModule,
+) {
 	const histories = await getRemoteHistory();
 
 	const targets = module
-		? histories.filter((item) => item.module === module)
+		? histories.filter(
+				(item) => item.module === module,
+			)
 		: histories;
 
-	await Promise.all(targets.map((item) => deleteRemoteHistory(item.id)));
+	await Promise.all(
+		targets.map((item) =>
+			deleteRemoteHistory(item.id),
+		),
+	);
 }
 
 async function syncLocalHistoryToRemote(
 	localItems: CalculationHistoryItem[],
 	remoteItems: CalculationHistoryItem[],
 ) {
-	const remoteIds = new Set(remoteItems.map((item) => item.id));
+	const remoteIds = new Set(
+		remoteItems.map((item) => item.id),
+	);
 
 	const localItemsToUpload = localItems.filter(
 		(item) => !remoteIds.has(item.id),
 	);
 
 	await Promise.all(
-		localItemsToUpload.map((item) => createRemoteHistory(item)),
+		localItemsToUpload.map((item) =>
+			createRemoteHistory(item),
+		),
 	);
+
+	return localItemsToUpload;
 }
 
-export const useHistoryStore = create<HistoryState>((set, get) => ({
-	items: [],
+function readLocalHistory() {
+	if (typeof window === "undefined") {
+		return [];
+	}
 
-	loadHistory: async () => {
-		if (typeof window === "undefined") {
-			return;
+	const saved =
+		localStorage.getItem(STORAGE_KEY);
+
+	if (!saved) {
+		return [];
+	}
+
+	try {
+		const parsedItems =
+			JSON.parse(saved) as CalculationHistoryItem[];
+
+		if (!Array.isArray(parsedItems)) {
+			return [];
 		}
 
-		const session = await getSession();
+		return parsedItems.map(
+			normalizeHistoryItem,
+		);
+	} catch {
+		return [];
+	}
+}
 
-		if (!session) {
-			const saved = localStorage.getItem(STORAGE_KEY);
+async function syncAuthenticatedHistory() {
+	const remoteItems = await getRemoteHistory();
 
-			if (!saved) {
-				set({
-					items: [],
-				});
+	const localItems = readLocalHistory();
 
+	const uploadedItems =
+		await syncLocalHistoryToRemote(
+			localItems,
+			remoteItems,
+		);
+
+	const remoteIds = new Set(
+		remoteItems.map((item) => item.id),
+	);
+
+	const mergedItems = [
+		...uploadedItems,
+		...remoteItems.filter(
+			(item) => !remoteIds.has(item.id),
+		),
+	];
+
+	const existingRemoteItems =
+		remoteItems.filter(
+			(item) =>
+				!uploadedItems.some(
+					(localItem) =>
+						localItem.id === item.id,
+				),
+		);
+
+	const finalItems = [
+		...uploadedItems,
+		...existingRemoteItems,
+	];
+
+	localStorage.removeItem(STORAGE_KEY);
+
+	return finalItems.map(normalizeHistoryItem);
+}
+
+export const useHistoryStore =
+	create<HistoryState>((set, get) => ({
+		items: [],
+
+		loadHistory: async () => {
+			if (typeof window === "undefined") {
 				return;
 			}
 
-			try {
-				const parsedItems = JSON.parse(saved) as CalculationHistoryItem[];
+			const session = await getSession();
 
-				if (!Array.isArray(parsedItems)) {
+			if (!session) {
+				const saved =
+					localStorage.getItem(
+						STORAGE_KEY,
+					);
+
+				if (!saved) {
 					set({
 						items: [],
 					});
@@ -249,436 +371,640 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 					return;
 				}
 
-				const normalizedItems = parsedItems.map(normalizeHistoryItem);
+				try {
+					const parsedItems =
+						JSON.parse(
+							saved,
+						) as CalculationHistoryItem[];
 
-				set({
-					items: normalizedItems,
-				});
+					if (
+						!Array.isArray(
+							parsedItems,
+						)
+					) {
+						set({
+							items: [],
+						});
 
-				saveToStorage(normalizedItems);
-			} catch {
-				set({
-					items: [],
-				});
+						return;
+					}
+
+					const normalizedItems =
+						parsedItems.map(
+							normalizeHistoryItem,
+						);
+
+					set({
+						items: normalizedItems,
+					});
+
+					saveToStorage(
+						normalizedItems,
+					);
+				} catch {
+					set({
+						items: [],
+					});
+				}
+
+				return;
 			}
 
-			return;
-		}
+			try {
+				const syncedItems =
+					await syncAuthenticatedHistory();
 
-		try {
-			const localSaved = localStorage.getItem(STORAGE_KEY);
+				set({
+					items: syncedItems,
+				});
+			} catch {
+				const saved =
+					localStorage.getItem(
+						STORAGE_KEY,
+					);
 
-			let localItems: CalculationHistoryItem[] = [];
+				if (!saved) {
+					set({
+						items: [],
+					});
 
-			if (localSaved) {
+					return;
+				}
+
 				try {
-					const parsedLocal = JSON.parse(
-						localSaved,
-					) as CalculationHistoryItem[];
+					const parsedItems =
+						JSON.parse(
+							saved,
+						) as CalculationHistoryItem[];
 
-					if (Array.isArray(parsedLocal)) {
-						localItems = parsedLocal.map(normalizeHistoryItem);
+					if (
+						!Array.isArray(
+							parsedItems,
+						)
+					) {
+						set({
+							items: [],
+						});
+
+						return;
 					}
+
+					set({
+						items: parsedItems.map(
+							normalizeHistoryItem,
+						),
+					});
 				} catch {
-					localItems = [];
+					set({
+						items: [],
+					});
 				}
 			}
+		},
 
-			const remoteItems = await getRemoteHistory();
+		syncAfterLogin: async () => {
+			try {
+				const session =
+					await getSession();
 
-			await syncLocalHistoryToRemote(localItems, remoteItems);
+				if (!session) {
+					return;
+				}
 
-			const syncedItems = await getRemoteHistory();
+				const syncedItems =
+					await syncAuthenticatedHistory();
+
+				set({
+					items: syncedItems,
+				});
+			} catch {}
+		},
+
+		saveCalculation: (item) => {
+			const now =
+				new Date().toISOString();
+
+			const firstEntry =
+				createHistoryEntry(item);
+
+			const newItem: CalculationHistoryItem =
+				{
+					...item,
+					id: createId(item.module),
+					items: [firstEntry],
+					isPinned:
+						item.isPinned ?? false,
+					createdAt: now,
+					updatedAt: undefined,
+				};
+
+			const nextItems = [
+				newItem,
+				...get().items,
+			];
 
 			set({
-				items: syncedItems.map(normalizeHistoryItem),
+				items: nextItems,
 			});
 
-			localStorage.removeItem(STORAGE_KEY);
-		} catch {
-			const saved = localStorage.getItem(STORAGE_KEY);
-
-			if (!saved) {
-				set({
-					items: [],
-				});
-
-				return;
-			}
-
-			try {
-				const parsedItems = JSON.parse(saved) as CalculationHistoryItem[];
-
-				if (!Array.isArray(parsedItems)) {
-					set({
-						items: [],
-					});
-
-					return;
-				}
-
-				set({
-					items: parsedItems.map(normalizeHistoryItem),
-				});
-			} catch {
-				set({
-					items: [],
-				});
-			}
-		}
-	},
-
-	saveCalculation: (item) => {
-		const now = new Date().toISOString();
-
-		const firstEntry = createHistoryEntry(item);
-
-		const newItem: CalculationHistoryItem = {
-			...item,
-			id: createId(item.module),
-			items: [firstEntry],
-			isPinned: item.isPinned ?? false,
-			createdAt: now,
-			updatedAt: undefined,
-		};
-
-		const nextItems = [newItem, ...get().items];
-
-		set({
-			items: nextItems,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
-			}
-
-			try {
-				await createRemoteHistory(newItem);
-			} catch {}
-		});
-
-		return newItem;
-	},
-
-	updateCalculation: (id, item) => {
-		const now = new Date().toISOString();
-
-		const currentItems = get().items;
-
-		const existingItem = currentItems.find((history) => history.id === id);
-
-		if (!existingItem) {
-			return null;
-		}
-
-		const updatedEntry = createHistoryEntry(item);
-
-		const existingEntries =
-			existingItem.items && existingItem.items.length > 0
-				? existingItem.items.map(normalizeHistoryEntry)
-				: [createLegacyHistoryEntry(existingItem)];
-
-		const nextEntries = existingEntries.map((entry, index) => {
-			if (index !== 0) {
-				return entry;
-			}
-
-			return {
-				...entry,
-				id: entry.id,
-				title: updatedEntry.title,
-				subtitle: updatedEntry.subtitle,
-				form: updatedEntry.form,
-				result: updatedEntry.result,
-				completed: false,
-				completedAt: undefined,
-			};
-		});
-
-		const updatedItem: CalculationHistoryItem = {
-			...existingItem,
-			form: item.form,
-			result: item.result,
-			title: existingItem.title,
-			subtitle:
-				nextEntries.length > 1 ? `${nextEntries.length} Items` : item.subtitle,
-			items: nextEntries,
-			isPinned: existingItem.isPinned ?? false,
-			createdAt: existingItem.createdAt,
-			updatedAt: now,
-		};
-
-		const nextItems = currentItems.map((history) =>
-			history.id === id ? updatedItem : history,
-		);
-
-		set({
-			items: nextItems,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
-			}
-
-			try {
-				await updateRemoteHistory(id, updatedItem);
-			} catch {}
-		});
-
-		return updatedItem;
-	},
-
-	addCalculationItem: (id, item) => {
-		const now = new Date().toISOString();
-
-		const currentItems = get().items;
-
-		const existingItem = currentItems.find((history) => history.id === id);
-
-		if (!existingItem) {
-			return null;
-		}
-
-		const nextEntry = createHistoryEntry(item);
-
-		const existingEntries =
-			existingItem.items && existingItem.items.length > 0
-				? existingItem.items.map(normalizeHistoryEntry)
-				: [createLegacyHistoryEntry(existingItem)];
-
-		const updatedItem: CalculationHistoryItem = {
-			...existingItem,
-			title: existingItem.title,
-			subtitle: `${existingEntries.length + 1} Items`,
-			items: [...existingEntries, nextEntry],
-			updatedAt: now,
-		};
-
-		const nextItems = currentItems.map((history) =>
-			history.id === id ? updatedItem : history,
-		);
-
-		set({
-			items: nextItems,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
-			}
-
-			try {
-				await updateRemoteHistory(id, updatedItem);
-			} catch {}
-		});
-
-		return updatedItem;
-	},
-
-	completeCalculationItem: (historyId, entryId) => {
-		const currentItems = get().items;
-
-		const existingHistory = currentItems.find(
-			(history) => history.id === historyId,
-		);
-
-		if (!existingHistory) {
-			return {
-				history: null,
-				success: false,
-				reason: "NOT_FOUND",
-			};
-		}
-
-		const existingEntries =
-			existingHistory.items && existingHistory.items.length > 0
-				? existingHistory.items.map(normalizeHistoryEntry)
-				: [createLegacyHistoryEntry(existingHistory)];
-
-		const existingEntry = existingEntries.find((entry) => entry.id === entryId);
-
-		if (!existingEntry) {
-			return {
-				history: existingHistory,
-				success: false,
-				reason: "NOT_FOUND",
-			};
-		}
-
-		if (existingEntry.completed === true) {
-			return {
-				history: existingHistory,
-				success: false,
-				reason: "ALREADY_COMPLETED",
-			};
-		}
-
-		const now = new Date().toISOString();
-
-		const updatedEntries = existingEntries.map((entry) => {
-			if (entry.id !== entryId) {
-				return entry;
-			}
-
-			return {
-				...entry,
-				completed: true,
-				completedAt: now,
-			};
-		});
-
-		const updatedHistory: CalculationHistoryItem = {
-			...existingHistory,
-			items: updatedEntries,
-			updatedAt: now,
-		};
-
-		const nextItems = currentItems.map((history) =>
-			history.id === historyId ? updatedHistory : history,
-		);
-
-		set({
-			items: nextItems,
-		});
-
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
-			}
-
-			try {
-				await updateRemoteHistory(historyId, updatedHistory);
-			} catch {}
-		});
-
-		return {
-			history: updatedHistory,
-			success: true,
-		};
-	},
-
-	renameHistory: (id, title) => {
-		const cleanTitle = title.trim();
-
-		if (!cleanTitle) {
-			return;
-		}
-
-		const nextItems = get().items.map((item) =>
-			item.id === id
-				? {
-						...item,
-						title: cleanTitle,
-						updatedAt: new Date().toISOString(),
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
 					}
-				: item,
-		);
 
-		set({
-			items: nextItems,
-		});
+					try {
+						await createRemoteHistory(
+							newItem,
+						);
+					} catch {}
+				},
+			);
 
-		const updatedItem = nextItems.find((item) => item.id === id);
+			return newItem;
+		},
 
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
+		updateCalculation: (id, item) => {
+			const now =
+				new Date().toISOString();
+
+			const currentItems =
+				get().items;
+
+			const existingItem =
+				currentItems.find(
+					(history) =>
+						history.id === id,
+				);
+
+			if (!existingItem) {
+				return null;
 			}
 
-			if (!updatedItem) {
-				return;
-			}
+			const updatedEntry =
+				createHistoryEntry(item);
 
-			try {
-				await updateRemoteHistory(id, updatedItem);
-			} catch {}
-		});
-	},
+			const existingEntries =
+				existingItem.items &&
+				existingItem.items.length > 0
+					? existingItem.items.map(
+							normalizeHistoryEntry,
+						)
+					: [
+							createLegacyHistoryEntry(
+								existingItem,
+							),
+						];
 
-	togglePinHistory: (id) => {
-		const nextItems = get().items.map((item) =>
-			item.id === id
-				? {
-						...item,
-						isPinned: !item.isPinned,
-						updatedAt: new Date().toISOString(),
+			const nextEntries =
+				existingEntries.map(
+					(entry, index) => {
+						if (index !== 0) {
+							return entry;
+						}
+
+						return {
+							...entry,
+							id: entry.id,
+							title:
+								updatedEntry.title,
+							subtitle:
+								updatedEntry.subtitle,
+							form:
+								updatedEntry.form,
+							result:
+								updatedEntry.result,
+							completed:
+								false,
+							completedAt:
+								undefined,
+						};
+					},
+				);
+
+			const updatedItem: CalculationHistoryItem =
+				{
+					...existingItem,
+					form: item.form,
+					result: item.result,
+					title: existingItem.title,
+					subtitle:
+						nextEntries.length > 1
+							? `${nextEntries.length} Items`
+							: item.subtitle,
+					items: nextEntries,
+					isPinned:
+						existingItem.isPinned ??
+						false,
+					createdAt:
+						existingItem.createdAt,
+					updatedAt: now,
+				};
+
+			const nextItems =
+				currentItems.map(
+					(history) =>
+						history.id === id
+							? updatedItem
+							: history,
+				);
+
+			set({
+				items: nextItems,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
 					}
-				: item,
-		);
 
-		set({
-			items: nextItems,
-		});
+					try {
+						await updateRemoteHistory(
+							id,
+							updatedItem,
+						);
+					} catch {}
+				},
+			);
 
-		const updatedItem = nextItems.find((item) => item.id === id);
+			return updatedItem;
+		},
 
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
+		addCalculationItem: (id, item) => {
+			const now =
+				new Date().toISOString();
+
+			const currentItems =
+				get().items;
+
+			const existingItem =
+				currentItems.find(
+					(history) =>
+						history.id === id,
+				);
+
+			if (!existingItem) {
+				return null;
+			}
+
+			const nextEntry =
+				createHistoryEntry(item);
+
+			const existingEntries =
+				existingItem.items &&
+				existingItem.items.length > 0
+					? existingItem.items.map(
+							normalizeHistoryEntry,
+						)
+					: [
+							createLegacyHistoryEntry(
+								existingItem,
+							),
+						];
+
+			const updatedItem: CalculationHistoryItem =
+				{
+					...existingItem,
+					title: existingItem.title,
+					subtitle: `${existingEntries.length + 1} Items`,
+					items: [
+						...existingEntries,
+						nextEntry,
+					],
+					updatedAt: now,
+				};
+
+			const nextItems =
+				currentItems.map(
+					(history) =>
+						history.id === id
+							? updatedItem
+							: history,
+				);
+
+			set({
+				items: nextItems,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
+
+					try {
+						await updateRemoteHistory(
+							id,
+							updatedItem,
+						);
+					} catch {}
+				},
+			);
+
+			return updatedItem;
+		},
+
+		completeCalculationItem: (
+			historyId,
+			entryId,
+		) => {
+			const currentItems =
+				get().items;
+
+			const existingHistory =
+				currentItems.find(
+					(history) =>
+						history.id === historyId,
+				);
+
+			if (!existingHistory) {
+				return {
+					history: null,
+					success: false,
+					reason: "NOT_FOUND",
+				};
+			}
+
+			const existingEntries =
+				existingHistory.items &&
+				existingHistory.items.length > 0
+					? existingHistory.items.map(
+							normalizeHistoryEntry,
+						)
+					: [
+							createLegacyHistoryEntry(
+								existingHistory,
+							),
+						];
+
+			const existingEntry =
+				existingEntries.find(
+					(entry) =>
+						entry.id === entryId,
+				);
+
+			if (!existingEntry) {
+				return {
+					history:
+						existingHistory,
+					success: false,
+					reason: "NOT_FOUND",
+				};
+			}
+
+			if (
+				existingEntry.completed ===
+				true
+			) {
+				return {
+					history:
+						existingHistory,
+					success: false,
+					reason: "ALREADY_COMPLETED",
+				};
+			}
+
+			const now =
+				new Date().toISOString();
+
+			const updatedEntries =
+				existingEntries.map(
+					(entry) => {
+						if (
+							entry.id !==
+							entryId
+						) {
+							return entry;
+						}
+
+						return {
+							...entry,
+							completed: true,
+							completedAt: now,
+						};
+					},
+				);
+
+			const updatedHistory: CalculationHistoryItem =
+				{
+					...existingHistory,
+					items: updatedEntries,
+					updatedAt: now,
+				};
+
+			const nextItems =
+				currentItems.map(
+					(history) =>
+						history.id === historyId
+							? updatedHistory
+							: history,
+				);
+
+			set({
+				items: nextItems,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
+
+					try {
+						await updateRemoteHistory(
+							historyId,
+							updatedHistory,
+						);
+					} catch {}
+				},
+			);
+
+			return {
+				history: updatedHistory,
+				success: true,
+			};
+		},
+
+		renameHistory: (id, title) => {
+			const cleanTitle =
+				title.trim();
+
+			if (!cleanTitle) {
 				return;
 			}
 
-			if (!updatedItem) {
-				return;
-			}
+			const nextItems =
+				get().items.map((item) =>
+					item.id === id
+						? {
+								...item,
+								title: cleanTitle,
+								updatedAt:
+									new Date().toISOString(),
+							}
+						: item,
+				);
 
-			try {
-				await updateRemoteHistory(id, updatedItem);
-			} catch {}
-		});
-	},
+			set({
+				items: nextItems,
+			});
 
-	deleteHistory: (id) => {
-		const nextItems = get().items.filter((item) => item.id !== id);
+			const updatedItem =
+				nextItems.find(
+					(item) =>
+						item.id === id,
+				);
 
-		set({
-			items: nextItems,
-		});
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
 
-		void getSession().then(async (session) => {
-			if (!session) {
-				saveToStorage(nextItems);
-				return;
-			}
+					if (!updatedItem) {
+						return;
+					}
 
-			try {
-				await deleteRemoteHistory(id);
-			} catch {}
-		});
-	},
+					try {
+						await updateRemoteHistory(
+							id,
+							updatedItem,
+						);
+					} catch {}
+				},
+			);
+		},
 
-	clearHistory: (module) => {
-		const currentItems = get().items;
+		togglePinHistory: (id) => {
+			const nextItems =
+				get().items.map((item) =>
+					item.id === id
+						? {
+								...item,
+								isPinned:
+									!item.isPinned,
+								updatedAt:
+									new Date().toISOString(),
+							}
+						: item,
+				);
 
-		const nextItems = module
-			? currentItems.filter((item) => item.module !== module)
-			: [];
+			set({
+				items: nextItems,
+			});
 
-		set({
-			items: nextItems,
-		});
+			const updatedItem =
+				nextItems.find(
+					(item) =>
+						item.id === id,
+				);
 
-		void getSession().then(async (session) => {
-			if (!session) {
-				if (!module) {
-					localStorage.removeItem(STORAGE_KEY);
-					return;
-				}
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
 
-				saveToStorage(nextItems);
-				return;
-			}
+					if (!updatedItem) {
+						return;
+					}
 
-			try {
-				await clearRemoteHistory(module);
-			} catch {}
-		});
-	},
-}));
+					try {
+						await updateRemoteHistory(
+							id,
+							updatedItem,
+						);
+					} catch {}
+				},
+			);
+		},
+
+		deleteHistory: (id) => {
+			const nextItems =
+				get().items.filter(
+					(item) =>
+						item.id !== id,
+				);
+
+			set({
+				items: nextItems,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
+
+					try {
+						await deleteRemoteHistory(
+							id,
+						);
+					} catch {}
+				},
+			);
+		},
+
+		clearHistory: (module) => {
+			const currentItems =
+				get().items;
+
+			const nextItems = module
+				? currentItems.filter(
+						(item) =>
+							item.module !==
+							module,
+					)
+				: [];
+
+			set({
+				items: nextItems,
+			});
+
+			void getSession().then(
+				async (session) => {
+					if (!session) {
+						if (!module) {
+							localStorage.removeItem(
+								STORAGE_KEY,
+							);
+							return;
+						}
+
+						saveToStorage(
+							nextItems,
+						);
+						return;
+					}
+
+					try {
+						await clearRemoteHistory(
+							module,
+						);
+					} catch {}
+				},
+			);
+		},
+	}));

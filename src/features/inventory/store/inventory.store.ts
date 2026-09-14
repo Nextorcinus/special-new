@@ -8,17 +8,12 @@ type InventoryResources = Record<string, string>;
 
 type InventoryState = {
 	resources: InventoryResources;
-
 	setResource: (id: string, value: string) => void;
-
 	setResources: (resources: InventoryResources) => void;
-
 	loadResources: () => Promise<void>;
-
+	syncAfterLogin: () => Promise<void>;
 	clearResources: () => void;
-
 	consumeResources: (resources: Record<string, number>) => boolean;
-
 	exchangeDesignPlans: (amberAmount: number) => boolean;
 };
 
@@ -106,6 +101,44 @@ async function deleteRemoteInventory() {
 	}
 }
 
+function readLocalInventory() {
+	if (typeof window === "undefined") {
+		return null;
+	}
+
+	const saved = localStorage.getItem(STORAGE_KEY);
+
+	if (!saved) {
+		return null;
+	}
+
+	try {
+		const parsed = JSON.parse(saved);
+
+		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+			return null;
+		}
+
+		return parsed as InventoryResources;
+	} catch {
+		return null;
+	}
+}
+
+async function syncAuthenticatedInventory() {
+	const localResources = readLocalInventory();
+
+	if (localResources) {
+		await saveRemoteInventory(localResources);
+
+		localStorage.removeItem(STORAGE_KEY);
+
+		return localResources;
+	}
+
+	return await getRemoteInventory();
+}
+
 export const useInventoryStore = create<InventoryState>((set, get) => ({
 	resources: {},
 
@@ -162,102 +195,44 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 		const session = await getSession();
 
 		if (!session) {
-			const saved = localStorage.getItem(STORAGE_KEY);
+			const saved = readLocalInventory();
 
-			if (!saved) {
-				set({
-					resources: {},
-				});
-
-				return;
-			}
-
-			try {
-				const parsed = JSON.parse(saved);
-
-				if (
-					!parsed ||
-					typeof parsed !== "object" ||
-					Array.isArray(parsed)
-				) {
-					set({
-						resources: {},
-					});
-
-					return;
-				}
-
-				set({
-					resources: parsed,
-				});
-			} catch {
-				set({
-					resources: {},
-				});
-			}
+			set({
+				resources: saved ?? {},
+			});
 
 			return;
 		}
 
 		try {
-			const localSaved = localStorage.getItem(STORAGE_KEY);
-
-			if (localSaved) {
-				try {
-					const localResources = JSON.parse(localSaved);
-
-					if (
-						localResources &&
-						typeof localResources === "object" &&
-						!Array.isArray(localResources)
-					) {
-						await saveRemoteInventory(localResources);
-
-						localStorage.removeItem(STORAGE_KEY);
-
-						set({
-							resources: localResources,
-						});
-
-						return;
-					}
-				} catch {}
-			}
-
-			const remoteResources = await getRemoteInventory();
+			const resources = await syncAuthenticatedInventory();
 
 			set({
-				resources: remoteResources,
+				resources,
 			});
 		} catch {
-			const saved = localStorage.getItem(STORAGE_KEY);
+			const saved = readLocalInventory();
 
-			if (!saved) {
-				set({
-					resources: {},
-				});
+			set({
+				resources: saved ?? {},
+			});
+		}
+	},
 
+	syncAfterLogin: async () => {
+		try {
+			const session = await getSession();
+
+			if (!session) {
 				return;
 			}
 
-			try {
-				const parsed = JSON.parse(saved);
+			const resources = await syncAuthenticatedInventory();
 
-				if (
-					parsed &&
-					typeof parsed === "object" &&
-					!Array.isArray(parsed)
-				) {
-					set({
-						resources: parsed,
-					});
-				}
-			} catch {
-				set({
-					resources: {},
-				});
-			}
-		}
+			set({
+				resources,
+			});
+		} catch {}
 	},
 
 	clearResources: () => {
@@ -283,17 +258,18 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 	consumeResources: (required) => {
 		const current = get().resources;
 
-		const normalized = Object.entries(required).reduce<
-			Record<string, number>
-		>((acc, [key, value]) => {
-			const amount = Number(value);
+		const normalized = Object.entries(required).reduce<Record<string, number>>(
+			(acc, [key, value]) => {
+				const amount = Number(value);
 
-			if (Number.isFinite(amount) && amount > 0) {
-				acc[key] = amount;
-			}
+				if (Number.isFinite(amount) && amount > 0) {
+					acc[key] = amount;
+				}
 
-			return acc;
-		}, {});
+				return acc;
+			},
+			{},
+		);
 
 		if (Object.keys(normalized).length === 0) {
 			return true;
@@ -302,10 +278,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 		for (const [key, requiredAmount] of Object.entries(normalized)) {
 			const currentAmount = parseShortNumber(current[key] ?? "");
 
-			if (
-				!Number.isFinite(currentAmount) ||
-				currentAmount < requiredAmount
-			) {
+			if (!Number.isFinite(currentAmount) || currentAmount < requiredAmount) {
 				return false;
 			}
 		}
@@ -350,13 +323,9 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 
 		const resources = get().resources;
 
-		const plans = parseShortNumber(
-			resources["design-plans"] ?? "",
-		);
+		const plans = parseShortNumber(resources["design-plans"] ?? "");
 
-		const amber = parseShortNumber(
-			resources["lunar-amber"] ?? "",
-		);
+		const amber = parseShortNumber(resources["lunar-amber"] ?? "");
 
 		const requiredPlans = amberAmount * 10;
 
@@ -366,12 +335,8 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 
 		const next = {
 			...resources,
-			"design-plans": formatCompactNumber(
-				plans - requiredPlans,
-			),
-			"lunar-amber": formatCompactNumber(
-				amber + amberAmount,
-			),
+			"design-plans": formatCompactNumber(plans - requiredPlans),
+			"lunar-amber": formatCompactNumber(amber + amberAmount),
 		};
 
 		set({
