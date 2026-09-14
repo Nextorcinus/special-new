@@ -1,14 +1,32 @@
 "use client";
 
-import { Backpack, ChevronDown, History, LogOut } from "lucide-react";
+import {
+	Backpack,
+	ChevronDown,
+	History,
+	LogOut,
+} from "lucide-react";
 import Link from "next/link";
-import { getSession, signOut } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import {
+	getSession,
+	signOut,
+} from "next-auth/react";
+import {
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+
+import SyncOverlay from "@/components/auth/SyncOverlay";
 import ResourceBagDrawer from "@/features/inventory/components/ResourceBagDrawer";
 import { useHistoryStore } from "@/features/inventory/store/history/history.store";
 import { useInventoryStore } from "@/features/inventory/store/inventory.store";
 
-const DISCORD_AUTHORIZED_KEY = "special-lazyness-discord-authorized";
+const DISCORD_AUTHORIZED_KEY =
+	"special-lazyness-discord-authorized";
+
+const DISCORD_SYNC_PENDING_KEY =
+	"special-lazyness-discord-sync-pending";
 
 type UserAccountProps = {
 	user: {
@@ -24,54 +42,103 @@ type UserData = {
 	image?: string | null;
 };
 
-export default function UserAccount({ user }: UserAccountProps) {
+type SyncStatus =
+	| "waiting"
+	| "syncing"
+	| "complete";
+
+export default function UserAccount({
+	user,
+}: UserAccountProps) {
 	const [open, setOpen] = useState(false);
 	const [bagOpen, setBagOpen] = useState(false);
-	const [currentUser, setCurrentUser] = useState<UserData>(user);
+	const [currentUser, setCurrentUser] =
+		useState<UserData>(user);
 
-	const containerRef = useRef<HTMLDivElement>(null);
+	const [syncOpen, setSyncOpen] =
+		useState(false);
 
-	const syncHistory = useHistoryStore((state) => state.syncAfterLogin);
+	const [historyStatus, setHistoryStatus] =
+		useState<SyncStatus>("waiting");
 
-	const syncInventory = useInventoryStore((state) => state.syncAfterLogin);
+	const [
+		inventoryStatus,
+		setInventoryStatus,
+	] = useState<SyncStatus>("waiting");
+
+	const containerRef =
+		useRef<HTMLDivElement>(null);
+
+	const syncHistory =
+		useHistoryStore(
+			(state) => state.syncAfterLogin,
+		);
+
+	const syncInventory =
+		useInventoryStore(
+			(state) => state.syncAfterLogin,
+		);
 
 	useEffect(() => {
 		setCurrentUser(user);
 	}, [user]);
 
 	useEffect(() => {
-		localStorage.setItem(DISCORD_AUTHORIZED_KEY, "true");
+		localStorage.setItem(
+			DISCORD_AUTHORIZED_KEY,
+			"true",
+		);
 	}, []);
+
+	async function runDataSync() {
+		setSyncOpen(true);
+
+		setHistoryStatus("syncing");
+		setInventoryStatus("syncing");
+
+		const historyPromise =
+			syncHistory().then(
+				() => {
+					setHistoryStatus(
+						"complete",
+					);
+				},
+				() => {
+					setHistoryStatus(
+						"complete",
+					);
+				},
+			);
+
+		const inventoryPromise =
+			syncInventory().then(
+				() => {
+					setInventoryStatus(
+						"complete",
+					);
+				},
+				() => {
+					setInventoryStatus(
+						"complete",
+					);
+				},
+			);
+
+		await Promise.all([
+			historyPromise,
+			inventoryPromise,
+		]);
+
+		await new Promise((resolve) =>
+			setTimeout(resolve, 500),
+		);
+
+		setSyncOpen(false);
+	}
 
 	useEffect(() => {
 		let active = true;
 
-		async function syncAccountData() {
-			const session = await getSession();
-
-			if (!session?.user) {
-				return;
-			}
-
-			if (active) {
-				setCurrentUser({
-					id: session.user.id ?? "",
-					name: session.user.name ?? "Discord User",
-					image: session.user.image ?? null,
-				});
-			}
-
-			await Promise.all([syncHistory(), syncInventory()]);
-		}
-
-		void syncAccountData();
-
-		return () => {
-			active = false;
-		};
-	}, [syncHistory, syncInventory]);
-
-	useEffect(() => {
 		async function handleDiscordAuthComplete() {
 			const session = await getSession();
 
@@ -79,18 +146,31 @@ export default function UserAccount({ user }: UserAccountProps) {
 				return;
 			}
 
+			if (!active) {
+				return;
+			}
+
 			setCurrentUser({
 				id: session.user.id ?? "",
-				name: session.user.name ?? "Discord User",
-				image: session.user.image ?? null,
+				name:
+					session.user.name ??
+					"Discord User",
+				image:
+					session.user.image ??
+					null,
 			});
 
-			await Promise.all([syncHistory(), syncInventory()]);
+			await runDataSync();
 		}
 
-		window.addEventListener("discord-auth-complete", handleDiscordAuthComplete);
+		window.addEventListener(
+			"discord-auth-complete",
+			handleDiscordAuthComplete,
+		);
 
 		return () => {
+			active = false;
+
 			window.removeEventListener(
 				"discord-auth-complete",
 				handleDiscordAuthComplete,
@@ -99,29 +179,92 @@ export default function UserAccount({ user }: UserAccountProps) {
 	}, [syncHistory, syncInventory]);
 
 	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
+		let active = true;
+
+		async function handleInitialSession() {
+			const session = await getSession();
+
+			if (!session?.user) {
+				return;
+			}
+
+			if (!active) {
+				return;
+			}
+
+			setCurrentUser({
+				id: session.user.id ?? "",
+				name:
+					session.user.name ??
+					"Discord User",
+				image:
+					session.user.image ??
+					null,
+			});
+
+			const pending =
+				sessionStorage.getItem(
+					DISCORD_SYNC_PENDING_KEY,
+				);
+
+			if (pending === "true") {
+				sessionStorage.removeItem(
+					DISCORD_SYNC_PENDING_KEY,
+				);
+
+				await runDataSync();
+			}
+		}
+
+		void handleInitialSession();
+
+		return () => {
+			active = false;
+		};
+	}, [syncHistory, syncInventory]);
+
+	useEffect(() => {
+		const handleClickOutside = (
+			event: MouseEvent,
+		) => {
 			if (
 				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
+				!containerRef.current.contains(
+					event.target as Node,
+				)
 			) {
 				setOpen(false);
 			}
 		};
 
-		const handleKeyDown = (event: KeyboardEvent) => {
+		const handleKeyDown = (
+			event: KeyboardEvent,
+		) => {
 			if (event.key === "Escape") {
 				setOpen(false);
 			}
 		};
 
-		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener(
+			"mousedown",
+			handleClickOutside,
+		);
 
-		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener(
+			"keydown",
+			handleKeyDown,
+		);
 
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener(
+				"mousedown",
+				handleClickOutside,
+			);
 
-			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener(
+				"keydown",
+				handleKeyDown,
+			);
 		};
 	}, []);
 
@@ -134,16 +277,24 @@ export default function UserAccount({ user }: UserAccountProps) {
 		setOpen(false);
 
 		await signOut({
-			redirectTo: window.location.origin,
+			redirectTo:
+				window.location.origin,
 		});
 	}
 
 	return (
 		<>
-			<div ref={containerRef} className="relative">
+			<div
+				ref={containerRef}
+				className="relative"
+			>
 				<button
 					type="button"
-					onClick={() => setOpen((value) => !value)}
+					onClick={() =>
+						setOpen(
+							(value) => !value,
+						)
+					}
 					aria-expanded={open}
 					aria-haspopup="menu"
 					className={`group flex h-12 items-center gap-2 rounded-full border px-1.5 pr-2 transition-all duration-200 active:scale-[0.98] ${
@@ -154,8 +305,13 @@ export default function UserAccount({ user }: UserAccountProps) {
 				>
 					{currentUser.image ? (
 						<img
-							src={currentUser.image}
-							alt={currentUser.name ?? "Discord user"}
+							src={
+								currentUser.image
+							}
+							alt={
+								currentUser.name ??
+								"Discord user"
+							}
 							width={40}
 							height={40}
 							className="size-10 rounded-full object-cover ring-1 ring-[var(--sl-border)]"
@@ -163,18 +319,26 @@ export default function UserAccount({ user }: UserAccountProps) {
 					) : (
 						<div className="flex size-10 items-center justify-center rounded-full bg-[var(--sl-surface-hover)]">
 							<span className="text-sm font-semibold text-[var(--sl-text)]">
-								{currentUser.name?.charAt(0).toUpperCase() ?? "U"}
+								{currentUser.name
+									?.charAt(
+										0,
+									)
+									.toUpperCase() ??
+									"U"}
 							</span>
 						</div>
 					)}
 
 					<span className="hidden max-w-28 truncate text-sm font-semibold text-[var(--sl-text)] sm:block">
-						{currentUser.name ?? "Discord User"}
+						{currentUser.name ??
+							"Discord User"}
 					</span>
 
 					<ChevronDown
 						className={`size-4 text-[var(--sl-text-muted)] transition-transform duration-200 ${
-							open ? "rotate-180" : ""
+							open
+								? "rotate-180"
+								: ""
 						}`}
 					/>
 				</button>
@@ -191,23 +355,38 @@ export default function UserAccount({ user }: UserAccountProps) {
 							<div className="flex items-center gap-3">
 								{currentUser.image ? (
 									<img
-										src={currentUser.image}
-										alt={currentUser.name ?? "Discord user"}
-										width={48}
-										height={48}
+										src={
+											currentUser.image
+										}
+										alt={
+											currentUser.name ??
+											"Discord user"
+										}
+										width={
+											48
+										}
+										height={
+											48
+										}
 										className="size-12 rounded-full object-cover ring-1 ring-[var(--sl-border)]"
 									/>
 								) : (
 									<div className="flex size-12 items-center justify-center rounded-full bg-[var(--sl-surface)]">
 										<span className="text-base font-semibold text-[var(--sl-text)]">
-											{currentUser.name?.charAt(0).toUpperCase() ?? "U"}
+											{currentUser.name
+												?.charAt(
+													0,
+												)
+												.toUpperCase() ??
+												"U"}
 										</span>
 									</div>
 								)}
 
 								<div className="min-w-0">
 									<p className="truncate text-sm font-semibold text-[var(--sl-text)]">
-										{currentUser.name ?? "Discord User"}
+										{currentUser.name ??
+											"Discord User"}
 									</p>
 
 									<p className="mt-0.5 text-xs text-[var(--sl-text-muted)]">
@@ -222,7 +401,11 @@ export default function UserAccount({ user }: UserAccountProps) {
 						<div className="space-y-1">
 							<Link
 								href="/history"
-								onClick={() => setOpen(false)}
+								onClick={() =>
+									setOpen(
+										false,
+									)
+								}
 								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-150 hover:bg-[var(--sl-surface-hover)]"
 							>
 								<span className="flex size-8 items-center justify-center rounded-lg bg-[var(--sl-surface-hover)] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:text-[var(--sl-primary)]">
@@ -236,7 +419,9 @@ export default function UserAccount({ user }: UserAccountProps) {
 
 							<button
 								type="button"
-								onClick={handleOpenBag}
+								onClick={
+									handleOpenBag
+								}
 								className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-[var(--sl-surface-hover)]"
 							>
 								<span className="flex size-8 items-center justify-center rounded-lg bg-[var(--sl-surface-hover)] text-[var(--sl-text-muted)] transition-all duration-150 group-hover:text-[var(--sl-primary)]">
@@ -253,20 +438,37 @@ export default function UserAccount({ user }: UserAccountProps) {
 
 						<button
 							type="button"
-							onClick={handleLogout}
+							onClick={
+								handleLogout
+							}
 							className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150 hover:bg-red-500/10"
 						>
 							<span className="flex size-8 items-center justify-center rounded-lg bg-red-500/10 text-red-500 transition-all duration-150 group-hover:bg-red-500/15">
 								<LogOut className="size-4" />
 							</span>
 
-							<span className="text-sm font-semibold text-red-500">Logout</span>
+							<span className="text-sm font-semibold text-red-500">
+								Logout
+							</span>
 						</button>
 					</div>
 				</div>
 			</div>
 
-			<ResourceBagDrawer open={bagOpen} onOpenChange={setBagOpen} />
+			<ResourceBagDrawer
+				open={bagOpen}
+				onOpenChange={setBagOpen}
+			/>
+
+			<SyncOverlay
+				open={syncOpen}
+				historyStatus={
+					historyStatus
+				}
+				inventoryStatus={
+					inventoryStatus
+				}
+			/>
 		</>
 	);
 }
