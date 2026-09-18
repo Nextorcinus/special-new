@@ -12,7 +12,9 @@ type DiscordProfile = {
 	image?: string | null;
 };
 
-function getDiscordProfile(profile: unknown): DiscordProfile {
+function getDiscordProfile(
+	profile: unknown,
+): DiscordProfile {
 	if (!profile || typeof profile !== "object") {
 		return {};
 	}
@@ -25,22 +27,27 @@ function getDiscordProfile(profile: unknown): DiscordProfile {
 			typeof data.id === "number"
 				? data.id
 				: undefined,
+
 		username:
 			typeof data.username === "string"
 				? data.username
 				: undefined,
+
 		global_name:
 			typeof data.global_name === "string"
 				? data.global_name
 				: null,
+
 		avatar:
 			typeof data.avatar === "string"
 				? data.avatar
 				: null,
+
 		email:
 			typeof data.email === "string"
 				? data.email
 				: null,
+
 		image:
 			typeof data.image === "string"
 				? data.image
@@ -62,7 +69,7 @@ function getDiscordAvatarUrl(
 
 	const defaultAvatar = Number(
 		(BigInt(discordId) /
-			BigInt(2) ** BigInt(22)) %
+			(BigInt(2) ** BigInt(22))) %
 			BigInt(6),
 	);
 
@@ -75,6 +82,8 @@ export const {
 	signIn,
 	signOut,
 } = NextAuth({
+	trustHost: true,
+
 	providers: [
 		Discord({
 			clientId: process.env.AUTH_DISCORD_ID,
@@ -83,6 +92,7 @@ export const {
 
 			authorization: {
 				url: "https://discord.com/oauth2/authorize",
+
 				params: {
 					scope: "identify",
 				},
@@ -91,6 +101,12 @@ export const {
 			profile(profile) {
 				const discordProfile =
 					getDiscordProfile(profile);
+
+				if (!discordProfile.id) {
+					throw new Error(
+						"Discord profile ID is missing.",
+					);
+				}
 
 				const discordId = String(
 					discordProfile.id,
@@ -104,13 +120,16 @@ export const {
 
 				return {
 					id: discordId,
+
 					name:
 						discordProfile.global_name ??
 						discordProfile.username ??
 						"Discord User",
+
 					email:
 						discordProfile.email ??
 						null,
+
 					image,
 				};
 			},
@@ -122,71 +141,102 @@ export const {
 	},
 
 	callbacks: {
-		async signIn({ profile }) {
-			const discordProfile =
-				getDiscordProfile(profile);
-
-			if (!discordProfile.id) {
-				return false;
-			}
-
-			const discordId = String(
-				discordProfile.id,
-			);
-
-			const username =
-				discordProfile.global_name ??
-				discordProfile.username ??
-				"Discord User";
-
-			const avatar =
-				getDiscordAvatarUrl(
-					discordId,
-					discordProfile.avatar,
+		async signIn({ user }) {
+			try {
+				/*
+				 * user.id comes from the normalized
+				 * Discord provider profile() above.
+				 *
+				 * Therefore we don't need to depend
+				 * on the raw Discord profile here.
+				 */
+				const discordId = String(
+					user.id ?? "",
 				);
 
-			await prisma.user.upsert({
-				where: {
-					discordId,
-				},
-				update: {
-					username,
-					avatar,
-				},
-				create: {
-					discordId,
-					username,
-					avatar,
-				},
-			});
-
-			return true;
-		},
-
-		async jwt({ token, profile }) {
-			if (profile) {
-				const discordProfile =
-					getDiscordProfile(profile);
-
-				if (discordProfile.id) {
-					const discordId = String(
-						discordProfile.id,
+				if (!discordId) {
+					console.error(
+						"[Auth] Discord user ID is missing.",
 					);
 
-					token.discordId =
-						discordId;
-
-					token.username =
-						discordProfile.global_name ??
-						discordProfile.username ??
-						"Discord User";
-
-					token.avatar =
-						getDiscordAvatarUrl(
-							discordId,
-							discordProfile.avatar,
-						);
+					throw new Error(
+						"Discord user ID is missing.",
+					);
 				}
+
+				const username =
+					typeof user.name === "string" &&
+					user.name.trim()
+						? user.name.trim()
+						: "Discord User";
+
+				const avatar =
+					typeof user.image === "string"
+						? user.image
+						: null;
+
+				console.log(
+					"[Auth] Discord login:",
+					{
+						discordId,
+						username,
+					},
+				);
+
+				await prisma.user.upsert({
+					where: {
+						discordId,
+					},
+
+					update: {
+						username,
+						avatar,
+					},
+
+					create: {
+						discordId,
+						username,
+						avatar,
+					},
+				});
+
+				console.log(
+					"[Auth] User database sync successful.",
+				);
+
+				return true;
+			} catch (error) {
+				console.error(
+					"[Auth] signIn callback failed:",
+					error,
+				);
+
+				/*
+				 * Don't silently convert a database/auth
+				 * error into AccessDenied.
+				 *
+				 * Throwing allows Auth.js to expose the
+				 * actual underlying error.
+				 */
+				throw error;
+			}
+		},
+
+		async jwt({ token, user }) {
+			if (user) {
+				token.discordId = String(
+					user.id ?? "",
+				);
+
+				token.username =
+					typeof user.name === "string"
+						? user.name
+						: "Discord User";
+
+				token.avatar =
+					typeof user.image === "string"
+						? user.image
+						: null;
 			}
 
 			return token;
