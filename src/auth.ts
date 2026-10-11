@@ -82,19 +82,19 @@ export const {
 } = NextAuth({
 	trustHost: true,
 
-	providers: [
-		Discord({
-			clientId: process.env.AUTH_DISCORD_ID,
-			clientSecret:
-				process.env.AUTH_DISCORD_SECRET,
+providers: [
+  Discord({
+    issuer: "https://discord.com",
 
-			authorization: {
-				url: "https://discord.com/oauth2/authorize",
+    clientId: process.env.AUTH_DISCORD_ID,
+    clientSecret: process.env.AUTH_DISCORD_SECRET,
 
-				params: {
-					scope: "identify",
-				},
-			},
+    authorization: {
+      url: "https://discord.com/oauth2/authorize",
+      params: {
+        scope: "identify",
+      },
+    },
 
 			profile(profile) {
 				const discordProfile =

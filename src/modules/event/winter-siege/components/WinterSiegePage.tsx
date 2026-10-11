@@ -1,8 +1,20 @@
 "use client";
 
-import { ArrowLeft, RefreshCw, Swords, Users, Zap } from "lucide-react";
+import {
+	ArrowLeft,
+	Check,
+	RefreshCw,
+	Swords,
+	Users,
+} from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { toast } from "sonner";
 
 import SLButton from "@/components/ui/sl-ui/SLButton";
@@ -34,86 +46,83 @@ type ApiMember = {
 	eventData?: ApiMemberEventData[];
 };
 
-function createSquadKey(memberId: string, squadId: WinterSiegeSquadId) {
-	return `${memberId}:${squadId}`;
-}
-
-function formatPower(value: unknown): string {
-	if (value === null || value === undefined) {
-		return "-";
-	}
-
-	const raw = String(value).trim();
-
-	if (!raw) {
-		return "-";
-	}
-
-	if (!/^[\d,.]+$/.test(raw)) {
-		return raw;
-	}
-
-	const number = Number(raw.replace(/,/g, ""));
-
-	if (!Number.isFinite(number)) {
-		return raw;
-	}
-
-	if (number >= 1_000_000_000_000) {
-		return `${(number / 1_000_000_000_000).toLocaleString("en-US", {
-			maximumFractionDigits: 3,
-		})}T`;
-	}
-
-	if (number >= 1_000_000_000) {
-		return `${(number / 1_000_000_000).toLocaleString("en-US", {
-			maximumFractionDigits: 3,
-		})}B`;
-	}
-
-	if (number >= 1_000_000) {
-		return `${(number / 1_000_000).toLocaleString("en-US", {
-			maximumFractionDigits: 3,
-		})}M`;
-	}
-
-	if (number >= 1_000) {
-		return `${(number / 1_000).toLocaleString("en-US", {
-			maximumFractionDigits: 3,
-		})}K`;
-	}
-
-	return number.toLocaleString("en-US");
-}
-
 function normalizeEventData(
 	eventData?: ApiMemberEventData[],
 ): WinterSiegeEventData {
 	const winterSiegeData = eventData?.find(
-		(item) => item.eventType === "winter-siege",
+		(item) =>
+			item.eventType === "winter-siege",
 	);
 
-	if (!winterSiegeData?.data || typeof winterSiegeData.data !== "object") {
+	if (
+		!winterSiegeData?.data ||
+		typeof winterSiegeData.data !== "object"
+	) {
 		return {};
 	}
 
 	return {
-		squad1Power: winterSiegeData.data.squad1Power,
-		squad2Power: winterSiegeData.data.squad2Power,
+		squad1Power:
+			winterSiegeData.data.squad1Power,
+		squad2Power:
+			winterSiegeData.data.squad2Power,
 	};
 }
 
-function normalizeMember(member: ApiMember): WinterSiegeMember {
+function normalizeMember(
+	member: ApiMember,
+): WinterSiegeMember {
 	return {
 		id: member.id,
 		name: member.name,
 		furnace: member.furnace,
 		power:
-			member.power === null || member.power === undefined
+			member.power === null ||
+			member.power === undefined
 				? null
 				: String(member.power),
-		eventData: normalizeEventData(member.eventData),
+		eventData: normalizeEventData(
+			member.eventData,
+		),
 	};
+}
+
+async function readJsonResponse(
+	response: Response,
+	fallbackMessage: string,
+): Promise<unknown> {
+	const contentType = response.headers.get("content-type") ?? "";
+	const body = await response.text();
+
+	if (!body.trim()) {
+		throw new Error(
+			response.ok
+				? fallbackMessage
+				: `${fallbackMessage} (${response.status})`,
+		);
+	}
+
+	if (!contentType.toLowerCase().includes("application/json")) {
+		const preview = body.replace(/\s+/g, " ").trim().slice(0, 160);
+		throw new Error(
+			`${fallbackMessage} The server returned non-JSON content (${response.status}). ${preview}`,
+		);
+	}
+
+	try {
+		return JSON.parse(body) as unknown;
+	} catch {
+		throw new Error(
+			`${fallbackMessage} The server returned invalid JSON.`,
+		);
+	}
+}
+
+function createSquadKey(
+	memberId: string,
+	squadId: WinterSiegeSquadId,
+) {
+	return `${memberId}:${squadId}`;
 }
 
 function getSquadPower(
@@ -127,24 +136,38 @@ function getSquadPower(
 	return member.eventData?.squad2Power;
 }
 
-function buildSquadPool(members: WinterSiegeMember[]): WinterSiegeSquad[] {
+function buildSquadPool(
+	members: WinterSiegeMember[],
+): WinterSiegeSquad[] {
 	return members.flatMap((member) => {
 		const squad1: WinterSiegeSquad = {
-			id: createSquadKey(member.id, "squad-1"),
+			id: createSquadKey(
+				member.id,
+				"squad-1",
+			),
 			memberId: member.id,
 			memberName: member.name,
 			squadId: "squad-1",
 			squadName: "Squad 1",
-			power: getSquadPower(member, "squad-1"),
+			power: getSquadPower(
+				member,
+				"squad-1",
+			),
 		};
 
 		const squad2: WinterSiegeSquad = {
-			id: createSquadKey(member.id, "squad-2"),
+			id: createSquadKey(
+				member.id,
+				"squad-2",
+			),
 			memberId: member.id,
 			memberName: member.name,
 			squadId: "squad-2",
 			squadName: "Squad 2",
-			power: getSquadPower(member, "squad-2"),
+			power: getSquadPower(
+				member,
+				"squad-2",
+			),
 		};
 
 		return [squad1, squad2];
@@ -152,127 +175,381 @@ function buildSquadPool(members: WinterSiegeMember[]): WinterSiegeSquad[] {
 }
 
 export default function WinterSiegePage() {
-	const [members, setMembers] = useState<WinterSiegeMember[]>([]);
+	const [members, setMembers] = useState<
+		WinterSiegeMember[]
+	>([]);
 
-	const [assignments, setAssignments] = useState<WinterSiegeAssignment[]>([]);
+	const [assignments, setAssignments] =
+		useState<WinterSiegeAssignment[]>([]);
 
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] =
+		useState(true);
 
-	const loadMembers = useCallback(async () => {
-		setLoading(true);
+	const [saving, setSaving] =
+		useState(false);
 
-		try {
-			const response = await fetch("/api/members", {
-				method: "GET",
-				cache: "no-store",
-			});
+	const [loadedPlan, setLoadedPlan] =
+		useState(false);
 
-			const data = await response.json();
+	const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
-			if (!response.ok) {
-				throw new Error(data?.error || "Failed to load members.");
-			}
+	const savePlan = useCallback(
+		(nextAssignments: WinterSiegeAssignment[]) => {
+			const request = async () => {
+				setSaving(true);
 
-			const rawMembers = Array.isArray(data?.items)
-				? data.items
-				: Array.isArray(data?.members)
-					? data.members
-					: Array.isArray(data)
-						? data
+				try {
+					const response = await fetch(
+						"/api/events/winter-siege",
+						{
+							method: "PUT",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								assignments: nextAssignments,
+							}),
+						},
+						);
+
+					const data = await readJsonResponse(
+						response,
+						"Failed to save Winter Siege plan.",
+					);
+
+					if (!response.ok) {
+						const errorData =
+							data &&
+							typeof data === "object"
+								? (data as Record<string, unknown>)
+								: null;
+
+						throw new Error(
+								typeof errorData?.error === "string"
+									? errorData.error
+									: "Failed to save Winter Siege plan.",
+							);
+					}
+				} catch (error) {
+					console.error(
+						"[WinterSiege] Save failed:",
+						error,
+					);
+
+					toast.error(
+						"Failed to save Winter Siege plan",
+						{
+							description:
+								error instanceof Error
+									? error.message
+									: "Please try again.",
+						},
+					);
+				} finally {
+					setSaving(false);
+				}
+			};
+
+			const queuedRequest =
+				saveQueueRef.current.then(request, request);
+
+			saveQueueRef.current =
+				queuedRequest.catch(() => undefined);
+
+			return queuedRequest;
+		},
+		[],
+	);
+
+
+	const loadData = useCallback(
+		async () => {
+			setLoading(true);
+
+			try {
+				const [
+					membersResponse,
+					planResponse,
+				] = await Promise.all([
+					fetch("/api/members", {
+						method: "GET",
+						cache: "no-store",
+					}),
+					fetch(
+						"/api/events/winter-siege",
+						{
+							method: "GET",
+							cache: "no-store",
+						},
+					),
+				]);
+
+				const membersData =
+					await readJsonResponse(
+						membersResponse,
+						"Failed to load members.",
+					);
+
+				const planData =
+					await readJsonResponse(
+						planResponse,
+						"Failed to load Winter Siege plan.",
+					);
+
+				if (!membersResponse.ok) {
+					throw new Error(
+						membersData &&
+						typeof membersData === "object" &&
+						typeof (membersData as Record<string, unknown>).error === "string"
+							? String(
+									(membersData as Record<string, unknown>).error,
+								)
+							: "Failed to load members.",
+					);
+				}
+
+				if (!planResponse.ok) {
+					throw new Error(
+						planData &&
+						typeof planData === "object" &&
+						typeof (planData as Record<string, unknown>).error === "string"
+							? String(
+									(planData as Record<string, unknown>).error,
+								)
+							: "Failed to load Winter Siege plan.",
+					);
+				}
+
+				const membersObject =
+					membersData &&
+					typeof membersData === "object" &&
+					!Array.isArray(membersData)
+						? (membersData as Record<string, unknown>)
+						: null;
+
+				const rawMembers = Array.isArray(
+					membersObject?.items,
+				)
+					? membersObject.items
+					: Array.isArray(
+							membersObject?.members,
+						  )
+						? membersObject.members
+						: Array.isArray(membersData)
+							? membersData
+							: [];
+
+				const normalizedMembers =
+					rawMembers
+						.filter(
+							(item): item is ApiMember =>
+								Boolean(
+									item &&
+									typeof item === "object",
+								),
+						)
+						.map((member) =>
+							normalizeMember(member),
+						);
+
+				const planObject =
+					planData &&
+					typeof planData === "object" &&
+					!Array.isArray(planData)
+						? (planData as Record<string, unknown>)
+						: null;
+
+				const loadedAssignments =
+					Array.isArray(
+						planObject?.assignments,
+					)
+						? planObject.assignments
+								.filter(
+									(
+										item: unknown,
+									): item is WinterSiegeAssignment => {
+										if (
+											!item ||
+											typeof item !==
+												"object"
+										) {
+											return false;
+										}
+
+										const value =
+											item as Record<
+												string,
+												unknown
+											>;
+
+										return (
+											typeof value.memberId ===
+												"string" &&
+											(value.squadId ===
+												"squad-1" ||
+												value.squadId ===
+													"squad-2") &&
+											(value.locationId ===
+												null ||
+												typeof value.locationId ===
+													"string")
+										);
+									},
+								)
 						: [];
 
-			const normalizedMembers = rawMembers.map((member: ApiMember) =>
-				normalizeMember(member),
-			);
+				setMembers(
+					normalizedMembers,
+				);
 
-			setMembers(normalizedMembers);
-		} catch (error) {
-			console.error("[WinterSiege] Failed to load members:", error);
+				setAssignments(
+					loadedAssignments,
+				);
 
-			toast.error("Failed to load members", {
-				description:
-					error instanceof Error ? error.message : "Please try again.",
-			});
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+				setLoadedPlan(true);
+			} catch (error) {
+				console.error(
+					"[WinterSiege] Failed to load:",
+					error,
+				);
+
+				toast.error(
+					"Failed to load Winter Siege",
+					{
+						description:
+							error instanceof Error
+								? error.message
+								: "Please try again.",
+					},
+				);
+			} finally {
+				setLoading(false);
+			}
+		},
+		[],
+	);
 
 	useEffect(() => {
-		void loadMembers();
-	}, [loadMembers]);
+		void loadData();
+	}, [loadData]);
 
-	const squadPool = useMemo(() => buildSquadPool(members), [members]);
+	const squadPool = useMemo(
+		() => buildSquadPool(members),
+		[members],
+	);
 
 	const selectedSquadIds = useMemo(
 		() =>
 			new Set(
-				assignments.map((assignment) =>
-					createSquadKey(assignment.memberId, assignment.squadId),
+				assignments.map(
+					(assignment) =>
+						createSquadKey(
+							assignment.memberId,
+							assignment.squadId,
+						),
 				),
 			),
 		[assignments],
 	);
 
 	const plannedSquads = useMemo(
-		() => squadPool.filter((squad) => selectedSquadIds.has(squad.id)),
+		() =>
+			squadPool.filter((squad) =>
+				selectedSquadIds.has(
+					squad.id,
+				),
+			),
 		[squadPool, selectedSquadIds],
 	);
 
 	const unselectedSquads = useMemo(
-		() => squadPool.filter((squad) => !selectedSquadIds.has(squad.id)),
+		() =>
+			squadPool.filter(
+				(squad) =>
+					!selectedSquadIds.has(
+						squad.id,
+					),
+			),
 		[squadPool, selectedSquadIds],
 	);
 
-	const squad1Plan = useMemo(
-		() => plannedSquads.filter((squad) => squad.squadId === "squad-1"),
-		[plannedSquads],
-	);
+	const assignedCount = assignments.filter(
+		(assignment) =>
+			Boolean(assignment.locationId),
+	).length;
 
-	const squad2Plan = useMemo(
-		() => plannedSquads.filter((squad) => squad.squadId === "squad-2"),
-		[plannedSquads],
-	);
+	const unassignedPlannedCount =
+		plannedSquads.length - assignedCount;
 
-	const assignedCount = assignments.length;
+	function applyAssignments(
+		nextAssignments: WinterSiegeAssignment[],
+		successMessage?: string,
+	) {
+		setAssignments(nextAssignments);
 
-	const unassignedPlannedCount = plannedSquads.length - assignedCount;
+		void savePlan(nextAssignments);
 
-	function handleAddSquad(memberId: string, squadId: WinterSiegeSquadId) {
-		setAssignments((current) => {
-			const key = createSquadKey(memberId, squadId);
-
-			const alreadyInPlan = current.some(
-				(assignment) =>
-					createSquadKey(assignment.memberId, assignment.squadId) === key,
-			);
-
-			if (alreadyInPlan) {
-				return current;
-			}
-
-			return [
-				...current,
-				{
-					memberId,
-					squadId,
-					locationId: null,
-				},
-			];
-		});
-
-		toast.success("Squad added to plan");
+		if (successMessage) {
+			toast.success(successMessage);
+		}
 	}
 
-	function handleRemoveSquad(memberId: string, squadId: WinterSiegeSquadId) {
-		setAssignments((current) =>
-			current.filter(
-				(assignment) =>
-					!(assignment.memberId === memberId && assignment.squadId === squadId),
-			),
+	function handleAddSquad(
+		memberId: string,
+		squadId: WinterSiegeSquadId,
+	) {
+		const key = createSquadKey(
+			memberId,
+			squadId,
 		);
 
-		toast.success("Squad removed from plan");
+		const alreadyInPlan =
+			assignments.some(
+				(assignment) =>
+					createSquadKey(
+						assignment.memberId,
+						assignment.squadId,
+					) === key,
+			);
+
+		if (alreadyInPlan) {
+			return;
+		}
+
+		const nextAssignments = [
+			...assignments,
+			{
+				memberId,
+				squadId,
+				locationId: null,
+			},
+		];
+
+		applyAssignments(
+			nextAssignments,
+			"Squad added to plan",
+		);
+	}
+
+	function handleRemoveSquad(
+		memberId: string,
+		squadId: WinterSiegeSquadId,
+	) {
+		const nextAssignments =
+			assignments.filter(
+				(assignment) =>
+					!(
+						assignment.memberId ===
+							memberId &&
+						assignment.squadId ===
+							squadId
+					),
+			);
+
+		applyAssignments(
+			nextAssignments,
+			"Squad removed from plan",
+		);
 	}
 
 	function handleAssignSquad(
@@ -280,52 +557,69 @@ export default function WinterSiegePage() {
 		squadId: WinterSiegeSquadId,
 		locationId: string,
 	) {
-		setAssignments((current) => {
-			const existingIndex = current.findIndex(
+		const existingIndex =
+			assignments.findIndex(
 				(assignment) =>
-					assignment.memberId === memberId && assignment.squadId === squadId,
+					assignment.memberId ===
+						memberId &&
+					assignment.squadId ===
+						squadId,
 			);
 
-			if (existingIndex === -1) {
-				return [
-					...current,
-					{
-						memberId,
-						squadId,
-						locationId,
-					},
-				];
-			}
+		let nextAssignments: WinterSiegeAssignment[];
 
-			const next = [...current];
+		if (existingIndex === -1) {
+			nextAssignments = [
+				...assignments,
+				{
+					memberId,
+					squadId,
+					locationId,
+				},
+			];
+		} else {
+			nextAssignments = [
+				...assignments,
+			];
 
-			next[existingIndex] = {
-				...next[existingIndex],
+			nextAssignments[
+				existingIndex
+			] = {
+				...nextAssignments[
+					existingIndex
+				],
 				locationId,
 			};
+		}
 
-			return next;
-		});
+		applyAssignments(nextAssignments);
 	}
 
 	function handleRemoveAssignment(
 		memberId: string,
 		squadId: WinterSiegeSquadId,
 	) {
-		setAssignments((current) =>
-			current.map((assignment) => {
-				if (
-					assignment.memberId !== memberId ||
-					assignment.squadId !== squadId
-				) {
-					return assignment;
-				}
+		const nextAssignments =
+			assignments.map(
+				(assignment) => {
+					if (
+						assignment.memberId !==
+							memberId ||
+						assignment.squadId !==
+							squadId
+					) {
+						return assignment;
+					}
 
-				return {
-					...assignment,
-					locationId: null,
-				};
-			}),
+					return {
+						...assignment,
+						locationId: null,
+					};
+				},
+			);
+
+		applyAssignments(
+			nextAssignments,
 		);
 	}
 
@@ -334,23 +628,18 @@ export default function WinterSiegePage() {
 			return;
 		}
 
-		setAssignments([]);
-
-		toast.success("Winter Siege reset", {
-			description: "All squad selections and map placements were cleared.",
-		});
+		applyAssignments([], "Winter Siege reset");
 	}
 
 	return (
 		<div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-			{/* Header */}
 			<div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
 				<div>
 					<Link
 						href="/events"
-						className="mb-3 inline-flex items-center gap-1.5 text-[10px] font-semibold text-[var(--sl-text-muted)] transition-colors hover:text-[var(--sl-text)]"
+						className="mb-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--sl-text-muted)] transition-colors hover:text-[var(--sl-text)]"
 					>
-						<ArrowLeft className="size-3.5" />
+						<ArrowLeft className="size-4" />
 						Back to Events
 					</Link>
 
@@ -364,80 +653,69 @@ export default function WinterSiegePage() {
 								Winter Siege
 							</h1>
 
-							<p className="mt-1 text-xs text-[var(--sl-text-muted)] sm:text-sm">
+							<p className="mt-1 text-sm text-[var(--sl-text-muted)]">
 								Strategy Planner
 							</p>
 						</div>
 					</div>
 				</div>
 
-				<SLButton
-					variantType="secondary"
-					onClick={handleReset}
-					disabled={assignments.length === 0}
-				>
-					<RefreshCw className="mr-2 size-3.5" />
-					Reset
-				</SLButton>
+				<div className="flex items-center gap-2">
+					{loadedPlan && (
+						<div className="flex items-center gap-1.5 rounded-full bg-[var(--sl-input)] px-3 py-2 text-xs font-semibold text-[var(--sl-text-muted)]">
+							{saving ? (
+								<>
+									<RefreshCw className="size-3.5 animate-spin" />
+									Saving...
+								</>
+							) : (
+								<>
+									<Check className="size-3.5 text-[var(--sl-primary)]" />
+									Saved
+								</>
+							)}
+						</div>
+					)}
+
+					<SLButton
+						variantType="secondary"
+						onClick={handleReset}
+						disabled={
+							assignments.length === 0 ||
+							saving
+						}
+					>
+						<RefreshCw className="mr-2 size-3.5" />
+						Reset
+					</SLButton>
+				</div>
 			</div>
 
-			{/* Overview */}
 			<div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-				<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
-					<p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--sl-text-muted)]">
-						Members
-					</p>
+				<OverviewCard
+					label="Members"
+					value={members.length}
+					description="Global database"
+				/>
 
-					<p className="mt-1 text-lg font-black text-[var(--sl-text)]">
-						{members.length}
-					</p>
+				<OverviewCard
+					label="Squads in Plan"
+					value={plannedSquads.length}
+					valueClass="text-[var(--sl-primary)]"
+					description="Individual deployment units"
+				/>
 
-					<p className="mt-1 text-[9px] text-[var(--sl-text-muted)]">
-						Global database
-					</p>
-				</div>
+				<OverviewCard
+					label="Map Assigned"
+					value={assignedCount}
+					description="Locations selected"
+				/>
 
-				<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
-					<p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--sl-text-muted)]">
-						Squads in Plan
-					</p>
-
-					<p className="mt-1 text-lg font-black text-[var(--sl-primary)]">
-						{plannedSquads.length}
-					</p>
-
-					<p className="mt-1 text-[9px] text-[var(--sl-text-muted)]">
-						Individual deployment units
-					</p>
-				</div>
-
-				<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
-					<p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--sl-text-muted)]">
-						Map Assigned
-					</p>
-
-					<p className="mt-1 text-lg font-black text-[var(--sl-text)]">
-						{assignedCount}
-					</p>
-
-					<p className="mt-1 text-[9px] text-[var(--sl-text-muted)]">
-						Locations selected
-					</p>
-				</div>
-
-				<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
-					<p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--sl-text-muted)]">
-						Unassigned
-					</p>
-
-					<p className="mt-1 text-lg font-black text-[var(--sl-text)]">
-						{unassignedPlannedCount}
-					</p>
-
-					<p className="mt-1 text-[9px] text-[var(--sl-text-muted)]">
-						Ready for placement
-					</p>
-				</div>
+				<OverviewCard
+					label="Unassigned"
+					value={unassignedPlannedCount}
+					description="Ready for placement"
+				/>
 			</div>
 
 			{loading ? (
@@ -445,118 +723,70 @@ export default function WinterSiegePage() {
 					<RefreshCw className="size-6 animate-spin text-[var(--sl-primary)]" />
 
 					<p className="mt-3 text-sm font-bold text-[var(--sl-text)]">
-						Loading members...
+						Loading Winter Siege...
 					</p>
 
-					<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
-						Getting members from your global database.
+					<p className="mt-1 text-sm text-[var(--sl-text-muted)]">
+						Loading members and saved plan.
 					</p>
 				</div>
 			) : (
 				<>
-					{/* Squad Selection */}
 					<section className="mt-6">
 						<div className="mb-4">
-							<h2 className="text-sm font-bold text-[var(--sl-text)]">
+							<h2 className="text-base font-bold text-[var(--sl-text)]">
 								Squad Pool
 							</h2>
 
-							<p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--sl-text-muted)]">
-								Select individual squads from your global member database. Squad
-								1 and Squad 2 can be placed independently on the Winter Siege
-								map.
+							<p className="mt-1 text-sm leading-5 text-[var(--sl-text-muted)]">
+								Select individual squads from your global member database. Squad 1 and Squad 2 can be placed independently.
 							</p>
 						</div>
 
 						<WinterSiegeMemberSelector
 							members={members}
-							selectedSquads={selectedSquadIds}
-							onAddSquad={handleAddSquad}
-							onRemoveSquad={handleRemoveSquad}
+							selectedSquads={
+								selectedSquadIds
+							}
+							onAddSquad={
+								handleAddSquad
+							}
+							onRemoveSquad={
+								handleRemoveSquad
+							}
 						/>
 					</section>
 
-					{/* Selected Squads */}
-					<section className="mt-6">
-						<div className="mb-4 flex items-end justify-between gap-3">
-							<div>
-								<h2 className="text-sm font-bold text-[var(--sl-text)]">
-									Squads in Plan
-								</h2>
-
-								<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
-									Selected squads will be available for map placement.
-								</p>
-							</div>
-
-							<div className="flex items-center gap-1.5 rounded-full bg-[var(--sl-input)] px-2.5 py-1.5">
-								<Users className="size-3 text-[var(--sl-text-muted)]" />
-
-								<span className="text-[9px] font-bold text-[var(--sl-text-muted)]">
-									{plannedSquads.length} squads
-								</span>
-							</div>
-						</div>
-
-						{plannedSquads.length === 0 ? (
-							<div className="flex min-h-[180px] flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--sl-border)] bg-[var(--sl-surface)] px-5 text-center">
-								<div className="flex size-11 items-center justify-center rounded-xl bg-[var(--sl-input)] text-[var(--sl-text-muted)]">
-									<Users className="size-5" />
-								</div>
-
-								<h3 className="mt-3 text-sm font-bold text-[var(--sl-text)]">
-									No squads selected
-								</h3>
-
-								<p className="mt-1 max-w-md text-xs leading-5 text-[var(--sl-text-muted)]">
-									Add Squad 1 or Squad 2 from the squad pool above.
-								</p>
-							</div>
-						) : (
-							<div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-								<SquadPlanGroup
-									title="Squad 1"
-									description="Independent Squad 1 deployment pool."
-									squads={squad1Plan}
-									onRemove={handleRemoveSquad}
-								/>
-
-								<SquadPlanGroup
-									title="Squad 2"
-									description="Independent Squad 2 deployment pool."
-									squads={squad2Plan}
-									onRemove={handleRemoveSquad}
-								/>
-							</div>
-						)}
-					</section>
-
-					{/* Map Placement */}
 					<section className="mt-6">
 						<WinterSiegeMap
 							squads={plannedSquads}
-							assignments={assignments}
-							onAssign={handleAssignSquad}
-							onRemoveAssignment={handleRemoveAssignment}
+							assignments={
+								assignments
+							}
+							onAssign={
+								handleAssignSquad
+							}
+							onRemoveAssignment={
+								handleRemoveAssignment
+							}
 						/>
 					</section>
 
-					{/* Remaining Squad Info */}
 					{unselectedSquads.length > 0 && (
 						<section className="mt-4">
 							<div className="rounded-xl border border-[var(--sl-border)] bg-[var(--sl-surface)] px-4 py-3">
-								<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+								<div className="flex items-center justify-between gap-3">
 									<div>
-										<p className="text-[10px] font-semibold text-[var(--sl-text-muted)]">
+										<p className="text-sm font-semibold text-[var(--sl-text-muted)]">
 											Squads not selected
 										</p>
 
-										<p className="mt-0.5 text-[9px] text-[var(--sl-text-muted)]">
+										<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
 											These squads remain available in the pool.
 										</p>
 									</div>
 
-									<div className="rounded-full bg-[var(--sl-input)] px-3 py-1.5 text-xs font-black text-[var(--sl-text)]">
+									<div className="rounded-full bg-[var(--sl-input)] px-3 py-1.5 text-sm font-black text-[var(--sl-text)]">
 										{unselectedSquads.length}
 									</div>
 								</div>
@@ -569,98 +799,32 @@ export default function WinterSiegePage() {
 	);
 }
 
-function SquadPlanGroup({
-	title,
+function OverviewCard({
+	label,
+	value,
 	description,
-	squads,
-	onRemove,
+	valueClass = "text-[var(--sl-text)]",
 }: {
-	title: string;
+	label: string;
+	value: number;
 	description: string;
-	squads: WinterSiegeSquad[];
-	onRemove: (memberId: string, squadId: WinterSiegeSquadId) => void;
+	valueClass?: string;
 }) {
 	return (
-		<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)]">
-			<div className="flex items-center justify-between gap-3 border-b border-[var(--sl-border)] p-4">
-				<div>
-					<h3 className="text-sm font-bold text-[var(--sl-text)]">{title}</h3>
+		<div className="rounded-2xl border border-[var(--sl-border)] bg-[var(--sl-surface)] p-4">
+			<p className="text-xs font-semibold uppercase tracking-wider text-[var(--sl-text-muted)]">
+				{label}
+			</p>
 
-					<p className="mt-1 text-[10px] text-[var(--sl-text-muted)]">
-						{description}
-					</p>
-				</div>
-
-				<div className="flex items-center gap-1.5 rounded-full bg-[var(--sl-primary)]/10 px-2.5 py-1.5">
-					<Zap className="size-3 text-[var(--sl-primary)]" />
-
-					<span className="text-[9px] font-bold text-[var(--sl-primary)]">
-						{squads.length}
-					</span>
-				</div>
-			</div>
-
-			<div className="space-y-2 p-3">
-				{squads.length === 0 ? (
-					<div className="flex min-h-[90px] items-center justify-center rounded-xl border border-dashed border-[var(--sl-border)]">
-						<p className="text-[10px] text-[var(--sl-text-muted)]">
-							No squads selected
-						</p>
-					</div>
-				) : (
-					squads.map((squad) => (
-						<SelectedSquadRow
-							key={squad.id}
-							squad={squad}
-							onRemove={() => onRemove(squad.memberId, squad.squadId)}
-						/>
-					))
-				)}
-			</div>
-		</div>
-	);
-}
-
-function SelectedSquadRow({
-	squad,
-	onRemove,
-}: {
-	squad: WinterSiegeSquad;
-	onRemove: () => void;
-}) {
-	return (
-		<div className="flex items-center gap-3 rounded-xl bg-[var(--sl-input)] px-3 py-3">
-			<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--sl-surface)] text-[10px] font-black text-[var(--sl-text)]">
-				{squad.memberName.charAt(0).toUpperCase()}
-			</div>
-
-			<div className="min-w-0 flex-1">
-				<div className="flex min-w-0 items-center gap-2">
-					<p className="truncate text-xs font-bold text-[var(--sl-text)]">
-						{squad.memberName}
-					</p>
-
-					<span className="shrink-0 rounded-full bg-[var(--sl-primary)]/10 px-2 py-0.5 text-[8px] font-bold text-[var(--sl-primary)]">
-						{squad.squadName}
-					</span>
-				</div>
-
-				<div className="mt-1 flex items-center gap-1">
-					<Zap className="size-3 text-[var(--sl-primary)]" />
-
-					<p className="text-[9px] font-semibold text-[var(--sl-text-muted)]">
-						{formatPower(squad.power)}
-					</p>
-				</div>
-			</div>
-
-			<button
-				type="button"
-				onClick={onRemove}
-				className="shrink-0 rounded-lg px-2.5 py-1.5 text-[9px] font-bold text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-hover)] hover:text-[var(--sl-text)]"
+			<p
+				className={`mt-1 text-xl font-black ${valueClass}`}
 			>
-				Remove
-			</button>
+				{value}
+			</p>
+
+			<p className="mt-1 text-xs text-[var(--sl-text-muted)]">
+				{description}
+			</p>
 		</div>
 	);
 }

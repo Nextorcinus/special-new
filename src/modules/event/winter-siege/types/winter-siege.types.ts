@@ -1,4 +1,6 @@
-export type WinterSiegeSquadId = "squad-1" | "squad-2";
+export type WinterSiegeSquadId =
+	| "squad-1"
+	| "squad-2";
 
 export type WinterSiegeEventData = {
 	squad1Power?: unknown;
