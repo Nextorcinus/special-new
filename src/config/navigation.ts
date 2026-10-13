@@ -95,4 +95,12 @@ export const NAVIGATION: NavigationItem[] = [
 		icon: "/category/state-age.png",
 		href: "/state",
 	},
+
+	// Calculations
+	{
+		id: "calculations",
+		title: "Calculations",
+		icon: "/category/calc-points.png",
+		href: "/calculations",
+	},
 ];

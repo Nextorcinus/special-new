@@ -3,6 +3,7 @@ export { default as MilestoneGoals } from "./components/MilestoneGoals";
 export { default as MissionCard } from "./components/MissionCard";
 export { default as StageSummary } from "./components/StageSummary";
 export { default as StageTabs } from "./components/StageTabs";
+export { default as BaldurSkillSelector } from "./components/BaldurSkillSelector";
 
 export { useAllianceShowdown } from "./hooks/useAllianceShowdown";
 export type {
