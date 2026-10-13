@@ -1,0 +1,763 @@
+{
+	"title": "Alliance Showdown",
+	"source": "WOS Tools Alliance Showdown Calculator JavaScript provided by user",
+	"notes": [
+		"Mission names and stage membership follow the user's supplied list.",
+		"Points and priority values are taken from the supplied JavaScript source.",
+		"Duplicate mission IDs within each stage are removed; shared missions can still appear in different stages because each stage has its own scoring and progress.",
+		"Duplicate mission names are removed within each stage. The same mission may appear in different stages because each stage has its own scoring and progress.",
+		"Milestone definitions are reusable: stages 1-4 reference milestoneSets.standard, and stages 5-6 reference milestoneSets.final."
+	],
+	"stages": [
+		{
+			"id": "stage1",
+			"day": 1,
+			"name": "Rise of the City",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystal",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "researchSpeedup",
+					"name": "Use 1m of Research Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gatherMeat",
+					"name": "Gather 2,000 Meat in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherWood",
+					"name": "Gather 2,000 Wood in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherCoal",
+					"name": "Gather 400 Coal in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherIron",
+					"name": "Gather 100 Iron in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage2",
+			"day": 2,
+			"name": "Hero Development",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystal",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mythicHeroShard",
+					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "epicHeroShard",
+					"name": "Use 1 Epic Hero Shard to ascend Heroes",
+					"points": 750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "rareHeroShard",
+					"name": "Use 1 Rare Hero Shard to ascend Heroes",
+					"points": 210,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "researchSpeedup",
+					"name": "Use 1m of Research Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage3",
+			"day": 3,
+			"name": "Pet Training",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "advancedWildMark",
+					"name": "Use 1 Advanced Wild Mark to refine pets",
+					"points": 9370,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "commonWildMark",
+					"name": "Use 1 Common Wild Mark to refine pets",
+					"points": 680,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "chiefCharmPoint",
+					"name": "Raise Chief Charm max score by 1",
+					"points": 45,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "petAdvancementScore",
+					"name": "Pet advancement score increases by 1",
+					"points": 30,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "gatherMeat",
+					"name": "Gather 2,000 Meat in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherWood",
+					"name": "Gather 2,000 Wood in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherCoal",
+					"name": "Gather 400 Coal in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gatherIron",
+					"name": "Gather 100 Iron in the Wilderness",
+					"points": 2,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage4",
+			"day": 4,
+			"name": "Gear Enhancement",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroExclusiveGearWidget",
+					"name": "Use 1 Hero Exclusive Gear Widget",
+					"points": 3750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroGearEssenceStone",
+					"name": "Use 1 Hero Gear Essence Stone",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "chiefCharmPoint",
+					"name": "Raise Chief Charm max score by 1",
+					"points": 45,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage5",
+			"day": 5,
+			"name": "Trade Dominion",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystal",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "final"
+		},
+		{
+			"id": "stage6",
+			"day": 6,
+			"name": "Full-Scale Competition",
+			"missions": [
+				{
+					"id": "escortTruck",
+					"name": "Escort 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "raidTruck",
+					"name": "Raid 1 Truck",
+					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mithril",
+					"name": "Use 1 Mithril",
+					"points": 67500,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystal",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "advancedWildMark",
+					"name": "Use 1 Advanced Wild Mark to refine pets",
+					"points": 9370,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "commonWildMark",
+					"name": "Use 1 Common Wild Mark to refine pets",
+					"points": 680,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "epicHeroShard",
+					"name": "Use 1 Epic Hero Shard to ascend Heroes",
+					"points": 750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "rareHeroShard",
+					"name": "Use 1 Rare Hero Shard to ascend Heroes",
+					"points": 210,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mythicHeroShard",
+					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroGearEssenceStone",
+					"name": "Use 1 Hero Gear Essence Stone",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroExclusiveGearWidget",
+					"name": "Use 1 Hero Exclusive Gear Widget",
+					"points": 3750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "chiefCharmPoint",
+					"name": "Raise Chief Charm max score by 1",
+					"points": 45,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "petAdvancementScore",
+					"name": "Pet advancement score increases by 1",
+					"points": 30,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "chiefGearScore",
+					"name": "Chief Gear score increases by 1",
+					"points": 22,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "researchSpeedup",
+					"name": "Use 1m of Research Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "final"
+		}
+	],
+	"milestoneSets": {
+		"standard": [
+			{
+				"points": 100,
+				"label": "100"
+			},
+			{
+				"points": 25000,
+				"label": "25K"
+			},
+			{
+				"points": 50000,
+				"label": "50K"
+			},
+			{
+				"points": 87500,
+				"label": "87.5K"
+			},
+			{
+				"points": 125000,
+				"label": "125K"
+			}
+		],
+		"final": [
+			{
+				"points": 100,
+				"label": "100"
+			},
+			{
+				"points": 37500,
+				"label": "37.5K"
+			},
+			{
+				"points": 75000,
+				"label": "75K"
+			},
+			{
+				"points": 125000,
+				"label": "125K"
+			},
+			{
+				"points": 187500,
+				"label": "187.5K"
+			}
+		]
+	}
+}
