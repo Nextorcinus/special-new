@@ -310,21 +310,67 @@
 					"priority": "great",
 					"quantity": 0
 				},
+
 				{
-					"id": "chiefCharmPoint",
+					"id": "chief-charms",
 					"name": "Raise Chief Charm max score by 1",
-					"points": 45,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "upgrade",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						}
+					]
 				},
 				{
 					"id": "petAdvancementScore",
 					"name": "Pet advancement score increases by 1",
-					"points": 30,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "advancement",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"levels": [
+						{ "level": 10, "points": 500 },
+						{ "level": 20, "points": 1000 },
+						{ "level": 30, "points": 2000 },
+						{ "level": 40, "points": 3000 },
+						{ "level": 50, "points": 4500 },
+						{ "level": 60, "points": 6750 },
+						{ "level": 70, "points": 10000 },
+						{ "level": 80, "points": 12000 },
+						{ "level": 90, "points": 14500 },
+						{ "level": 100, "points": 17500 }
+					]
 				},
 				{
 					"id": "gatherMeat",
