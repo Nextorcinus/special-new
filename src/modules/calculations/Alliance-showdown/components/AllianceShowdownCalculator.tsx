@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useAllianceShowdown } from "../hooks/useAllianceShowdown";
@@ -86,7 +87,10 @@ export default function AllianceShowdownCalculator() {
 					</p>
 				</div>
 
-				<MilestoneGoals milestones={milestones} totalPoints={finalPoints} />
+				<MilestoneGoals
+					milestones={milestones}
+					totalPoints={finalPoints}
+				/>
 			</section>
 
 			<section className="space-y-3">
@@ -120,6 +124,7 @@ export default function AllianceShowdownCalculator() {
 								onRangeSelectionChange={(selection) =>
 									setMissionRangeSelection(mission.id, selection)
 								}
+								baldurBonusPercent={baldurBonusPercent}
 								onQuantityChange={(quantity) =>
 									setMissionQuantity(mission.id, quantity)
 								}
@@ -129,6 +134,7 @@ export default function AllianceShowdownCalculator() {
 								key={`${activeStage.id}-${mission.id}`}
 								mission={mission}
 								index={index}
+								baldurBonusPercent={baldurBonusPercent}
 								onQuantityChange={(quantity) =>
 									setMissionQuantity(mission.id, quantity)
 								}

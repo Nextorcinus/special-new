@@ -8,7 +8,6 @@ import type {
 } from "../utils/calculatePoints";
 import {
 	calculateMissionPoints,
-	calculateMissionRangePoints,
 	formatPoints,
 	getMissionPoints,
 } from "../utils/calculatePoints";
@@ -21,6 +20,7 @@ type TieredMissionCardProps = {
 	onQuantityChange: (quantity: number) => void;
 	rangeSelection?: MissionRangeSelection;
 	onRangeSelectionChange?: (selection: MissionRangeSelection) => void;
+	baldurBonusPercent?: number;
 };
 
 export default function TieredMissionCard({
@@ -31,8 +31,15 @@ export default function TieredMissionCard({
 	onQuantityChange,
 	rangeSelection,
 	onRangeSelectionChange,
+	baldurBonusPercent = 0,
 }: TieredMissionCardProps) {
 	const levels = mission.levels ?? [];
+	const bonusPercent = Math.max(0, baldurBonusPercent);
+	const pointsPerScore = Math.max(0, mission.pointsPerScore ?? 0);
+
+	const boostedPointsPerScore =
+		pointsPerScore +
+		Math.floor((pointsPerScore * bonusPercent) / 100);
 
 	const defaultEndpoint: MissionSelection = {
 		level: levels[0]?.level ?? 0,
@@ -40,8 +47,8 @@ export default function TieredMissionCard({
 	};
 
 	const activeRange: MissionRangeSelection = rangeSelection ?? {
-		from: defaultEndpoint,
-		to: defaultEndpoint,
+		from: { ...defaultEndpoint },
+		to: { ...defaultEndpoint },
 	};
 
 	const selectedLevel = useMemo(
@@ -61,13 +68,28 @@ export default function TieredMissionCard({
 				: null,
 	};
 
-	const pointsEach = getMissionPoints(mission, activeSelection);
-	const subtotal = calculateMissionPoints(mission, activeSelection);
+	const isRangeMission = mission.pointsPerScore !== undefined;
 
-	const rangePoints =
-		mission.pointsPerScore !== undefined
-			? calculateMissionRangePoints(mission, activeRange)
-			: 0;
+	const basePointsEach = getMissionPoints(mission, activeSelection);
+
+	const pointsEach =
+		basePointsEach +
+		Math.floor((basePointsEach * bonusPercent) / 100);
+
+	const rangeFromPoints = getMissionPoints(mission, activeRange.from);
+	const rangeToPoints = getMissionPoints(mission, activeRange.to);
+
+	const rangeScoreDifference = Math.max(
+		0,
+		rangeToPoints - rangeFromPoints,
+	);
+
+	const finalRangePoints = rangeScoreDifference * boostedPointsPerScore;
+
+	const basePoints = calculateMissionPoints(mission, activeSelection);
+
+	const finalPoints =
+		basePoints + Math.floor((basePoints * bonusPercent) / 100);
 
 	const backgroundClass =
 		index % 2 === 0
@@ -119,6 +141,7 @@ export default function TieredMissionCard({
 		if (!nextLevel) return;
 
 		const availableStatuses = nextLevel.statuses ?? [];
+
 		const safeStatus =
 			status !== null &&
 			availableStatuses.some((item) => item.status === status)
@@ -147,9 +170,16 @@ export default function TieredMissionCard({
 		onQuantityChange(limitedValue);
 	};
 
-	const renderRangeEndpoint = (label: string, endpoint: "from" | "to") => {
+	const renderRangeEndpoint = (
+		label: string,
+		endpoint: "from" | "to",
+	) => {
 		const value = activeRange[endpoint];
-		const endpointLevel = levels.find((item) => item.level === value.level);
+
+		const endpointLevel = levels.find(
+			(item) => item.level === value.level,
+		);
+
 		const endpointStatuses = endpointLevel?.statuses ?? [];
 
 		const safeStatus =
@@ -157,6 +187,11 @@ export default function TieredMissionCard({
 			endpointStatuses.some((item) => item.status === value.status)
 				? value.status
 				: null;
+
+		const endpointPoints = getMissionPoints(mission, {
+			level: value.level,
+			status: safeStatus,
+		});
 
 		return (
 			<div className="min-w-0 space-y-2">
@@ -168,7 +203,11 @@ export default function TieredMissionCard({
 					aria-label={`${label} level for ${mission.name}`}
 					value={value.level}
 					onChange={(event) =>
-						updateRangeEndpoint(endpoint, Number(event.target.value), null)
+						updateRangeEndpoint(
+							endpoint,
+							Number(event.target.value),
+							null,
+						)
 					}
 					className="h-9 w-full min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 				>
@@ -187,7 +226,9 @@ export default function TieredMissionCard({
 						updateRangeEndpoint(
 							endpoint,
 							value.level,
-							event.target.value === "" ? null : Number(event.target.value),
+							event.target.value === ""
+								? null
+								: Number(event.target.value),
 						)
 					}
 					className="h-9 w-full min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)] disabled:cursor-not-allowed disabled:opacity-40"
@@ -201,13 +242,7 @@ export default function TieredMissionCard({
 				</select>
 
 				<p className="text-xs text-[var(--sl-text-muted)]">
-					{formatPoints(
-						getMissionPoints(mission, {
-							level: value.level,
-							status: safeStatus,
-						}),
-					)}{" "}
-					pts
+					{formatPoints(endpointPoints)} pts
 				</p>
 			</div>
 		);
@@ -234,7 +269,7 @@ export default function TieredMissionCard({
 				</span>
 			</div>
 
-			{mission.pointsPerScore !== undefined ? (
+			{isRangeMission ? (
 				<div className="mt-3 space-y-3">
 					<div className="grid grid-cols-2 gap-3">
 						{renderRangeEndpoint("From", "from")}
@@ -246,17 +281,19 @@ export default function TieredMissionCard({
 							<span className="text-xs text-[var(--sl-text-muted)]">
 								Points per score
 							</span>
+
 							<span className="text-sm font-semibold text-[var(--sl-text)]">
-								{formatPoints(mission.pointsPerScore)}
+								{formatPoints(boostedPointsPerScore)}
 							</span>
 						</div>
 
-						<div className="mt-2 flex items-center justify-between gap-2">
-							<span className="text-xs text-[var(--sl-text-muted)]">
+						<div className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--divider)] pt-2">
+							<span className="text-xs font-medium text-[var(--sl-text-muted)]">
 								Total range points
 							</span>
-							<span className="text-sm font-semibold text-[var(--sl-success)]">
-								{formatPoints(rangePoints)}
+
+							<span className="text-sm font-semibold tabular-nums text-[var(--sl-success)]">
+								{formatPoints(finalRangePoints)}
 							</span>
 						</div>
 					</div>
@@ -267,7 +304,9 @@ export default function TieredMissionCard({
 						<select
 							aria-label={`Level for ${mission.name}`}
 							value={selectedLevel?.level ?? ""}
-							onChange={(event) => changeLevel(Number(event.target.value))}
+							onChange={(event) =>
+								changeLevel(Number(event.target.value))
+							}
 							className="h-9 min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 						>
 							{levels.map((item) => (
@@ -285,7 +324,9 @@ export default function TieredMissionCard({
 									: String(activeSelection.status)
 							}
 							disabled={!hasStatuses}
-							onChange={(event) => changeStatus(event.target.value)}
+							onChange={(event) =>
+								changeStatus(event.target.value)
+							}
 							className="h-9 min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<option value="">Base Level</option>
@@ -302,7 +343,9 @@ export default function TieredMissionCard({
 							type="button"
 							aria-label={`Decrease ${mission.name}`}
 							disabled={mission.quantity <= 0}
-							onClick={() => changeQuantity(mission.quantity - 1)}
+							onClick={() =>
+								changeQuantity(mission.quantity - 1)
+							}
 							className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-input-hover)] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							−
@@ -315,7 +358,9 @@ export default function TieredMissionCard({
 							step={1}
 							value={mission.quantity}
 							aria-label={`Quantity for ${mission.name}`}
-							onChange={(event) => changeQuantity(Number(event.target.value))}
+							onChange={(event) =>
+								changeQuantity(Number(event.target.value))
+							}
 							className="h-8 min-w-0 flex-1 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-center text-sm font-medium text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 						/>
 
@@ -326,26 +371,28 @@ export default function TieredMissionCard({
 								mission.maxQuantity !== undefined &&
 								mission.quantity >= mission.maxQuantity
 							}
-							onClick={() => changeQuantity(mission.quantity + 1)}
+							onClick={() =>
+								changeQuantity(mission.quantity + 1)
+							}
 							className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-input-hover)] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							+
 						</button>
 					</div>
 
-					<div className="mt-3 flex flex-wrap items-end justify-between gap-2 border-t border-[var(--divider)] pt-2.5">
+					<div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--divider)] pt-2.5">
 						<span className="text-[11px] leading-relaxed text-[var(--sl-text-muted)]">
 							{formatPoints(pointsEach)} pts each
 						</span>
 
 						<span
 							className={`text-xs font-semibold tabular-nums ${
-								subtotal > 0
+								finalPoints > 0
 									? "text-[var(--sl-success)]"
 									: "text-[var(--sl-text-muted)]"
 							}`}
 						>
-							{formatPoints(subtotal)} pts
+							{formatPoints(finalPoints)} pts
 						</span>
 					</div>
 				</>

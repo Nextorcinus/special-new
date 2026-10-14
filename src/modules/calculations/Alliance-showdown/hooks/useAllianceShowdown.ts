@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
@@ -27,7 +28,9 @@ function createDefaultSelection(mission: Mission): MissionSelection {
 	};
 }
 
-function createDefaultRangeSelection(mission: Mission): MissionRangeSelection {
+function createDefaultRangeSelection(
+	mission: Mission,
+): MissionRangeSelection {
 	const initial = createDefaultSelection(mission);
 
 	return {
@@ -41,7 +44,10 @@ function createInitialQuantities(): StageQuantities {
 		data.stages.map((stage) => [
 			stage.id,
 			Object.fromEntries(
-				stage.missions.map((mission) => [mission.id, mission.quantity ?? 0]),
+				stage.missions.map((mission) => [
+					mission.id,
+					mission.quantity ?? 0,
+				]),
 			),
 		]),
 	);
@@ -58,7 +64,10 @@ function createInitialSelections(): StageSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [mission.id, createDefaultSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultSelection(mission),
+					]),
 			),
 		]),
 	);
@@ -75,39 +84,75 @@ function createInitialRangeSelections(): StageRangeSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultRangeSelection(mission),
+					]),
 			),
 		]),
 	);
+}
+
+function calculateMissionBasePoints(
+	mission: Mission,
+	selection?: MissionSelection,
+	rangeSelection?: MissionRangeSelection,
+): number {
+	if (mission.pointsPerScore !== undefined) {
+		if (!rangeSelection) return 0;
+
+		return calculateMissionRangePoints(mission, rangeSelection);
+	}
+
+	const points = getMissionPoints(mission, selection);
+	const quantity = Number.isFinite(mission.quantity)
+		? Math.max(0, mission.quantity)
+		: 0;
+
+	return points * quantity;
+}
+
+function calculateMissionBaldurBonus(
+	basePoints: number,
+	bonusPercent: number,
+): number {
+	return Math.floor((basePoints * bonusPercent) / 100);
 }
 
 function calculateStagePoints(
 	missions: Mission[],
 	selections: Record<string, MissionSelection>,
 	rangeSelections: Record<string, MissionRangeSelection>,
-): number {
-	return missions.reduce((total, mission) => {
-		if (mission.pointsPerScore !== undefined) {
-			const rangeSelection = rangeSelections[mission.id];
+	bonusPercent: number,
+): { basePoints: number; bonusPoints: number; finalPoints: number } {
+	return missions.reduce(
+		(total, mission) => {
+			const basePoints = calculateMissionBasePoints(
+				mission,
+				selections[mission.id],
+				rangeSelections[mission.id],
+			);
 
-			if (!rangeSelection) {
-				return total;
-			}
+			const bonusPoints = calculateMissionBaldurBonus(
+				basePoints,
+				bonusPercent,
+			);
 
-			return total + calculateMissionRangePoints(mission, rangeSelection);
-		}
-
-		const points = getMissionPoints(mission, selections[mission.id]);
-		const quantity = Number.isFinite(mission.quantity)
-			? Math.max(0, mission.quantity)
-			: 0;
-
-		return total + points * quantity;
-	}, 0);
+			return {
+				basePoints: total.basePoints + basePoints,
+				bonusPoints: total.bonusPoints + bonusPoints,
+				finalPoints:
+					total.finalPoints + basePoints + bonusPoints,
+			};
+		},
+		{ basePoints: 0, bonusPoints: 0, finalPoints: 0 },
+	);
 }
 
 export function useAllianceShowdown() {
-	const [activeStageId, setActiveStageId] = useState(data.stages[0]?.id ?? "");
+	const [activeStageId, setActiveStageId] = useState(
+		data.stages[0]?.id ?? "",
+	);
 
 	const [quantities, setQuantities] = useState<StageQuantities>(
 		createInitialQuantities,
@@ -117,9 +162,8 @@ export function useAllianceShowdown() {
 		createInitialSelections,
 	);
 
-	const [rangeSelections, setRangeSelections] = useState<StageRangeSelections>(
-		createInitialRangeSelections,
-	);
+	const [rangeSelections, setRangeSelections] =
+		useState<StageRangeSelections>(createInitialRangeSelections);
 
 	const [baldurLevel, setBaldurLevel] = useState(0);
 
@@ -137,17 +181,19 @@ export function useAllianceShowdown() {
 		return activeStage.missions.map((mission) => ({
 			...mission,
 			quantity:
-				quantities[activeStage.id]?.[mission.id] ?? mission.quantity ?? 0,
+				quantities[activeStage.id]?.[mission.id] ??
+				mission.quantity ??
+				0,
 		}));
 	}, [activeStage, quantities]);
 
 	const activeSelections = useMemo(
-		() => (activeStage ? (selections[activeStage.id] ?? {}) : {}),
+		() => (activeStage ? selections[activeStage.id] ?? {} : {}),
 		[activeStage, selections],
 	);
 
 	const activeRangeSelections = useMemo(
-		() => (activeStage ? (rangeSelections[activeStage.id] ?? {}) : {}),
+		() => (activeStage ? rangeSelections[activeStage.id] ?? {} : {}),
 		[activeStage, rangeSelections],
 	);
 
@@ -157,11 +203,28 @@ export function useAllianceShowdown() {
 		return data.milestoneSets[activeStage.milestoneSet] ?? [];
 	}, [activeStage]);
 
-	const totalPoints = useMemo(
+	const baldurBonusPercent = baldurLevel * 5;
+	const baldurMultiplier = 1 + baldurBonusPercent / 100;
+
+	const activeStageCalculation = useMemo(
 		() =>
-			calculateStagePoints(missions, activeSelections, activeRangeSelections),
-		[missions, activeSelections, activeRangeSelections],
+			calculateStagePoints(
+				missions,
+				activeSelections,
+				activeRangeSelections,
+				baldurBonusPercent,
+			),
+		[
+			missions,
+			activeSelections,
+			activeRangeSelections,
+			baldurBonusPercent,
+		],
 	);
+
+	const totalPoints = activeStageCalculation.basePoints;
+	const baldurBonus = activeStageCalculation.bonusPoints;
+	const finalPoints = activeStageCalculation.finalPoints;
 
 	const updateBaldurLevel = useCallback((level: number) => {
 		const safeLevel = Number.isFinite(level)
@@ -170,11 +233,6 @@ export function useAllianceShowdown() {
 
 		setBaldurLevel(safeLevel);
 	}, []);
-
-	const baldurBonusPercent = baldurLevel * 5;
-	const baldurMultiplier = 1 + baldurBonusPercent / 100;
-	const baldurBonus = Math.floor((totalPoints * baldurBonusPercent) / 100);
-	const finalPoints = totalPoints + baldurBonus;
 
 	const updateMissionQuantity = useCallback(
 		(missionId: string, quantity: number) => {
@@ -333,7 +391,10 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [mission.id, createDefaultSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultSelection(mission),
+					]),
 			),
 		}));
 
@@ -346,7 +407,10 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultRangeSelection(mission),
+					]),
 			),
 		}));
 	}, [activeStage]);
@@ -354,34 +418,38 @@ export function useAllianceShowdown() {
 	const allStageSummaries = useMemo(
 		() =>
 			data.stages.map((stage) => {
-				const stageMissions: Mission[] = stage.missions.map((mission) => ({
+				const stageMissions = stage.missions.map((mission) => ({
 					...mission,
-					quantity: quantities[stage.id]?.[mission.id] ?? mission.quantity ?? 0,
+					quantity:
+						quantities[stage.id]?.[mission.id] ??
+						mission.quantity ??
+						0,
 				}));
 
-				const stageTotalPoints = calculateStagePoints(
+				const calculation = calculateStagePoints(
 					stageMissions,
 					selections[stage.id] ?? {},
 					rangeSelections[stage.id] ?? {},
-				);
-
-				const stageBaldurBonus = Math.floor(
-					(stageTotalPoints * baldurBonusPercent) / 100,
+					baldurBonusPercent,
 				);
 
 				return {
 					id: stage.id,
 					day: stage.day,
 					name: stage.name,
-					totalPoints: stageTotalPoints,
-					finalPoints: stageTotalPoints + stageBaldurBonus,
+					totalPoints: calculation.basePoints,
+					finalPoints: calculation.finalPoints,
 				};
 			}),
 		[quantities, selections, rangeSelections, baldurBonusPercent],
 	);
 
 	const allStagesTotalPoints = useMemo(
-		() => allStageSummaries.reduce((sum, stage) => sum + stage.totalPoints, 0),
+		() =>
+			allStageSummaries.reduce(
+				(sum, stage) => sum + stage.totalPoints,
+				0,
+			),
 		[allStageSummaries],
 	);
 
@@ -394,7 +462,8 @@ export function useAllianceShowdown() {
 		[allStageSummaries],
 	);
 
-	const allStagesFinalPoints = allStagesTotalPoints + allStagesBaldurBonus;
+	const allStagesFinalPoints =
+		allStagesTotalPoints + allStagesBaldurBonus;
 
 	return {
 		stages: data.stages,
