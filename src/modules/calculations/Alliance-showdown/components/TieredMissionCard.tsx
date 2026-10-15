@@ -8,9 +8,12 @@ import type {
 } from "../utils/calculatePoints";
 import {
 	calculateMissionPoints,
+	calculateMissionRangePoints,
 	formatPoints,
 	getMissionPoints,
 } from "../utils/calculatePoints";
+
+type MissionTierValue = number | string;
 
 type TieredMissionCardProps = {
 	mission: Mission;
@@ -22,6 +25,33 @@ type TieredMissionCardProps = {
 	onRangeSelectionChange?: (selection: MissionRangeSelection) => void;
 	baldurBonusPercent?: number;
 };
+
+function sameValue(
+	a: MissionTierValue | null | undefined,
+	b: MissionTierValue | null | undefined,
+): boolean {
+	return a === b || (a != null && b != null && String(a) === String(b));
+}
+
+function formatLevel(level: MissionTierValue): string {
+	if (typeof level === "number") {
+		return `Level ${level}`;
+	}
+
+	return level
+		.replace(/[-_]/g, " ")
+		.replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function formatStatus(status: MissionTierValue): string {
+	if (typeof status === "number") {
+		return `Status ${status}`;
+	}
+
+	return status
+		.replace(/[-_]/g, " ")
+		.replace(/\b\w/g, (character) => character.toUpperCase());
+}
 
 export default function TieredMissionCard({
 	mission,
@@ -36,10 +66,11 @@ export default function TieredMissionCard({
 	const levels = mission.levels ?? [];
 	const bonusPercent = Math.max(0, baldurBonusPercent);
 	const pointsPerScore = Math.max(0, mission.pointsPerScore ?? 0);
+	const isRangeMission = mission.pointsPerScore !== undefined;
+	const isPetAdvancementMission = mission.id === "petAdvancementScore";
 
 	const boostedPointsPerScore =
-		pointsPerScore +
-		Math.floor((pointsPerScore * bonusPercent) / 100);
+		pointsPerScore + Math.floor((pointsPerScore * bonusPercent) / 100);
 
 	const defaultEndpoint: MissionSelection = {
 		level: levels[0]?.level ?? 0,
@@ -51,8 +82,16 @@ export default function TieredMissionCard({
 		to: { ...defaultEndpoint },
 	};
 
+	const getLevelIndex = (levelValue: MissionTierValue) =>
+		levels.findIndex((item) => sameValue(item.level, levelValue));
+
+	const fromLevelIndex = getLevelIndex(activeRange.from.level);
+	const toLevelIndex = getLevelIndex(activeRange.to.level);
+
 	const selectedLevel = useMemo(
-		() => levels.find((item) => item.level === selection.level) ?? levels[0],
+		() =>
+			levels.find((item) => sameValue(item.level, selection.level)) ??
+			levels[0],
 		[levels, selection.level],
 	);
 
@@ -62,34 +101,34 @@ export default function TieredMissionCard({
 	const activeSelection: MissionSelection = {
 		level: selectedLevel?.level ?? 0,
 		status:
+			!isPetAdvancementMission &&
 			selection.status !== null &&
-			statuses.some((item) => item.status === selection.status)
+			statuses.some((item) => sameValue(item.status, selection.status))
 				? selection.status
 				: null,
 	};
 
-	const isRangeMission = mission.pointsPerScore !== undefined;
-
 	const basePointsEach = getMissionPoints(mission, activeSelection);
 
 	const pointsEach =
-		basePointsEach +
-		Math.floor((basePointsEach * bonusPercent) / 100);
-
-	const rangeFromPoints = getMissionPoints(mission, activeRange.from);
-	const rangeToPoints = getMissionPoints(mission, activeRange.to);
-
-	const rangeScoreDifference = Math.max(
-		0,
-		rangeToPoints - rangeFromPoints,
-	);
-
-	const finalRangePoints = rangeScoreDifference * boostedPointsPerScore;
+		basePointsEach + Math.floor((basePointsEach * bonusPercent) / 100);
 
 	const basePoints = calculateMissionPoints(mission, activeSelection);
 
 	const finalPoints =
 		basePoints + Math.floor((basePoints * bonusPercent) / 100);
+
+	// Calculate range using progression steps instead of subtracting
+	// the displayed endpoint point values.
+	const baseRangePoints = calculateMissionRangePoints(mission, activeRange);
+
+	// The helper returns score increase multiplied by the original
+	// pointsPerScore. Convert it back to score increase, then apply
+	// the Baldur-adjusted points per score.
+	const rangeScoreIncrease =
+		pointsPerScore > 0 ? baseRangePoints / pointsPerScore : 0;
+
+	const finalRangePoints = rangeScoreIncrease * boostedPointsPerScore;
 
 	const backgroundClass =
 		index % 2 === 0
@@ -103,8 +142,8 @@ export default function TieredMissionCard({
 				? "bg-[var(--sl-warning)]/10 text-[var(--sl-warning)]"
 				: "bg-[var(--sl-text-muted)]/10 text-[var(--sl-text-muted)]";
 
-	const changeLevel = (level: number) => {
-		const nextLevel = levels.find((item) => item.level === level);
+	const changeLevel = (value: string) => {
+		const nextLevel = levels.find((item) => sameValue(item.level, value));
 
 		if (!nextLevel) return;
 
@@ -115,15 +154,13 @@ export default function TieredMissionCard({
 	};
 
 	const changeStatus = (value: string) => {
-		const status = value === "" ? null : Number(value);
+		const status =
+			value === ""
+				? null
+				: (statuses.find((item) => sameValue(item.status, value))?.status ??
+					null);
 
-		if (
-			status !== null &&
-			(!Number.isFinite(status) ||
-				!statuses.some((item) => item.status === status))
-		) {
-			return;
-		}
+		if (value !== "" && status === null) return;
 
 		onSelectionChange({
 			level: selectedLevel?.level ?? 0,
@@ -133,26 +170,59 @@ export default function TieredMissionCard({
 
 	const updateRangeEndpoint = (
 		endpoint: "from" | "to",
-		level: number,
-		status: number | null,
+		levelValue: string,
+		statusValue: string | null,
 	) => {
-		const nextLevel = levels.find((item) => item.level === level);
+		const nextLevelIndex = getLevelIndex(levelValue);
+		const nextLevel = levels[nextLevelIndex];
 
 		if (!nextLevel) return;
 
 		const availableStatuses = nextLevel.statuses ?? [];
 
-		const safeStatus =
-			status !== null &&
-			availableStatuses.some((item) => item.status === status)
-				? status
-				: null;
+		const nextStatus =
+			statusValue === null || statusValue === ""
+				? null
+				: (availableStatuses.find((item) => sameValue(item.status, statusValue))
+						?.status ?? null);
+
+		if (statusValue && nextStatus === null) return;
+
+		if (endpoint === "from") {
+			if (nextLevelIndex > toLevelIndex) {
+				onRangeSelectionChange?.({
+					from: {
+						level: nextLevel.level,
+						status: nextStatus,
+					},
+					to: {
+						level: nextLevel.level,
+						status: null,
+					},
+				});
+
+				return;
+			}
+
+			onRangeSelectionChange?.({
+				...activeRange,
+				from: {
+					level: nextLevel.level,
+					status: nextStatus,
+				},
+			});
+
+			return;
+		}
+
+		// Prevent To from selecting a level earlier than From.
+		if (nextLevelIndex < fromLevelIndex) return;
 
 		onRangeSelectionChange?.({
 			...activeRange,
-			[endpoint]: {
+			to: {
 				level: nextLevel.level,
-				status: safeStatus,
+				status: nextStatus,
 			},
 		});
 	};
@@ -170,26 +240,23 @@ export default function TieredMissionCard({
 		onQuantityChange(limitedValue);
 	};
 
-	const renderRangeEndpoint = (
-		label: string,
-		endpoint: "from" | "to",
-	) => {
+	const renderRangeEndpoint = (label: string, endpoint: "from" | "to") => {
 		const value = activeRange[endpoint];
 
-		const endpointLevel = levels.find(
-			(item) => item.level === value.level,
+		const endpointLevel = levels.find((item) =>
+			sameValue(item.level, value.level),
 		);
 
 		const endpointStatuses = endpointLevel?.statuses ?? [];
 
 		const safeStatus =
 			value.status !== null &&
-			endpointStatuses.some((item) => item.status === value.status)
+			endpointStatuses.some((item) => sameValue(item.status, value.status))
 				? value.status
 				: null;
 
 		const endpointPoints = getMissionPoints(mission, {
-			level: value.level,
+			level: endpointLevel?.level ?? value.level,
 			status: safeStatus,
 		});
 
@@ -201,19 +268,19 @@ export default function TieredMissionCard({
 
 				<select
 					aria-label={`${label} level for ${mission.name}`}
-					value={value.level}
+					value={String(value.level)}
 					onChange={(event) =>
-						updateRangeEndpoint(
-							endpoint,
-							Number(event.target.value),
-							null,
-						)
+						updateRangeEndpoint(endpoint, event.target.value, null)
 					}
 					className="h-9 w-full min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 				>
-					{levels.map((item) => (
-						<option key={item.level} value={item.level}>
-							Level {item.level}
+					{levels.map((item, levelIndex) => (
+						<option
+							key={String(item.level)}
+							value={String(item.level)}
+							disabled={endpoint === "to" && levelIndex < fromLevelIndex}
+						>
+							{formatLevel(item.level)}
 						</option>
 					))}
 				</select>
@@ -225,18 +292,19 @@ export default function TieredMissionCard({
 					onChange={(event) =>
 						updateRangeEndpoint(
 							endpoint,
-							value.level,
-							event.target.value === ""
-								? null
-								: Number(event.target.value),
+							String(value.level),
+							event.target.value,
 						)
 					}
 					className="h-9 w-full min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)] disabled:cursor-not-allowed disabled:opacity-40"
 				>
-					<option value="">Base Level</option>
+					<option value="">
+						{endpointStatuses.length ? "Base Level" : "No Status"}
+					</option>
+
 					{endpointStatuses.map((item) => (
-						<option key={item.status} value={item.status}>
-							Status {item.status}
+						<option key={String(item.status)} value={String(item.status)}>
+							{formatStatus(item.status)}
 						</option>
 					))}
 				</select>
@@ -300,42 +368,45 @@ export default function TieredMissionCard({
 				</div>
 			) : (
 				<>
-					<div className="mt-3 grid grid-cols-2 gap-2">
+					<div
+						className={`mt-3 grid gap-2 ${
+							isPetAdvancementMission ? "grid-cols-1" : "grid-cols-2"
+						}`}
+					>
 						<select
 							aria-label={`Level for ${mission.name}`}
-							value={selectedLevel?.level ?? ""}
-							onChange={(event) =>
-								changeLevel(Number(event.target.value))
-							}
+							value={String(selectedLevel?.level ?? "")}
+							onChange={(event) => changeLevel(event.target.value)}
 							className="h-9 min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 						>
 							{levels.map((item) => (
-								<option key={item.level} value={item.level}>
-									Level {item.level}
+								<option key={String(item.level)} value={String(item.level)}>
+									{formatLevel(item.level)}
 								</option>
 							))}
 						</select>
 
-						<select
-							aria-label={`Status for ${mission.name}`}
-							value={
-								activeSelection.status === null
-									? ""
-									: String(activeSelection.status)
-							}
-							disabled={!hasStatuses}
-							onChange={(event) =>
-								changeStatus(event.target.value)
-							}
-							className="h-9 min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)] disabled:cursor-not-allowed disabled:opacity-40"
-						>
-							<option value="">Base Level</option>
-							{statuses.map((item) => (
-								<option key={item.status} value={item.status}>
-									Status {item.status}
-								</option>
-							))}
-						</select>
+						{!isPetAdvancementMission && (
+							<select
+								aria-label={`Status for ${mission.name}`}
+								value={
+									activeSelection.status === null
+										? ""
+										: String(activeSelection.status)
+								}
+								disabled={!hasStatuses}
+								onChange={(event) => changeStatus(event.target.value)}
+								className="h-9 min-w-0 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-xs text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+							>
+								<option value="">Base Level</option>
+
+								{statuses.map((item) => (
+									<option key={String(item.status)} value={String(item.status)}>
+										{formatStatus(item.status)}
+									</option>
+								))}
+							</select>
+						)}
 					</div>
 
 					<div className="mt-2 flex items-center gap-1.5">
@@ -343,9 +414,7 @@ export default function TieredMissionCard({
 							type="button"
 							aria-label={`Decrease ${mission.name}`}
 							disabled={mission.quantity <= 0}
-							onClick={() =>
-								changeQuantity(mission.quantity - 1)
-							}
+							onClick={() => changeQuantity(mission.quantity - 1)}
 							className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-input-hover)] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							−
@@ -358,9 +427,7 @@ export default function TieredMissionCard({
 							step={1}
 							value={mission.quantity}
 							aria-label={`Quantity for ${mission.name}`}
-							onChange={(event) =>
-								changeQuantity(Number(event.target.value))
-							}
+							onChange={(event) => changeQuantity(Number(event.target.value))}
 							className="h-8 min-w-0 flex-1 rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] px-2 text-center text-sm font-medium text-[var(--sl-text)] outline-none focus:border-[var(--sl-primary)]"
 						/>
 
@@ -371,9 +438,7 @@ export default function TieredMissionCard({
 								mission.maxQuantity !== undefined &&
 								mission.quantity >= mission.maxQuantity
 							}
-							onClick={() =>
-								changeQuantity(mission.quantity + 1)
-							}
+							onClick={() => changeQuantity(mission.quantity + 1)}
 							className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--sl-border)] bg-[var(--sl-input)] text-[var(--sl-text-muted)] transition-colors hover:bg-[var(--sl-input-hover)] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							+

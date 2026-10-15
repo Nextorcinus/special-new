@@ -1,12 +1,12 @@
 export type MissionPriority = "great" | "medium" | "low";
 
 export type MissionStatus = {
-	status: number;
+	status: number | string;
 	points: number;
 };
 
 export type MissionLevel = {
-	level: number;
+	level: number | string;
 	points?: number;
 	statuses?: MissionStatus[];
 };
@@ -48,8 +48,8 @@ export type AllianceShowdownData = {
 };
 
 export type MissionSelection = {
-	level: number;
-	status: number | null;
+	level: number | string;
+	status: number | string | null;
 };
 
 export type MissionRangeSelection = {
@@ -58,21 +58,29 @@ export type MissionRangeSelection = {
 };
 
 type ProgressStep = {
-	level: number;
-	status: number | null;
+	level: number | string;
+	status: number | string | null;
 	points: number;
 };
 
+function sameValue(
+	a: number | string | null | undefined,
+	b: number | string | null | undefined,
+): boolean {
+	return a === b || (a != null && b != null && String(a) === String(b));
+}
+
+/**
+ * Mengikuti urutan level dan status dari JSON.
+ * Jangan mengurutkan berdasarkan nama karena urutan teks
+ * belum tentu sama dengan urutan progresi permainan.
+ */
 function getProgressSteps(mission: Mission): ProgressStep[] {
 	const steps: ProgressStep[] = [];
 
-	for (const level of [...(mission.levels ?? [])].sort(
-		(a, b) => a.level - b.level,
-	)) {
+	for (const level of mission.levels ?? []) {
 		if (level.statuses?.length) {
-			for (const status of [...level.statuses].sort(
-				(a, b) => a.status - b.status,
-			)) {
+			for (const status of level.statuses) {
 				steps.push({
 					level: level.level,
 					status: status.status,
@@ -95,28 +103,33 @@ function getSelectionIndex(
 	steps: ProgressStep[],
 	selection: MissionSelection,
 ): number {
+	const matchingIndices = steps
+		.map((step, index) => ({ step, index }))
+		.filter(({ step }) => sameValue(step.level, selection.level));
+
+	if (matchingIndices.length === 0) {
+		return -1;
+	}
+
 	if (selection.status !== null) {
-		return steps.findIndex(
-			(step) =>
-				step.level === selection.level && step.status === selection.status,
+		const exactMatch = matchingIndices.find(({ step }) =>
+			sameValue(step.status, selection.status),
 		);
+
+		return exactMatch?.index ?? -1;
 	}
 
-	const statusSteps = steps.filter(
-		(step) => step.level === selection.level && step.status !== null,
+	// Base Level pada level yang memiliki status dianggap
+	// sebagai posisi sebelum status pertama level tersebut.
+	const firstStatusIndex = matchingIndices.find(
+		({ step }) => step.status !== null,
 	);
 
-	if (statusSteps.length > 0) {
-		return steps.findIndex(
-			(step) =>
-				step.level === selection.level &&
-				step.status === statusSteps[statusSteps.length - 1].status,
-		);
+	if (firstStatusIndex) {
+		return firstStatusIndex.index - 1;
 	}
 
-	return steps.findIndex(
-		(step) => step.level === selection.level && step.status === null,
-	);
+	return matchingIndices[0].index;
 }
 
 export function getMissionPoints(
@@ -127,30 +140,46 @@ export function getMissionPoints(
 		return mission.points;
 	}
 
-	const selectedLevel = mission.levels?.find(
-		(item) => item.level === selection?.level,
+	if (!selection) {
+		return 0;
+	}
+
+	const selectedLevel = mission.levels?.find((item) =>
+		sameValue(item.level, selection.level),
 	);
 
 	if (!selectedLevel) {
 		return 0;
 	}
 
-	if (selection?.status == null) {
+	if (selection.status === null) {
 		return selectedLevel.points ?? 0;
 	}
 
-	const selectedStatus = selectedLevel.statuses?.find(
-		(item) => item.status === selection.status,
+	const selectedStatus = selectedLevel.statuses?.find((item) =>
+		sameValue(item.status, selection.status),
 	);
 
-	return selectedStatus?.points ?? 0;
+	return selectedStatus?.points ?? selectedLevel.points ?? 0;
 }
 
+/**
+ * Menghitung jumlah langkah progresi antara From dan To.
+ *
+ * Poin setiap langkah dijumlahkan satu per satu, bukan
+ * mengurangkan nilai endpoint yang mungkin sama.
+ */
 export function getMissionRangePoints(
 	mission: Mission,
 	selection: MissionRangeSelection,
 ): number {
-	if (mission.pointsPerScore === undefined || mission.pointsPerScore < 0) {
+	const pointsPerScore = mission.pointsPerScore;
+
+	if (
+		pointsPerScore === undefined ||
+		!Number.isFinite(pointsPerScore) ||
+		pointsPerScore < 0
+	) {
 		return 0;
 	}
 
@@ -171,7 +200,7 @@ export function getMissionRangePoints(
 		.slice(fromIndex + 1, toIndex + 1)
 		.reduce((total, step) => total + step.points, 0);
 
-	return scoreIncrease * mission.pointsPerScore;
+	return scoreIncrease * pointsPerScore;
 }
 
 export function calculateMissionPoints(

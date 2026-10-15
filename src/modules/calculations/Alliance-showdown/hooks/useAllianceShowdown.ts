@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
@@ -21,6 +20,13 @@ type StageRangeSelections = Record<
 	Record<string, MissionRangeSelection>
 >;
 
+function sameValue(
+	a: number | string | null | undefined,
+	b: number | string | null | undefined,
+): boolean {
+	return a === b || (a != null && b != null && String(a) === String(b));
+}
+
 function createDefaultSelection(mission: Mission): MissionSelection {
 	return {
 		level: mission.levels?.[0]?.level ?? 0,
@@ -28,9 +34,7 @@ function createDefaultSelection(mission: Mission): MissionSelection {
 	};
 }
 
-function createDefaultRangeSelection(
-	mission: Mission,
-): MissionRangeSelection {
+function createDefaultRangeSelection(mission: Mission): MissionRangeSelection {
 	const initial = createDefaultSelection(mission);
 
 	return {
@@ -44,10 +48,7 @@ function createInitialQuantities(): StageQuantities {
 		data.stages.map((stage) => [
 			stage.id,
 			Object.fromEntries(
-				stage.missions.map((mission) => [
-					mission.id,
-					mission.quantity ?? 0,
-				]),
+				stage.missions.map((mission) => [mission.id, mission.quantity ?? 0]),
 			),
 		]),
 	);
@@ -64,10 +65,7 @@ function createInitialSelections(): StageSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [
-						mission.id,
-						createDefaultSelection(mission),
-					]),
+					.map((mission) => [mission.id, createDefaultSelection(mission)]),
 			),
 		]),
 	);
@@ -84,10 +82,7 @@ function createInitialRangeSelections(): StageRangeSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [
-						mission.id,
-						createDefaultRangeSelection(mission),
-					]),
+					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
 			),
 		]),
 	);
@@ -133,16 +128,12 @@ function calculateStagePoints(
 				rangeSelections[mission.id],
 			);
 
-			const bonusPoints = calculateMissionBaldurBonus(
-				basePoints,
-				bonusPercent,
-			);
+			const bonusPoints = calculateMissionBaldurBonus(basePoints, bonusPercent);
 
 			return {
 				basePoints: total.basePoints + basePoints,
 				bonusPoints: total.bonusPoints + bonusPoints,
-				finalPoints:
-					total.finalPoints + basePoints + bonusPoints,
+				finalPoints: total.finalPoints + basePoints + bonusPoints,
 			};
 		},
 		{ basePoints: 0, bonusPoints: 0, finalPoints: 0 },
@@ -150,9 +141,7 @@ function calculateStagePoints(
 }
 
 export function useAllianceShowdown() {
-	const [activeStageId, setActiveStageId] = useState(
-		data.stages[0]?.id ?? "",
-	);
+	const [activeStageId, setActiveStageId] = useState(data.stages[0]?.id ?? "");
 
 	const [quantities, setQuantities] = useState<StageQuantities>(
 		createInitialQuantities,
@@ -162,8 +151,9 @@ export function useAllianceShowdown() {
 		createInitialSelections,
 	);
 
-	const [rangeSelections, setRangeSelections] =
-		useState<StageRangeSelections>(createInitialRangeSelections);
+	const [rangeSelections, setRangeSelections] = useState<StageRangeSelections>(
+		createInitialRangeSelections,
+	);
 
 	const [baldurLevel, setBaldurLevel] = useState(0);
 
@@ -181,19 +171,17 @@ export function useAllianceShowdown() {
 		return activeStage.missions.map((mission) => ({
 			...mission,
 			quantity:
-				quantities[activeStage.id]?.[mission.id] ??
-				mission.quantity ??
-				0,
+				quantities[activeStage.id]?.[mission.id] ?? mission.quantity ?? 0,
 		}));
 	}, [activeStage, quantities]);
 
 	const activeSelections = useMemo(
-		() => (activeStage ? selections[activeStage.id] ?? {} : {}),
+		() => (activeStage ? (selections[activeStage.id] ?? {}) : {}),
 		[activeStage, selections],
 	);
 
 	const activeRangeSelections = useMemo(
-		() => (activeStage ? rangeSelections[activeStage.id] ?? {} : {}),
+		() => (activeStage ? (rangeSelections[activeStage.id] ?? {}) : {}),
 		[activeStage, rangeSelections],
 	);
 
@@ -214,12 +202,7 @@ export function useAllianceShowdown() {
 				activeRangeSelections,
 				baldurBonusPercent,
 			),
-		[
-			missions,
-			activeSelections,
-			activeRangeSelections,
-			baldurBonusPercent,
-		],
+		[missions, activeSelections, activeRangeSelections, baldurBonusPercent],
 	);
 
 	const totalPoints = activeStageCalculation.basePoints;
@@ -280,17 +263,17 @@ export function useAllianceShowdown() {
 				return;
 			}
 
-			const selectedLevel = mission.levels?.find(
-				(level) => level.level === selection.level,
+			const selectedLevel = mission.levels?.find((level) =>
+				sameValue(level.level, selection.level),
 			);
 
 			if (!selectedLevel) return;
 
-			let safeStatus: number | null = null;
+			let safeStatus: number | string | null = null;
 
 			if (selection.status !== null) {
-				const selectedStatus = selectedLevel.statuses?.find(
-					(status) => status.status === selection.status,
+				const selectedStatus = selectedLevel.statuses?.find((status) =>
+					sameValue(status.status, selection.status),
 				);
 
 				if (!selectedStatus) return;
@@ -331,18 +314,21 @@ export function useAllianceShowdown() {
 			const validateEndpoint = (
 				endpoint: MissionSelection,
 			): MissionSelection | null => {
-				const level = mission.levels?.find(
-					(item) => item.level === endpoint.level,
+				const level = mission.levels?.find((item) =>
+					sameValue(item.level, endpoint.level),
 				);
 
 				if (!level) return null;
 
 				if (endpoint.status === null) {
-					return { level: level.level, status: null };
+					return {
+						level: level.level,
+						status: null,
+					};
 				}
 
-				const status = level.statuses?.find(
-					(item) => item.status === endpoint.status,
+				const status = level.statuses?.find((item) =>
+					sameValue(item.status, endpoint.status),
 				);
 
 				if (!status) return null;
@@ -391,10 +377,7 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [
-						mission.id,
-						createDefaultSelection(mission),
-					]),
+					.map((mission) => [mission.id, createDefaultSelection(mission)]),
 			),
 		}));
 
@@ -407,10 +390,7 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [
-						mission.id,
-						createDefaultRangeSelection(mission),
-					]),
+					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
 			),
 		}));
 	}, [activeStage]);
@@ -420,10 +400,7 @@ export function useAllianceShowdown() {
 			data.stages.map((stage) => {
 				const stageMissions = stage.missions.map((mission) => ({
 					...mission,
-					quantity:
-						quantities[stage.id]?.[mission.id] ??
-						mission.quantity ??
-						0,
+					quantity: quantities[stage.id]?.[mission.id] ?? mission.quantity ?? 0,
 				}));
 
 				const calculation = calculateStagePoints(
@@ -445,11 +422,7 @@ export function useAllianceShowdown() {
 	);
 
 	const allStagesTotalPoints = useMemo(
-		() =>
-			allStageSummaries.reduce(
-				(sum, stage) => sum + stage.totalPoints,
-				0,
-			),
+		() => allStageSummaries.reduce((sum, stage) => sum + stage.totalPoints, 0),
 		[allStageSummaries],
 	);
 
@@ -462,8 +435,7 @@ export function useAllianceShowdown() {
 		[allStageSummaries],
 	);
 
-	const allStagesFinalPoints =
-		allStagesTotalPoints + allStagesBaldurBonus;
+	const allStagesFinalPoints = allStagesTotalPoints + allStagesBaldurBonus;
 
 	return {
 		stages: data.stages,

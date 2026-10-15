@@ -349,6 +349,304 @@
 									"points": 2813
 								}
 							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
 						}
 					]
 				},
@@ -453,20 +751,365 @@
 					"quantity": 0
 				},
 				{
-					"id": "chiefCharmPoint",
+					"id": "chief-charms",
 					"name": "Raise Chief Charm max score by 1",
-					"points": 45,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "upgrade",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
 				},
 				{
-					"id": "trainingSpeedup",
-					"name": "Use 1m of Training Speedup",
-					"points": 18,
-					"unit": "minute",
+					"id": "trainTroops",
+					"name": "Train Troops by 1",
+					"calculationType": "tiered",
+					"unit": "advancement",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"levels": [
+						{ "level": 1, "points": 1 },
+						{ "level": 2, "points": 1 },
+						{ "level": 3, "points": 2 },
+						{ "level": 4, "points": 3 },
+						{ "level": 5, "points": 4 },
+						{ "level": 6, "points": 7 },
+						{ "level": 7, "points": 10 },
+						{ "level": 8, "points": 14 },
+						{ "level": 9, "points": 18 },
+						{ "level": 10, "points": 24 },
+						{ "level": 11, "points": 30 },
+						{ "level": 12, "points": 38 }
+					]
 				},
 				{
 					"id": "gems",
@@ -677,28 +1320,1048 @@
 					"quantity": 0
 				},
 				{
-					"id": "chiefCharmPoint",
+					"id": "chief-charms",
 					"name": "Raise Chief Charm max score by 1",
-					"points": 45,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "upgrade",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
 				},
 				{
 					"id": "petAdvancementScore",
 					"name": "Pet advancement score increases by 1",
-					"points": 30,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "advancement",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"levels": [
+						{ "level": 10, "points": 500 },
+						{ "level": 20, "points": 1000 },
+						{ "level": 30, "points": 2000 },
+						{ "level": 40, "points": 3000 },
+						{ "level": 50, "points": 4500 },
+						{ "level": 60, "points": 6750 },
+						{ "level": 70, "points": 10000 },
+						{ "level": 80, "points": 12000 },
+						{ "level": 90, "points": 14500 },
+						{ "level": 100, "points": 17500 }
+					]
 				},
 				{
 					"id": "chiefGearScore",
 					"name": "Chief Gear score increases by 1",
-					"points": 22,
-					"unit": "unit",
+					"calculationType": "tiered",
+					"unit": "upgrade",
 					"priority": "great",
-					"quantity": 0
+					"quantity": 0,
+					"pointsPerScore": 22,
+					"levels": [
+						{
+							"level": "uncommon",
+							"points": 1125,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 1875
+								}
+							]
+						},
+						{
+							"level": "rare",
+							"points": 3000,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 4500
+								},
+								{
+									"status": "2 star",
+									"points": 5100
+								},
+								{
+									"status": "3 star",
+									"points": 5440
+								}
+							]
+						},
+						{
+							"level": "epic",
+							"points": 3230,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3230
+								},
+								{
+									"status": "2 star",
+									"points": 3225
+								},
+								{
+									"status": "3 star",
+									"points": 3225
+								}
+							]
+						},
+						{
+							"level": "epic-T1",
+							"points": 3440,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3440
+								},
+								{
+									"status": "2 star",
+									"points": 4085
+								},
+								{
+									"status": "3 star",
+									"points": 4085
+								}
+							]
+						},
+						{
+							"level": "mythic",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T1",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2-3-star",
+							"points": 2320,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-1-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2310
+								},
+								{
+									"status": "Step 2",
+									"points": 2310
+								},
+								{
+									"status": "Step 3",
+									"points": 2310
+								}
+							]
+						},
+						{
+							"level": "legendary-2-star",
+							"points": 2630,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-3-star",
+							"points": 2570,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-T1",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2300
+								},
+								{
+									"status": "Step 2",
+									"points": 2300
+								},
+								{
+									"status": "Step 3",
+									"points": 2300
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-1-star",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-2-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-3-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T2",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2390
+								},
+								{
+									"status": "Step 2",
+									"points": 2390
+								},
+								{
+									"status": "Step 3",
+									"points": 2390
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-1-star",
+							"points": 2390,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-2-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-3-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-1-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-2-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-3-star",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3190
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-3-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-2-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-3-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-3-star",
+							"points": 3090
+						}
+					]
 				},
 				{
 					"id": "expertSigil",
