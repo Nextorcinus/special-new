@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import showdownData from "../data/alliance-showdown.json";
 import {
 	type AllianceShowdownData,
@@ -20,6 +21,27 @@ type StageRangeSelections = Record<
 	Record<string, MissionRangeSelection>
 >;
 
+type AllianceShowdownProgress = {
+	activeStageId: string;
+	quantities: StageQuantities;
+	selections: StageSelections;
+	rangeSelections: StageRangeSelections;
+	baldurLevel: number;
+};
+
+type StorageMode = "local" | "remote";
+
+const STORAGE_KEY = "special-lazyness-alliance-showdown";
+const SAVE_DEBOUNCE_MS = 500;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		!Array.isArray(value)
+	);
+}
+
 function sameValue(
 	a: number | string | null | undefined,
 	b: number | string | null | undefined,
@@ -34,7 +56,9 @@ function createDefaultSelection(mission: Mission): MissionSelection {
 	};
 }
 
-function createDefaultRangeSelection(mission: Mission): MissionRangeSelection {
+function createDefaultRangeSelection(
+	mission: Mission,
+): MissionRangeSelection {
 	const initial = createDefaultSelection(mission);
 
 	return {
@@ -48,7 +72,10 @@ function createInitialQuantities(): StageQuantities {
 		data.stages.map((stage) => [
 			stage.id,
 			Object.fromEntries(
-				stage.missions.map((mission) => [mission.id, mission.quantity ?? 0]),
+				stage.missions.map((mission) => [
+					mission.id,
+					mission.quantity ?? 0,
+				]),
 			),
 		]),
 	);
@@ -65,7 +92,10 @@ function createInitialSelections(): StageSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [mission.id, createDefaultSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultSelection(mission),
+					]),
 			),
 		]),
 	);
@@ -82,10 +112,103 @@ function createInitialRangeSelections(): StageRangeSelections {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultRangeSelection(mission),
+					]),
 			),
 		]),
 	);
+}
+
+function createInitialProgress(): AllianceShowdownProgress {
+	return {
+		activeStageId: data.stages[0]?.id ?? "",
+		quantities: createInitialQuantities(),
+		selections: createInitialSelections(),
+		rangeSelections: createInitialRangeSelections(),
+		baldurLevel: 0,
+	};
+}
+
+/**
+ * Read local progress safely.
+ * This function is only called inside client-side effects.
+ */
+function readLocalProgress(): Partial<AllianceShowdownProgress> | null {
+	try {
+		const raw = localStorage.getItem(STORAGE_KEY);
+
+		if (!raw) return null;
+
+		const parsed: unknown = JSON.parse(raw);
+
+		if (!isRecord(parsed)) return null;
+
+		const progress: Partial<AllianceShowdownProgress> = {};
+
+		if (typeof parsed.activeStageId === "string") {
+			progress.activeStageId = parsed.activeStageId;
+		}
+
+		if (isRecord(parsed.quantities)) {
+			progress.quantities = parsed.quantities as StageQuantities;
+		}
+
+		if (isRecord(parsed.selections)) {
+			progress.selections = parsed.selections as StageSelections;
+		}
+
+		if (isRecord(parsed.rangeSelections)) {
+			progress.rangeSelections =
+				parsed.rangeSelections as StageRangeSelections;
+		}
+
+		if (
+			typeof parsed.baldurLevel === "number" &&
+			Number.isFinite(parsed.baldurLevel)
+		) {
+			progress.baldurLevel = Math.min(
+				10,
+				Math.max(0, Math.floor(parsed.baldurLevel)),
+			);
+		}
+
+		return progress;
+	} catch (error) {
+		console.error(
+			"[Alliance Showdown] Failed to read local progress:",
+			error,
+		);
+
+		return null;
+	}
+}
+
+/**
+ * Merge saved stage records with the current defaults.
+ * This preserves default entries when saved data is incomplete.
+ */
+function mergeStageRecords<T>(
+	initial: Record<string, Record<string, T>>,
+	saved: unknown,
+): Record<string, Record<string, T>> {
+	if (!isRecord(saved)) return initial;
+
+	const result: Record<string, Record<string, T>> = {
+		...initial,
+	};
+
+	for (const [stageId, savedStage] of Object.entries(saved)) {
+		if (!isRecord(savedStage)) continue;
+
+		result[stageId] = {
+			...(initial[stageId] ?? {}),
+			...(savedStage as Record<string, T>),
+		};
+	}
+
+	return result;
 }
 
 function calculateMissionBasePoints(
@@ -128,7 +251,10 @@ function calculateStagePoints(
 				rangeSelections[mission.id],
 			);
 
-			const bonusPoints = calculateMissionBaldurBonus(basePoints, bonusPercent);
+			const bonusPoints = calculateMissionBaldurBonus(
+				basePoints,
+				bonusPercent,
+			);
 
 			return {
 				basePoints: total.basePoints + basePoints,
@@ -141,21 +267,238 @@ function calculateStagePoints(
 }
 
 export function useAllianceShowdown() {
-	const [activeStageId, setActiveStageId] = useState(data.stages[0]?.id ?? "");
+	const initialProgress = useMemo(createInitialProgress, []);
+
+	const [activeStageId, setActiveStageId] = useState(
+		initialProgress.activeStageId,
+	);
 
 	const [quantities, setQuantities] = useState<StageQuantities>(
-		createInitialQuantities,
+		initialProgress.quantities,
 	);
 
 	const [selections, setSelections] = useState<StageSelections>(
-		createInitialSelections,
+		initialProgress.selections,
 	);
 
-	const [rangeSelections, setRangeSelections] = useState<StageRangeSelections>(
-		createInitialRangeSelections,
-	);
+	const [rangeSelections, setRangeSelections] =
+		useState<StageRangeSelections>(initialProgress.rangeSelections);
 
 	const [baldurLevel, setBaldurLevel] = useState(0);
+
+	const [isProgressLoaded, setIsProgressLoaded] = useState(false);
+	const [storageMode, setStorageMode] = useState<StorageMode>("local");
+
+	/**
+	 * Load server progress first.
+	 *
+	 * If the user is authenticated and has saved server progress,
+	 * that progress takes precedence over local progress.
+	 *
+	 * If the user is not authenticated, local progress is restored.
+	 */
+	useEffect(() => {
+		let cancelled = false;
+
+		const applyProgress = (
+			progress: Partial<AllianceShowdownProgress>,
+		) => {
+			if (cancelled) return;
+
+			const validStageIds = new Set(
+				data.stages.map((stage) => stage.id),
+			);
+
+			const nextStageId =
+				progress.activeStageId &&
+				validStageIds.has(progress.activeStageId)
+					? progress.activeStageId
+					: data.stages[0]?.id ?? "";
+
+			setActiveStageId(nextStageId);
+
+			if (progress.quantities) {
+				setQuantities((previous) =>
+					mergeStageRecords(previous, progress.quantities),
+				);
+			}
+
+			if (progress.selections) {
+				setSelections((previous) =>
+					mergeStageRecords(previous, progress.selections),
+				);
+			}
+
+			if (progress.rangeSelections) {
+				setRangeSelections((previous) =>
+					mergeStageRecords(
+						previous,
+						progress.rangeSelections,
+					),
+				);
+			}
+
+			if (typeof progress.baldurLevel === "number") {
+				setBaldurLevel(
+					Math.min(
+						10,
+						Math.max(0, Math.floor(progress.baldurLevel)),
+					),
+				);
+			}
+		};
+
+		async function loadProgress() {
+			let remoteRequestSucceeded = false;
+
+			try {
+				const response = await fetch("/api/alliance-showdown", {
+					method: "GET",
+					cache: "no-store",
+				});
+
+				if (cancelled) return;
+
+				if (response.ok) {
+					const result: unknown = await response.json();
+
+					if (!isRecord(result)) {
+						throw new Error(
+							"Invalid Alliance Showdown API response",
+						);
+					}
+
+					remoteRequestSucceeded = true;
+
+					if (isRecord(result.data)) {
+						applyProgress(
+							result.data as Partial<AllianceShowdownProgress>,
+						);
+					} else {
+						// The account has no saved progress yet.
+						// Restore local progress so it can be migrated
+						// to the account by the save effect.
+						const localProgress = readLocalProgress();
+
+						if (localProgress) {
+							applyProgress(localProgress);
+						}
+					}
+				} else if (response.status !== 401) {
+					throw new Error(
+						`Failed to load server progress: HTTP ${response.status}`,
+					);
+				}
+			} catch (error) {
+				console.error(
+					"[Alliance Showdown] Failed to load remote progress:",
+					error,
+				);
+			}
+
+			if (cancelled) return;
+
+			if (!remoteRequestSucceeded) {
+				const localProgress = readLocalProgress();
+
+				if (localProgress) {
+					applyProgress(localProgress);
+				}
+			}
+
+			if (cancelled) return;
+
+			setStorageMode(
+				remoteRequestSucceeded ? "remote" : "local",
+			);
+
+			setIsProgressLoaded(true);
+		}
+
+		void loadProgress();
+
+		return () => {
+			cancelled = true;
+		};
+	}, []);
+
+	/**
+	 * Save progress after loading has finished.
+	 *
+	 * Local progress is written immediately.
+	 * Remote progress is debounced to reduce API requests.
+	 */
+	useEffect(() => {
+		if (!isProgressLoaded) return;
+
+		const progress: AllianceShowdownProgress = {
+			activeStageId,
+			quantities,
+			selections,
+			rangeSelections,
+			baldurLevel,
+		};
+
+		try {
+			localStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify(progress),
+			);
+		} catch (error) {
+			console.error(
+				"[Alliance Showdown] Failed to save local progress:",
+				error,
+			);
+		}
+
+		if (storageMode !== "remote") return;
+
+		const controller = new AbortController();
+
+		const saveTimer = setTimeout(() => {
+			void fetch("/api/alliance-showdown", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data: progress }),
+				signal: controller.signal,
+			})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(
+							`Save failed: HTTP ${response.status}`,
+						);
+					}
+				})
+				.catch((error: unknown) => {
+					if (
+						error instanceof Error &&
+						error.name === "AbortError"
+					) {
+						return;
+					}
+
+					console.error(
+						"[Alliance Showdown] Failed to save remote progress:",
+						error,
+					);
+				});
+		}, SAVE_DEBOUNCE_MS);
+
+		return () => {
+			clearTimeout(saveTimer);
+			controller.abort();
+		};
+	}, [
+		isProgressLoaded,
+		storageMode,
+		activeStageId,
+		quantities,
+		selections,
+		rangeSelections,
+		baldurLevel,
+	]);
 
 	const activeStage = useMemo(
 		() =>
@@ -171,17 +514,22 @@ export function useAllianceShowdown() {
 		return activeStage.missions.map((mission) => ({
 			...mission,
 			quantity:
-				quantities[activeStage.id]?.[mission.id] ?? mission.quantity ?? 0,
+				quantities[activeStage.id]?.[mission.id] ??
+				mission.quantity ??
+				0,
 		}));
 	}, [activeStage, quantities]);
 
 	const activeSelections = useMemo(
-		() => (activeStage ? (selections[activeStage.id] ?? {}) : {}),
+		() => (activeStage ? selections[activeStage.id] ?? {} : {}),
 		[activeStage, selections],
 	);
 
 	const activeRangeSelections = useMemo(
-		() => (activeStage ? (rangeSelections[activeStage.id] ?? {}) : {}),
+		() =>
+			activeStage
+				? rangeSelections[activeStage.id] ?? {}
+				: {},
 		[activeStage, rangeSelections],
 	);
 
@@ -202,7 +550,12 @@ export function useAllianceShowdown() {
 				activeRangeSelections,
 				baldurBonusPercent,
 			),
-		[missions, activeSelections, activeRangeSelections, baldurBonusPercent],
+		[
+			missions,
+			activeSelections,
+			activeRangeSelections,
+			baldurBonusPercent,
+		],
 	);
 
 	const totalPoints = activeStageCalculation.basePoints;
@@ -272,8 +625,9 @@ export function useAllianceShowdown() {
 			let safeStatus: number | string | null = null;
 
 			if (selection.status !== null) {
-				const selectedStatus = selectedLevel.statuses?.find((status) =>
-					sameValue(status.status, selection.status),
+				const selectedStatus = selectedLevel.statuses?.find(
+					(status) =>
+						sameValue(status.status, selection.status),
 				);
 
 				if (!selectedStatus) return;
@@ -377,7 +731,10 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore === undefined,
 					)
-					.map((mission) => [mission.id, createDefaultSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultSelection(mission),
+					]),
 			),
 		}));
 
@@ -390,7 +747,10 @@ export function useAllianceShowdown() {
 							mission.calculationType === "tiered" &&
 							mission.pointsPerScore !== undefined,
 					)
-					.map((mission) => [mission.id, createDefaultRangeSelection(mission)]),
+					.map((mission) => [
+						mission.id,
+						createDefaultRangeSelection(mission),
+					]),
 			),
 		}));
 	}, [activeStage]);
@@ -400,7 +760,10 @@ export function useAllianceShowdown() {
 			data.stages.map((stage) => {
 				const stageMissions = stage.missions.map((mission) => ({
 					...mission,
-					quantity: quantities[stage.id]?.[mission.id] ?? mission.quantity ?? 0,
+					quantity:
+						quantities[stage.id]?.[mission.id] ??
+						mission.quantity ??
+						0,
 				}));
 
 				const calculation = calculateStagePoints(
@@ -422,20 +785,26 @@ export function useAllianceShowdown() {
 	);
 
 	const allStagesTotalPoints = useMemo(
-		() => allStageSummaries.reduce((sum, stage) => sum + stage.totalPoints, 0),
+		() =>
+			allStageSummaries.reduce(
+				(sum, stage) => sum + stage.totalPoints,
+				0,
+			),
 		[allStageSummaries],
 	);
 
 	const allStagesBaldurBonus = useMemo(
 		() =>
 			allStageSummaries.reduce(
-				(sum, stage) => sum + stage.finalPoints - stage.totalPoints,
+				(sum, stage) =>
+					sum + stage.finalPoints - stage.totalPoints,
 				0,
 			),
 		[allStageSummaries],
 	);
 
-	const allStagesFinalPoints = allStagesTotalPoints + allStagesBaldurBonus;
+	const allStagesFinalPoints =
+		allStagesTotalPoints + allStagesBaldurBonus;
 
 	return {
 		stages: data.stages,
@@ -461,5 +830,7 @@ export function useAllianceShowdown() {
 		allStagesBaldurBonus,
 		allStagesFinalPoints,
 		resetStage,
+		isProgressLoaded,
+		storageMode,
 	};
 }
