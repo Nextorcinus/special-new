@@ -1,0 +1,2582 @@
+{
+	"title": "State vs State",
+	"source": "WOS SVS Calculator JavaScript provided by user",
+	"notes": [
+		"Mission names and stage membership follow the user's supplied list.",
+		"Points and priority values are taken from the supplied JavaScript source.",
+		"Duplicate mission IDs within each stage are removed; shared missions can still appear in different stages because each stage has its own scoring and progress.",
+		"Duplicate mission names are removed within each stage. The same mission may appear in different stages because each stage has its own scoring and progress.",
+		"Milestone definitions are reusable: stages 1-4 reference milestoneSets.standard, and stages 5-6 reference milestoneSets.final."
+	],
+	"stages": [
+		{
+			"id": "stage1",
+			"day": 1,
+			"name": "City Construction",
+			"missions": [
+				{
+					"id": "chief-charms",
+					"name": "Raise Chief Charm max score by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
+				},
+				{
+					"id": "refinedFireCrystalBuilding",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "researchSpeedup",
+					"name": "Use 1m of Research Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage2",
+			"day": 2,
+			"name": "Research Day",
+			"missions": [
+				{
+					"id": "playLuckyWheel",
+					"name": "Play the Lucky Wheel 1",
+					"points": 8000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "rareHeroShard",
+					"name": "Use 1 Rare Hero Shard to ascend Heroes",
+					"points": 210,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "epicHeroShard",
+					"name": "Use 1 Epic Hero Shard to ascend Heroes",
+					"points": 750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mythicHeroShard",
+					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+
+				{
+					"id": "refinedFireCrystalBuilding",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "researchSpeedup",
+					"name": "Use 1m of Research Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage3",
+			"day": 3,
+			"name": "Beast Slay",
+			"missions": [
+				{
+					"id": "playLuckyWheel",
+					"name": "Play the Lucky Wheel 1",
+					"points": 8000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "callRallyPolar",
+					"name": "Call rally and hunt down 1 Polar Terror",
+					"points": 30000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "killBeast1to10",
+					"name": "Defeat a level 1 to level 10 Beast",
+					"points": 9000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "killBeast11to15",
+					"name": "Defeat a level 11 to level 15 Beast",
+					"points": 9750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "killBeast16to20",
+					"name": "Defeat a level 16 to level 20 Beast",
+					"points": 10500,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "killBeast21to25",
+					"name": "Defeat a level 21 to level 25 Beast",
+					"points": 11250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "killBeast25to30",
+					"name": "Defeat a level 25 to level 30 Beast",
+					"points": 12000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "advancedWildMark",
+					"name": "Use 1 Advanced Wild Mark to refine pets",
+					"points": 9370,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "commonWildMark",
+					"name": "Use 1 Common Wild Mark to refine pets",
+					"points": 680,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+
+				{
+					"id": "chief-charms",
+					"name": "Raise Chief Charm max score by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
+				},
+				{
+					"id": "petAdvancementScore",
+					"name": "Pet advancement score increases by 1",
+					"calculationType": "tiered",
+					"unit": "advancement",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 30,
+					"levels": [
+						{ "level": 10, "points": 500 },
+						{ "level": 20, "points": 1000 },
+						{ "level": 30, "points": 2000 },
+						{ "level": 40, "points": 3000 },
+						{ "level": 50, "points": 4500 },
+						{ "level": 60, "points": 6750 },
+						{ "level": 70, "points": 10000 },
+						{ "level": 80, "points": 12000 },
+						{ "level": 90, "points": 14500 },
+						{ "level": 100, "points": 17500 }
+					]
+				},
+				{
+					"id": "rareHeroShard",
+					"name": "Use 1 Rare Hero Shard to ascend Heroes",
+					"points": 210,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "epicHeroShard",
+					"name": "Use 1 Epic Hero Shard to ascend Heroes",
+					"points": 750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mythicHeroShard",
+					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage4",
+			"day": 4,
+			"name": "Hero Development",
+			"missions": [
+				{
+					"id": "mithril",
+					"name": "Use 1 Mithril",
+					"points": 67500,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroExclusiveGearWidget",
+					"name": "Use 1 Hero Exclusive Gear Widget",
+					"points": 3750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "heroGearEssenceStone",
+					"name": "Use 1 Hero Gear Essence Stone",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "chief-charms",
+					"name": "Raise Chief Charm max score by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
+				},
+				{
+					"id": "trainTroops",
+					"name": "Train Troops by 1",
+					"calculationType": "tiered",
+					"unit": "advancement",
+					"priority": "great",
+					"quantity": 0,
+					"levels": [
+						{ "level": 1, "points": 1 },
+						{ "level": 2, "points": 1 },
+						{ "level": 3, "points": 2 },
+						{ "level": 4, "points": 3 },
+						{ "level": 5, "points": 4 },
+						{ "level": 6, "points": 7 },
+						{ "level": 7, "points": 10 },
+						{ "level": 8, "points": 14 },
+						{ "level": 9, "points": 18 },
+						{ "level": 10, "points": 24 },
+						{ "level": 11, "points": 30 },
+						{ "level": 12, "points": 38 }
+					]
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "standard"
+		},
+		{
+			"id": "stage5",
+			"day": 5,
+			"name": "Power Boost",
+			"missions": [
+				{
+					"id": "chief-charms",
+					"name": "Raise Chief Charm max score by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 45,
+					"levels": [
+						{
+							"level": 1,
+							"points": 625
+						},
+						{
+							"level": 2,
+							"points": 1250
+						},
+						{
+							"level": 3,
+							"points": 3125
+						},
+						{
+							"level": 4,
+							"points": 8750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2813
+								},
+								{
+									"status": 2,
+									"points": 2812
+								},
+								{
+									"status": 3,
+									"points": 2813
+								}
+							]
+						},
+						{
+							"level": 5,
+							"points": 2812,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3125
+								},
+								{
+									"status": 2,
+									"points": 3125
+								},
+								{
+									"status": 3,
+									"points": 3125
+								}
+							]
+						},
+						{
+							"level": 6,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3438
+								},
+								{
+									"status": 2,
+									"points": 3437
+								},
+								{
+									"status": 3,
+									"points": 3438
+								}
+							]
+						},
+						{
+							"level": 7,
+							"points": 3125,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3250
+								},
+								{
+									"status": 2,
+									"points": 3250
+								},
+								{
+									"status": 3,
+									"points": 3250
+								}
+							]
+						},
+						{
+							"level": 8,
+							"points": 3250,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3500
+								},
+								{
+									"status": 2,
+									"points": 3500
+								},
+								{
+									"status": 3,
+									"points": 3500
+								}
+							]
+						},
+						{
+							"level": 9,
+							"points": 3500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3750
+								},
+								{
+									"status": 2,
+									"points": 3750
+								},
+								{
+									"status": 3,
+									"points": 3750
+								}
+							]
+						},
+						{
+							"level": 10,
+							"points": 3750,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 11,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3400
+								},
+								{
+									"status": 2,
+									"points": 3400
+								},
+								{
+									"status": 3,
+									"points": 3400
+								},
+								{
+									"status": 4,
+									"points": 3400
+								}
+							]
+						},
+						{
+							"level": 12,
+							"points": 3400,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3600
+								},
+								{
+									"status": 2,
+									"points": 3600
+								},
+								{
+									"status": 3,
+									"points": 3600
+								},
+								{
+									"status": 4,
+									"points": 3600
+								}
+							]
+						},
+						{
+							"level": 13,
+							"points": 3600,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 3800
+								},
+								{
+									"status": 2,
+									"points": 3800
+								},
+								{
+									"status": 3,
+									"points": 3800
+								},
+								{
+									"status": 4,
+									"points": 3800
+								}
+							]
+						},
+						{
+							"level": 14,
+							"points": 3800,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4000
+								},
+								{
+									"status": 2,
+									"points": 4000
+								},
+								{
+									"status": 3,
+									"points": 4000
+								},
+								{
+									"status": 4,
+									"points": 4000
+								}
+							]
+						},
+						{
+							"level": 15,
+							"points": 4000,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 4200
+								},
+								{
+									"status": 2,
+									"points": 4200
+								},
+								{
+									"status": 3,
+									"points": 4200
+								},
+								{
+									"status": 4,
+									"points": 4200
+								}
+							]
+						},
+						{
+							"level": 16,
+							"points": 4200,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2500
+								},
+								{
+									"status": 2,
+									"points": 2500
+								},
+								{
+									"status": 3,
+									"points": 2500
+								},
+								{
+									"status": 4,
+									"points": 2500
+								},
+								{
+									"status": 5,
+									"points": 2500
+								},
+								{
+									"status": 6,
+									"points": 2500
+								},
+								{
+									"status": 7,
+									"points": 2500
+								},
+								{
+									"status": 8,
+									"points": 2500
+								}
+							]
+						},
+						{
+							"level": 17,
+							"points": 2500,
+							"statuses": [
+								{
+									"status": 1,
+									"points": 2700
+								},
+								{
+									"status": 2,
+									"points": 2700
+								},
+								{
+									"status": 3,
+									"points": 2700
+								},
+								{
+									"status": 4,
+									"points": 2700
+								},
+								{
+									"status": 5,
+									"points": 2700
+								},
+								{
+									"status": 6,
+									"points": 2700
+								},
+								{
+									"status": 7,
+									"points": 2700
+								},
+								{
+									"status": 8,
+									"points": 2700
+								}
+							]
+						},
+						{
+							"level": 18,
+							"points": 2700
+						}
+					]
+				},
+				{
+					"id": "chiefGearScore",
+					"name": "Chief Gear score increases by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 22,
+					"levels": [
+						{
+							"level": "uncommon",
+							"points": 1125,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 1875
+								}
+							]
+						},
+						{
+							"level": "rare",
+							"points": 3000,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 4500
+								},
+								{
+									"status": "2 star",
+									"points": 5100
+								},
+								{
+									"status": "3 star",
+									"points": 5440
+								}
+							]
+						},
+						{
+							"level": "epic",
+							"points": 3230,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3230
+								},
+								{
+									"status": "2 star",
+									"points": 3225
+								},
+								{
+									"status": "3 star",
+									"points": 3225
+								}
+							]
+						},
+						{
+							"level": "epic-T1",
+							"points": 3440,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3440
+								},
+								{
+									"status": "2 star",
+									"points": 4085
+								},
+								{
+									"status": "3 star",
+									"points": 4085
+								}
+							]
+						},
+						{
+							"level": "mythic",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T1",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2-3-star",
+							"points": 2320,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-1-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2310
+								},
+								{
+									"status": "Step 2",
+									"points": 2310
+								},
+								{
+									"status": "Step 3",
+									"points": 2310
+								}
+							]
+						},
+						{
+							"level": "legendary-2-star",
+							"points": 2630,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-3-star",
+							"points": 2570,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-T1",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2300
+								},
+								{
+									"status": "Step 2",
+									"points": 2300
+								},
+								{
+									"status": "Step 3",
+									"points": 2300
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-1-star",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-2-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-3-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T2",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2390
+								},
+								{
+									"status": "Step 2",
+									"points": 2390
+								},
+								{
+									"status": "Step 3",
+									"points": 2390
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-1-star",
+							"points": 2390,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-2-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-3-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-1-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-2-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-3-star",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3190
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-3-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-2-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-3-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-3-star",
+							"points": 3090
+						}
+					]
+				},
+				{
+					"id": "petAdvancementScore",
+					"name": "Pet advancement score increases by 1",
+					"calculationType": "tiered",
+					"unit": "advancement",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 30,
+					"levels": [
+						{ "level": 10, "points": 500 },
+						{ "level": 20, "points": 1000 },
+						{ "level": 30, "points": 2000 },
+						{ "level": 40, "points": 3000 },
+						{ "level": 50, "points": 4500 },
+						{ "level": 60, "points": 6750 },
+						{ "level": 70, "points": 10000 },
+						{ "level": 80, "points": 12000 },
+						{ "level": 90, "points": 14500 },
+						{ "level": 100, "points": 17500 }
+					]
+				},
+				{
+					"id": "refinedFireCrystalBuilding",
+					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystal",
+					"name": "Use 1 Fire Crystal to upgrade buildings",
+					"points": 1250,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "fireCrystalShard",
+					"name": "Use 1 Fire Crystal Shard for Research",
+					"points": 625,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
+					"id": "gems",
+					"name": "Use 1 Gem",
+					"points": 1,
+					"unit": "unit",
+					"priority": "low",
+					"quantity": 0
+				}
+			],
+			"milestoneSet": "final"
+		}
+	],
+	"milestoneSets": {
+		"standard": [
+			{
+				"points": 100,
+				"label": "100"
+			},
+			{
+				"points": 25000,
+				"label": "25K"
+			},
+			{
+				"points": 50000,
+				"label": "50K"
+			},
+			{
+				"points": 87500,
+				"label": "87.5K"
+			},
+			{
+				"points": 125000,
+				"label": "125K"
+			}
+		],
+		"final": [
+			{
+				"points": 100,
+				"label": "100"
+			},
+			{
+				"points": 37500,
+				"label": "37.5K"
+			},
+			{
+				"points": 75000,
+				"label": "75K"
+			},
+			{
+				"points": 125000,
+				"label": "125K"
+			},
+			{
+				"points": 187500,
+				"label": "187.5K"
+			}
+		]
+	}
+}

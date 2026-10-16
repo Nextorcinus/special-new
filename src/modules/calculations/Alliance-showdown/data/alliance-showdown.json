@@ -1,6 +1,6 @@
 {
 	"title": "Alliance Showdown",
-	"source": "WOS Tools Alliance Showdown Calculator JavaScript provided by user",
+	"source": "WOS Alliance Showdown Calculator JavaScript provided by user",
 	"notes": [
 		"Mission names and stage membership follow the user's supplied list.",
 		"Points and priority values are taken from the supplied JavaScript source.",
@@ -31,8 +31,16 @@
 					"quantity": 0
 				},
 				{
-					"id": "refinedFireCrystal",
+					"id": "refinedFireCrystalBuilding",
 					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
 					"points": 18750,
 					"unit": "unit",
 					"priority": "great",
@@ -63,14 +71,6 @@
 					"quantity": 0
 				},
 				{
-					"id": "expertSigil",
-					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
-					"points": 3600,
-					"unit": "unit",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
 					"id": "researchSpeedup",
 					"name": "Use 1m of Research Speedup",
 					"points": 18,
@@ -79,24 +79,16 @@
 					"quantity": 0
 				},
 				{
-					"id": "expertSkillsSpeedup",
-					"name": "Use 1m of Expert Skills Speedup",
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
 					"points": 18,
 					"unit": "minute",
 					"priority": "medium",
 					"quantity": 0
 				},
 				{
-					"id": "bookOfKnowledge",
-					"name": "Use 1 Book of Knowledge",
-					"points": 36,
-					"unit": "unit",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
-					"id": "trainingSpeedup",
-					"name": "Use 1m of Training Speedup",
+					"id": "expertSkillsSpeedup",
+					"name": "Use 1m of Expert Skills Speedup",
 					"points": 18,
 					"unit": "minute",
 					"priority": "medium",
@@ -135,11 +127,27 @@
 					"quantity": 0
 				},
 				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "medium",
+					"quantity": 0
+				},
+				{
 					"id": "gems",
 					"name": "Use 1 Gem",
 					"points": 1,
 					"unit": "unit",
 					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "medium",
 					"quantity": 0
 				}
 			],
@@ -167,8 +175,41 @@
 					"quantity": 0
 				},
 				{
-					"id": "refinedFireCrystal",
+					"id": "rareHeroShard",
+					"name": "Use 1 Rare Hero Shard to ascend Heroes",
+					"points": 210,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "epicHeroShard",
+					"name": "Use 1 Epic Hero Shard to ascend Heroes",
+					"points": 750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mythicHeroShard",
+					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
+					"points": 1875,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+
+				{
+					"id": "refinedFireCrystalBuilding",
 					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
 					"points": 18750,
 					"unit": "unit",
 					"priority": "great",
@@ -191,35 +232,19 @@
 					"quantity": 0
 				},
 				{
-					"id": "expertSigil",
-					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
-					"points": 3600,
-					"unit": "unit",
-					"priority": "great",
+					"id": "constructionSpeedup",
+					"name": "Use 1m of Construction Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
 					"quantity": 0
 				},
 				{
-					"id": "mythicHeroShard",
-					"name": "Use 1 Mythic Hero Shard to ascend Heroes",
-					"points": 1875,
-					"unit": "unit",
-					"priority": "great",
-					"quantity": 0
-				},
-				{
-					"id": "epicHeroShard",
-					"name": "Use 1 Epic Hero Shard to ascend Heroes",
-					"points": 750,
-					"unit": "unit",
-					"priority": "great",
-					"quantity": 0
-				},
-				{
-					"id": "rareHeroShard",
-					"name": "Use 1 Rare Hero Shard to ascend Heroes",
-					"points": 210,
-					"unit": "unit",
-					"priority": "great",
+					"id": "trainingSpeedup",
+					"name": "Use 1m of Training Speedup",
+					"points": 18,
+					"unit": "minute",
+					"priority": "medium",
 					"quantity": 0
 				},
 				{
@@ -239,35 +264,27 @@
 					"quantity": 0
 				},
 				{
-					"id": "bookOfKnowledge",
-					"name": "Use 1 Book of Knowledge",
-					"points": 36,
-					"unit": "unit",
-					"priority": "great",
-					"quantity": 0
-				},
-				{
-					"id": "constructionSpeedup",
-					"name": "Use 1m of Construction Speedup",
-					"points": 18,
-					"unit": "minute",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
-					"id": "trainingSpeedup",
-					"name": "Use 1m of Training Speedup",
-					"points": 18,
-					"unit": "minute",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
 					"id": "gems",
 					"name": "Use 1 Gem",
 					"points": 1,
 					"unit": "unit",
 					"priority": "low",
+					"quantity": 0
+				},
+				{
+					"id": "expertSigil",
+					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
+					"points": 3600,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "bookOfKnowledge",
+					"name": "Use 1 Book of Knowledge",
+					"points": 36,
+					"unit": "unit",
+					"priority": "great",
 					"quantity": 0
 				}
 			],
@@ -657,6 +674,7 @@
 					"unit": "advancement",
 					"priority": "great",
 					"quantity": 0,
+					"pointsPerScore": 30,
 					"levels": [
 						{ "level": 10, "points": 500 },
 						{ "level": 20, "points": 1000 },
@@ -730,6 +748,14 @@
 					"id": "raidTruck",
 					"name": "Raid 1 Truck",
 					"points": 10000,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "mithril",
+					"name": "Use 1 Mithril",
+					"points": 67500,
 					"unit": "unit",
 					"priority": "great",
 					"quantity": 0
@@ -1144,8 +1170,701 @@
 					"quantity": 0
 				},
 				{
-					"id": "refinedFireCrystal",
+					"id": "chiefGearScore",
+					"name": "Chief Gear score increases by 1",
+					"calculationType": "tiered",
+					"unit": "upgrade",
+					"priority": "great",
+					"quantity": 0,
+					"pointsPerScore": 22,
+					"levels": [
+						{
+							"level": "uncommon",
+							"points": 1125,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 1875
+								}
+							]
+						},
+						{
+							"level": "rare",
+							"points": 3000,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 4500
+								},
+								{
+									"status": "2 star",
+									"points": 5100
+								},
+								{
+									"status": "3 star",
+									"points": 5440
+								}
+							]
+						},
+						{
+							"level": "epic",
+							"points": 3230,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3230
+								},
+								{
+									"status": "2 star",
+									"points": 3225
+								},
+								{
+									"status": "3 star",
+									"points": 3225
+								}
+							]
+						},
+						{
+							"level": "epic-T1",
+							"points": 3440,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 3440
+								},
+								{
+									"status": "2 star",
+									"points": 4085
+								},
+								{
+									"status": "3 star",
+									"points": 4085
+								}
+							]
+						},
+						{
+							"level": "mythic",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T1",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2",
+							"points": 6250,
+							"statuses": [
+								{
+									"status": "1 star",
+									"points": 6250
+								},
+								{
+									"status": "2 star",
+									"points": 6250
+								},
+								{
+									"status": "3 star",
+									"points": 6250
+								}
+							]
+						},
+						{
+							"level": "mythic-T2-3-star",
+							"points": 2320,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-1-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2310
+								},
+								{
+									"status": "Step 2",
+									"points": 2310
+								},
+								{
+									"status": "Step 3",
+									"points": 2310
+								}
+							]
+						},
+						{
+							"level": "legendary-2-star",
+							"points": 2630,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-3-star",
+							"points": 2570,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2330
+								},
+								{
+									"status": "Step 2",
+									"points": 2330
+								},
+								{
+									"status": "Step 3",
+									"points": 2330
+								}
+							]
+						},
+						{
+							"level": "legendary-T1",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2300
+								},
+								{
+									"status": "Step 2",
+									"points": 2300
+								},
+								{
+									"status": "Step 3",
+									"points": 2300
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-1-star",
+							"points": 2660,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-2-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2320
+								},
+								{
+									"status": "Step 2",
+									"points": 2320
+								},
+								{
+									"status": "Step 3",
+									"points": 2320
+								}
+							]
+						},
+						{
+							"level": "legendary-T1-3-star",
+							"points": 2600,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T2",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2390
+								},
+								{
+									"status": "Step 2",
+									"points": 2390
+								},
+								{
+									"status": "Step 3",
+									"points": 2390
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-1-star",
+							"points": 2390,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-2-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2380
+								},
+								{
+									"status": "Step 2",
+									"points": 2380
+								},
+								{
+									"status": "Step 3",
+									"points": 2380
+								}
+							]
+						},
+						{
+							"level": "legendary-T2-3-star",
+							"points": 2420,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-1-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2360
+								},
+								{
+									"status": "Step 2",
+									"points": 2360
+								},
+								{
+									"status": "Step 3",
+									"points": 2360
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-2-star",
+							"points": 2480,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 2370
+								},
+								{
+									"status": "Step 2",
+									"points": 2370
+								},
+								{
+									"status": "Step 3",
+									"points": 2370
+								}
+							]
+						},
+						{
+							"level": "legendary-T3-3-star",
+							"points": 2450,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3190
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T4-3-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-2-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T5-3-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-1-star",
+							"points": 3090,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3020
+								},
+								{
+									"status": "Step 2",
+									"points": 3090
+								},
+								{
+									"status": "Step 3",
+									"points": 3100
+								},
+								{
+									"status": "Step 4",
+									"points": 3090
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-2-star",
+							"points": 3100,
+							"statuses": [
+								{
+									"status": "Step 1",
+									"points": 3010
+								},
+								{
+									"status": "Step 2",
+									"points": 3100
+								},
+								{
+									"status": "Step 3",
+									"points": 3090
+								},
+								{
+									"status": "Step 4",
+									"points": 3100
+								}
+							]
+						},
+						{
+							"level": "legendary-T6-3-star",
+							"points": 3090
+						}
+					]
+				},
+				{
+					"id": "refinedFireCrystalBuilding",
 					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
 					"points": 18750,
 					"unit": "unit",
 					"priority": "great",
@@ -1168,26 +1887,10 @@
 					"quantity": 0
 				},
 				{
-					"id": "expertSigil",
-					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
-					"points": 3600,
-					"unit": "unit",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
 					"id": "expertSkillsSpeedup",
 					"name": "Use 1m of Expert Skills Speedup",
 					"points": 18,
 					"unit": "minute",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
-					"id": "bookOfKnowledge",
-					"name": "Use 1 Book of Knowledge",
-					"points": 36,
-					"unit": "unit",
 					"priority": "medium",
 					"quantity": 0
 				},
@@ -1240,8 +1943,24 @@
 					"quantity": 0
 				},
 				{
-					"id": "refinedFireCrystal",
+					"id": "heroExclusiveGearWidget",
+					"name": "Use 1 Hero Exclusive Gear Widget",
+					"points": 3750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalBuilding",
 					"name": "Use 1 Refined Fire Crystal to upgrade buildings",
+					"points": 18750,
+					"unit": "unit",
+					"priority": "great",
+					"quantity": 0
+				},
+				{
+					"id": "refinedFireCrystalResearch",
+					"name": "Use 1 Refined Fire Crystal for research",
 					"points": 18750,
 					"unit": "unit",
 					"priority": "great",
@@ -1303,14 +2022,7 @@
 					"priority": "great",
 					"quantity": 0
 				},
-				{
-					"id": "heroExclusiveGearWidget",
-					"name": "Use 1 Hero Exclusive Gear Widget",
-					"points": 3750,
-					"unit": "unit",
-					"priority": "great",
-					"quantity": 0
-				},
+
 				{
 					"id": "fireCrystalShard",
 					"name": "Use 1 Fire Crystal Shard for Research",
@@ -1665,6 +2377,7 @@
 					"unit": "advancement",
 					"priority": "great",
 					"quantity": 0,
+					"pointsPerScore": 30,
 					"levels": [
 						{ "level": 10, "points": 500 },
 						{ "level": 20, "points": 1000 },
@@ -2362,22 +3075,6 @@
 							"points": 3090
 						}
 					]
-				},
-				{
-					"id": "expertSigil",
-					"name": "Use 1 Expert Sigil (excl. Common Sigils)",
-					"points": 3600,
-					"unit": "unit",
-					"priority": "medium",
-					"quantity": 0
-				},
-				{
-					"id": "bookOfKnowledge",
-					"name": "Use 1 Book of Knowledge",
-					"points": 36,
-					"unit": "unit",
-					"priority": "medium",
-					"quantity": 0
 				},
 				{
 					"id": "constructionSpeedup",
