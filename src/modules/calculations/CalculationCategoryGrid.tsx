@@ -10,7 +10,7 @@ const CALCULATION_CATEGORIES = [
 	{
 		id: "svs",
 		title: "SvS",
-		icon: "/icons/svs.png",
+		icon: "/icons/SVS.png",
 		href: "/calculations/svs",
 	},
 ];
